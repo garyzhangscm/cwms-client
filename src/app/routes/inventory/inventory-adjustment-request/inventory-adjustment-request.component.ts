@@ -344,8 +344,8 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.requestInProcess = true;
     this.processInventoryAdjustmentRequest(
       this.currentProcessingRequest!,
-      this.inventoryAdjustmentRequestProcessForm.value.approved.value,
-      this.inventoryAdjustmentRequestProcessForm.value.comment.value,
+      this.inventoryAdjustmentRequestProcessForm.value.approved,
+      this.inventoryAdjustmentRequestProcessForm.value.comment,
     );
   }
 

@@ -439,22 +439,22 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   findWaveCandidate(): void {
     this.isSpinning = true;
     
-    let startCreatedTime : Date = this.searchForm.value.createdTimeRanger.value ? 
+    let startCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
         this.searchForm.value.createdTimeRanger.value[0] : undefined; 
-    let endCreatedTime : Date = this.searchForm.value.createdTimeRanger.value ? 
+    let endCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
         this.searchForm.value.createdTimeRanger.value[1] : undefined; 
-    let specificCreatedDate : Date = this.searchForm.value.createdDate.value;
+    let specificCreatedDate : Date = this.searchForm.value.createdDate;
 
     this.waveService
-      .findWaveableOrderCandidate(this.searchForm.value.orderNumber.value, 
-        this.searchForm.value.client.value, 
+      .findWaveableOrderCandidate(this.searchForm.value.orderNumber, 
+        this.searchForm.value.client, 
         undefined,
-        this.searchForm.value.customer.value, 
+        this.searchForm.value.customer, 
         startCreatedTime, 
         endCreatedTime, specificCreatedDate, 
-        this.searchForm.value.singleOrderLineOnly.value,
-        this.searchForm.value.singleOrderQuantityOnly.value,
-        this.searchForm.value.singleOrderCaseQuantityOnly.value,)
+        this.searchForm.value.singleOrderLineOnly,
+        this.searchForm.value.singleOrderQuantityOnly,
+        this.searchForm.value.singleOrderCaseQuantityOnly,)
       .subscribe({
 
         next: (wavableOrders)  => {
@@ -473,15 +473,15 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       });
 
     this.waveService
-      .findWaveableShipmentCandidate(this.searchForm.value.orderNumber.value, 
-        this.searchForm.value.client.value, 
+      .findWaveableShipmentCandidate(this.searchForm.value.orderNumber, 
+        this.searchForm.value.client, 
         undefined,
-        this.searchForm.value.customer.value, 
+        this.searchForm.value.customer, 
         startCreatedTime, 
         endCreatedTime, specificCreatedDate, 
-        this.searchForm.value.singleOrderLineOnly.value,
-        this.searchForm.value.singleOrderQuantityOnly.value,
-        this.searchForm.value.singleOrderCaseQuantityOnly.value,)
+        this.searchForm.value.singleOrderLineOnly,
+        this.searchForm.value.singleOrderQuantityOnly,
+        this.searchForm.value.singleOrderCaseQuantityOnly,)
       .subscribe({
 
         next: (waveableShipmentsRes)  => {
@@ -885,15 +885,15 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     if (this.planWaveWithOrderLineFlag) {
 
       this.planWaveWithOrderLines(
-        this.newWaveNumberForm.value.waveNumber.value, 
+        this.newWaveNumberForm.value.waveNumber, 
         this.selectedWavableOrderLines,
-        this.newWaveNumberForm.value.comment.value );
+        this.newWaveNumberForm.value.comment );
     }
     else {
       this.planWaveWithShipmentLines(
-        this.newWaveNumberForm.value.waveNumber.value, 
+        this.newWaveNumberForm.value.waveNumber, 
         this.selectedWavableShipmentLines,
-        this.newWaveNumberForm.value.comment.value );
+        this.newWaveNumberForm.value.comment );
 
     }
   }

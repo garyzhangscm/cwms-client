@@ -68,11 +68,11 @@ export class QcQcResultComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    console.log(`search by number ${this.searchForm.value.number.value}`);
+    console.log(`search by number ${this.searchForm.value.number}`);
     this.qcInspectionRequestService.getQCInspectionResult(
-      this.searchForm.value.lpn.value,      
-      this.searchForm.value.workOrderQCSampleNumber.value,      
-      this.searchForm.value.number.value).subscribe(
+      this.searchForm.value.lpn,      
+      this.searchForm.value.workOrderQCSampleNumber,      
+      this.searchForm.value.number).subscribe(
       {
         next: (qcInspectionRequestRes) => {
           this.listOfQCInspectionRequest = qcInspectionRequestRes;

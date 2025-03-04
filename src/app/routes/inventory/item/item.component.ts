@@ -723,8 +723,8 @@ export class InventoryItemComponent implements OnInit {
       nzOnOk: () => {
         this.addItemBarcode( 
           item,
-          this.addItemBarcodeForm.value.code.value,
-          this.addItemBarcodeForm.value.type.value,
+          this.addItemBarcodeForm.value.code,
+          this.addItemBarcodeForm.value.type,
         );
         return false;
       },

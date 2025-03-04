@@ -143,11 +143,11 @@ export class AlertAlertComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     
-    let startTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+    let startTime : Date = this.searchForm.value.dateTimeRanger ? 
         this.searchForm.value.dateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+    let endTime : Date = this.searchForm.value.dateTimeRanger ? 
         this.searchForm.value.dateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.value.date.value;
+    let specificDate : Date = this.searchForm.value.date;
 
 
     this.alertService

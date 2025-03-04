@@ -203,18 +203,18 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger ? 
         this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger ? 
         this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.value.integrationDate.value;
+    let specificDate : Date = this.searchForm.value.integrationDate;
     
     this.integrationInventoryAdjustmentConfirmationService
       .getData( startTime,
         endTime, 
         specificDate,
-        this.searchForm.value.statusList.value,
-        this.searchForm.value.id.value,
+        this.searchForm.value.statusList,
+        this.searchForm.value.id,
          )
       .subscribe(integrationInventoryAdjustmentConfirmationRes => {
         this.listOfAllIntegrationInventoryAdjustmentConfirmations = integrationInventoryAdjustmentConfirmationRes;

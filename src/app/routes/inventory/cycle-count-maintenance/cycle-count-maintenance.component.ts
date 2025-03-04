@@ -401,7 +401,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   generateBatchId(): void {
     if (this.requestForm.value.autoGenerateId.value) {
       this.requestForm.value.batchId.disable();
-      if (!this.requestForm.value.batchId.value) {
+      if (!this.requestForm.value.batchId) {
         this.cycleCountBatchService.getNextCycleCountBatchId().subscribe(nextId => {
           this.requestForm.value.batchId.setValue(nextId);
         });
@@ -418,11 +418,11 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     this.isSpinning = true;
     this.cycleCountRequestService
       .generateCycleCountRequests(
-        this.requestForm.value.batchId.value,
+        this.requestForm.value.batchId,
         this.cycleCountRequestType,
-        this.requestForm.value.startValue.value,
-        this.requestForm.value.endValue.value,
-        this.requestForm.value.includeEmptyLocation.value,
+        this.requestForm.value.startValue,
+        this.requestForm.value.endValue,
+        this.requestForm.value.includeEmptyLocation,
       )
       .subscribe(res => {
         this.requestForm.value.startValue.reset();
@@ -432,7 +432,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
         if (this.newBatch) {
           // refresh the page by going to the same page, with
           // batch id in the parameter
-          this.router.navigateByUrl(`/inventory/count/cycle-count-maintenance?batchId=${this.requestForm.value.batchId.value}`);
+          this.router.navigateByUrl(`/inventory/count/cycle-count-maintenance?batchId=${this.requestForm.value.batchId}`);
         }
         else {
 
@@ -457,7 +457,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     // we haven't load them yet
     // once we finished one table, the correpondent 0 will 
     // be set to 1
-    const batchId = this.requestForm.value.batchId.value;
+    const batchId = this.requestForm.value.batchId;
     if (batchId) {
       this.isSpinning = true;
       this.loadingInProcess = [0, 0, 0, 0, 0];
@@ -974,7 +974,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to print cycle count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.cycleCountRequestService.printCycleCountSheet(
-      this.requestForm.value.batchId.value,
+      this.requestForm.value.batchId,
       cycleCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
@@ -988,7 +988,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           event.printerName,
           event.physicalCopyCount, PrintPageOrientation.Landscape,
           PrintPageSize.A4,
-          this.requestForm.value.batchId.value, 
+          this.requestForm.value.batchId, 
           printResult, event.collated);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
@@ -1006,12 +1006,12 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to preview cycle count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.cycleCountRequestService.printCycleCountSheet(
-      this.requestForm.value.batchId.value,
+      this.requestForm.value.batchId,
       cycleCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
         this.isSpinning = false;
-        sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.value.batchId.value}`);
+        sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.value.batchId}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
 
       },
@@ -1087,7 +1087,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to print Audit count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.auditCountRequestService.printAuditCountSheet(
-      this.requestForm.value.batchId.value,
+      this.requestForm.value.batchId,
       auditCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
@@ -1101,7 +1101,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           event.printerName,
           event.physicalCopyCount, PrintPageOrientation.Landscape,
           PrintPageSize.A4,
-          this.requestForm.value.batchId.value, 
+          this.requestForm.value.batchId, 
           printResult, event.collated);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
@@ -1119,12 +1119,12 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to preview audit count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.auditCountRequestService.printAuditCountSheet(
-      this.requestForm.value.batchId.value,
+      this.requestForm.value.batchId,
       auditCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
         this.isSpinning = false;
-        sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.value.batchId.value}`);
+        sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.value.batchId}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
 
       },

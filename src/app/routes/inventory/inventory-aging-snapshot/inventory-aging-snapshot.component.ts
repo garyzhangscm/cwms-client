@@ -85,7 +85,7 @@ export class InventoryInventoryAgingSnapshotComponent implements OnInit {
     this.isSpinning = true; 
     this.inventoryAgingSnapshotService
       .getInventoryAgingSnapshots(this.searchForm.value.number ,
-        this.searchForm!.value.status.value)
+        this.searchForm!.value.status)
       .subscribe({
 
         next: (inventoryAgingSnapshotRes) => {

@@ -87,7 +87,7 @@ export class InventoryInventoryStatusComponent implements OnInit {
      
 
     this.inventoryStatusService.getInventoryStatuses(
-      this.searchForm.value.name.value, ).subscribe({
+      this.searchForm.value.name, ).subscribe({
 
         next: (inventoryStatusRes) => {
           this.searchResult = this.i18n.fanyi('search_result_analysis', {

@@ -480,19 +480,19 @@ export class UserLoginComponent implements OnDestroy {
       },
       nzOnOk: () => {
         
-        if (this.changePasswordRequestForm.value.newPassword.value === null ||
-            this.changePasswordRequestForm.value.confirmPassword.value === null) {
+        if (this.changePasswordRequestForm.value.newPassword === null ||
+            this.changePasswordRequestForm.value.confirmPassword === null) {
            this.msg.error(this.i18n.fanyi('password-is-empty'));
            return false;
         }
-        if (this.changePasswordRequestForm.value.newPassword.value !== 
-            this.changePasswordRequestForm.value.confirmPassword.value) {
+        if (this.changePasswordRequestForm.value.newPassword !== 
+            this.changePasswordRequestForm.value.confirmPassword) {
            this.msg.error(this.i18n.fanyi('password-not-match'));
            return false;
         }
         this.changePassword( 
           user,
-          this.changePasswordRequestForm.value.newPassword.value
+          this.changePasswordRequestForm.value.newPassword
         );
         return true;
       },

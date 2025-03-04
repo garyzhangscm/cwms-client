@@ -199,15 +199,15 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
     this.searchResult = '';
     this.isSpinning = true;
 
-    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger ? 
         this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger ? 
         this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.value.integrationDate.value;
+    let specificDate : Date = this.searchForm.value.integrationDate;
 	
     this.integrationItemDataService.getData(startTime, endTime, specificDate, 
-      this.searchForm.value.statusList.value,
-      this.searchForm.value.id.value,).subscribe(
+      this.searchForm.value.statusList,
+      this.searchForm.value.id,).subscribe(
       integrationItemDataRes => {
         console.log(`integrationItemDataRes:\n${JSON.stringify(integrationItemDataRes)}`);
         this.listOfAllIntegrationItemData = integrationItemDataRes;

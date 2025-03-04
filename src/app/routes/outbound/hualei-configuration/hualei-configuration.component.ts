@@ -287,22 +287,22 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         this.addProductModal.destroy(); 
       },
       nzOnOk: () => { 
-        if (this.addProductForm.value.productId.value == null) {
+        if (this.addProductForm.value.productId == null) {
           this.messageService.error("please fill in the product id");
           return false; 
         }
-        if (this.addProductForm.value.name.value == null) {
+        if (this.addProductForm.value.name == null) {
           this.messageService.error("please fill in the name");
           return false; 
         }
-        if (this.addProductForm.value.description.value == null) {
+        if (this.addProductForm.value.description == null) {
           this.messageService.error("please fill in the description");
           return false; 
         }
         // get the carrier and service level for the hualei product
         let carrierId : number | undefined = undefined;
         let carrierServiceLevelId  : number | undefined = undefined;
-        let carrierInformation : string = this.addProductForm.value.carrier.value.toString();
+        let carrierInformation : string = this.addProductForm.value.carrier.toString();
         if (carrierInformation) {
           console.log(`get carrier information ${carrierInformation}`);
           let carrierInformationArray : string[] = [];
@@ -312,9 +312,9 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         }
 
         this.addProduct( 
-          this.addProductForm.value.productId.value,
-          this.addProductForm.value.name.value,
-          this.addProductForm.value.description.value,
+          this.addProductForm.value.productId,
+          this.addProductForm.value.name,
+          this.addProductForm.value.description,
           carrierId, 
           carrierServiceLevelId
         );
@@ -377,17 +377,17 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         this.addShippingLabelFormatModal.destroy(); 
       },
       nzOnOk: () => {
-        if (this.addShippingLabelFormatForm.value.productId.value == null) {
+        if (this.addShippingLabelFormatForm.value.productId == null) {
           this.messageService.error("please fill in the product id");
           return false; 
         }
-        if (this.addShippingLabelFormatForm.value.shippingLabelFormat.value == null) {
+        if (this.addShippingLabelFormatForm.value.shippingLabelFormat == null) {
           this.messageService.error("please fill in the shipping label format");
           return false; 
         } 
         this.addShippingLabelFormat( 
-          this.addShippingLabelFormatForm.value.productId.value,
-          this.addShippingLabelFormatForm.value.shippingLabelFormat.value,  
+          this.addShippingLabelFormatForm.value.productId,
+          this.addShippingLabelFormatForm.value.shippingLabelFormat,  
         );
         return true;
       },

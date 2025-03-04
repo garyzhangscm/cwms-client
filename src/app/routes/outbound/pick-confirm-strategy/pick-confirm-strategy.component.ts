@@ -126,8 +126,8 @@ export class OutboundPickConfirmStrategyComponent implements OnInit {
     this.pickConfirmStrategyService.getPickConfirmStrategies(
       sequence,      
       undefined,
-      this.searchForm.value.itemName.value,
-      this.searchForm.value.itemFamily.value,
+      this.searchForm.value.itemName,
+      this.searchForm.value.itemFamily,
     ).subscribe({
       next: (pickConfirmStrategyRes) => {
 

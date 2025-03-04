@@ -627,10 +627,10 @@ export class OutboundWaveComponent implements OnInit {
   search(expandedWaveId?: number, tabSelectedIndex?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.waveService.getWaves(this.searchForm.value.number.value, 
-      this.searchForm.value.waveStatus.value, 
-      this.searchForm.value.includeCompletedWave.value, 
-      this.searchForm.value.includeCancelledWave.value).subscribe(
+    this.waveService.getWaves(this.searchForm.value.number, 
+      this.searchForm.value.waveStatus, 
+      this.searchForm.value.includeCompletedWave, 
+      this.searchForm.value.includeCancelledWave).subscribe(
       waveRes => {
         // this.listOfAllWaves = this.calculateQuantities(waveRes); 
  
@@ -908,8 +908,8 @@ export class OutboundWaveComponent implements OnInit {
         this.unpickInventory(
           wave,
           inventory,
-          this.unpickForm.value.destinationLocation.value,
-          this.unpickForm.value.immediateMove.value,
+          this.unpickForm.value.destinationLocation,
+          this.unpickForm.value.immediateMove,
         );
       },
       nzWidth: 1000,

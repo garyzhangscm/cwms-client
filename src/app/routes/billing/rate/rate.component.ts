@@ -286,16 +286,16 @@ export class BillingRateComponent implements OnInit {
         this.newBillingRateByInventoryAgeModal.destroy(); 
       },
       nzOnOk: () => {
-        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value: ${this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value}`)
-        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value == null?: ${!this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value}`)
-        if (!this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value ||
-              !this.newBillingRateByInventoryAgeForm.value.endInventoryAge.value) {
+        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value: ${this.newBillingRateByInventoryAgeForm.value.startInventoryAge}`)
+        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value == null?: ${!this.newBillingRateByInventoryAgeForm.value.startInventoryAge}`)
+        if (!this.newBillingRateByInventoryAgeForm.value.startInventoryAge ||
+              !this.newBillingRateByInventoryAgeForm.value.endInventoryAge) {
            
               this.messageService.error(`start inventory age and end inventory age are required`);
               return false;
         }
-        if (this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value  >
-             this.newBillingRateByInventoryAgeForm.value.endInventoryAge.value ) {
+        if (this.newBillingRateByInventoryAgeForm.value.startInventoryAge  >
+             this.newBillingRateByInventoryAgeForm.value.endInventoryAge ) {
            
               this.messageService.error(`start inventory age needs to be less than end inventory age`);
               return false;
@@ -306,8 +306,8 @@ export class BillingRateComponent implements OnInit {
           nzOkLoading: true
         });
         this.addNewBillingRateGroup( 
-          this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value,
-          this.newBillingRateByInventoryAgeForm.value.endInventoryAge.value,
+          this.newBillingRateByInventoryAgeForm.value.startInventoryAge,
+          this.newBillingRateByInventoryAgeForm.value.endInventoryAge,
         );
         return false;
       },

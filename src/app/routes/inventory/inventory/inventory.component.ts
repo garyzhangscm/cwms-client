@@ -1189,8 +1189,8 @@ export class InventoryInventoryComponent implements OnInit {
       nzOnOk: () => {
         this.moveInventory(
           inventory,
-          this.inventoryMovementForm.value.destinationLocation.value,
-          this.inventoryMovementForm.value.immediateMove.value,
+          this.inventoryMovementForm.value.destinationLocation,
+          this.inventoryMovementForm.value.immediateMove,
         );
       },
 
@@ -1227,8 +1227,8 @@ export class InventoryInventoryComponent implements OnInit {
         });
         this.moveInventoryInBatch(
           this.getSelectedInventory(),
-          this.inventoryMovementForm.value.destinationLocation.value,
-          this.inventoryMovementForm.value.immediateMove.value,
+          this.inventoryMovementForm.value.destinationLocation,
+          this.inventoryMovementForm.value.immediateMove,
         );
         return false;
       },

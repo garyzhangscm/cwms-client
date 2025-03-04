@@ -99,7 +99,7 @@ export class OutboundStopComponent implements OnInit {
      
 
     this.stopService.getStops(
-      this.searchForm.value.number.value,   
+      this.searchForm.value.number,   
     ).subscribe(
       {
         next: (stopRes) => {

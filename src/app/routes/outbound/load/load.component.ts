@@ -190,16 +190,16 @@ export class OutboundLoadComponent implements OnInit {
     this.isSpinning = true;
     // this.checked = false;
     
-    let startTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+    let startTime : Date = this.searchForm.value.dateTimeRanger ? 
         this.searchForm.value.dateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+    let endTime : Date = this.searchForm.value.dateTimeRanger ? 
         this.searchForm.value.dateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.value.date.value;
+    let specificDate : Date = this.searchForm.value.date;
 
     this.trailerAppointmentService.getTrailerAppointments(
-      this.searchForm.value.number.value, 
+      this.searchForm.value.number, 
       TrailerAppointmentType.SHIPPING,
-      this.searchForm.value.status.value,
+      this.searchForm.value.status,
       startTime,  endTime, specificDate    
     ).subscribe(
       {
@@ -717,9 +717,9 @@ export class OutboundLoadComponent implements OnInit {
                   this.isSpinning = true;
                   this.shortAllocationService.createWorkOrder(
                     shortAllocation,
-                    this.createWorkOrderForm.value.bom.value,
-                    this.createWorkOrderForm.value.workOrderNumber.value,
-                    this.createWorkOrderForm.value.workOrderQuantity.value,
+                    this.createWorkOrderForm.value.bom,
+                    this.createWorkOrderForm.value.workOrderNumber,
+                    this.createWorkOrderForm.value.workOrderQuantity,
                   ).subscribe({
                     next: () => {
                       

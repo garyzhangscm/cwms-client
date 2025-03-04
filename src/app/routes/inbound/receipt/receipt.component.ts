@@ -321,19 +321,19 @@ export class InboundReceiptComponent implements OnInit {
     this.searchResult = '';
 
     
-    let checkInStartTime : Date = this.searchForm.value.checkInDateTimeRanger.value ? 
+    let checkInStartTime : Date = this.searchForm.value.checkInDateTimeRanger ? 
         this.searchForm.value.checkInDateTimeRanger.value[0] : undefined; 
-    let checkInEndTime : Date = this.searchForm.value.checkInDateTimeRanger.value ? 
+    let checkInEndTime : Date = this.searchForm.value.checkInDateTimeRanger ? 
         this.searchForm.value.checkInDateTimeRanger.value[1] : undefined; 
-    let checkInSpecificDate : Date = this.searchForm.value.checkInDate.value;
+    let checkInSpecificDate : Date = this.searchForm.value.checkInDate;
 
-    this.receiptService.getReceipts(this.searchForm!.value.number.value, true,       
-      this.searchForm!.value.statusList.value,       
-      this.searchForm!.value.supplier.value,
+    this.receiptService.getReceipts(this.searchForm!.value.number, true,       
+      this.searchForm!.value.statusList,       
+      this.searchForm!.value.supplier,
       checkInStartTime, checkInEndTime, checkInSpecificDate, 
          undefined,
          undefined,
-      this.searchForm!.value.client.value).subscribe(
+      this.searchForm!.value.client).subscribe(
       receiptRes => {
 
         this.searching = false;
@@ -1164,13 +1164,13 @@ export class InboundReceiptComponent implements OnInit {
       if (this.billableActivityReceiptLine) {
 
         const receiptLineBillableActivity : ReceiptLineBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.value.billableActivityType.value,
-          activityTime: this.billableActivityForm.value.activityTime.value,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType,
+          activityTime: this.billableActivityForm.value.activityTime,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityReceipt?.clientId,
-          rate: this.billableActivityForm.value.rate.value,
-          amount: this.billableActivityForm.value.amount.value,
-          totalCharge: this.billableActivityForm.value.totalCharge.value,
+          rate: this.billableActivityForm.value.rate,
+          amount: this.billableActivityForm.value.amount,
+          totalCharge: this.billableActivityForm.value.totalCharge,
         }
         this.receiptService.addReceiptLineBillableActivity(this.billableActivityReceiptLine.id!, 
           receiptLineBillableActivity).subscribe({
@@ -1188,13 +1188,13 @@ export class InboundReceiptComponent implements OnInit {
       else {
 
         const receiptBillableActivity : ReceiptBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.value.billableActivityType.value,
-          activityTime: this.billableActivityForm.value.activityTime.value,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType,
+          activityTime: this.billableActivityForm.value.activityTime,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityReceipt?.clientId,
-          rate: this.billableActivityForm.value.rate.value,
-          amount: this.billableActivityForm.value.amount.value,
-          totalCharge: this.billableActivityForm.value.totalCharge.value,
+          rate: this.billableActivityForm.value,
+          amount: this.billableActivityForm.value.amount,
+          totalCharge: this.billableActivityForm.value.totalCharge,
         }
         this.receiptService.addReceiptBillableActivity(
           this.billableActivityReceipt!.id!, receiptBillableActivity).subscribe({
@@ -1223,12 +1223,12 @@ export class InboundReceiptComponent implements OnInit {
   
   recalculateTotalCharge(): void { 
     
-    if (this.billableActivityForm.value.rate.value != null &&
-      this.billableActivityForm.value.amount.value != null) {
+    if (this.billableActivityForm.value.rate != null &&
+      this.billableActivityForm.value.amount != null) {
 
         this.billableActivityForm!.value.totalCharge.setValue(
-          this.billableActivityForm.value.rate.value * 
-          this.billableActivityForm.value.amount.value
+          this.billableActivityForm.value.rate * 
+          this.billableActivityForm.value.amount
         );
         
       } 
