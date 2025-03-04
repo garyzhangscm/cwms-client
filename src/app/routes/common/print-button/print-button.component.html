@@ -9,10 +9,13 @@
         {{ 'report.print.default' | i18n }}</a>
     </li>
 
-    <li nz-menu-item *ngIf="allowPreview">
-      <a (click)="previewReport()">
-        {{ 'report.preview' | i18n }}</a>
-    </li>
+    @if(allowPreview) {
+        
+      <li nz-menu-item >
+        <a (click)="previewReport()">
+          {{ 'report.preview' | i18n }}</a>
+      </li>
+    }
 
   </ul>
 </nz-dropdown-menu>

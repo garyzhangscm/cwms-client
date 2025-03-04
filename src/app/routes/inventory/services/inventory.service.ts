@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 
 import { Client } from '../../common/models/client'; 
 import { ReportHistory } from '../../report/models/report-history';
+import { Page } from '../../util/models/Page';
 import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -122,6 +123,96 @@ export class InventoryService {
 
     const url = `inventory/inventories`;
     return this.http.get(url, params).pipe(map(res => {return {data: res.data, total: res.total}}));
+  }
+  
+  getPageableInventories(
+    client?: Client,
+    itemFamilies?: ItemFamily[],
+    itemName?: string,
+    locationName?: string,
+    lpn?: string,
+    includeDetails?: boolean,
+    inventoryStatusId?: number,
+    locationGroupId?: number,
+    color?: string,
+    style?: string,
+    productSize?: string,
+    attribute1?: string,
+    attribute2?: string,
+    attribute3?: string,
+    attribute4?: string,
+    attribute5?: string,
+    receiptNumber?: string,
+    pageIndex?: number, 
+    pageSize?: number
+  ): Observable<Page<Inventory[]>> {
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+ 
+     
+
+    if (itemName) { 
+      params = params.append('itemName', itemName.trim()); 
+    }
+    
+    if (color) { 
+      params = params.append('color', color.trim()); 
+    }
+    if (style) { 
+      params = params.append('style', style.trim()); 
+    }
+    if (productSize) { 
+      params = params.append('productSize', productSize.trim()); 
+    }
+    if (attribute1) { 
+      params = params.append('attribute1', attribute1.trim()); 
+    }
+    if (attribute2) { 
+      params = params.append('attribute2', attribute2.trim()); 
+    }
+    if (attribute3) { 
+      params = params.append('attribute3', attribute3.trim()); 
+    }
+    if (attribute4) { 
+      params = params.append('attribute4', attribute4.trim()); 
+    }
+    if (attribute5) { 
+      params = params.append('attribute5', attribute5.trim()); 
+    }
+
+    if (client) {
+      params = params.append('client', client.id!.toString());  
+    }
+    if (itemFamilies && itemFamilies.length > 0) {
+      params = params.append('item_families', itemFamilies.join(','));   
+    }
+    if (locationName) {
+      params = params.append('location', locationName.trim());    
+    }
+    if (lpn) {
+      params = params.append('lpn', lpn.trim());     
+    } 
+    if (locationGroupId) {
+      params = params.append('locationGroupId', locationGroupId);     
+    } 
+    if (inventoryStatusId) {
+      params = params.append('inventoryStatusId', inventoryStatusId);   
+    } 
+    
+    if (receiptNumber) {
+      params = params.append('receiptNumber', receiptNumber);   
+    } 
+    if (pageIndex != null) {
+      params = params.append('pageIndex', pageIndex);   
+    } 
+    if (pageSize != null) {
+      params = params.append('pageSize', pageSize);   
+    } 
+    
+    const url = `inventory/inventories/pagination`;
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getInventoryById(id: number): Observable<Inventory> {

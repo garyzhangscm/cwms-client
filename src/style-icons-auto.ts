@@ -35,7 +35,16 @@ import {
   ToolOutline,
   UserOutline,
   WalletOutline,
-  WarningTwoTone
+  WarningTwoTone,
+  // used by menu
+  ShoppingCartOutline,
+  MessageOutline,
+  PrinterOutline,
+  ShareAltOutline,
+  ExceptionOutline,
+  TeamOutline,
+  DashboardOutline,
+  GithubOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -71,5 +80,14 @@ export const ICONS_AUTO = [
   ToolOutline,
   UserOutline,
   WalletOutline,
-  WarningTwoTone
+  WarningTwoTone,
+  // used by menu
+  ShoppingCartOutline,
+  MessageOutline,
+  PrinterOutline,
+  ShareAltOutline,
+  ExceptionOutline,
+  TeamOutline,
+  DashboardOutline,
+  GithubOutline
 ];
