@@ -399,8 +399,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.productionLineService.getProductionLines(
-      this.searchForm.value.name.value,
-      this.searchForm.value.type.value, 
+      this.searchForm.value.name,
+      this.searchForm.value.type, 
       false, false).subscribe({
         next: (productionLineRes) => {
           this.listOfAllProductionLine = productionLineRes;  

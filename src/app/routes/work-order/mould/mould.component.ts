@@ -112,7 +112,7 @@ export class WorkOrderMouldComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.mouldService
-      .getMoulds(this.searchForm.value.name.value, this.searchForm.value.description.value)
+      .getMoulds(this.searchForm.value.name, this.searchForm.value.description)
       .subscribe(
         mouldRes => {
           this.listOfAllMoulds = mouldRes;

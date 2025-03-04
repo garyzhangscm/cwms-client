@@ -116,9 +116,9 @@ export class UtilDataInitComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addDataInitialRequest( 
-          this.dataInitialRequestForm.value.companyName.value,
-          this.dataInitialRequestForm.value.warehouseName.value,
-          this.dataInitialRequestForm.value.adminUsername.value,
+          this.dataInitialRequestForm.value.companyName,
+          this.dataInitialRequestForm.value.warehouseName,
+          this.dataInitialRequestForm.value.adminUsername,
         );
       },
 

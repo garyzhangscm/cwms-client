@@ -71,9 +71,9 @@ export class WorkOrderMrpComponent implements OnInit {
      
 
     this.materialRequirementsPlanningService.getMRPs(
-      this.searchForm.value.number.value,  
-      this.searchForm.value.description.value,  
-      this.searchForm.value.mpsNumber.value).subscribe(
+      this.searchForm.value.number,  
+      this.searchForm.value.description,  
+      this.searchForm.value.mpsNumber).subscribe(
         mrpRes => {
   
 

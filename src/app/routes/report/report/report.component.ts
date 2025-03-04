@@ -144,9 +144,9 @@ export class ReportReportComponent implements OnInit {
 
     this.reportService
       .getAll(
-        this.searchForm.value.type.value,
-        this.searchForm.value.companySpecific.value,
-        this.searchForm.value.warehouseSpecific.value
+        this.searchForm.value.type,
+        this.searchForm.value.companySpecific,
+        this.searchForm.value.warehouseSpecific
       )
       .subscribe(
         reportRes => {

@@ -73,8 +73,8 @@ export class WorkOrderMpsComponent implements OnInit {
      
 
     this.masterProductionScheduleService.getMasterProductionSchedules(
-      this.searchForm.value.number.value,  
-      this.searchForm.value.description.value).subscribe(
+      this.searchForm.value.number,  
+      this.searchForm.value.description).subscribe(
         mpsRes => {
   
 
@@ -175,7 +175,7 @@ export class WorkOrderMpsComponent implements OnInit {
       nzOnOk: () => {
         this.removeMPS(
           masterProductionSchedule, 
-          this.removeMPSForm.value.moveSuccessor.value,
+          this.removeMPSForm.value.moveSuccessor,
         );
       },
 

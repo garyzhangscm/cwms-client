@@ -84,10 +84,10 @@ export class UtilMenuComponent implements OnInit {
       menuRes => {
  
         // filter by name
-        if (this.searchForm.value.name.value) {
+        if (this.searchForm.value.name) {
           menuRes.forEach(
             menuGroup => {
-              if (menuGroup.text.toLowerCase().includes(this.searchForm.value.name.value)) {
+              if (menuGroup.text.toLowerCase().includes(this.searchForm.value.name)) {
                 // add the whole menuGrup to the result
                 this.listOfAllMenus = [...this.listOfAllMenus, ...this.getMenusFromMenuGroup(menuGroup)];
               }
@@ -95,14 +95,14 @@ export class UtilMenuComponent implements OnInit {
                 // check if we have matched sub group or menu item
                 menuGroup.children.forEach(
                   menuSubGroup => {
-                    if (menuSubGroup.text.toLowerCase().includes(this.searchForm.value.name.value)) {
+                    if (menuSubGroup.text.toLowerCase().includes(this.searchForm.value.name)) {
                       // add the whole sub menuGrup to the result
                       this.listOfAllMenus = [...this.listOfAllMenus, ...this.getMenusFromMenuSubGroup(menuGroup, menuSubGroup)];
                     }
                     else {
                       menuSubGroup.children.forEach(
                         menu => {                          
-                          if (menu.text.toLowerCase().includes(this.searchForm.value.name.value)) {
+                          if (menu.text.toLowerCase().includes(this.searchForm.value.name)) {
                             // add the whole sub menuGrup to the result
                             this.listOfAllMenus = [...this.listOfAllMenus, 
                                     {

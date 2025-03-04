@@ -106,10 +106,10 @@ search(): void {
   this.searchResult = '';
   this.qcRuleConfigurationService.getQCRuleConfigurations(
     undefined,
-    this.searchForm!.value.item.value,
-    this.searchForm!.value.itemFamily.value,
-    this.searchForm!.value.inventoryStatus.value,
-    this.searchForm.value.supplier.value,
+    this.searchForm!.value.item,
+    this.searchForm!.value.itemFamily,
+    this.searchForm!.value.inventoryStatus,
+    this.searchForm.value.supplier,
   ).subscribe({
     next: (qcRuleConfigurationRes) => {
       this.listOfAllQCRuleConfiguration = qcRuleConfigurationRes; 

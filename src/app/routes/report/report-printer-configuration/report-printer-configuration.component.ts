@@ -94,7 +94,7 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
 
     this.reportPrinterConfigurationService
       .getAll(
-        this.searchForm.value.type.value,
+        this.searchForm.value.type,
       )
       .subscribe(
         reportPrinterConfigurationRes => {

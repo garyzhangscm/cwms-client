@@ -169,18 +169,18 @@ export class WorkOrderMpsViewComponent implements OnInit {
      * 
      */
     
-    let startTime : Date = this.searchForm.value.mpsDateTimeRanger.value ? 
+    let startTime : Date = this.searchForm.value.mpsDateTimeRanger ? 
         this.searchForm.value.mpsDateTimeRanger.value[0] : addDays(new Date(), -2000); 
-    let endTime : Date = this.searchForm.value.mpsDateTimeRanger.value ? 
+    let endTime : Date = this.searchForm.value.mpsDateTimeRanger ? 
         this.searchForm.value.mpsDateTimeRanger.value[1] : addDays(new Date(), 2000); 
 
       
     this.masterProductionScheduleService.getMasterProductionSchedules(      
-      this.searchForm.value.number.value,  
+      this.searchForm.value.number,  
       undefined, 
       undefined,
-      this.searchForm.value.productionLines.value,  
-      this.searchForm.value.itemName.value, 
+      this.searchForm.value.productionLines,  
+      this.searchForm.value.itemName, 
       startTime, 
       endTime 
     ).subscribe({
@@ -199,8 +199,8 @@ export class WorkOrderMpsViewComponent implements OnInit {
             // first, we will filter out the result by production line, if the user query by production line
             mps.masterProductionScheduleLines.filter(
               masterProductionScheduleLine => 
-              this.searchForm.value.productionLines.value == null ||
-                String(this.searchForm.value.productionLines.value).split(",").some(
+              this.searchForm.value.productionLines == null ||
+                String(this.searchForm.value.productionLines).split(",").some(
                   productoinLineId => +productoinLineId === masterProductionScheduleLine.productionLine.id!
                 ) 
             ).forEach(

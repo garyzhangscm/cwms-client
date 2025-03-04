@@ -201,9 +201,9 @@ export class UtilDataTransferComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addDataExportRequest( 
-          this.dataExportRequestForm.value.number.value,
-          this.dataExportRequestForm.value.companyCode.value,
-          this.dataExportRequestForm.value.description.value,
+          this.dataExportRequestForm.value.number,
+          this.dataExportRequestForm.value.companyCode,
+          this.dataExportRequestForm.value.description,
         );
       },
 
@@ -266,9 +266,9 @@ export class UtilDataTransferComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addDataImportRequest( 
-          this.dataImportRequestForm.value.number.value,
-          this.dataImportRequestForm.value.companyCode.value,
-          this.dataImportRequestForm.value.description.value,
+          this.dataImportRequestForm.value.number,
+          this.dataImportRequestForm.value.companyCode,
+          this.dataImportRequestForm.value.description,
         );
       },
 

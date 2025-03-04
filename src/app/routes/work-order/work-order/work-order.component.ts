@@ -1316,10 +1316,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         this.unpickInventory(
           workOrder,
           inventory,
-          this.unpickForm.value.destinationLocation.value,
-          this.unpickForm.value.immediateMove.value,
-          this.unpickForm.value.overrideConsumedQuantity.value,
-          this.unpickForm.value.consumedQuantity.value,
+          this.unpickForm.value.destinationLocation,
+          this.unpickForm.value.immediateMove,
+          this.unpickForm.value.overrideConsumedQuantity,
+          this.unpickForm.value.consumedQuantity,
         );
       },
       nzWidth: 1000,
@@ -1967,8 +1967,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       nzOnOk: () => {
         this.recalculateQCQuantity( 
           workOrder,
-          this.recalculateQCForm.value.newQCQuantity.value,
-          this.recalculateQCForm.value.newQCPercentage.value,
+          this.recalculateQCForm.value.newQCQuantity,
+          this.recalculateQCForm.value.newQCPercentage,
         );
       },
 
