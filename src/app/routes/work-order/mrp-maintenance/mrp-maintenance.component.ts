@@ -90,11 +90,11 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
 
   }
   loadMPS() {
-    if (this.searchForm.value.mpsNumber.value) {
+    if (this.searchForm.value.mpsNumber) {
       // only load the MPS when the user input the MPS
       this.isSpinning = true;
       this.masterProductionScheduleService.getMasterProductionSchedules(
-        this.searchForm.value.mpsNumber.value
+        this.searchForm.value.mpsNumber
       ).subscribe({
         next: (mps) => {
 
@@ -298,12 +298,12 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
         this.chooseBOMModal.destroy(); 
       },
       nzOnOk: () => {
-        if (this.addMRPForm.value.mrpNumber.value == null) {
+        if (this.addMRPForm.value.mrpNumber == null) {
           this.messageService.error(this.i18n.fanyi('mrp-number-is-required'))
           return false;
         }
-        this.currentMRP!.number = this.addMRPForm.value.mrpNumber.value;
-        this.currentMRP!.description = this.addMRPForm.value.description.value;
+        this.currentMRP!.number = this.addMRPForm.value.mrpNumber;
+        this.currentMRP!.description = this.addMRPForm.value.description;
         this.saveMRP();
         return true;
       },

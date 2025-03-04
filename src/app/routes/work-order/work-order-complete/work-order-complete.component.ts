@@ -155,11 +155,11 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       nzOnOk: () => {
         this.addReturnMaterialRequest(
           workOrderLineCompleteTransaction,
-          this.returnMaterialForm.value.lpn.value,
-          this.returnMaterialForm.value.inventoryStatus.value,
-          this.returnMaterialForm.value.itemPackageType.value,
-          this.returnMaterialForm.value.quantity.value,
-          this.returnMaterialForm.value.locationName.value,
+          this.returnMaterialForm.value.lpn,
+          this.returnMaterialForm.value.inventoryStatus,
+          this.returnMaterialForm.value.itemPackageType,
+          this.returnMaterialForm.value.quantity,
+          this.returnMaterialForm.value.locationName,
         );
       },
       nzWidth: 1000,

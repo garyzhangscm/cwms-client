@@ -583,9 +583,9 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     this.isSpinning = true;
     this.locationService
       .getLocations(
-        this.searchForm.value.taggedLocationGroupTypes.value,
-        this.searchForm.value.taggedLocationGroups.value,
-        this.searchForm.value.locationName.value,
+        this.searchForm.value.taggedLocationGroupTypes,
+        this.searchForm.value.taggedLocationGroups,
+        this.searchForm.value.locationName,
         undefined,
         // this.searchForm.controls.locationStatus.value,
       )
@@ -685,10 +685,10 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   copyLocation() {
     this.isSpinning = true;
     this.locationService.copyLocation(this.copyFromLocation!.id!,
-      this.copyLocationForm.value.startNumber.value,
-      this.copyLocationForm.value.endNumber.value,
-      this.copyLocationForm.value.prefix.value,
-      this.copyLocationForm.value.postfix.value).subscribe({
+      this.copyLocationForm.value.startNumber,
+      this.copyLocationForm.value.endNumber,
+      this.copyLocationForm.value.prefix,
+      this.copyLocationForm.value.postfix).subscribe({
         next: () => {
           this.isSpinning = false;
           this.copyLocationModalVisible = false;

@@ -86,7 +86,7 @@ export class TransportationCarrierComponent implements OnInit {
      
 
     this.carrierService.getCarriers(
-      this.searchForm.value.name.value).subscribe({
+      this.searchForm.value.name).subscribe({
         next: (carriersRes) => {
 
           this.listOfCarriers = carriersRes;

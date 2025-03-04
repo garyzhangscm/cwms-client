@@ -151,9 +151,9 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
 
       this.addSparePartDetail(
         this.currentSparePart!,
-        this.sparePartDetailForm.value.itemName.value,
-        this.sparePartDetailForm.value.inventoryStatus.value,
-        this.sparePartDetailForm.value.quantity.value,
+        this.sparePartDetailForm.value.itemName,
+        this.sparePartDetailForm.value.inventoryStatus,
+        this.sparePartDetailForm.value.quantity,
       );
 
       this.sparePartDetailModal.destroy();

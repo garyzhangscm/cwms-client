@@ -100,9 +100,9 @@ export class WorkOrderProductionLineMonitorComponent implements OnInit {
      
 
     this.productionLineMonitorService.getProductionLineMonitors(
-      this.searchForm.value.name.value, 
-      this.searchForm.value.description.value, 
-      this.searchForm.value.productionLine.value, ).subscribe({
+      this.searchForm.value.name, 
+      this.searchForm.value.description, 
+      this.searchForm.value.productionLine, ).subscribe({
 
         next: (productionLineMonitorRes) => {
             this.listOfProductionLineMonitors = productionLineMonitorRes;

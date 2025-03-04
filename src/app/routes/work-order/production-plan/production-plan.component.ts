@@ -149,7 +149,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
     this.searching = true;
     this.searchResult = '';
     this.productionPlanService
-      .getProductionPlans(this.searchForm.value.number.value, this.searchForm.value.item.value)
+      .getProductionPlans(this.searchForm.value.number, this.searchForm.value.item)
       .subscribe(
         productionPlanRes => {
           this.listOfAllProductionPlans = productionPlanRes;

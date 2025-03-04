@@ -123,12 +123,12 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     this.searchResult = ''; 
 
     this.workTaskService.getWorkTasks(
-      this.searchForm.value.number.value, 
-      this.searchForm.value.type.value, 
-      this.searchForm.value.status.value, 
-      this.searchForm.value.sourceLocationName.value, 
-      this.searchForm.value.assignedUserName.value, 
-      this.searchForm.value.assignedRoleName.value, ).subscribe({
+      this.searchForm.value.number, 
+      this.searchForm.value.type, 
+      this.searchForm.value.status, 
+      this.searchForm.value.sourceLocationName, 
+      this.searchForm.value.assignedUserName, 
+      this.searchForm.value.assignedRoleName, ).subscribe({
 
         next: (workTasksRes) => {
           this.isSpinning = false;

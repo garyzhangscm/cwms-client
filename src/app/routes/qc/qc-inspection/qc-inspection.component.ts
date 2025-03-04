@@ -121,10 +121,10 @@ export class QcQcInspectionComponent implements OnInit {
 
       this.qcInspectionRequestService.getQCInspectionRequests(
         undefined, undefined,
-        this.searchForm.value.lpn.value,
-        this.searchForm.value.number.value, 
-        this.searchForm.value.qcInspectionRequestType.value,
-        this.searchForm.value.qcInspectionResult.value).subscribe(
+        this.searchForm.value.lpn,
+        this.searchForm.value.number, 
+        this.searchForm.value.qcInspectionRequestType,
+        this.searchForm.value.qcInspectionResult).subscribe(
         {
           next: (qcInspectionRequestRes) => {
             this.listOfQCInspectionRequest = qcInspectionRequestRes; 

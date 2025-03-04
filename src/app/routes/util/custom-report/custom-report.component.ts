@@ -249,7 +249,7 @@ export class UtilCustomReportComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.customReportService.getCustomReports(this.searchForm.value.name.value).subscribe({
+    this.customReportService.getCustomReports(this.searchForm.value.name).subscribe({
       next: (customReportRes) => {
         this.customReports = customReportRes;
         this.isSpinning = false;

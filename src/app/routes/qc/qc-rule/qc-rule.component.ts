@@ -65,7 +65,7 @@ resetForm(): void {
 search(): void {
   this.isSpinning = true;
   this.searchResult = '';
-  this.qcRuleService.getQCRules(this.searchForm.value.name.value).subscribe(
+  this.qcRuleService.getQCRules(this.searchForm.value.name).subscribe(
     {
       next: (qcRuleRes) => {
         this.listOfAllQCRules = qcRuleRes;

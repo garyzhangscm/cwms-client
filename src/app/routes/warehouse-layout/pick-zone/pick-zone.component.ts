@@ -79,7 +79,7 @@ export class WarehouseLayoutPickZoneComponent implements OnInit {
     this.searchResult = '';
     this.isSpinning = true;
     
-    this.pickZoneService.getPickZones(this.searchForm!.value.name.value).subscribe({
+    this.pickZoneService.getPickZones(this.searchForm!.value.name).subscribe({
       next: (pickZoneRes) => {
         this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {

@@ -80,11 +80,11 @@ export class WorkOrderWorkOrderQcInspectionResultComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.workOrderQcResultService.getWorkOrderQcResults(
-      this.searchForm.value.number.value,
-      this.searchForm.value.workOrderQCSampleNumber.value,
-      this.searchForm.value.productionLineId.value,
+      this.searchForm.value.number,
+      this.searchForm.value.workOrderQCSampleNumber,
+      this.searchForm.value.productionLineId,
       undefined,
-      this.searchForm.value.workOrderNumber.value).subscribe(
+      this.searchForm.value.workOrderNumber).subscribe(
       {
         next: (workOrderQcResultRes) => {
           this.listOfWorkOrderQcResult = workOrderQcResultRes;

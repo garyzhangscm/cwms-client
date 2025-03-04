@@ -162,7 +162,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.billOfMaterialService
-      .getBillOfMaterials(this.searchForm.value.number.value, this.searchForm.value.item.value)
+      .getBillOfMaterials(this.searchForm.value.number, this.searchForm.value.item)
       .subscribe(
         billOfMaterailRes => {
           this.listOfAllBillOfMaterial = billOfMaterailRes;

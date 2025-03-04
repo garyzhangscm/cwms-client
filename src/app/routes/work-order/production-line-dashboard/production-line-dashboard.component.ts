@@ -451,7 +451,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
           return false;
         }
         // get the unit quantity first
-        let unitQuantity = this.produceInventoryForm.value.quantity.value * 
+        let unitQuantity = this.produceInventoryForm.value.quantity * 
             this.currentProducingUnitOfMeasure!.quantity!;
         this.produceInventory(workOrderNumber, productionLine, unitQuantity);
         
@@ -547,7 +547,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   produceInventory(workOrderNumber : string, productionLine: ProductionLine, unitQuantity: number) : void { 
     this.isSpinning = true;  
     
-    const inventoryStatus = this.validInventoryStatuses.find(is => is.id! === this.produceInventoryForm.value.inventoryStatus.value);
+    const inventoryStatus = this.validInventoryStatuses.find(is => is.id! === this.produceInventoryForm.value.inventoryStatus);
  
     const workOrderProduceTransaction : WorkOrderProduceTransaction = { 
         workOrderNumber: workOrderNumber,
@@ -555,11 +555,11 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
         workOrderLineConsumeTransactions: [],
         workOrderProducedInventories: [
             { 
-                lpn: this.produceInventoryForm.value.lpn.value,
+                lpn: this.produceInventoryForm.value.lpn,
                 quantity: unitQuantity,
-                inventoryStatusId: this.produceInventoryForm.value.inventoryStatus.value,
+                inventoryStatusId: this.produceInventoryForm.value.inventoryStatus,
                 inventoryStatus: inventoryStatus,
-                itemPackageTypeId: this.produceInventoryForm.value.itemPackageType.value,
+                itemPackageTypeId: this.produceInventoryForm.value.itemPackageType,
                 itemPackageType: this.currentProducingItemPackageType
             }
         ],
