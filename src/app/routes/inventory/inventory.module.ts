@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common'; 
 import { NgModule, Type } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
 import { STModule } from '@delon/abc/st'; 
@@ -160,7 +160,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzSelectModule,
     NzSpinModule ,
     NzCardModule ,
-    CommonModule ,
+    CommonModule , 
     NzInputModule ,
     NzTabsModule ,
     NzBadgeModule ,

@@ -24,7 +24,8 @@ function reAttachToken(injector: Injector, req: HttpRequest<any>): HttpRequest<a
 
 function refreshTokenRequest(injector: Injector): Observable<any> {
   const model = injector.get(DA_SERVICE_TOKEN).get(); 
-  return injector.get(HttpClient).post(`/api/auth/refresh`, { headers: { refreshToken: model?.['refreshToken'] || '' } });
+  // return injector.get(HttpClient).post(`/auth/refresh`, { headers: { refreshToken: model?.['refreshToken'] || '' } });
+  return injector.get(HttpClient).post(`/auth/refresh`,   model?.['refreshToken'] || ''  );
 }
 
 /**
@@ -32,7 +33,7 @@ function refreshTokenRequest(injector: Injector): Observable<any> {
  */
 export function tryRefreshToken(injector: Injector, ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
   // 1、若请求为刷新Token请求，表示来自刷新Token可以直接跳转登录页
-  if ([`/api/auth/refresh`].some(url => req.url.includes(url))) {
+  if ([`/auth/refresh`].some(url => req.url.includes(url))) {
     toLogin(injector);
     return throwError(() => ev);
   }

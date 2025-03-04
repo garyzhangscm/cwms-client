@@ -610,28 +610,88 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         companyId: this.companyService.getCurrentCompany()!.id, 
         webPageName: this.pageName,
         tableName: "workOrderTable",
-        columnName: "totalQuantity",
-        columnDisplayText: this.i18n.fanyi("work-order.totalQuantity"),
-        columnWidth: 50,
-        columnSequence: 7, 
-        displayFlag: true
-      },
-      {
-        companyId: this.companyService.getCurrentCompany()!.id, 
-        webPageName: this.pageName,
-        tableName: "workOrderTable",
         columnName: "qcQuantity",
-        columnDisplayText: this.i18n.fanyi("qcQuantity"),
+        columnDisplayText: this.i18n.fanyi("work-order.qcQuantity"),
         columnWidth: 50,
-        columnSequence: 8, 
+        columnSequence: 6, 
         displayFlag: true
       },
       {
         companyId: this.companyService.getCurrentCompany()!.id, 
         webPageName: this.pageName,
         tableName: "workOrderTable",
-        columnName: "totalInprocessQuantity",
-        columnDisplayText: this.i18n.fanyi("work-order.totalInprocessQuantity"),
+        columnName: "qcPercentage",
+        columnDisplayText: this.i18n.fanyi("work-order.qcPercentage"),
+        columnWidth: 50,
+        columnSequence: 6, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "qcQuantityRequested",
+        columnDisplayText: this.i18n.fanyi("work-order.qcQuantityRequested"),
+        columnWidth: 50,
+        columnSequence: 6, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "qcQuantityCompleted",
+        columnDisplayText: this.i18n.fanyi("work-order.qcQuantityCompleted"),
+        columnWidth: 50,
+        columnSequence: 6, 
+        displayFlag: true
+      },  
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "totalLineExpectedQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.totalLineExpectedQuantity"),
+        columnWidth: 50,
+        columnSequence: 6, 
+        displayFlag: true
+      },  
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "totalLineOpenQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.totalLineOpenQuantity"),
+        columnWidth: 50,
+        columnSequence: 6, 
+        displayFlag: true
+      },  
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "totalLineInprocessQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.totalLineInprocessQuantity"),
+        columnWidth: 50,
+        columnSequence: 6, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "totalLineDeliveredQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.totalLineDeliveredQuantity"),
+        columnWidth: 50,
+        columnSequence: 9, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "totalLineConsumedQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.totalLineConsumedQuantity"),
         columnWidth: 50,
         columnSequence: 9, 
         displayFlag: true
@@ -665,6 +725,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
     workOrderTableConfiguration.forEach(
       columnConfig => {
+        // console.log(`columnConfig.columnName: ${columnConfig.columnName}`)
         this.defaultWorkOrderTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
 
         this.workOrderTableColumns = [...this.workOrderTableColumns, 
@@ -831,12 +892,17 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       workOrders.forEach(
         workOrder => {
           itemIdSet.add(workOrder.itemId!);
+          /**
+           * postpone the loading of items for the line and by product
+           * when the user expand for the work order's detail
+           * 
           workOrder.workOrderLines.forEach(
             workOrderLine => itemIdSet.add(workOrderLine.itemId!)
           )
           workOrder.workOrderByProducts.forEach(
             workOrderByProduct => itemIdSet.add(workOrderByProduct.itemId!)
           )
+           */
         }
       )
       if (itemIdSet.size > 0) {

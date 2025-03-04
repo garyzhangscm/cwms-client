@@ -421,9 +421,7 @@ export class InventoryInventoryComponent implements OnInit {
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
     this.initSearchForm();
-    
-    this.inventoryTablePI = this.inventoryTable.pi;
-    this.inventoryTablePS = this.inventoryTable.ps;
+     
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.hasOwnProperty('refresh')) {
@@ -505,7 +503,7 @@ export class InventoryInventoryComponent implements OnInit {
     } else {
       
       this.inventoryService
-        .getInventories(
+        .getPageableInventories(
           this.searchForm.value.client,
           this.searchForm.value.taggedItemFamilies,
           this.searchForm.value.itemName,
@@ -526,22 +524,26 @@ export class InventoryInventoryComponent implements OnInit {
           this.inventoryTable.pi,
           this.inventoryTable.ps
         )
-        .subscribe(
-          inventoryRes => {
-            this.inventoryTable.total = inventoryRes.total; 
-            this.processInventoryQueryResult(inventoryRes.data);
+        .subscribe({
+          next: (page) => {
+            this.inventoryTable.total = page.totalElements;
+            
+
+            this.processInventoryQueryResult(page.content);
             // this.resetInventoryTableColumnsFilter();
             this.isSpinning = false;
             this.searchResult = this.i18n.fanyi('search_result_analysis', {
               currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-              rowCount: inventoryRes.total,
+              rowCount: page.totalElements,
             });
           },
-          () => {
+          error: () => {
+
             this.isSpinning = false;
             this.searchResult = '';
-          },
-        );
+          }
+        });
+        
     }
   }
   resetInventoryTableColumnsFilter(){
