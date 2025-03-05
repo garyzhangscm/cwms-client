@@ -45,6 +45,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { CommonModule } from '@angular/common';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 const COMPONENTS: Array<Type<void>> = [
   QcQcRuleComponent,
@@ -95,6 +96,7 @@ const COMPONENTS: Array<Type<void>> = [
     NzModalModule,        
     NzTabsModule ,
     CommonModule,
+    NzRadioModule,
   ],
   declarations: COMPONENTS,
 })

@@ -225,7 +225,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     GoogleChartsModule ,
     NzCheckboxModule ,
     NzPopoverModule ,
-    NzBadgeModule , 
+    NzBadgeModule ,  
   ],
   declarations: [
     ...COMPONENTS,

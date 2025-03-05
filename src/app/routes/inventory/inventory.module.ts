@@ -84,6 +84,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -174,6 +175,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzUploadModule ,
     NzModalModule ,
     NzDatePickerModule ,
+    NzRadioModule,
     
   ],
   declarations: [

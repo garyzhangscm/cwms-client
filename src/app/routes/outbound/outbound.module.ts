@@ -88,6 +88,7 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { Loader } from '@googlemaps/js-api-loader';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -188,6 +189,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         NzAlertModule ,
         CommonModule,
         NgxGpAutocompleteModule,
+        NzRadioModule,
         
     ],
     providers: [DatePipe, 
