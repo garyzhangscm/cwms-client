@@ -73,6 +73,7 @@ function buildAuthRefresh(injector: Injector) {
     .pipe(
       filter(() => !refreshToking),
       switchMap(res => {
+        console.log(`==========   Refresh   Token  ========`);
         console.log(res);
         refreshToking = true;
         return refreshTokenRequest(injector);
@@ -81,9 +82,10 @@ function buildAuthRefresh(injector: Injector) {
     .subscribe({
       next: res => {
         // TODO: Mock expired value
-        res.expired = +new Date() + 1000 * 60 * 5;
+        // res.expired = +new Date() + 1000 * 60 * 5;
         refreshToking = false;
-        tokenSrv.set(res);
+
+        tokenSrv.set(res.user);
       },
       error: () => toLogin(injector)
     });
