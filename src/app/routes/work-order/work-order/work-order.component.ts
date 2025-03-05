@@ -611,7 +611,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         webPageName: this.pageName,
         tableName: "workOrderTable",
         columnName: "qcQuantity",
-        columnDisplayText: this.i18n.fanyi("work-order.qcQuantity"),
+        columnDisplayText: this.i18n.fanyi("qcQuantity"),
         columnWidth: 50,
         columnSequence: 6, 
         displayFlag: true
@@ -621,7 +621,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         webPageName: this.pageName,
         tableName: "workOrderTable",
         columnName: "qcPercentage",
-        columnDisplayText: this.i18n.fanyi("work-order.qcPercentage"),
+        columnDisplayText: this.i18n.fanyi("qcPercentage"),
         columnWidth: 50,
         columnSequence: 6, 
         displayFlag: true
@@ -631,7 +631,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         webPageName: this.pageName,
         tableName: "workOrderTable",
         columnName: "qcQuantityRequested",
-        columnDisplayText: this.i18n.fanyi("work-order.qcQuantityRequested"),
+        columnDisplayText: this.i18n.fanyi("qcQuantityRequested"),
         columnWidth: 50,
         columnSequence: 6, 
         displayFlag: true
@@ -641,7 +641,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         webPageName: this.pageName,
         tableName: "workOrderTable",
         columnName: "qcQuantityCompleted",
-        columnDisplayText: this.i18n.fanyi("work-order.qcQuantityCompleted"),
+        columnDisplayText: this.i18n.fanyi("qcQuantityCompleted"),
         columnWidth: 50,
         columnSequence: 6, 
         displayFlag: true
