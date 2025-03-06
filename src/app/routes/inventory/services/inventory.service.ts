@@ -186,7 +186,7 @@ export class InventoryService {
       params = params.append('client', client.id!.toString());  
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = params.append('item_families', itemFamilies.join(','));   
+      params = params.append('itemFamilies', itemFamilies.join(','));   
     }
     if (locationName) {
       params = params.append('location', locationName.trim());    
@@ -205,7 +205,8 @@ export class InventoryService {
       params = params.append('receiptNumber', receiptNumber);   
     } 
     if (pageIndex != null) {
-      params = params.append('pageIndex', pageIndex);   
+      // st table is 1 indexed
+      params = params.append('pageIndex', pageIndex - 1);   
     } 
     if (pageSize != null) {
       params = params.append('pageSize', pageSize);   

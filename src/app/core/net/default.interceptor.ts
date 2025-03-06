@@ -59,7 +59,11 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
       if (environment.api.refreshTokenEnabled && environment.api.refreshTokenType === 're-request') {
         return tryRefreshToken(injector, ev, req, next);
       }
-      toLogin(injector);
+      else {
+
+        notification(injector).error(`authentication fail`, `User authentication fail, please login again`);
+        toLogin(injector);
+      }
       break;
     case 403:
     case 404:
@@ -107,7 +111,7 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
     // catchError((err: HttpErrorResponse) => handleData(injector, err, newReq, next)) 
     catchError((err: HttpErrorResponse) => {
       console.log(`!! Get error ${err.status} while call ${url}, \n statusText: ${err.statusText}`);
-      const errortext = CODEMESSAGE[err.status] || err.statusText;
+      const errortext = CODEMESSAGE[err.status] || err.statusText; 
       // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
       console.log(`!! will throw error ${err.status}`);
       if (err.status === 401) {
@@ -116,7 +120,8 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       }
       else {
 
-        notification(injector).error(`${err.status}: ${err.url}`, errortext);
+          // notification(injector).error(`${err.status}: ${err.url}`, errortext);
+          notification(injector).error(`${err.status}: ${err.url}`, err.statusText);
       }
       return throwError(() => err);
 

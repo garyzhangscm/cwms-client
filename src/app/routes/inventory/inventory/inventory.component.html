@@ -195,6 +195,7 @@
     [data]="listOfDisplayInventories"  
     [columns]="inventoryTablecolumns" [footer]="tableFoot" [scroll]="{ x: '2650px' }"
       [body]="bodyTpl" [page]="invetoryTablePagination"
+      
       (change)="inventoryTableChanged($event)"
       [widthMode]="{ type: 'strict' }" resizable>
     
