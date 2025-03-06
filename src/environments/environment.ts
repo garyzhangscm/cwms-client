@@ -14,8 +14,8 @@ export const environment = {
     // baseUrl: 'http://k8s-staging-webclien-d59c548886-1645723175.us-west-1.elb.amazonaws.com/api/', 
     // baseUrl: 'https://prod.claytechsuite.com/api/', 
     baseUrl: 'https://staging.claytechsuite.com/api/', 
-    refreshTokenEnabled: true,
-    refreshTokenType: 'auth-refresh'
+    // refreshTokenEnabled: true,
+    // refreshTokenType: 'auth-refresh'
   },
   // providers: [provideMockConfig({ data: MOCKDATA })],
   // interceptorFns: [mockInterceptor]

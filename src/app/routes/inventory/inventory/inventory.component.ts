@@ -50,14 +50,14 @@ import * as XLSX from 'xlsx';
 export class InventoryInventoryComponent implements OnInit { 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   inventoryTablePI = 10;
-  inventoryTablePS = 0;
+  inventoryTablePS = -1;
 
   @ViewChild('inventoryTable', { static: false })
   inventoryTable!: STComponent;
   invetoryTablePagination = {
     showSize: true,
     pageSizes: [5, 10, 25, 50, 100],
-    front: false
+    front: false,
   };
   inventoryConfiguration?: InventoryConfiguration;
 

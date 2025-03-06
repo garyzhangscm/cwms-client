@@ -15,8 +15,4 @@ module.exports = {
   //   changeOrigin: true
   // }
   
-  '/api': {
-    target: 'https://staging.claytechsuite.com/api',
-    secure: true
-  }
 };

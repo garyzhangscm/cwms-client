@@ -104,8 +104,7 @@ import { HeaderI18nComponent } from './widgets/i18n.component';
 export class LayoutBasicComponent {
   private readonly settings = inject(SettingsService);
   options: LayoutDefaultOptions = {
-    // logoExpanded: `./assets/logo-full.svg`,
-    logoExpanded: `./assets/claytech_logo.png`,
+    logoExpanded: `./assets/logo-full.svg`, 
     logoCollapsed: `./assets/logo.svg`
   };
   searchToggleStatus = false;
