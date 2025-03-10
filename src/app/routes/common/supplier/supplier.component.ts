@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -165,8 +165,7 @@ export class CommonSupplierComponent implements OnInit {
   ];
   setOfCheckedId = new Set<number>();
   checked = false;
-  indeterminate = false;
-  searchForm!: UntypedFormGroup;
+  indeterminate = false; 
   isSpinning = false;
 
   // Table data for display
@@ -178,6 +177,13 @@ export class CommonSupplierComponent implements OnInit {
   editId = -1;
   editCol = '';
   searchResult = "";
+   
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control('', []), 
+  });
+
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
@@ -185,8 +191,7 @@ export class CommonSupplierComponent implements OnInit {
   constructor(
     private supplierService: SupplierService, 
     private modalService: NzModalService,
-    private activatedRoute: ActivatedRoute,
-    private fb: UntypedFormBuilder,
+    private activatedRoute: ActivatedRoute, 
     private userService: UserService,
   ) { 
     userService.isCurrentPageDisplayOnly("/common/supplier").then(
@@ -195,12 +200,9 @@ export class CommonSupplierComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchForm = this.fb.group({
-      name: [null], 
-    }); 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) {
-        this.searchForm!.value.name.setValue(params['name']);
+        this.searchForm.controls.name.setValue(params['name']);
         this.search();
       }
     });
@@ -215,7 +217,7 @@ export class CommonSupplierComponent implements OnInit {
     this.isSpinning = true;
 
     this.supplierService.getSuppliers(
-      this.searchForm.value.name).subscribe(
+      this.searchForm.value.name ?  this.searchForm.value.name : undefined).subscribe(
         {
           next: (supplierRes) => {
 

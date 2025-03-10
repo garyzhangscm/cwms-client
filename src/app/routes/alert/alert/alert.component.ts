@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -89,8 +89,7 @@ export class AlertAlertComponent implements OnInit {
 
     }
   }
-  
-  searchForm!: UntypedFormGroup;
+   
   alerts: Alert[] = [];
   searchResult = "";
   alertTypes = AlertType;
@@ -98,14 +97,23 @@ export class AlertAlertComponent implements OnInit {
   alertStatusList = AlertStatus;
   alertStatusListKeys = Object.keys(this.alertStatusList);
    
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    type: this.fb.control<string | undefined>('', []),
+    status: this.fb.control<string | undefined>('', []),
+    keyWords: this.fb.control<string | undefined>('', []),
+    dateTimeRanger: this.fb.control<Date | undefined>(undefined),
+    date: this.fb.control<Date | undefined>(undefined),
+  });
+
   displayOnly = false;
   constructor(private http: _HttpClient,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private alertService: AlertService,
     private messageService: NzMessageService,
-    private router: Router, 
-    private fb: UntypedFormBuilder,
+    private router: Router,  
     private userService: UserService) {
       
     userService.isCurrentPageDisplayOnly("/alert/alert").then(
@@ -116,20 +124,12 @@ export class AlertAlertComponent implements OnInit {
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.alert.alert'));
     // initiate the search form
-    this.searchForm = this.fb.group({
-      type: [null],
-      status: [null],
-      keyWords: [null],
-      dateTimeRanger: [null],
-      date: [null],
-
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['type'] || params['status']  || params['keywords'] ) {
-        this.searchForm.value.type.setValue(params['type']);
-        this.searchForm.value.status.setValue(params['status']);
-        this.searchForm.value.keywords.setValue(params['keywords']);
+        this.searchForm.controls.type.setValue(params['type']);
+        this.searchForm.controls.status.setValue(params['status']);
+        this.searchForm.controls.keyWords.setValue(params['keywords']);
         this.search();
       }
     });
@@ -143,16 +143,18 @@ export class AlertAlertComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     
-    let startTime : Date = this.searchForm.value.dateTimeRanger ? 
-        this.searchForm.value.dateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.value.dateTimeRanger ? 
-        this.searchForm.value.dateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.value.date;
+    let startTime : Date | undefined = this.searchForm.value.dateTimeRanger ? 
+        this.searchForm.value.dateTimeRanger : undefined; 
+    let endTime : Date | undefined = this.searchForm.value.dateTimeRanger ? 
+        this.searchForm.value.dateTimeRanger : undefined; 
+    let specificDate : Date | undefined = this.searchForm.value.date  ? 
+    this.searchForm.value.date : undefined; 
 
 
     this.alertService
-      .getAlerts(this.searchForm.value.type, this.searchForm.value.status, 
-         this.searchForm.value.keyWords, 
+      .getAlerts(this.searchForm.value.type ? this.searchForm.value.type : undefined, 
+        this.searchForm.value.status  ? this.searchForm.value.status : undefined, 
+         this.searchForm.value.keyWords ? this.searchForm.value.keyWords : undefined, 
          startTime, endTime, specificDate )
       .subscribe({
 

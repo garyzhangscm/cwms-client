@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -21,8 +21,15 @@ import { UserService } from '../services/user.service';
 export class AuthUserComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder,
+   
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    username: this.fb.control('', []), 
+  });
+  
+
+  constructor( 
     private userService: UserService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
@@ -135,8 +142,7 @@ export class AuthUserComponent implements OnInit {
     }
   ];
 
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  // Form related data and functions 
 
   // Table data for display
   listOfAllUsers: User[] = [];
@@ -157,6 +163,7 @@ export class AuthUserComponent implements OnInit {
   copyUserForm!: UntypedFormGroup;
   copyUserModal!: NzModalRef;
 
+  
   resetForm(): void {
     this.searchForm!.reset();
     this.listOfAllUsers = [];
@@ -166,7 +173,8 @@ export class AuthUserComponent implements OnInit {
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.userService.getUsers(this.searchForm!.value.username).subscribe(
+    this.userService.getUsers(this.searchForm.value.username ? this.searchForm.value.username : undefined)
+    .subscribe(
       userRes => {
         //      console.log(`user:\n${JSON.stringify(userRes)}`);
         this.listOfAllUsers = userRes;
@@ -194,14 +202,10 @@ export class AuthUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      username: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['username']) {
-        this.searchForm!.value.username.setValue(params['username']);
+        this.searchForm.controls.username.setValue(params['username']);
         this.search();
       }
     });
@@ -246,7 +250,7 @@ export class AuthUserComponent implements OnInit {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         this.newTempUserModal.destroy(); 
         // search by the new user
-        this.searchForm.value.username.setValue(username);
+        this.searchForm.controls.username.setValue(username);
         this.search();
       }, 
       error: () => this.messageService.error(this.i18n.fanyi('message.action.error'))
@@ -296,7 +300,7 @@ export class AuthUserComponent implements OnInit {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         this.copyUserModal.destroy(); 
         // search by the new user
-        this.searchForm.value.username.setValue(username);
+        this.searchForm.controls.username.setValue(username);
         this.search();
       }, 
       error: () => this.messageService.error(this.i18n.fanyi('message.action.error'))

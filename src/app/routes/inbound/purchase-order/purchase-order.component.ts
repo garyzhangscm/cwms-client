@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -26,6 +26,16 @@ export class InboundPurchaseOrderComponent implements OnInit {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
+  
+  private readonly fb = inject(FormBuilder);
+  // initiate the search form 
+  
+  searchForm = this.fb.nonNullable.group({
+    number: this.fb.control('', []),
+    statusList: this.fb.control('', []),
+    supplier: this.fb.control('', []), 
+  });
+  
 
   mapOfReceipt: { [key: string]: Receipt[] } = {};
 
@@ -51,8 +61,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
     }
   ]; 
 
-  
-  searchForm!: UntypedFormGroup;
+   
   purchaseOrders: PurchaseOrder[] = [];
   searchResult = "";
   validSuppliers: Supplier[] = [];
@@ -68,8 +77,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private userService: UserService,
     private supplierService: SupplierService,
-    private receiptService: ReceiptService,
-    private fb: UntypedFormBuilder,) { 
+    private receiptService: ReceiptService, ) { 
       userService.isCurrentPageDisplayOnly("/inbound/purchase-order").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );                 
@@ -78,16 +86,10 @@ export class InboundPurchaseOrderComponent implements OnInit {
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.purchaseOrder'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      statusList: [null],
-      supplier: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm.value.number.setValue(params['number']);
+        this.searchForm.controls.number.setValue(params['number']);
         this.search();
       }
     });
@@ -103,9 +105,9 @@ export class InboundPurchaseOrderComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     this.purchaseOrderService
-      .getPurchaseOrders(this.searchForm.value.number, 
-        this.searchForm.value.statusList, 
-        this.searchForm.value.supplier)
+      .getPurchaseOrders(this.searchForm.value.number ? this.searchForm.value.number :  undefined, 
+        this.searchForm.value.statusList ? this.searchForm.value.statusList : undefined, 
+        this.searchForm.value.supplier ? this.searchForm.value.supplier : undefined)
       .subscribe({
 
         next: (purchaseOrderRes) => {

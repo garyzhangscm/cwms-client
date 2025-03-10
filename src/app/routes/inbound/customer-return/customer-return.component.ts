@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -63,16 +63,22 @@ export class InboundCustomerReturnComponent implements OnInit {
     
   ];
 
- 
-  searchForm!: UntypedFormGroup;
+  
   customerReturnOrders: CustomerReturnOrder[] = [];
   searchResult = "";
+  
+  private readonly fb = inject(FormBuilder);
+  
+    // initiate the search form 
+  searchForm = this.fb.nonNullable.group({
+    number: this.fb.control('', []),
+    statusList: this.fb.control('', []), 
+  });
 
   displayOnly = false;
   constructor(  
     private activatedRoute: ActivatedRoute,
-    private customerReturnOrderService: CustomerReturnOrderService, 
-    private fb: UntypedFormBuilder, 
+    private customerReturnOrderService: CustomerReturnOrderService,  
     private userService: UserService,
     private orderLineService: OrderLineService,
     private localCacheService: LocalCacheService,) { 
@@ -82,16 +88,11 @@ export class InboundCustomerReturnComponent implements OnInit {
     }
 
   ngOnInit(): void {  
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      statusList: [null],
-    });
  
     this.activatedRoute.queryParams.subscribe(params => {
       // if we are changing an existing record
       if (params['number']) { 
-        this.searchForm!.value.number.setValue(params['number']);
+        this.searchForm.controls.number.setValue(params['number']);
         this.search();
       } 
     });
@@ -115,8 +116,9 @@ export class InboundCustomerReturnComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     this.customerReturnOrderService
-      .getCustomerReturnOrders(this.searchForm.value.number, false, 
-        this.searchForm!.value.statusList,)
+      .getCustomerReturnOrders(this.searchForm.value.number ? this.searchForm.value.number : undefined, 
+        false, 
+        this.searchForm!.value.statusList ? this.searchForm!.value.statusList : undefined,)
       .subscribe({
 
         next: (customerReturnRes) => {

@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { ActivatedRoute,  } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -23,6 +23,18 @@ import { InvoiceService } from '../services/invoice.service';
 export class BillingInvoiceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
+  
+    // initiate the search form 
+
+    private readonly fb = inject(FormBuilder);
+  
+    searchForm = this.fb.nonNullable.group({
+      number: this.fb.control('', []),
+      referenceNumber: this.fb.control('', []),
+      clientId: this.fb.control(null, []), 
+    });
+
+
   isSpinning = false;
   threePartyLogisticsFlag = false;
 
@@ -89,8 +101,7 @@ export class BillingInvoiceComponent implements OnInit {
 
     }
   }
-  
-  searchForm!: UntypedFormGroup;
+   
   invoices: Invoice[] = []; 
   searchResult = '';
   availableClients: Client[] = [];
@@ -103,8 +114,7 @@ export class BillingInvoiceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private clientService: ClientService,
     private userService: UserService,
-    private localCacheService: LocalCacheService, 
-    private fb: UntypedFormBuilder,) { 
+    private localCacheService: LocalCacheService,  ) { 
       userService.isCurrentPageDisplayOnly("/billing/invoice").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );          
@@ -124,17 +134,10 @@ export class BillingInvoiceComponent implements OnInit {
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('invoice'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      referenceNumber: [null], 
-      clientId: [null], 
-    });
-
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number'] || params['referenceNumber'] ) {
-        this.searchForm.value.number.setValue(params['number']);
-        this.searchForm.value.referenceNumber.setValue(params['referenceNumber']); 
+        this.searchForm.controls.number.setValue(params['number']);
+        this.searchForm.controls.referenceNumber.setValue(params['referenceNumber']); 
         this.search();
       }
     });
@@ -161,8 +164,8 @@ export class BillingInvoiceComponent implements OnInit {
       .getInvoices(this.warehouseService.getCurrentWarehouse().id,
         this.searchForm.value.clientId? this.searchForm.value.clientId : undefined,
 
-         this.searchForm.value.number, 
-         this.searchForm.value.referenceNumber, )
+         this.searchForm.value.number ? this.searchForm.value.number : undefined, 
+         this.searchForm.value.referenceNumber ? this.searchForm.value.referenceNumber : undefined )
       .subscribe({
 
         next: (invoiceRes) => {

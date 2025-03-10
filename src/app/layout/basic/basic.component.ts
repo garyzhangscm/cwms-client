@@ -20,16 +20,21 @@ import { HeaderI18nComponent } from './widgets/i18n.component';
   selector: 'layout-basic',
   template: `
     <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl" [customError]="null">
-      <layout-default-header-item direction="left">
+      <!--
+        <layout-default-header-item direction="left">
         <a layout-default-header-item-trigger href="//github.com/ng-alain/ng-alain" target="_blank">
           <nz-icon nzType="github" />
         </a>
       </layout-default-header-item>
+-->
+ <!--
       <layout-default-header-item direction="left" hidden="mobile">
         <a layout-default-header-item-trigger routerLink="/passport/lock">
           <nz-icon nzType="lock" />
         </a>
       </layout-default-header-item>
+      
+-->
       <layout-default-header-item direction="left" hidden="pc">
         <div layout-default-header-item-trigger (click)="searchToggleStatus = !searchToggleStatus">
           <nz-icon nzType="search" />

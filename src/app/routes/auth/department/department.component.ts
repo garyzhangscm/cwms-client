@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -43,20 +43,25 @@ export class AuthDepartmentComponent implements OnInit {
     }
   ]; 
 
-  
-  searchForm!: UntypedFormGroup;
+   
   departments: Department[] = [];
   searchResult = "";
    
   displayOnly = false;
+  
+  private readonly fb = inject(FormBuilder);
+   
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control('', []),
+  });
+
   constructor(private http: _HttpClient,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private departmentService: DepartmentService,
     private messageService: NzMessageService,
     private router: Router, 
-    private userService: UserService,
-    private fb: UntypedFormBuilder,) { 
+    private userService: UserService,) { 
       userService.isCurrentPageDisplayOnly("/auth/department").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );    
@@ -65,13 +70,10 @@ export class AuthDepartmentComponent implements OnInit {
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.department'));
     // initiate the search form
-    this.searchForm = this.fb.group({
-      name: [null]
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) {
-        this.searchForm.value.name.setValue(params['name']);
+        this.searchForm.controls.name.setValue(params['name']);
         this.search();
       }
     });}
@@ -84,7 +86,7 @@ export class AuthDepartmentComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     this.departmentService
-      .getDepartments(this.searchForm.value.name)
+      .getDepartments(this.searchForm.value.name ? this.searchForm.value.name : undefined)
       .subscribe({
 
         next: (departmentRes) => {
