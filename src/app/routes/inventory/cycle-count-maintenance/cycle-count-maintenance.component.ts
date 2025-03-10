@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, TemplateRef } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -302,8 +302,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     },
   ];
 
-
-  requestForm!: UntypedFormGroup;
+ 
   pageTitle: string;
 
   availableRequestType = CycleCountRequestType;
@@ -343,10 +342,22 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   isSpinning = false;
 
+  private readonly fb = inject(FormBuilder);
+  
+  
+  requestForm = this.fb.nonNullable.group({
+    batchId: this.fb.control('', [Validators.required]),
+    requestType: this.fb.control('', [Validators.required]),
+    startValue: this.fb.control('', []),
+    endValue: this.fb.control('', []),
+    includeEmptyLocation: this.fb.control<boolean | null>(false),
+    autoGenerateId: this.fb.control<boolean | null>(false),
+  });
+  
+   
   constructor(
     private activatedRoute: ActivatedRoute, 
-    private titleService: TitleService,
-    private fb: UntypedFormBuilder,
+    private titleService: TitleService, 
     private cycleCountBatchService: CycleCountBatchService,
     private cycleCountRequestService: CycleCountRequestService,
     private cycleCountResulttService: CycleCountResultService,
@@ -369,18 +380,11 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.cycle-count-request.title'));
 
-    this.requestForm = this.fb.group({
-      batchId: ['', Validators.required],
-      requestType: ['', Validators.required],
-      startValue: [null],
-      endValue: [null],
-      includeEmptyLocation: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['batchId']) {
-        this.requestForm.value.batchId.setValue(params['batchId']);
-        this.requestForm.value.batchId.disable();
+        this.requestForm.controls.batchId.setValue(params['batchId']);
+        this.requestForm.controls.batchId.disable();
         this.newBatch = false;
       }
       else {
@@ -399,15 +403,15 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   }
 
   generateBatchId(): void {
-    if (this.requestForm.value.autoGenerateId.value) {
-      this.requestForm.value.batchId.disable();
+    if (this.requestForm.value.autoGenerateId) {
+      this.requestForm.controls.batchId.disable();
       if (!this.requestForm.value.batchId) {
         this.cycleCountBatchService.getNextCycleCountBatchId().subscribe(nextId => {
-          this.requestForm.value.batchId.setValue(nextId);
+          this.requestForm.controls.batchId.setValue(nextId);
         });
       }
     } else {
-      this.requestForm.value.batchId.enable();
+      this.requestForm.controls.batchId.enable();
     }
   }
   requestTypeChange(newRequestType: CycleCountRequestType): void {
@@ -418,16 +422,16 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     this.isSpinning = true;
     this.cycleCountRequestService
       .generateCycleCountRequests(
-        this.requestForm.value.batchId,
+        this.requestForm.value.batchId ? this.requestForm.value.batchId : '',
         this.cycleCountRequestType,
-        this.requestForm.value.startValue,
-        this.requestForm.value.endValue,
-        this.requestForm.value.includeEmptyLocation,
+        this.requestForm.value.startValue ? this.requestForm.value.startValue : '',
+        this.requestForm.value.endValue ? this.requestForm.value.endValue : '',
+        this.requestForm.value.includeEmptyLocation ? this.requestForm.value.includeEmptyLocation : false,
       )
       .subscribe(res => {
-        this.requestForm.value.startValue.reset();
-        this.requestForm.value.endValue.reset();
-        this.requestForm.value.includeEmptyLocation.reset();
+        this.requestForm.controls.startValue.reset();
+        this.requestForm.controls.endValue.reset();
+        this.requestForm.controls.includeEmptyLocation.reset();
         this.message.info(this.i18n.fanyi('message.new.complete'));
         if (this.newBatch) {
           // refresh the page by going to the same page, with
@@ -437,7 +441,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
         else {
 
           this.refreshCountBatchResults();
-          this.requestForm.value.batchId.disable();
+          this.requestForm.controls.batchId.disable();
           this.isSpinning = false;
         }
       },
@@ -447,7 +451,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     // When we use the 'fkey' to automatically generate the next cycle count id
     // the reactive form control may not have the right value.Let's set
     // the number back to the bind control
-    this.requestForm.value.batchId.setValue((event.target as HTMLInputElement).value);
+    this.requestForm.controls.batchId.setValue((event.target as HTMLInputElement).value);
     this.refreshCountBatchResults();
   }
 
@@ -927,10 +931,10 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   }
 
   processStartValueQueryResult(selectedStartValue: any): void {
-    this.requestForm.value.startValue.setValue(selectedStartValue);
+    this.requestForm.controls.startValue.setValue(selectedStartValue);
   }
   processEndValueQueryResult(selectedEndValue: any): void {
-    this.requestForm.value.endValue.setValue(selectedEndValue);
+    this.requestForm.controls.endValue.setValue(selectedEndValue);
   }
 
   /**
@@ -974,7 +978,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to print cycle count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.cycleCountRequestService.printCycleCountSheet(
-      this.requestForm.value.batchId,
+      this.requestForm.value.batchId!,
       cycleCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
@@ -988,7 +992,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           event.printerName,
           event.physicalCopyCount, PrintPageOrientation.Landscape,
           PrintPageSize.A4,
-          this.requestForm.value.batchId, 
+          this.requestForm.value.batchId!, 
           printResult, event.collated);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
@@ -1006,7 +1010,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to preview cycle count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.cycleCountRequestService.printCycleCountSheet(
-      this.requestForm.value.batchId,
+      this.requestForm.value.batchId!,
       cycleCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
@@ -1087,7 +1091,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to print Audit count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.auditCountRequestService.printAuditCountSheet(
-      this.requestForm.value.batchId,
+      this.requestForm.value.batchId!,
       auditCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
@@ -1101,7 +1105,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           event.printerName,
           event.physicalCopyCount, PrintPageOrientation.Landscape,
           PrintPageSize.A4,
-          this.requestForm.value.batchId, 
+          this.requestForm.value.batchId!, 
           printResult, event.collated);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
@@ -1119,7 +1123,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     console.log(`start to preview audit count sheet for batch: ${this.requestForm.value.batchId} `);
 
     this.auditCountRequestService.printAuditCountSheet(
-      this.requestForm.value.batchId,
+      this.requestForm.value.batchId!,
       auditCountRequestIds,
       this.i18n.currentLang)
       .subscribe(printResult => {
