@@ -1,5 +1,5 @@
 import { Component,  inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder,   UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder,   UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn, STComponent } from '@delon/abc/st';
@@ -49,15 +49,19 @@ export class CommonClientComponent implements OnInit {
  
   threePartyLogisticsFlag: boolean = false;
  
-  isSpinning = false;
-  searchForm!: UntypedFormGroup;
+  isSpinning = false; 
+   
+  private readonly fb = inject(FormBuilder);
   
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control('', []), 
+  });
+
   displayOnly = false;
   constructor(private clientService: ClientService,
     private localCacheService: LocalCacheService,
     private messageService: NzMessageService,
-    private activatedRoute: ActivatedRoute,
-    private fb: UntypedFormBuilder,
+    private activatedRoute: ActivatedRoute, 
     private userService: UserService,
     private modalService: NzModalService) { 
       userService.isCurrentPageDisplayOnly("/common/client").then(
@@ -72,15 +76,12 @@ export class CommonClientComponent implements OnInit {
     }
 
   ngOnInit(): void {
-      this.searchForm = this.fb.group({
-        name: [null], 
-      });  
       
     // IN case we get the number passed in, refresh the display
     // and show the client information
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) {
-        this.searchForm.value.name.setValue(params['name']);
+        this.searchForm.controls.name.setValue(params['name']);
         this.search();
       }
     });
@@ -93,7 +94,7 @@ export class CommonClientComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.clientService.getClients(
-      this.searchForm.value.name).subscribe({
+      this.searchForm.value.name ? this.searchForm.value.name :  undefined).subscribe({
         next: (clientRes) => {
           this.clients = clientRes; 
           this.isSpinning = false;

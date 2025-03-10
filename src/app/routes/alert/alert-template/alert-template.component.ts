@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -41,8 +41,7 @@ export class AlertAlertTemplateComponent implements OnInit {
     }
   ]; 
    
-  
-  searchForm!: UntypedFormGroup;
+   
   alertTemplates: AlertTemplate[] = [];
   searchResult = "";
   alertTypes = AlertType; 
@@ -51,14 +50,23 @@ export class AlertAlertTemplateComponent implements OnInit {
   alertDeliveryChannelsKeys = Object.keys(this.alertDeliveryChannels);
    
   displayOnly = false;
+  private readonly fb = inject(FormBuilder);
+  
+    // initiate the search form
+    
+
+  searchForm = this.fb.nonNullable.group({
+    type: this.fb.control('', []),
+    deliveryChannel: this.fb.control('', []),
+    
+  });
 
   constructor(private http: _HttpClient,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private alertTemplateService: AlertTemplateService,
     private messageService: NzMessageService,
-    private router: Router, 
-    private fb: UntypedFormBuilder,
+    private router: Router,  
     private userService: UserService) { 
       userService.isCurrentPageDisplayOnly("/alert/alert-template").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -68,17 +76,11 @@ export class AlertAlertTemplateComponent implements OnInit {
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.alert.template'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      type: [null],
-      deliveryChannel: [null], 
-
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['type'] || params['deliveryChannel'] ) {
-        this.searchForm.value.type.setValue(params['type']);
-        this.searchForm.value.deliveryChannel.setValue(params['deliveryChannel']); 
+        this.searchForm.controls.type.setValue(params['type']);
+        this.searchForm.controls.deliveryChannel.setValue(params['deliveryChannel']); 
         this.search();
       }
     });
@@ -94,8 +96,8 @@ export class AlertAlertTemplateComponent implements OnInit {
 
 
     this.alertTemplateService
-      .getAlertTemplates(this.searchForm.value.type, 
-        this.searchForm.value.deliveryChannel,  )
+      .getAlertTemplates(this.searchForm.value.type ? this.searchForm.value.type : undefined, 
+        this.searchForm.value.deliveryChannel? this.searchForm.value.deliveryChannel : undefined,  )
       .subscribe({
 
         next: (alertTemplateRes) => {

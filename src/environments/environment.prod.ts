@@ -7,7 +7,7 @@ export const environment = {
     // baseUrl: './',    
     // baseUrl: 'https://prod.claytechsuite.com/api/', 
     baseUrl: './api/', 
-    refreshTokenEnabled: true,
-    refreshTokenType: 'auth-refresh'
+    // refreshTokenEnabled: true,
+    // refreshTokenType: 'auth-refresh'
   }
 } as Environment;

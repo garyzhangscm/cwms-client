@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -20,9 +20,16 @@ import { InboundReceivingConfigurationService } from '../services/inbound-receiv
 export class InboundInboundReceivingConfigurationComponent implements OnInit {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
+  private readonly fb = inject(FormBuilder);
+   
+  searchForm = this.fb.nonNullable.group({
+    supplier: this.fb.control(null, []),
+    item: this.fb.control('', []), 
+  });
+  
   displayOnly = false;
-  constructor( 
-              private fb: UntypedFormBuilder, 
+  constructor(  
               private inboundReceivingConfigurationService: InboundReceivingConfigurationService,
               private router: Router,
               private supplierService: SupplierService, 
@@ -38,16 +45,11 @@ export class InboundInboundReceivingConfigurationComponent implements OnInit {
   inboundReceivingConfigurations: InboundReceivingConfiguration[] = [];
   
   searchResult = '';
-  isSpinning = false;
-  searchForm!: UntypedFormGroup;
+  isSpinning = false; 
   validSuppliers: Supplier[] = [];
 
   ngOnInit(): void { 
     
-    this.searchForm = this.fb.group({
-      supplier: [null],
-      item: [null],
-    });
     this.loadSuppliers();
 
   }
@@ -71,7 +73,7 @@ export class InboundInboundReceivingConfigurationComponent implements OnInit {
   
   processItemQueryResult(selectedItemName: any): void {
     console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.value.item.setValue(selectedItemName);
+    this.searchForm.controls.item.setValue(selectedItemName);
     
     
   }
@@ -81,9 +83,9 @@ export class InboundInboundReceivingConfigurationComponent implements OnInit {
     this.searchResult = '';
 
     this.inboundReceivingConfigurationService.getInboundReceivingConfigurations(
-      this.searchForm!.value.supplier,
+      this.searchForm!.value.supplier ? this.searchForm!.value.supplier : undefined,
       undefined,
-      this.searchForm.value.item,
+      this.searchForm.value.item ? this.searchForm.value.item : undefined,
     ).subscribe({
          next: (inboundReceivingConfigurationRes) => {
             this.inboundReceivingConfigurations = inboundReceivingConfigurationRes; 

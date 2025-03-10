@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -22,9 +22,17 @@ import { InboundQcConfigurationService } from '../services/inbound-qc-configurat
 export class InboundInboundQcConfigurationComponent implements OnInit {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
+  private readonly fb = inject(FormBuilder);
+  
+  
+  searchForm = this.fb.nonNullable.group({
+    supplier: this.fb.control(null, []),
+    item: this.fb.control('', []), 
+  });
+  
   displayOnly = false;
-  constructor( 
-              private fb: UntypedFormBuilder, 
+  constructor(  
               private inboundQCConfigurationService: InboundQcConfigurationService,
               private router: Router,
               private supplierService: SupplierService, 
@@ -40,16 +48,11 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
   listOfAllQCConfiguration: InboundQcConfiguration[] = [];
   
   searchResult = '';
-  isSpinning = false;
-  searchForm!: UntypedFormGroup;
+  isSpinning = false; 
   validSuppliers: Supplier[] = [];
 
   ngOnInit(): void { 
     
-    this.searchForm = this.fb.group({
-      supplier: [null],
-      item: [null],
-    });
     this.loadSuppliers();
 
   }
@@ -73,7 +76,7 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
   
   processItemQueryResult(selectedItemName: any): void {
     console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.value.item.setValue(selectedItemName);
+    this.searchForm.controls.item.setValue(selectedItemName);
     
     
   }
@@ -82,9 +85,9 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.inboundQCConfigurationService.getInboundQcConfigurations(
-      this.searchForm!.value.supplier,
+      this.searchForm!.value.supplier ? this.searchForm!.value.supplier : undefined ,
       undefined,
-      this.searchForm.value.item,
+      this.searchForm.value.item ? this.searchForm.value.item : undefined,
     ).subscribe(
       qcConfigurationRes => {
         this.listOfAllQCConfiguration = qcConfigurationRes; 

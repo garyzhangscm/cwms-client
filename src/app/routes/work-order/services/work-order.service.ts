@@ -59,7 +59,7 @@ export class WorkOrderService {
       }
       if (pageIndex && pageIndex > 0) {
         
-        params = params.append('pageIndex', pageIndex);   
+        params = params.append('pageIndex', (pageIndex-1));   
       }
       if (pageSize && pageSize > 0) {
         

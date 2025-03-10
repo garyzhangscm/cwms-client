@@ -97,9 +97,20 @@ export class CommonPrintButtonComponent implements OnInit {
               
             printers.forEach(
               (printer, index) => {
+                
+                this.availablePrinters = [...this.availablePrinters, 
+                  {
+                      id: index, 
+                      name: printer.name, 
+                      description: printer.name, 
+                      warehouseId: this.warehouseService.getCurrentWarehouse().id
+                  }
+                ];
+                /*
                 this.availablePrinters.push({
                   id: index, name: printer.name, description: printer.name, warehouseId: this.warehouseService.getCurrentWarehouse().id
                 });
+                */
 
               }); 
           })

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -129,9 +129,15 @@ export class AuthWorkingTeamComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  private readonly fb = inject(FormBuilder);
+  
+    // initiate the search form 
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control('', []), 
+  });
+
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder,
+  constructor( 
     private activatedRoute: ActivatedRoute,
     private workingTeamService: WorkingTeamService,
     private userService: UserService,
@@ -143,9 +149,16 @@ export class AuthWorkingTeamComponent implements OnInit {
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );       
   }
-
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+ 
+  ngOnInit(): void {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.working-team'));
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params['name']) {
+        this.searchForm.controls.name.setValue(params['name']);
+        this.search();
+      }
+    });
+  }
 
   // Table data for display
   listOfAllWorkingTeams: WorkingTeam[] = [];
@@ -169,7 +182,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.workingTeamService.getWorkingTeams(this.searchForm!.value.name).subscribe(
+    this.workingTeamService.getWorkingTeams(this.searchForm.value.name ? this.searchForm.value.name : undefined).subscribe(
       workingTeamRes => {
         this.listOfAllWorkingTeams = workingTeamRes;
         this.listOfDisplayWorkingTeams = workingTeamRes;
@@ -207,19 +220,6 @@ export class AuthWorkingTeamComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.working-team'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      name: [null],
-    });
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params['name']) {
-        this.searchForm!.value.name.setValue(params['name']);
-        this.search();
-      }
-    });
-  }
 
   disableWorkingTeam(workingTeamId: number): void {
     this.workingTeamService.disableWorkingTeam(workingTeamId).subscribe(workingTeamRes => {

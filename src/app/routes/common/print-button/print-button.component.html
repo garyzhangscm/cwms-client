@@ -36,9 +36,17 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-select nz-input formControlName="printer" style="width: 250px">
+              @for (availablePrint of availablePrinters; track availablePrint) {
+                <nz-option [nzLabel]="availablePrint.name"
+                  [nzValue]="availablePrint.id">
+                </nz-option>
+              }        
+              <!--
+
               <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
                 [nzValue]="availablePrint.id">
               </nz-option>
+              -->
             </nz-select>
           </nz-form-control>
         </nz-form-item>

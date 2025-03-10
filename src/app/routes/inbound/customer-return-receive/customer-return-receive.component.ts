@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AbstractControl , UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl , FormBuilder, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -28,16 +28,28 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
   currentCustomerReturnOrder?: CustomerReturnOrder;
   pageTitle: string;
   isSpinning = false;
-
-  receivingForm!: UntypedFormGroup;
+ 
   availableInventoryStatuses: InventoryStatus[] = [];
   receivingItem?: Item;
+  
+   
+  
+  private readonly fb = inject(FormBuilder);
+  
+  receivingForm = this.fb.nonNullable.group({
+    itemNumber: this.fb.control('', []),
+    lpn: this.fb.control('', []),
+    inventoryStatus: this.fb.control('', []),
+    itemPackageType: this.fb.control('', []),
+    quantity: this.fb.control(null, []),
+    locationName: this.fb.control('', []),
+  });
+  
 
   constructor(private http: _HttpClient, 
     private activatedRoute: ActivatedRoute, 
     private customerReturnOrderService: CustomerReturnOrderService,
-    private customerReturnOrderLineService: CustomerReturnOrderLineService,
-    private fb: UntypedFormBuilder,
+    private customerReturnOrderLineService: CustomerReturnOrderLineService, 
     private router: Router,
     private locationService: LocationService,
     private messageService: NzMessageService, 
@@ -46,14 +58,6 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
 
   ngOnInit(): void { 
     
-    this.receivingForm = this.fb.group({
-      itemNumber:  [''] ,
-      lpn:   ['', Validators.required],
-      inventoryStatus: ['', Validators.required],
-      itemPackageType: ['', Validators.required],
-      quantity: ['', Validators.required],
-      locationName: ['']
-    }),
 
     this.receivingItem = undefined;
     this.activatedRoute.queryParams.subscribe(params => {
@@ -81,7 +85,7 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
   }
 
   receivingLPNChanged(event: Event): void {
-    this.receivingForm!.value.lpn.setValue((event.target as HTMLInputElement).value);
+    this.receivingForm!.controls.lpn.setValue((event.target as HTMLInputElement).value);
   }
   itemChanged(csrLine: CustomerReturnOrderLine) { 
     this.receivingItem = csrLine?.item;
@@ -103,7 +107,8 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
         this.messageService.error(`can't find customer return order line with item ${this.receivingItem?.name}`);
         return;
       }
-      this.locationService.getLocations(undefined, undefined, locationName).subscribe(locations => {
+      this.locationService.getLocations(undefined, undefined, locationName ? locationName : undefined)
+      .subscribe(locations => {
         this.customerReturnOrderLineService
           .receiveInventory(
             this.currentCustomerReturnOrder!.id!,
@@ -155,12 +160,12 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
 
     return {
       id: undefined,
-      lpn: this.receivingForm.value.lpn,
+      lpn: this.receivingForm.value.lpn ? this.receivingForm.value.lpn : undefined,
       location: receiptLocation,
       locationName: receiptLocation.name,
       item: this.receivingItem,
       itemPackageType,
-      quantity: this.receivingForm.value.quantity,
+      quantity: this.receivingForm.value.quantity ? this.receivingForm.value.quantity : undefined,
       inventoryStatus,
     };
   }

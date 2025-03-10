@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -329,14 +329,23 @@ export class AuthRoleComponent implements OnInit {
   isSpinning = false;
 
 
+    // initiate the search form 
+
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control('', []), 
+  });
+
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder,
+
+  constructor( 
     private activatedRoute: ActivatedRoute,
     private roleService: RoleService,
     private userService: UserService,
     private menuService: MenuService,
-    private messageService: NzMessageService,    private titleService: TitleService,
+    private messageService: NzMessageService,    
+    private titleService: TitleService,
     private utilService: UtilService,
     private localCacheService: LocalCacheService, 
     private permissionService: PermissionService,
@@ -345,9 +354,7 @@ export class AuthRoleComponent implements OnInit {
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );     
    }
-
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+ 
 
   // Table data for display
   listOfAllRoles: Role[] = [];
@@ -376,7 +383,7 @@ export class AuthRoleComponent implements OnInit {
   search(tabIndex: number = 0): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.roleService.getRoles(this.searchForm!.value.name).subscribe(
+    this.roleService.getRoles(this.searchForm.value.name ? this.searchForm.value.name  : undefined ).subscribe(
       roleRes => {
         this.listOfAllRoles = roleRes;
         this.listOfDisplayRoles = roleRes;
@@ -405,13 +412,9 @@ export class AuthRoleComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.role'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      name: [null],
-    });
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) {
-        this.searchForm!.value.name.setValue(params['name']);
+        this.searchForm.controls.name.setValue(params['name']);
         this.search();
       }
     });
