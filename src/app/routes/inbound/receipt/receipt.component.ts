@@ -1,6 +1,6 @@
 import { DatePipe, formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -155,8 +155,27 @@ export class InboundReceiptComponent implements OnInit {
 
   receiptStatus = ReceiptStatus;
 
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    client: this.fb.control('', []),
+    number: this.fb.control('', []),
+    statusList: this.fb.control('', []),
+    supplier: this.fb.control('', []),
+    checkInDateTimeRanger: this.fb.control<Date | null>(null),
+    checkInDate: this.fb.control<Date | null>(null),
+  }); 
+  
+  billableActivityForm = this.fb.nonNullable.group({ 
+    billableActivityType: this.fb.control<number | undefined>(undefined, [Validators.required]),
+    activityTime:  this.fb.control<Date | undefined>(undefined, [Validators.required]),
+    rate: this.fb.control<number | undefined>(undefined, []),
+    amount: this.fb.control<number | undefined>(undefined, []),
+    totalCharge: this.fb.control<number | undefined>(undefined, [Validators.required]),
+  });
+   
+
   searching = false;
   searchResult = '';
 
@@ -185,8 +204,7 @@ export class InboundReceiptComponent implements OnInit {
   allBillableActivityTypes: BillableActivityType[] = [];
   availableBillableActivityTypes: BillableActivityType[] = [];
 
-  billableActivityModal!: NzModalRef; 
-  billableActivityForm!: UntypedFormGroup;
+  billableActivityModal!: NzModalRef;  
   addActivityInProcess = false;
 
   addOrModifyReceiptLineModal!: NzModalRef;
@@ -213,8 +231,7 @@ export class InboundReceiptComponent implements OnInit {
     ['modify-receipt', false],
   ]);
 
-  constructor(
-    private fb: UntypedFormBuilder, 
+  constructor( 
     private modalService: NzModalService,
     private receiptService: ReceiptService,
     private receivingTransactionService: ReceivingTransactionService,
@@ -264,18 +281,9 @@ export class InboundReceiptComponent implements OnInit {
   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      client: [null],
-      number: [null],
-      statusList: [null],
-      supplier: [null],
-      checkInDateTimeRanger: [null],
-      checkInDate: [null],
-    });
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm!.value.number.setValue(params['number']);
+        this.searchForm!.controls.number.setValue(params['number']);
         this.search();
       }
     });
@@ -321,19 +329,24 @@ export class InboundReceiptComponent implements OnInit {
     this.searchResult = '';
 
     
-    let checkInStartTime : Date = this.searchForm.value.checkInDateTimeRanger ? 
-        this.searchForm.value.checkInDateTimeRanger.value[0] : undefined; 
-    let checkInEndTime : Date = this.searchForm.value.checkInDateTimeRanger ? 
-        this.searchForm.value.checkInDateTimeRanger.value[1] : undefined; 
-    let checkInSpecificDate : Date = this.searchForm.value.checkInDate;
+    let checkInStartTime : Date | undefined = this.searchForm.value.checkInDateTimeRanger ? 
+        this.searchForm.value.checkInDateTimeRanger : undefined; 
+    let checkInEndTime : Date | undefined= this.searchForm.value.checkInDateTimeRanger ? 
+        this.searchForm.value.checkInDateTimeRanger : undefined; 
+    let checkInSpecificDate : Date | undefined= this.searchForm.value.checkInDate ?
+    this.searchForm.value.checkInDate : undefined;
 
-    this.receiptService.getReceipts(this.searchForm!.value.number, true,       
-      this.searchForm!.value.statusList,       
-      this.searchForm!.value.supplier,
-      checkInStartTime, checkInEndTime, checkInSpecificDate, 
+    this.receiptService.getReceipts(
+      this.searchForm!.value.number ? this.searchForm!.value.number : undefined, 
+      true,       
+      this.searchForm!.value.statusList ? this.searchForm!.value.statusList : undefined,       
+      this.searchForm!.value.supplier ? this.searchForm!.value.supplier : undefined,
+      checkInStartTime, 
+      checkInEndTime, 
+      checkInSpecificDate, 
          undefined,
          undefined,
-      this.searchForm!.value.client).subscribe(
+      this.searchForm!.value.client ? this.searchForm!.value.client : undefined).subscribe(
       receiptRes => {
 
         this.searching = false;
@@ -1136,13 +1149,6 @@ export class InboundReceiptComponent implements OnInit {
   */
 
 
-    this.billableActivityForm = this.fb.group({ 
-      billableActivityType: ['', Validators.required],
-      activityTime:  ['', Validators.required],
-      rate: [''],
-      amount: [''],
-      totalCharge: ['', Validators.required],
-    });
 
     // show the model
     this.billableActivityModal = this.modalService.create({
@@ -1164,13 +1170,13 @@ export class InboundReceiptComponent implements OnInit {
       if (this.billableActivityReceiptLine) {
 
         const receiptLineBillableActivity : ReceiptLineBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.value.billableActivityType,
-          activityTime: this.billableActivityForm.value.activityTime,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType ? this.billableActivityForm.value.billableActivityType : undefined,
+          activityTime: this.billableActivityForm.value.activityTime ? this.billableActivityForm.value.activityTime : undefined,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityReceipt?.clientId,
-          rate: this.billableActivityForm.value.rate,
-          amount: this.billableActivityForm.value.amount,
-          totalCharge: this.billableActivityForm.value.totalCharge,
+          rate: this.billableActivityForm.value.rate ? this.billableActivityForm.value.rate : undefined,
+          amount: this.billableActivityForm.value.amount ? this.billableActivityForm.value.amount : undefined,
+          totalCharge: this.billableActivityForm.value.totalCharge ? this.billableActivityForm.value.totalCharge : undefined,
         }
         this.receiptService.addReceiptLineBillableActivity(this.billableActivityReceiptLine.id!, 
           receiptLineBillableActivity).subscribe({
@@ -1179,7 +1185,7 @@ export class InboundReceiptComponent implements OnInit {
             this.addActivityInProcess = false;
             this.billableActivityModal.destroy();
             
-            this.searchForm!.value.value.setValue(this.billableActivityReceipt!.number);
+            this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
             this.search();
           },
           error: () => this.addActivityInProcess = false
@@ -1188,13 +1194,13 @@ export class InboundReceiptComponent implements OnInit {
       else {
 
         const receiptBillableActivity : ReceiptBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.value.billableActivityType,
-          activityTime: this.billableActivityForm.value.activityTime,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType ? this.billableActivityForm.value.billableActivityType : undefined,
+          activityTime: this.billableActivityForm.value.activityTime ? this.billableActivityForm.value.activityTime : undefined,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityReceipt?.clientId,
-          rate: this.billableActivityForm.value,
-          amount: this.billableActivityForm.value.amount,
-          totalCharge: this.billableActivityForm.value.totalCharge,
+          rate: this.billableActivityForm.value.rate ? this.billableActivityForm.value.rate : undefined,
+          amount: this.billableActivityForm.value.amount ? this.billableActivityForm.value.amount : undefined,
+          totalCharge: this.billableActivityForm.value.totalCharge ? this.billableActivityForm.value.totalCharge : undefined,
         }
         this.receiptService.addReceiptBillableActivity(
           this.billableActivityReceipt!.id!, receiptBillableActivity).subscribe({
@@ -1202,7 +1208,7 @@ export class InboundReceiptComponent implements OnInit {
             this.addActivityInProcess = false;
             this.billableActivityModal.destroy();
             
-            this.searchForm!.value.number.setValue(this.billableActivityReceipt!.number);
+            this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
             this.search();
           }, 
           error: () => this.addActivityInProcess = false
@@ -1226,7 +1232,7 @@ export class InboundReceiptComponent implements OnInit {
     if (this.billableActivityForm.value.rate != null &&
       this.billableActivityForm.value.amount != null) {
 
-        this.billableActivityForm!.value.totalCharge.setValue(
+        this.billableActivityForm!.controls.totalCharge.setValue(
           this.billableActivityForm.value.rate * 
           this.billableActivityForm.value.amount
         );

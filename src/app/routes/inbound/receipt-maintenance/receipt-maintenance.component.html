@@ -56,7 +56,13 @@
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
               <nz-select  formControlName="client" id="client" name="client">
-                <nz-option *ngFor="let client of validClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+                
+                @for (client of validClients; track client) {
+                  <nz-option [nzLabel]="client.name"
+                    [nzValue]="client.id">
+                  </nz-option>
+                }   
+                 
               </nz-select>
             </nz-form-control>
             
@@ -75,6 +81,17 @@
                   (ngModelChange)="onSupplierChange($event)"/>
               </nz-input-group>
             </nz-form-control>
+            
+            <nz-autocomplete #supplierAutoCompleteTpl>
+              
+              @for (supplier of filterValidSuppliers; track supplier) {
+                
+                  <nz-auto-option [nzLabel]="supplier.description" [nzValue]="supplier.name">
+                    {{ supplier.description }}
+                  </nz-auto-option>
+              }   
+
+            </nz-autocomplete>
           </nz-form-item>
         </div>
         <div nz-col [nzSpan]="8">
@@ -92,11 +109,6 @@
           <i nz-icon nzType="search"></i>
         </ng-template>
         
-        <nz-autocomplete #supplierAutoCompleteTpl>
-          <nz-auto-option *ngFor="let supplier of filterValidSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
-            {{ supplier.description }}
-          </nz-auto-option>
-        </nz-autocomplete>
       </div>
 
     </form>

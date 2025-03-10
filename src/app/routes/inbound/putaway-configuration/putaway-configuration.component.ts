@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component,  inject, OnInit,  } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -117,9 +117,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
-  isSpinning = false;
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  isSpinning = false; 
 
   // Table data for display
   listOfAllPutawayConfiguration: PutawayConfiguration[] = [];
@@ -138,9 +136,21 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  
+  private readonly fb = inject(FormBuilder);
+  // initiate the search form
+  
+  
+  searchForm = this.fb.nonNullable.group({
+    itemName: this.fb.control('', []),
+    itemFamilyName: this.fb.control('', []),
+    inventoryStatus: this.fb.control('', []), 
+  });
+  
+   
+  
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder,
+  constructor( 
     private putawayConfigurationService: PutawayConfigurationService,
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,
@@ -154,12 +164,6 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   
   }
   ngOnInit(): void {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      itemName: [null],
-      itemFamilyName: [null],
-      inventoryStatus: [null],
-    });
 
     // initiate the select control
     this.inventoryStatusService.loadInventoryStatuses().subscribe(inventoryStatusRes => {
@@ -179,9 +183,9 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     this.putawayConfigurationService
       .getPutawayConfigurations(
         undefined,
-        this.searchForm!.value.itemName,
-        this.searchForm!.value.itemFamilyName,
-        this.searchForm!.value.inventoryStatus,
+        this.searchForm!.value.itemName ? this.searchForm!.value.itemName  : undefined,
+        this.searchForm!.value.itemFamilyName ? this.searchForm!.value.itemFamilyName : undefined,
+        this.searchForm!.value.inventoryStatus ? this.searchForm!.value.inventoryStatus : undefined,
       )
       .subscribe(
         putawayConfigurationRes => {
@@ -299,7 +303,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     console.log(`user selected: ${itemName}`);
 
     this.lookupDrawerclosed();
-    this.searchForm!.value.itemName.setValue(itemName);
+    this.searchForm!.controls.itemName.setValue(itemName);
   }
 
   modifyPutawayConfiguration(putawayConfiguration: PutawayConfiguration) {

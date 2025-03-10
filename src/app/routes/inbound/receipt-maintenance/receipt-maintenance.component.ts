@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
@@ -159,8 +159,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   receivedInventoryTableChecked = false;
   receivedInventoryTableIndeterminate = false;
   newBatch = false;
-
-  receiptForm!: UntypedFormGroup;
+ 
   receivingForm!: UntypedFormGroup;
   pageTitle: string;
   currentReceipt: Receipt = {
@@ -230,6 +229,18 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   inventoryConfiguration?: InventoryConfiguration;
   
+  
+  private readonly fb = inject(FormBuilder);
+  
+  receiptForm = this.fb.nonNullable.group({
+    receiptId: this.fb.control<number | undefined>(undefined, []),
+    receiptNumber: this.fb.control('', [Validators.required]),
+    client: this.fb.control('', []),
+    supplier: this.fb.control('', []),
+    allowUnexpectedItem: this.fb.control<boolean | undefined>(undefined, []),
+  });
+  
+
   isSpinning = false;
   // how to print putaway work
   // all: print everything recevied, include the one that already in stock
@@ -238,8 +249,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   printPutawayWorkType = "all";
   constructor(
     private activatedRoute: ActivatedRoute, 
-    private titleService: TitleService,
-    private fb: UntypedFormBuilder,
+    private titleService: TitleService, 
     private receiptService: ReceiptService,
     private receiptLineService: ReceiptLineService,
     private clientService: ClientService,
@@ -278,14 +288,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.inbound.receipt.title'));
 
-    this.receiptForm = this.fb.group({
-      receiptId: [null],
-      receiptNumber: ['', [Validators.required]],
-      client: [null],
-      supplier: [null],
-      allowUnexpectedItem: [false],
-    });
-    this.receiptForm.value.receiptId.disable();
+    this.receiptForm.controls.receiptId.disable();
 
     this.clientService.getClients().subscribe({
       next: (clientRes) => {
@@ -548,16 +551,16 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   saveReceipt(): void {
     // Setup the value
     this.isSpinning = true;
-    this.currentReceipt.id = this.receiptForm!.value.receiptId;
-    this.currentReceipt.number = this.receiptForm!.value.receiptNumber;
+    this.currentReceipt.id = this.receiptForm!.value.receiptId ? this.receiptForm!.value.receiptId : undefined;
+    this.currentReceipt.number = this.receiptForm!.value.receiptNumber ? this.receiptForm!.value.receiptNumber : "";
 
     // Get the client by name
-    const client = this.getClientByName(this.receiptForm!.value.client);
+    const client = this.getClientByName(this.receiptForm!.value.client ? this.receiptForm!.value.client : "");
     this.currentReceipt.clientId = client ? client.id : undefined;
     this.currentReceipt.client = client ? client : undefined;
 
     // Get the supplier by name
-    const supplier = this.getSupplierByName(this.receiptForm!.value.supplier);
+    const supplier = this.getSupplierByName(this.receiptForm!.value.supplier ? this.receiptForm!.value.supplier : "");
     this.currentReceipt.supplierId = supplier ? supplier.id : undefined;
     this.currentReceipt.supplier = supplier ? supplier : undefined;
 
@@ -580,10 +583,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           this.message.success(this.i18n.fanyi('message.new.complete'));
           this.newBatch = false;
 
-          this.receiptForm!.value.receiptId.setValue(res.id);
-          this.receiptForm!.value.receiptId.disable();
-          this.receiptForm!.value.receiptNumber.setValue(res.number);
-          this.receiptForm!.value.receiptNumber.disable();
+          this.receiptForm!.controls.receiptId.setValue(res.id);
+          this.receiptForm!.controls.receiptId.disable();
+          this.receiptForm!.controls.receiptNumber.setValue(res.number);
+          this.receiptForm!.controls.receiptNumber.disable();
           this.isSpinning = false;
 
         }, 
@@ -619,9 +622,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.listOfAllReceivedInventory = [];
     this.listOfDisplayReceivedInventory = [];
 
-    this.receiptForm!.value.receiptId.setValue('');
-    this.receiptForm!.value.receiptNumber.setValue('');
-    this.receiptForm!.value.receiptNumber.enable();
+    this.receiptForm!.controls.receiptId.setValue(undefined);
+    this.receiptForm!.controls.receiptNumber.setValue('');
+    this.receiptForm!.controls.receiptNumber.enable();
 
     // this.receiptForm.controls.client.setValue('');
     // this.receiptForm.controls.supplier.setValue('');
@@ -631,14 +634,16 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.listOfAllReceiptLines = this.currentReceipt.receiptLines;
     this.listOfDisplayReceiptLines = this.currentReceipt.receiptLines;
 
-    this.receiptForm!.value.receiptId.setValue(this.currentReceipt.id);
-    this.receiptForm!.value.receiptId.disable();
-    this.receiptForm!.value.receiptNumber.setValue(this.currentReceipt.number);
-    this.receiptForm!.value.receiptNumber.disable();
-    this.receiptForm!.value.client.disable();
+    this.receiptForm!.controls.receiptId.setValue(this.currentReceipt.id);
+    this.receiptForm!.controls.receiptId.disable();
+    this.receiptForm!.controls.receiptNumber.setValue(this.currentReceipt.number);
+    this.receiptForm!.controls.receiptNumber.disable();
+    this.receiptForm!.controls.client.disable();
 
-    this.receiptForm!.value.client.setValue(this.currentReceipt.client ? this.currentReceipt.client.id : '');
-    this.receiptForm!.value.supplier.setValue(this.currentReceipt.supplier ? this.currentReceipt.supplier.name : '');
+    this.receiptForm!.controls.client.setValue(
+      this.currentReceipt.client && this.currentReceipt.client.id != null
+      ? this.currentReceipt.client.id + '' : '');
+    this.receiptForm!.controls.supplier.setValue(this.currentReceipt.supplier ? this.currentReceipt.supplier.name : '');
 
     this.loadReceivedInventory(this.currentReceipt);
 
@@ -706,7 +711,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     // When we use the 'fkey' to automatically generate the next receipt number
     // the reactive form control may not have the right value.Let's set
     // the number back to the bind control
-    this.receiptForm!.value.receiptNumber.setValue((event.target as HTMLInputElement).value);
+    this.receiptForm!.controls.receiptNumber.setValue((event.target as HTMLInputElement).value);
     this.refreshReceiptResults();
   }
 
@@ -735,8 +740,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         this.clearDisplay();
         // in case the receipt doesn't exists yet, let's set the
         // receipt number control as the input value
-        this.receiptForm!.value.receiptNumber.setValue(receiptNumber);
-        console.log(`this.receiptForm.controls.receiptNumber: ${this.receiptForm!.value.receiptNumber.value}`);
+        this.receiptForm!.controls.receiptNumber.setValue(receiptNumber);
+        console.log(`this.receiptForm.controls.receiptNumber: ${this.receiptForm!.value.receiptNumber}`);
       }
       this.isSpinning = false;
     });

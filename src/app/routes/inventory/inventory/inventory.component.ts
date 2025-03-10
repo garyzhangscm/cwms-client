@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common'; 
 import { Component,  inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 // import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 // import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -83,8 +83,7 @@ export class InventoryInventoryComponent implements OnInit {
   // Select control for clients and item families 
   availableClients: Client[] = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  // Form related data and functions 
   inventoryMovementForm!: UntypedFormGroup;
 
   searching = false;
@@ -152,8 +151,25 @@ export class InventoryInventoryComponent implements OnInit {
     ['reverse-inventory', false],
   ]);
   
-  constructor(
-    private fb: UntypedFormBuilder,
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    client: this.fb.control<Client | undefined>(undefined, []),
+    locationGroups: this.fb.control<number | undefined>(undefined, []),
+    taggedItemFamilies: this.fb.control<ItemFamily[] | undefined>(undefined, []),
+    itemName: this.fb.control('', []),
+    location: this.fb.control('', []),
+    lpn: this.fb.control<string | undefined>(undefined, []),
+    inventoryStatus: this.fb.control<number | undefined>(undefined, []),
+    color: this.fb.control('', []),
+    style: this.fb.control('', []),
+    receiptNumber: this.fb.control<string | undefined>(undefined, []),
+  });
+ 
+  
+   
+  
+  constructor( 
     private inventoryService: InventoryService,
     private clientService: ClientService,
     private itemFamilyService: ItemFamilyService, 
@@ -428,10 +444,10 @@ export class InventoryInventoryComponent implements OnInit {
         if (params['id']) {
           this.search(params['id']);
         } else if (params['lpn']) {
-          this.searchForm.value.lpn.setValue(params['lpn']);
+          this.searchForm.controls.lpn.setValue(params['lpn']);
           this.search();
         } else if (params['location']) {
-          this.searchForm.value.location.setValue(params['location']);
+          this.searchForm.controls.location.setValue(params['location']);
           this.search();
         } else {
           this.search();
@@ -504,23 +520,23 @@ export class InventoryInventoryComponent implements OnInit {
       
       this.inventoryService
         .getPageableInventories(
-          this.searchForm.value.client,
-          this.searchForm.value.taggedItemFamilies,
-          this.searchForm.value.itemName,
-          this.searchForm.value.location,
-          this.searchForm.value.lpn,
+          this.searchForm.value.client ? this.searchForm.value.client : undefined,
+          this.searchForm.value.taggedItemFamilies ? this.searchForm.value.taggedItemFamilies : undefined,
+          this.searchForm.value.itemName ? this.searchForm.value.itemName : undefined,
+          this.searchForm.value.location ? this.searchForm.value.location : undefined,
+          this.searchForm.value.lpn ? this.searchForm.value.lpn : undefined,
           false,
-          this.searchForm.value.inventoryStatus,
-          this.searchForm.value.locationGroups,
-          this.searchForm.value.color,
-          this.searchForm.value.style,
+          this.searchForm.value.inventoryStatus ? this.searchForm.value.inventoryStatus : undefined,
+          this.searchForm.value.locationGroups ? this.searchForm.value.locationGroups : undefined,
+          this.searchForm.value.color ? this.searchForm.value.color : undefined,
+          this.searchForm.value.style ? this.searchForm.value.style : undefined,
           undefined,
           undefined,
           undefined,
           undefined,
           undefined,
           undefined, 
-          this.searchForm.value.receiptNumber,
+          this.searchForm.value.receiptNumber ? this.searchForm.value.receiptNumber : undefined,
           this.inventoryTable.pi,
           this.inventoryTable.ps
         )
@@ -1132,18 +1148,6 @@ export class InventoryInventoryComponent implements OnInit {
 
   initSearchForm(): void {
     // initiate the search form
-    this.searchForm = this.fb.group({
-      client: [null],
-      locationGroups: [null],
-      taggedItemFamilies: [null],
-      itemName: [null],
-      location: [null],
-      lpn: [null],
-      inventoryStatus: [null],
-      color: [null],
-      style: [null],
-      receiptNumber: [null],
-    });
 
     // initiate the select control
     this.clientService.getClients().subscribe({
@@ -1291,7 +1295,7 @@ export class InventoryInventoryComponent implements OnInit {
 
           this.mapOfInprocessInventoryId[inventory.id!] = false;
           // refresh with LPN
-          this.searchForm.value.lpn.setValue(inventory.lpn);
+          this.searchForm.controls.lpn.setValue(inventory.lpn);
           this.search();
         },
         () => {
@@ -1305,7 +1309,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   processItemQueryResult(selectedItemName: any): void {
     // console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.value.itemName.setValue(selectedItemName);
+    this.searchForm.controls.itemName.setValue(selectedItemName);
   }
   processLocationQueryResult(selectedLocationName: any): void {
     // console.log(`start to query with location name ${selectedLocationName}`);
@@ -1315,7 +1319,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   processQueryLocationQueryResult(selectedLocationName: any): void {
     // console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.value.location.setValue(selectedLocationName);
+    this.searchForm.controls.location.setValue(selectedLocationName);
   }
 
   printLPNReport(event: any, inventory: Inventory) {
