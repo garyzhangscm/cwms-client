@@ -47,6 +47,7 @@ import { CommonModule } from '@angular/common';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 const COMPONENTS: Array<Type<void>> = [
   AuthUserComponent,
@@ -100,6 +101,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzInputModule ,
     NzIconModule ,
     NzSelectModule,
+    NzCheckboxModule ,
   ],
   declarations: [
     ...COMPONENTS,

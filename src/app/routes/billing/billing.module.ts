@@ -30,6 +30,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 const COMPONENTS: Array<Type<void>> = [
   BillingRateComponent,
@@ -67,6 +68,7 @@ const COMPONENTS: Array<Type<void>> = [
     NzInputModule ,
     NzInputNumberModule ,
     NzUploadModule ,
+    NzCheckboxModule ,
   ],
   declarations: COMPONENTS,
 })

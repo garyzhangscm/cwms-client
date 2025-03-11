@@ -8,6 +8,7 @@ import { I18nPipe } from '@delon/theme';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions'; 
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -71,6 +72,7 @@ const COMPONENTS: Array<Type<void>> = [
     CWMSCommonModule,
     NgxExtendedPdfViewerModule,
     NzInputNumberModule ,
+    NzCheckboxModule ,
   ],
   declarations: COMPONENTS,
 })
