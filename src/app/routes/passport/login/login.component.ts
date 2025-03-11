@@ -243,8 +243,8 @@ export class UserLoginComponent implements OnDestroy {
         // 清空路由复用信息
         this.reuseTabService?.clear();
         // 设置用户Token信息
-        // TODO: Mock expired value
-        res.user.expired = +new Date() + 1000 * 60 * 5;
+        // the expired return
+        res.user.expired = +new Date() + res.user.expiredIn * 60 * 1000;
         this.tokenService.set(res.user);
         
 

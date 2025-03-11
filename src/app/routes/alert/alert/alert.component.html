@@ -12,11 +12,12 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
             <nz-select  nzMode="multiple" formControlName="type">
-                <nz-option
-                 *ngFor="let alertType of alertTypeKeys"
-                [nzValue]="alertType"
-                 nzLabel="{{ 'ALERT-TYPE-' + alertType | i18n}}"
-                 ></nz-option>
+              
+              @for (alertType of alertTypeKeys; track alertType) {
+                <nz-option nzLabel="{{ 'ALERT-TYPE-' + alertType | i18n}}"
+                  [nzValue]="alertType">
+                </nz-option>
+              }    
           </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -28,11 +29,13 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
             <nz-select    formControlName="status">
-                <nz-option
-                    *ngFor="let alertStatus of  alertStatusListKeys"
-                    [nzValue]="alertStatus"
-                    nzLabel="{{ 'ALERT-STATUS-' + alertStatus | i18n}}"
-            ></nz-option>
+              
+              @for (alertStatus of alertStatusListKeys; track alertStatus) {
+                <nz-option 
+                [nzValue]="alertStatus"
+                nzLabel="{{ 'ALERT-STATUS-' + alertStatus | i18n}}">
+                </nz-option>
+              }     
           </nz-select>
           </nz-form-control>
         </nz-form-item>

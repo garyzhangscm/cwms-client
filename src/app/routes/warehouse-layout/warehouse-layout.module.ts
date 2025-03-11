@@ -43,6 +43,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { Loader } from '@googlemaps/js-api-loader';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 const COMPONENTS: Array<Type<void>> = [
   WarehouseLayoutWarehouseComponent,
@@ -93,6 +94,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzInputModule ,
     NzModalModule,
     NgxGpAutocompleteModule,
+    NzCheckboxModule ,
   ],
   declarations: [
     ...COMPONENTS,
