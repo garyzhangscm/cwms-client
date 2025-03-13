@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -68,7 +68,12 @@ export class UtilCustomReportComponent implements OnInit {
 
   isSpinning = false;
   
-  searchForm!: UntypedFormGroup;  
+  private readonly fb = inject(FormBuilder);
+  // initiate the search form 
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control('', []), 
+  });
+  
   searchResult = "";
 
   userPermissionMap: Map<string, boolean> = new Map<string, boolean>([  
@@ -84,8 +89,7 @@ export class UtilCustomReportComponent implements OnInit {
     private router: Router, 
     private customReportService: CustomReportService,
     private localCacheService: LocalCacheService,
-    private companyService: CompanyService,
-    private fb: UntypedFormBuilder,
+    private companyService: CompanyService, 
     private userService: UserService) {
       
       userService.isCurrentPageDisplayOnly("/util/custom-report").then(
@@ -226,15 +230,11 @@ export class UtilCustomReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.custom-report'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      name: [null], 
-    });
 
     
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) { 
-        this.searchForm.value.name.setValue(params['name']);
+        this.searchForm.controls.name.setValue(params['name']);
         this.search();
       }
     });
@@ -249,7 +249,8 @@ export class UtilCustomReportComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.customReportService.getCustomReports(this.searchForm.value.name).subscribe({
+    this.customReportService.getCustomReports(
+      this.searchForm.value.name ? this.searchForm.value.name : undefined).subscribe({
       next: (customReportRes) => {
         this.customReports = customReportRes;
         this.isSpinning = false;

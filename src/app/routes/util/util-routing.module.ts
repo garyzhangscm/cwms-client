@@ -256,7 +256,7 @@ const routes: Routes = [
     canActivate: [aclCanActivate], 
     data: { 
       guard:  {
-        role: [ '/util/rf-configuration', 'admin', 'system-admin' ], 
+        role: [ '/util/custom-report', 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }

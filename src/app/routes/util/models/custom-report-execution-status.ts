@@ -5,4 +5,5 @@ export enum CustomReportExecutionStatus {
   COMPLETE = 'COMPLETE',
   FAIL = 'FAIL',
   EXPIRED = 'EXPIRED',
+  DOWNLOADING = 'DOWNLOADING',
 }
