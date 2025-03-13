@@ -2,7 +2,7 @@ import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 
 import { UserService } from '../../auth/services/user.service';
@@ -26,6 +26,8 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryInventoryActivityComponent implements OnInit {
 
+  inventoryActivityTablePI = 10;
+  inventoryActivityTablePS = -1;
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "inventory-activity";
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
@@ -808,7 +810,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     }
 
     this.inventoryActivityService
-      .getInventoryActivities(
+      .getPageableInventoryActivities(
         clients,
         this.searchForm.value.taggedItemFamilies,
         this.searchForm.value.itemName,
@@ -820,25 +822,52 @@ export class InventoryInventoryActivityComponent implements OnInit {
         specificDate,
         this.searchForm.value.username,
         this.searchForm.value.rfCode,  
+        this.inventoryActivityTable.pi,
+        this.inventoryActivityTable.ps
       )
-      .subscribe(
-        inventoryActivityRes => {
-          this.processInventoryActivityQueryResult(inventoryActivityRes);
+      .subscribe({
+        
+        next: (page) => {
+          this.inventoryActivityTable.total = page.totalElements;
+          this.processInventoryActivityQueryResult(page.content);
           this.searching = false;
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-            rowCount: inventoryActivityRes.length,
+            rowCount: page.totalElements,
           });
         },
-        () => {
+        error: () => {
+
           this.searching = false;
           this.isSpinning = false;
           this.searchResult = '';
-        },
-      );
+        }
+
+ 
+
+      }); 
   }
 
+
+  inventoryActivityTableChanged(event: STChange) : void { 
+    if (event.type === 'pi' || event.type === 'ps') {
+      // see if the PI or PS is changed. If so
+      // we will need to redo the search since we use 
+      // client size pagination
+      const pipsChanged : boolean = 
+          (this.inventoryActivityTablePI != this.inventoryActivityTable.pi) ||
+          (this.inventoryActivityTablePS != this.inventoryActivityTable.ps);
+ 
+      if (pipsChanged) {
+        this.inventoryActivityTablePI = this.inventoryActivityTable.pi;
+        this.inventoryActivityTablePS = this.inventoryActivityTable.ps;
+        this.search();
+      }
+
+    }
+
+  }
 
   processInventoryActivityQueryResult(inventoryActivities: InventoryActivity[]): void {
     this.listOfAllInventoryActivities = inventoryActivities; 
@@ -887,6 +916,8 @@ export class InventoryInventoryActivityComponent implements OnInit {
  
     this.loadClients(inventoryActivity); 
     
+    this.loadLocation(inventoryActivity);
+    
   }
   
   async loadClients(inventoryActivity: InventoryActivity) {
@@ -895,6 +926,23 @@ export class InventoryInventoryActivityComponent implements OnInit {
       inventoryActivity.client =  await this.localCacheService.getClient(inventoryActivity.clientId!).toPromise().finally(
         () => this.loadingDetailsRequest--
       );
+    } 
+
+  }
+  
+  loadLocation(inventoryActivity: InventoryActivity) {
+ 
+     
+    if (inventoryActivity.locationId && inventoryActivity.location == null) {
+      this.loadingDetailsRequest++;
+      this.localCacheService.getLocation(inventoryActivity.locationId!)
+      .subscribe({
+        next: (locationRes) => {
+          inventoryActivity.location = locationRes;
+          this.loadingDetailsRequest--;
+
+        }
+      });
     } 
 
   }

@@ -198,6 +198,7 @@
 
   <st #inventoryActivityTable [data]="listOfAllInventoryActivities" [columns]="inventoryActivityTableColumns" 
         
+      (change)="inventoryActivityTableChanged($event)"
         [footer]="tableFoot" [scroll]="{ x: '1615px' }"
         [widthMode]="{ type: 'strict' }" resizable>
 
@@ -258,6 +259,20 @@
         <ng-template st-row="activityDateTimeColumn" let-inventoryActivity >  
           {{ inventoryActivity.activityDateTime | date:'short'}} 
         </ng-template>
+        
+      <ng-template st-row="locationColumn" let-inventoryActivity>  
+        
+        @if(inventoryActivity.locationId && inventoryActivity.location == null) {
+        
+            <nz-skeleton-element  
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        }
+        {{ inventoryActivity.location?.name }}
+      </ng-template>
   
   </st>
 <!--

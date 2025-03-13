@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
+import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -30,12 +31,17 @@ export class UtilExecuteCustomReportComponent implements OnInit {
 
   isSpinning = false;   
   pageTitle = "";
+  
+  private readonly tokenService = inject(DA_SERVICE_TOKEN);
   customReportParametersTableColumns : STColumn[] = [
      
     { title: this.i18n.fanyi("displayText"),  index: 'displayText' , }, 
     { title: this.i18n.fanyi("value"),  
          render: 'valueColumn', }, 
   ]; 
+
+  refreshReportResult: NodeJS.Timeout;
+
   
   
   constructor(private http: _HttpClient, 
@@ -49,6 +55,9 @@ export class UtilExecuteCustomReportComponent implements OnInit {
     private router: Router,) { 
  
       this.pageTitle = this.i18n.fanyi('customReport');
+      this.refreshReportResult = setInterval(() => {
+          this.refreshCustomReportExecutionStatus();
+        }, 5000); 
   }
 
   ngOnInit(): void {
@@ -79,6 +88,7 @@ export class UtilExecuteCustomReportComponent implements OnInit {
   }
   
   ngOnDestroy() {
+    if (this.refreshReportResult)
     console.log(`custom report on destroy, we will remove the timer that will refresh the status of the custom report execution`);
 /**
  * 
@@ -102,9 +112,11 @@ export class UtilExecuteCustomReportComponent implements OnInit {
 
   }
 
-  refreshCustomReportExecutionStatus() {
 
-    const customReportExecutionHistoryIDs = this.customReportExecutionHistories.filter(
+
+  refreshCustomReportExecutionStatus() {
+ 
+    const customReportExecutionHistoryIDs : string = this.customReportExecutionHistories.filter(
       // we don't need to update any execution history that is already expired, or already fulfilled
       customReportExecutionHistory => customReportExecutionHistory.resultFileExpired == false &&
           customReportExecutionHistory.customReportExecutionPercent < 100
@@ -112,7 +124,7 @@ export class UtilExecuteCustomReportComponent implements OnInit {
       customReportExecutionHistory => customReportExecutionHistory.id
     ).join(",");
 
-    if (customReportExecutionHistoryIDs == null) {
+    if (customReportExecutionHistoryIDs == null || customReportExecutionHistoryIDs == "") {
       return;
     }
 
@@ -134,6 +146,8 @@ export class UtilExecuteCustomReportComponent implements OnInit {
 
                 url = `${url}/download`; 
                 url = `${url}/${this.customReportExecutionHistories[index].id}`;
+                url = `${url}?token=${this.tokenService.get()?.token}`;
+                url = `${url}&companyId=${this.companyService.getCurrentCompany()!.id}`;
                 this.customReportExecutionHistories[index].resultFileDownloadUrl = url;
               }
             }
@@ -177,4 +191,39 @@ export class UtilExecuteCustomReportComponent implements OnInit {
         && customReportExecutionHistory.resultFileDownloadUrl != null 
         && customReportExecutionHistory.status == CustomReportExecutionStatus.COMPLETE;
   }
+
+  /**
+   * 
+  downloadCustomReport(customReportExecutionHistory: CustomReportExecutionHistory) {
+    if (customReportExecutionHistory.resultFileDownloadUrl) {
+      // console.log(`start to call ${customReportExecutionHistory.resultFileDownloadUrl} with token ${this.tokenService.get()?.token}`)
+      customReportExecutionHistory.status = CustomReportExecutionStatus.DOWNLOADING;
+
+      fetch(customReportExecutionHistory.resultFileDownloadUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.tokenService.get()?.token,
+          "companyId": this.companyService.getCurrentCompany()!.id + "",   
+        },
+      }).then((response) => response.blob())
+      .then((blob) => {
+        var _url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+
+        console.log(`start to download iwth url ${_url}`)
+        window.open(_url, "_blank")!.focus();
+        customReportExecutionHistory.status = CustomReportExecutionStatus.COMPLETE;
+      })
+      .catch((err) => {
+        console.log(err);
+        customReportExecutionHistory.status = CustomReportExecutionStatus.COMPLETE;
+      });
+    }
+  }
+   */
 }

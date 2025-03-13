@@ -11,7 +11,8 @@ export interface InventoryActivity {
   transactionId: string;
   transactionGroupId: string;
   lpn: string;
-  location: WarehouseLocation;
+  locationId?: number;
+  location?: WarehouseLocation;
   locationName?: string;
   item: Item;
   virtual?: boolean;

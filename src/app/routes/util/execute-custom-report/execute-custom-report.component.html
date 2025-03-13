@@ -62,7 +62,8 @@
         <nz-card nzTitle="{{'result' | i18n}}">
 
             <nz-list class="demo-loadmore-list" >
-                <nz-list-item *ngFor="let customReportExecutionHistory of customReportExecutionHistories">
+                <nz-list-item *ngFor="let customReportExecutionHistory of customReportExecutionHistories"> 
+
                     <ng-container>
                         <nz-list-item-meta 
                             nzDescription="{{ customReportExecutionHistory.query }}">
@@ -78,22 +79,30 @@
                         </nz-list-item-meta>
                         
                         <ul nz-list-item-actions>
+
                             <nz-list-item-action *ngIf="readyForDownload(customReportExecutionHistory)">
-                                
+
                                 <a [href]="customReportExecutionHistory.resultFileDownloadUrl" target="_blank" rel="noopener noreferrer">
                                     {{ 'report.download' | i18n }} 
                                 </a> 
+
+                                <!--
+                                <a (click)="downloadCustomReport(customReportExecutionHistory)">
+                                    <nz-spin [nzSpinning]="customReportExecutionHistory.status == CustomReportExecutionStatusList.DOWNLOADING">{{ 'report.download' | i18n }} 
+                                    </nz-spin>
+                                </a> 
+                                --> 
                               </nz-list-item-action>
                               
                             <nz-list-item-action *ngIf="!readyForDownload(customReportExecutionHistory) && customReportExecutionHistory.status != CustomReportExecutionStatusList.FAIL">
-                                 {{ 'report.download' | i18n }}  
+                                 <nz-spin>{{ 'report.download' | i18n }}  </nz-spin>
                               </nz-list-item-action>
                               
                             <nz-list-item-action *ngIf="customReportExecutionHistory.status == CustomReportExecutionStatusList.FAIL">
                                 <span style="color: red">{{ 'fail' | i18n }}  </span>
                              </nz-list-item-action>
                         </ul>
-                    </ng-container>
+                    </ng-container> 
                 </nz-list-item>
             </nz-list>
 
