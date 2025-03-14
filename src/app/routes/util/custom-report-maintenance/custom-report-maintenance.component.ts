@@ -26,6 +26,8 @@ export class UtilCustomReportMaintenanceComponent implements OnInit {
  
   newParameterName = "";
   newParameterDisplayText = "";
+  newParameterValueRequired = false;
+  newParameterDefaultValue = "";
 
   addParameterModalVisible = false;
  
@@ -193,7 +195,9 @@ export class UtilCustomReportMaintenanceComponent implements OnInit {
           companyId: this.companyService.getCurrentCompany()!.id,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           name: this.newParameterName, 
-          displayText: this.newParameterDisplayText
+          displayText: this.newParameterDisplayText,
+          required: this.newParameterValueRequired,
+          defaultValue: this.newParameterDefaultValue
 
         }];
         

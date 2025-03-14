@@ -8,6 +8,7 @@ export interface CustomReport {
     warehouseId: number;
 
     name: string;
+    description?: string;
     
     runAtCompanyLevel: boolean;
  

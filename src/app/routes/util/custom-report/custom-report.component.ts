@@ -35,7 +35,7 @@ export class UtilCustomReportComponent implements OnInit {
   customReportTableColumns : STColumn[] = [];
   defaultCustomReportTableColumns: {[key: string]: STColumn } = {
 
-    "name" : { title: this.i18n.fanyi("name"), index: 'name' , width: 50, 
+    "name" : { title: this.i18n.fanyi("name"), index: 'name' , width: 150, 
       sort: {
         compare: (a, b) => a.name.localeCompare(b.name)
       },
@@ -45,11 +45,11 @@ export class UtilCustomReportComponent implements OnInit {
         multiple: true
       }
     },   
-    "query" : { title: this.i18n.fanyi("query"), index: 'query' , width: 150, 
+    "description" : { title: this.i18n.fanyi("description"), index: 'description' , width: 250, 
       sort: {
-        compare: (a, b) => a.query.localeCompare(b.query)
+        compare: (a, b) => a.description.localeCompare(b.description)
       }, 
-    },  
+    },   
     "runAtCompanyLevel" : { title: this.i18n.fanyi("runAtCompanyLevel"), index: 'runAtCompanyLevel' , width: 150, 
       sort: {
         compare: (a, b) => a.runAtCompanyLevel.localeCompare(b.runAtCompanyLevel)
@@ -62,6 +62,11 @@ export class UtilCustomReportComponent implements OnInit {
         fn: (filter, record) => record.runAtCompanyLevel === filter.value,
         multiple: true
       }
+    },  
+    "query" : { title: this.i18n.fanyi("query"), index: 'query' , width: 550, 
+      sort: {
+        compare: (a, b) => a.query.localeCompare(b.query)
+      }, 
     },   
    
   };
@@ -197,9 +202,9 @@ export class UtilCustomReportComponent implements OnInit {
         companyId: this.companyService.getCurrentCompany()!.id, 
         webPageName: this.pageName,
         tableName: "customReportTable",
-        columnName: "query",
-        columnDisplayText: this.i18n.fanyi("query"),
-        columnWidth: 150,
+        columnName: "description",
+        columnDisplayText: this.i18n.fanyi("description"),
+        columnWidth: 250,
         columnSequence: 2, 
         displayFlag: true
       },
@@ -211,6 +216,16 @@ export class UtilCustomReportComponent implements OnInit {
         columnDisplayText: this.i18n.fanyi("runAtCompanyLevel"),
         columnWidth: 150,
         columnSequence: 3, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "customReportTable",
+        columnName: "query",
+        columnDisplayText: this.i18n.fanyi("query"),
+        columnWidth: 550,
+        columnSequence: 4, 
         displayFlag: true
       },
        
@@ -275,6 +290,7 @@ export class UtilCustomReportComponent implements OnInit {
       next: () => {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("message.action.success"));
+        this.search();
       }, 
       error: () => this.isSpinning = false
     })

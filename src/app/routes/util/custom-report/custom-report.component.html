@@ -30,7 +30,8 @@
   
   <div class="search-result-list"> 
     
-    <st #customReportTable [data]="customReports" [columns]="customReportTableColumns" [footer]="tableFoot">
+    <st #customReportTable [data]="customReports" [columns]="customReportTableColumns"
+     [footer]="tableFoot"  [scroll]="{ x: '1750px' }">
       
         
       <ng-template st-row="actionColumn" let-customReport > 
