@@ -43,9 +43,15 @@
                 [columns]="customReportParametersTableColumns" [page]="{ show: false }">
 
                 <ng-template st-row="valueColumn" let-customReportParameter let-index="index"> 
-                   
+                    
                     <input   type="text" nz-input [ngModel]="customReportParameter.value"
-                    (ngModelChange)="customReportParameterValueChanged(customReportParameter.name, $event)" required  />
+                    (ngModelChange)="customReportParameterValueChanged(customReportParameter.name, $event)" 
+                    [nzStatus] = "paramStatus.get(customReportParameter.id)!"  />
+
+                  @if(customReportParameter.required) {
+
+                    <span style="color:red">*</span>
+                  }
                 </ng-template>
 
             </st>

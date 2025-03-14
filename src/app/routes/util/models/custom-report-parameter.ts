@@ -7,4 +7,8 @@ export interface CustomReportParameter {
     displayText: string;
 
     value?: string;
+    
+    required: boolean;
+    defaultValue?: string;
+
 }

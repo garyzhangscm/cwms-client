@@ -5,6 +5,7 @@ import { STColumn } from '@delon/abc/st';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
+import { NzStatus } from 'ng-zorro-antd/core/types';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -21,8 +22,9 @@ import { CustomReportService } from '../services/custom-report.service';
 })
 export class UtilExecuteCustomReportComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
-  [x: string]: any;
+  // [x: string]: any;
 
+  paramStatus: Map<number, NzStatus>= new Map();
   currentCustomReport?: CustomReport;  
   customReportExecutionHistories: CustomReportExecutionHistory[] = [];
   // customReportExecutionStatusUpdateTimer?: NodeJS.Timeout;
@@ -66,6 +68,19 @@ export class UtilExecuteCustomReportComponent implements OnInit {
         this.customReportService.getCustomReport(params['id'])
           .subscribe(customReportRes => {
             this.currentCustomReport = customReportRes; 
+            this.currentCustomReport.customReportParameters.forEach(
+              parameter => {
+                parameter.value = parameter.defaultValue;
+                if (parameter.required && parameter.value == null) {
+
+                  this.paramStatus.set(parameter.id!, "warning");
+                }
+                else {
+                  
+                  this.paramStatus.set(parameter.id!, "");
+                }
+              }
+            )
             
           });
       }
@@ -88,7 +103,7 @@ export class UtilExecuteCustomReportComponent implements OnInit {
   }
   
   ngOnDestroy() {
-    if (this.refreshReportResult)
+    // if (this.refreshReportResult)
     console.log(`custom report on destroy, we will remove the timer that will refresh the status of the custom report execution`);
 /**
  * 
