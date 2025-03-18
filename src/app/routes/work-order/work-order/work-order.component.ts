@@ -320,7 +320,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         compare: (a, b) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
       }, 
     },  
-    "item" : { title: this.i18n.fanyi("work-order.item"), render: 'itemColumn', width: 150,  
+    "item" : { title: this.i18n.fanyi("work-order.item"), render: 'itemColumn', width: 200,  
       sort: {
         compare: (a, b) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
       }, 

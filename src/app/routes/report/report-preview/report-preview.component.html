@@ -38,17 +38,25 @@
     </a>
  
   </div>
-  <div nz-row  >
+  <div nz-row [nzGutter]="24" > 
+      <div nz-col [nzSpan]="6"> </div>
+      <div nz-col [nzSpan]="12"> 
+        <pdf-viewer [src]="pdfUrl" 
+          [render-text]="true" 
+          style="width: 100%; height: 750px"
+        
+        ></pdf-viewer>
+      </div>
+      <div nz-col [nzSpan]="6"> </div>
     <!--
 
-    <pdf-viewer [src]="pdfUrl" 
-      [render-text]="true" 
-      style="width: 100px; height: 125px"
-    
-    ></pdf-viewer>
-
-    -->
     <ngx-extended-pdf-viewer [src]="pdfUrl" ></ngx-extended-pdf-viewer>
+    
+    <ngx-extended-pdf-viewer [src]="'https://pdfobject.com/pdf/sample.pdf'"  
+    [height]="'auto'"   [textLayer]="true"
+    ></ngx-extended-pdf-viewer>
+    -->
+    
 
   </div> 
 </div>

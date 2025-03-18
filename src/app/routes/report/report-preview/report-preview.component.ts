@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
+import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, _HttpClient, TitleService } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -9,9 +10,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ReportOrientation } from '../models/report-orientation.enum';
-import { ReportType } from '../models/report-type.enum'; 
+import { ReportType } from '../models/report-type.enum';  
 
 @Component({
     selector: 'app-report-report-preview',
@@ -21,6 +23,7 @@ import { ReportType } from '../models/report-type.enum';
 })
 export class ReportReportPreviewComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private tokenService = inject(DA_SERVICE_TOKEN);
   printingInProcess = false;
   printingOrientation: PrintPageOrientation = PrintPageOrientation.Portrait;
   reportOrientation: ReportOrientation = ReportOrientation.LANDSCAPE;
@@ -38,8 +41,10 @@ export class ReportReportPreviewComponent implements OnInit {
     private printingService: PrintingService,
     private titleService: TitleService,
     private webLocation: Location, 
-    private router: Router
-  ) {}
+    private router: Router, 
+    private companyService: CompanyService, 
+  ) { 
+  }
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
@@ -60,6 +65,8 @@ export class ReportReportPreviewComponent implements OnInit {
       url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
       url = `${url}/${params['type']}`;
       url = `${url}/${params['fileName']}`;
+      url = `${url}?token=${this.tokenService.get()?.token}`;
+      url = `${url}&companyId=${this.companyService.getCurrentCompany()!.id}`;
 
       this.pdfUrl = url;
       this.fileName = params['fileName'];
