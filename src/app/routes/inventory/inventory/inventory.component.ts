@@ -1378,17 +1378,17 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   
-  removeSelectedInventory(): void {
+  removeSelectedInventory(asyncronized : boolean = false): void {
     // make sure we have at least one checkbox checked
     
     this.isSpinning = true;
     const selectedInventory = this.getSelectedInventory();
     if (selectedInventory.length > 0) {
       const inventoryIds = selectedInventory.map(inventory => inventory.id!).join(",");
-        this.inventoryService.removeInventories(inventoryIds).subscribe(
+        this.inventoryService.removeInventories(inventoryIds, asyncronized).subscribe(
           {
-            next: () => {
-              this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+            next: (message) => {
+              this.messageService.success(this.i18n.fanyi(message));
               this.isSpinning = false;
               this.search();
             }, 

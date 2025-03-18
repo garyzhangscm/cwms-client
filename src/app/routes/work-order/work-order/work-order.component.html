@@ -63,8 +63,8 @@
     </div>
 
     <st #workOrderTable [data]="listOfAllWorkOrder"  [columns]="workOrderTableColumns" 
-        [expand]="workOrderTableExpand"  expandAccordion 
-        [page]="workOrderTablePagination"
+        [expand]="workOrderTableExpand"  expandAccordion resizable 
+        [page]="workOrderTablePagination" [widthMode]="{ type: 'strict' }"
         (change)="workOrderTableChanged($event)" [scroll]="{ x: '2405px' }">
 
         

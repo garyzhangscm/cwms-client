@@ -20,7 +20,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzStepsModule } from 'ng-zorro-antd/steps'; 
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { PdfViewerModule } from 'ng2-pdf-viewer'; 
 import { CWMSCommonModule } from '../common/common.module';
  
 import { ReportPrinterMaintenanceComponent } from './printer-maintenance/printer-maintenance.component';
@@ -70,9 +70,9 @@ const COMPONENTS: Array<Type<void>> = [
     CommonModule,
     NzUploadModule ,
     CWMSCommonModule,
-    NgxExtendedPdfViewerModule,
+    PdfViewerModule,
     NzInputNumberModule ,
-    NzCheckboxModule ,
+    NzCheckboxModule , 
   ],
   declarations: COMPONENTS,
 })

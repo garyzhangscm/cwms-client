@@ -511,8 +511,19 @@
         
         @if(!userPermissionMap.has('remove-inventory-in-batch') || userPermissionMap.get('remove-inventory-in-batch')) {
         
-          <button nz-button nzDanger (click)="removeSelectedInventory()" >
-            {{'delete' | i18n}}</button>
+          <button nz-button nz-dropdown [nzDropdownMenu]="remoteInventoryButton"   
+          (click)="removeSelectedInventory(false)" >
+            {{ 'delete' | i18n }}<i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #remoteInventoryButton="nzDropdownMenu">
+            <ul nz-menu>
+
+              <li nz-menu-item>
+                <a (click)="removeSelectedInventory(true)">
+                  {{ 'send-delete-request' | i18n }}</a>
+              </li> 
+
+            </ul>
+          </nz-dropdown-menu> 
         }
         <nz-divider nzType="vertical"></nz-divider> 
 

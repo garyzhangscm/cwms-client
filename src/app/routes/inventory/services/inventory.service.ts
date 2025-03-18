@@ -12,6 +12,7 @@ import { SystemControlledNumberService } from '../../util/services/system-contro
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { AllocationDryRunResult } from '../models/allocation-dry-run-result';
 import { Inventory } from '../models/inventory';
 import { ItemFamily } from '../models/item-family';
@@ -23,6 +24,7 @@ export class InventoryService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private systemControlledNumberService: SystemControlledNumberService,
     private utilService: UtilService
   ) {}
@@ -252,9 +254,16 @@ export class InventoryService {
     return this.http.delete(url).pipe(map(res => res.data));
   }
   
-  removeInventories(inventoryIds: string): Observable<Inventory> {
-    const url = `inventory/inventory?inventoryIds=${inventoryIds}`;
-    return this.http.delete(url).pipe(map(res => res.data));
+  removeInventories(inventoryIds: string, asyncronized : boolean = false): Observable<string> {
+    const url = `inventory/inventory/batch-remove`;
+
+    
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+    params = params.append('asyncronized', asyncronized); 
+
+    return this.http.delete(url, params, {body: inventoryIds}).pipe(map(res => res.data));
   }
   adjustDownInventory(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
     let url = `inventory/inventory-adj/${inventory.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
