@@ -611,8 +611,10 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     this.productionLineService.getProductionLine(productionLine.id!).subscribe({
         next: (productionLineRes) => {
           this.productionLines.filter(productionLine => productionLineRes.id! === productionLine.id!)
-          .forEach(productionLine => productionLine.assignedWorkOrders = productionLineRes.assignedWorkOrders);
-
+          .forEach(productionLine => {
+            productionLine.assignedWorkOrders = productionLineRes.assignedWorkOrders;
+            this.loadItemInformationForProductionLines([productionLine]);
+          }); 
         }
     })
   }
