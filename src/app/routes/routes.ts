@@ -14,7 +14,8 @@ export const routes: Routes = [
     data: {},
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
+      // { path: 'dashboard', component: DashboardComponent },      
+      { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
       { path: 'warehouse-layout', loadChildren: () => import('./warehouse-layout/warehouse-layout.module').then((m) => m.WarehouseLayoutModule) },
       { path: 'util', loadChildren: () => import('./util/util.module').then((m) => m.UtilModule) },
       { path: 'auth', loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule) },

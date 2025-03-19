@@ -1,0 +1,66 @@
+<page-header title="{{'welcome' |  i18n}}" ></page-header>
+<div style="background: #ECECEC;padding:30px;">
+   
+    
+    <div nz-row [nzGutter]="8">
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(openOrders | number)!" [nzTitle]="'Open Orders'"></nz-statistic>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(newOrdersToday | number)!" [nzTitle]="'New Orders Today'"></nz-statistic>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(completedOrdersToday | number)!" [nzTitle]="'Completed Orders Today'"></nz-statistic>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(openReceipt | number)!" [nzTitle]="'Open Receipt'"></nz-statistic>
+        </nz-card>
+      </div>
+    </div> 
+  </div>
+
+<div nz-row [nzGutter]="8">
+  <div nz-col [nzSpan]="12"  style="padding: 20px">
+    <nz-spin [nzSpinning]="loadingPickCount">
+
+      <nz-card nzTitle="Picks">
+        <div  *ngIf="totalPicks > 0">
+            <span >Open Picks({{ openPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" openPicks * 100 / totalPicks" strokeWidth="14" target="100" color="red"></g2-mini-progress> 
+        </div>
+        <div  *ngIf="totalPicks == 0">
+          <span >Open Picks(0 %)</span> <g2-mini-progress [percent]=" 0" strokeWidth="14" target="100" color="red"></g2-mini-progress> 
+        </div>
+        <div *ngIf="totalPicks > 0">
+            <span>Completed Picks({{ completedPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" completedPicks * 100 / totalPicks" strokeWidth="14" target="100" color="orange"></g2-mini-progress> 
+        </div>
+        <div  *ngIf="totalPicks == 0">
+            <span>Completed Picks(0 %)</span> <g2-mini-progress [percent]="0" strokeWidth="14" target="100" color="orange"></g2-mini-progress> 
+        </div>
+        <!--
+
+        <div>
+            <span>Staged Picks({{ stagedPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" stagedPicks * 100 / totalPicks" strokeWidth="14" target="100" color="green"></g2-mini-progress> 
+        </div>
+        -->
+    </nz-card>
+    </nz-spin>
+  </div>
+  <div nz-col [nzSpan]="12"   style="padding: 20px">
+    
+    <nz-spin [nzSpinning]="loadingPickByLocationGroupCount">
+
+      <nz-card  nzTitle="Picks By Location Group">
+        <div *ngFor="let pick of picksByLocationGroup | keyvalue">
+            <span>{{ pick.key }} ({{pick.value[1] }} /  {{ pick.value[0]}})</span> <g2-mini-progress [percent]=" pick.value[1] * 100 / pick.value[0]" strokeWidth="14" [target]="pick.value[0]"></g2-mini-progress> 
+        </div>
+    </nz-card>
+    </nz-spin>
+  </div>
+</div>
