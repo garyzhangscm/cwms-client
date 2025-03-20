@@ -3,7 +3,7 @@ import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core
 import { FormBuilder, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -35,6 +35,8 @@ import { ReceiptLineService } from '../services/receipt-line.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { ReceivingTransactionService } from '../services/receiving-transaction.service';
 import { DateTimeService } from '../../util/services/date-time.service';
+import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 
 @Component({
     selector: 'app-inbound-receipt',
@@ -44,111 +46,66 @@ import { DateTimeService } from '../../util/services/date-time.service';
 })
 export class InboundReceiptComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
-  listOfColumns: Array<ColumnItem<Receipt>> = [
-    {
-      name: 'receipt.number',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => a.number.localeCompare(b.number),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'client',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'supplier',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableObjField(a.supplier, b.supplier, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, 
-    {
-      name: 'status',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => a.receiptStatus.localeCompare(b.receiptStatus),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'receipt.totalLineCount',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalLineCount, b.totalLineCount),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'receipt.totalItemCount',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'receipt.totalExpectedQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'receipt.totalReceivedQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalReceivedQuantity, b.totalReceivedQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-  ];
+  pageName = "receipt";
+  tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
+  
+  receiptTableColumns: STColumn[] = [];
+  
+  defaultReceiptTableColumns: {[key: string]: STColumn } = {
+
+    "number" : { title: this.i18n.fanyi("receipt.number"), render: 'numberColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.number, b.number)
+      },
+      
+    },   
+    "client" : { title: this.i18n.fanyi("client"), render: 'clientColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
+      }, 
+    },  
+    "supplier" : { title: this.i18n.fanyi("supplier"), render: 'supplierColumn', width: 150,  
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableObjField(a.supplier, b.supplier, 'name'),
+      },
+    },   
+    "status" : { title: this.i18n.fanyi("status"), render: 'statusColumn', width: 150,  
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.status, b.status),
+      },
+    },   
+    "totalLineCount" : { title: this.i18n.fanyi("receipt.totalLineCount"), index: 'totalLineCount', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalLineCount, b.totalLineCount),
+      },
+    },  
+    "totalItemCount" : { title: this.i18n.fanyi("receipt.totalItemCount"), index: 'totalItemCount' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+      },
+    },  
+    "totalExpectedQuantity" : { title: this.i18n.fanyi("receipt.totalExpectedQuantity"), index: 'totalExpectedQuantity' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
+      },
+    },   
+    "totalReceivedQuantity" : { title: this.i18n.fanyi("receipt.totalReceivedQuantity"), index: 'totalReceivedQuantity', width: 150 , 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalReceivedQuantity, b.totalReceivedQuantity),
+      },
+    },   
+   
+  };
 
 
-  listOfSelection = [
-    {
-      text: this.i18n.fanyi(`select-all-rows`),
-      onSelect: () => {
-        this.onAllChecked(true);
-      }
-    },
-  ];
-  expandSet = new Set<number>();
+ 
 
-  setOfCheckedId = new Set<number>();
-  checked = false;
-  indeterminate = false;
+  receiptTablePI = 10;
+  receiptTablePS = -1;
+
+  @ViewChild('receiptTable', { static: false })
+  receiptTable!: STComponent;
+ 
   isSpinning = false;
   isReceivedInventorySpinning = false;
   validSuppliers: Supplier[] = [];
@@ -161,7 +118,7 @@ export class InboundReceiptComponent implements OnInit {
   searchForm = this.fb.nonNullable.group({
     client: this.fb.control('', []),
     number: this.fb.control('', []),
-    statusList: this.fb.control('', []),
+    statusList: this.fb.control([], []),
     supplier: this.fb.control('', []),
     checkInDateTimeRanger: this.fb.control<Date | null>(null),
     checkInDate: this.fb.control<Date | null>(null),
@@ -180,8 +137,7 @@ export class InboundReceiptComponent implements OnInit {
   searchResult = '';
 
   // Table data for display
-  listOfAllReceipts: Receipt[] = [];
-  listOfDisplayReceipts: Receipt[] = [];
+  listOfAllReceipts: Receipt[] = []; 
   receiptStatusList = ReceiptStatus;
   receiptStatusListKeys = Object.keys(this.receiptStatusList);
 
@@ -245,6 +201,7 @@ export class InboundReceiptComponent implements OnInit {
     private clientService: ClientService,
     private itemService: ItemService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private billableActivityTypeService: BillableActivityTypeService,
     private userService: UserService, 
     private datePipe: DatePipe,
@@ -266,19 +223,178 @@ export class InboundReceiptComponent implements OnInit {
       next: (inventoryConfigurationRes) => {
         if (inventoryConfigurationRes) { 
           this.inventoryConfiguration = inventoryConfigurationRes;
-        } 
+        }  
         this.setupReceiptLineTableColumns();
         this.setupReceivedInventoryTableColumns();
         this.setupReceivingTransactionTableColumns();
       } , 
-      error: () =>  {
+      error: () =>  { 
         this.setupReceiptLineTableColumns();
         this.setupReceivedInventoryTableColumns();
         this.setupReceivingTransactionTableColumns();
       }
 
     });
+    
+    this.initWebPageTableColumnConfiguration();
   }
+  initWebPageTableColumnConfiguration() {
+    this.initReceiptTableColumnConfiguration();
+  }
+
+  initReceiptTableColumnConfiguration() {
+    
+    this.localCacheService.getWebPageTableColumnConfiguration(this.pageName, "receiptTable")
+    .subscribe({
+      next: (webPageTableColumnConfigurationRes) => {
+        
+        if (webPageTableColumnConfigurationRes && webPageTableColumnConfigurationRes.length > 0){
+
+          this.tableConfigurations["receiptTable"] = webPageTableColumnConfigurationRes;
+          this.refreshReceiptTableColumns();
+
+        }
+        else {
+          this.tableConfigurations["receiptTable"] = this.getDefaultReceiptTableColumnsConfiguration();
+          this.refreshReceiptTableColumns();
+        }
+      }, 
+      error: () => {
+        
+        this.tableConfigurations["receiptTable"] = this.getDefaultReceiptTableColumnsConfiguration();
+        this.refreshReceiptTableColumns();
+      }
+    })
+  }
+  
+  refreshReceiptTableColumns() {
+    
+    if (this.tableConfigurations["receiptTable"] == null) {
+      return;
+    } 
+    this.receiptTableColumns = [
+      { title: '', index: 'number', type: 'checkbox' },
+    ];
+
+    // loop through the table column configuration and add
+    // the column if the display flag is checked, and by sequence
+    let receiptTableConfiguration = this.tableConfigurations["receiptTable"].filter(
+      column => column.displayFlag
+    );
+
+    receiptTableConfiguration.sort((a, b) => a.columnSequence - b.columnSequence);
+
+    receiptTableConfiguration.forEach(
+      columnConfig => {
+        this.defaultReceiptTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
+
+        this.receiptTableColumns = [...this.receiptTableColumns, 
+          this.defaultReceiptTableColumns[columnConfig.columnName]
+        ]
+      }
+    )
+
+    this.receiptTableColumns = [...this.receiptTableColumns,  
+      {
+        title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
+        render: 'actionColumn',
+        iif: () => !this.displayOnly
+      }, 
+    ];
+    
+    if (this.receiptTable != null) {
+
+      this.receiptTable.resetColumns({ emitReload: true });
+    } 
+  }
+
+  
+  getDefaultReceiptTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
+    
+    return [
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "number",
+        columnDisplayText: this.i18n.fanyi("receipt.number"),
+        columnWidth: 150,
+        columnSequence: 1, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "client",
+        columnDisplayText: this.i18n.fanyi("client"),
+        columnWidth: 150,
+        columnSequence: 2, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "supplier",
+        columnDisplayText: this.i18n.fanyi("supplier"),
+        columnWidth: 150,
+        columnSequence: 3, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "status",
+        columnDisplayText: this.i18n.fanyi("status"),
+        columnWidth: 150,
+        columnSequence: 4, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "totalLineCount",
+        columnDisplayText: this.i18n.fanyi("receipt.totalLineCount"),
+        columnWidth: 150,
+        columnSequence: 5, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "totalItemCount",
+        columnDisplayText: this.i18n.fanyi("receipt.totalItemCount"),
+        columnWidth: 150,
+        columnSequence: 6, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "totalExpectedQuantity",
+        columnDisplayText: this.i18n.fanyi("receipt.totalExpectedQuantity"),
+        columnWidth: 150,
+        columnSequence: 7, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receiptTable",
+        columnName: "totalReceivedQuantity",
+        columnDisplayText: this.i18n.fanyi("receipt.totalReceivedQuantity"),
+        columnWidth: 150,
+        columnSequence: 8, 
+        displayFlag: true
+      },
+    ]
+  } 
+
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
     this.activatedRoute.queryParams.subscribe(params => {
@@ -315,11 +431,21 @@ export class InboundReceiptComponent implements OnInit {
       next: (billableActivityTypeRes) => this.allBillableActivityTypes = billableActivityTypeRes
     });
   }
+  
+  receiptTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]){
+    // console.log(`new wave table column configuration list ${tableColumnConfigurationList.length}`)
+    // tableColumnConfigurationList.forEach(
+    //   column => {
+    //     console.log(`${JSON.stringify(column)}`)
+    //   }
+    // )
+    this.tableConfigurations["receiptTable"] = tableColumnConfigurationList;
+    this.refreshReceiptTableColumns();
+}
 
   resetForm(): void {
     this.searchForm!.reset();
-    this.listOfAllReceipts = [];
-    this.listOfDisplayReceipts = [];
+    this.listOfAllReceipts = []; 
 
   }
 
@@ -336,41 +462,42 @@ export class InboundReceiptComponent implements OnInit {
     let checkInSpecificDate : Date | undefined= this.searchForm.value.checkInDate ?
     this.searchForm.value.checkInDate : undefined;
 
-    this.receiptService.getReceipts(
+    this.receiptService.getPageableReceipts(
       this.searchForm!.value.number ? this.searchForm!.value.number : undefined, 
       true,       
-      this.searchForm!.value.statusList ? this.searchForm!.value.statusList : undefined,       
+      this.searchForm!.value.statusList ? this.searchForm!.value.statusList.join(",") : undefined,       
       this.searchForm!.value.supplier ? this.searchForm!.value.supplier : undefined,
       checkInStartTime, 
       checkInEndTime, 
       checkInSpecificDate, 
          undefined,
          undefined,
-      this.searchForm!.value.client ? this.searchForm!.value.client : undefined).subscribe(
-      receiptRes => {
+      this.searchForm!.value.client ? this.searchForm!.value.client : undefined,
+      this.receiptTable.pi,
+      this.receiptTable.ps).subscribe({
+        next: (page) => {
 
-        this.searching = false;
-        this.isSpinning = false;
-        this.searchResult = this.i18n.fanyi('search_result_analysis', {
-          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-          rowCount: receiptRes.length,
-        });
-        
-        this.refreshDetailInformations(receiptRes);
-        // sum up the line's billable activity and save it to the receipt level
-        // for easy display
-        this.setupReceiptBillableActivities(receiptRes);
-        
-        this.listOfAllReceipts = this.calculateQuantities(receiptRes);
-        this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
+          this.searching = false;
+          this.isSpinning = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: page.totalElements,
+          });
+          
+          this.refreshDetailInformations(page.content);
+          // sum up the line's billable activity and save it to the receipt level
+          // for easy display
+          this.setupReceiptBillableActivities(page.content);
+          
+          this.listOfAllReceipts = this.calculateQuantities(page.content); 
+        }, 
+        error: () => {
 
-      },
-      () => {
-        this.searching = false;
-        this.isSpinning = false;
-        this.searchResult = '';
-      },
-    );
+          this.searching = false;
+          this.isSpinning = false;
+          this.searchResult = '';
+        }
+      })  
   }
   setupReceiptBillableActivities(receipts: Receipt[]) {
     receipts.forEach(
@@ -388,6 +515,29 @@ export class InboundReceiptComponent implements OnInit {
       }
     );
   }
+  receiptTableChanged(event: STChange) : void { 
+    
+    if (event.type === 'expand' && event.expand.expand === true) {
+      // console.log(`expanded: ${event.expand.id}`)
+      this.loadReceivedInventory(event.expand);
+    }
+    else if (event.type === 'pi' || event.type === 'ps') {
+      // see if the PI or PS is changed. If so
+      // we will need to redo the search since we use 
+      // client size pagination
+      const pipsChanged : boolean = 
+          (this.receiptTablePI != this.receiptTable.pi) ||
+          (this.receiptTablePS != this.receiptTable.ps);
+ 
+      if (pipsChanged) {
+        this.receiptTablePI = this.receiptTable.pi;
+        this.receiptTablePS = this.receiptTable.ps;
+        this.search();
+      }
+
+    }
+  }
+
   delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
   }
@@ -420,6 +570,7 @@ export class InboundReceiptComponent implements OnInit {
     // refresh the table while everything is loaded
     // console.log(`mnaually refresh the table`);   
     // this.st.reload();  
+    this.receiptTable.reload();
   }
   refreshDetailInformation(receipt: Receipt) { 
   
@@ -612,37 +763,7 @@ export class InboundReceiptComponent implements OnInit {
     });
     return receipts;
   }
-
-
-  updateCheckedSet(id: number, checked: boolean): void {
-    if (checked) {
-      this.setOfCheckedId.add(id);
-    } else {
-      this.setOfCheckedId.delete(id);
-    }
-  }
-
-  onItemChecked(id: number, checked: boolean): void {
-    this.updateCheckedSet(id, checked);
-    this.refreshCheckedStatus();
-  }
-
-  onAllChecked(value: boolean): void {
-    this.listOfDisplayReceipts!.forEach(item => this.updateCheckedSet(item.id!, value));
-    this.refreshCheckedStatus();
-  }
-
-  currentPageDataChange($event: Receipt[]): void {
-    this.listOfDisplayReceipts! = $event;
-    this.refreshCheckedStatus();
-  }
-
-  refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayReceipts!.every(item => this.setOfCheckedId.has(item.id!));
-    this.indeterminate = this.listOfDisplayReceipts!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
-  }
-
-
+ 
   removeSelectedReceipts(): void {
     // make sure we have at least one checkbox checked
     const selectedReceipts = this.getSelectedReceipts();
@@ -665,13 +786,25 @@ export class InboundReceiptComponent implements OnInit {
   }
 
   getSelectedReceipts(): Receipt[] {
-    const selectedReceipts: Receipt[] = [];
-    this.listOfAllReceipts.forEach((receipt: Receipt) => {
-      if (this.setOfCheckedId.has(receipt.id!)) {
-        selectedReceipts.push(receipt);
-      }
-    });
-    return selectedReceipts;
+    let selectedReceipts: Receipt[] = []; 
+    
+    const dataList: STData[] = this.receiptTable.list; 
+    dataList
+      .filter( data => data.checked)
+      .forEach(
+        data => {
+          // get the selected billing request and added it to the 
+          // selectedBillingRequests
+          selectedReceipts = [...selectedReceipts,
+              ...this.listOfAllReceipts.filter(
+                receipt => receipt.id == data["id"]
+              )
+          ]
+
+        }
+      ); 
+      return selectedReceipts;
+ 
   }
 
   checkInReceipt(receipt: Receipt): void {
@@ -698,21 +831,7 @@ export class InboundReceiptComponent implements OnInit {
       error: () => this.isSpinning = false
     });
   }
-  
-  onExpandChange(receipt: Receipt, checked: boolean): void { 
-    console.log(`expanded for receipt ${receipt.number}, expanded? ${checked} `)
-    if (checked) {
-      this.expandSet.add(receipt.id!);
-      this.loadItems(receipt);
-      this.loadReceivedInventory(receipt);
-      this.loadReceivingTransactions(receipt);
-      
-    } else {
-      this.expandSet.delete(receipt.id!);
-    }
-
-
-  }
+   
   @ViewChild('st', { static: false })
   st!: STComponent;
   
