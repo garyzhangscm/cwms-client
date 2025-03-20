@@ -7,6 +7,7 @@ import { I18NService } from 'src/app/core/i18n/i18n.service';
  
 import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
+import { Page } from '../../util/models/Page';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -28,6 +29,7 @@ export class ReceiptService {
     private utilService: UtilService
   ) { }
 
+  
   getReceipts(number?: string, loadDetails?: boolean, statusList?: string, 
     supplierName?: string, 
     checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date, purchaseOrderId?: number, 
@@ -68,6 +70,58 @@ export class ReceiptService {
     if (checkInSpecificDate) {
       params = params.append('checkInDate', this.dateTimeService.getISODateString(checkInSpecificDate));  
     }
+
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  getPageableReceipts(number?: string, loadDetails?: boolean, statusList?: string, 
+    supplierName?: string, 
+    checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date, purchaseOrderId?: number, 
+    clientName?: string, clientId?: string, 
+    pageIndex?: number, 
+    pageSize?: number): Observable<Page<Receipt[]>> {
+    const url = `inbound/paginated-receipts`;
+     
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
+    if (number) {
+      params = params.append('number', this.utilService.encodeHttpParameter(number.trim()));  
+    }
+    if (loadDetails !== undefined && loadDetails!= null) {
+      params = params.append('loadDetails', loadDetails);  
+    }
+    if (statusList) {
+      params = params.append('receipt_status_list', statusList);  
+    }
+    if (supplierName) {
+      params = params.append('supplierName', supplierName);  
+    }
+    if (clientName) {
+      params = params.append('clientName', clientName);  
+    }
+    if (clientId) {
+      params = params.append('clientId', clientId);  
+    }
+    if (purchaseOrderId) {
+      params = params.append('purchaseOrderId', purchaseOrderId);  
+    }
+
+    if (checkInStartTime) {
+      params = params.append('checkInStartTime', this.dateTimeService.getISODateTimeString(checkInStartTime));  
+    }
+    if (checkInEndTime) {
+      params = params.append('checkInEndTime', this.dateTimeService.getISODateTimeString(checkInEndTime));  
+    }
+    if (checkInSpecificDate) {
+      params = params.append('checkInDate', this.dateTimeService.getISODateString(checkInSpecificDate));  
+    }
+    if (pageIndex != null) {
+      // st table is 1 indexed
+      params = params.append('pageIndex', pageIndex - 1);   
+    } 
+    if (pageSize != null) {
+      params = params.append('pageSize', pageSize);   
+    } 
 
     return this.http.get(url, params).pipe(map(res => res.data));
   }

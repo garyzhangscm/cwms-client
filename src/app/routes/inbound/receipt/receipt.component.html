@@ -34,11 +34,13 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-                *ngFor="let status of receiptStatusListKeys"
-                [nzValue]="status"
-                nzLabel="{{ 'RECEIPT-STATUS-' + status | i18n}}"
-             ></nz-option>
+            
+            @for (status of receiptStatusListKeys; track $index) {
+              <nz-option 
+                  [nzValue]="status"
+                  nzLabel="{{ 'RECEIPT-STATUS-' + status | i18n}}"
+               ></nz-option>
+            }
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -118,355 +120,357 @@
 
       </ul>
     </nz-dropdown-menu>
+
+    <app-util-table-column-selection [tableColumnsConfiguration]="tableConfigurations['receiptTable']" 
+    (tableColumnConfigurationChanged)="receiptTableColumnConfigurationChanged($event)" >
+      
+    </app-util-table-column-selection>
      
   </div>
 
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #receiptTable nzShowSizeChanger nzShowPagination
-    [nzData]="listOfAllReceipts" [nzFooter]="tableFoot">
-    <thead>
-      <tr>
-        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
-        <th nzWidth="60px"></th>
-        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
-          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-          [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
+  
+  <st #receiptTable 
+      [data]="listOfAllReceipts"  
+      [columns]="receiptTableColumns" [footer]="tableFoot" [scroll]="{ x: '2650px' }" 
+        [expand]="receiptExpand"  expandAccordion 
+        (change)="receiptTableChanged($event)"
+        [widthMode]="{ type: 'strict' }" resizable>
 
-        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
-      </tr>
-    </thead>
-    <tbody>
+        
+      <ng-template st-row="numberColumn" let-receipt > 
+        @if(!displayOnly && (!userPermissionMap.has('modify-receipt') || userPermissionMap.get('modify-receipt'))) {
+
+          <a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
+          [queryParams]="{receiptNumber : receipt.number}" >
+          {{ receipt.number }}</a>
+        }
+        @if(displayOnly || userPermissionMap.get('modify-receipt') == false) {
+
+          <span>{{receipt.number}}</span>
+        }
+      </ng-template>
       
-      <ng-template ngFor let-receipt [ngForOf]="receiptTable.data">
-        <tr>
+      <ng-template st-row="clientColumn" let-receipt > 
+        
+        @if(receipt.clientId && receipt.client == null) {
 
-          <td [nzChecked]="setOfCheckedId.has(receipt.id!)" (nzCheckedChange)="onItemChecked(receipt.id!, $event)"></td>
-          <td [nzExpand]="expandSet.has(receipt.id!)" (nzExpandChange)="onExpandChange(receipt, $event)"></td>
-
-          <td>
-            
-            <a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
-              [queryParams]="{receiptNumber : receipt.number}" *ngIf="!displayOnly && (!userPermissionMap.has('modify-receipt') || userPermissionMap.get('modify-receipt'))">
-              {{ receipt.number }}</a>
-            <span *ngIf="displayOnly || userPermissionMap.get('modify-receipt') == false">{{receipt.number}}</span>
-            </td>
-          <td>
-              <nz-skeleton-element 
-              *ngIf="receipt.clientId && receipt.client == null"
-              nzType="input"
-              [nzActive]="true"
-              [nzSize]="'small'"
-              style="width:75px"
+          <nz-skeleton-element  
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
             ></nz-skeleton-element> 
-            {{ receipt.client?.name }}
-          </td>
-          <td>
-            
+        }
+        {{ receipt.client?.name }}
+
+      </ng-template>
+      
+      <ng-template st-row="supplierColumn" let-receipt > 
+        
+        @if(receipt.supplierId && receipt.supplier == null) {
+
+          <nz-skeleton-element  
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+            ></nz-skeleton-element> 
+        }
+        <span nz-tooltip nzTooltipTitle="{{ receipt.supplier?.description }}">{{ receipt.supplier?.name }}</span> 
+
+      </ng-template>
+      
+      <ng-template st-row="statusColumn" let-receipt > 
+        {{ 'RECEIPT-STATUS-' + receipt.receiptStatus | i18n}}
+      </ng-template>
+
+      <ng-template st-row="actionColumn" let-receipt > 
+        <nz-list>
+          <nz-list-item> 
+            <button
+                nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" >
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu> 
+                  <li nz-menu-item *ngIf="receipt.receiptStatus === receiptStatus.OPEN && (!userPermissionMap.has('check-in-receipt') || userPermissionMap.get('check-in-receipt'))">                  
+                    
+                    <a   nz-type="primary" (click)="checkInReceipt(receipt)"
+                    >
+                    {{ 'receipt.check-in' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="!displayOnly">                  
+                    
+                    <a routerLink="/inbound/printing-receiving-lpn-label" routerLinkActive="active"
+                    [queryParams]="{receiptId : receipt.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="receipt.receiptStatus !== receiptStatus.CLOSED && (!userPermissionMap.has('complete-receipt') || userPermissionMap.get('complete-receipt'))">                   
+                    
+                    <a   nz-type="primary" (click)="closeReceipt(receipt)"
+                    >
+                    {{ 'complete' | i18n }}</a>
+                  </li> 
+                  <li nz-menu-item *ngIf="!userPermissionMap.has('add-receipt-billable-activity') || userPermissionMap.get('add-receipt-billable-activity')">                   
+                     
+
+                    <a (click)="openAddReceiptActivityModal(receipt, tplBillableActivityModalTitle, 
+                        tplBillableActivityModalContent, tplBillableActivityModalFooter)" >
+                    {{ 'billable-activity-type.add' | i18n }}</a>
+                  </li> 
+                  
+                </ul>
+              </nz-dropdown-menu>
+          </nz-list-item> 
+        </nz-list>
+      </ng-template>
+      
+      <ng-template #receiptExpand let-receipt>
+        
+        <nz-tabset [nzType]="'card'">
+          <nz-tab nzTitle="{{'receipt.line' | i18n}}">
+              
+            <st #st [data]="receipt.receiptLines"  [columns]="receiptLineTableColumns"  
+              [expand]="expand"  expandAccordion 
+              [scroll]="{ x: '1315px' }">
+              
+             
+              <!--   billable activity  -->
+              <ng-template #expand let-receiptLine let-index="index" >
+                
+                <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" >
+                  <nz-tab nzTitle="{{'receipt.line.billable-activity-type' | i18n}}">
+                    <st #stLineBillableActivityTable [data]="receiptLine.receiptLineBillableActivities" 
+                      [columns]="receiptLineBillableActivityTableColumns"  >
+  
+                      <ng-template st-row="activityTimeColumn" let-billableActivity let-index="index">
+                        {{ billableActivity.activityTime | date:'short'}} 
+    
+                     </ng-template>
+                      <ng-template st-row="actionColumn" let-billableActivity let-index="index">
+                        <button nz-button nzDanger (click)="removeReceiptLineBillableActivity(receiptLine, billableActivity)"
+                            *ngIf="!userPermissionMap.has('remove-receipt-billable-activity') || userPermissionMap.get('remove-receipt-billable-activity')">
+                         {{'remove' | i18n}}
+                        </button>
+   
+                     </ng-template>
+                    </st>
+                  </nz-tab>
+                </nz-tabset>
+              </ng-template>
+
+              <ng-template st-row="expectedQuantityColumn" let-receiptLine let-index="index"> 
+
+                {{ receiptLine.displayExpectedQuantity }}  
                 <nz-skeleton-element 
-                *ngIf="receipt.supplierId && receipt.supplier == null"
+                  *ngIf="receiptLine.displayUnitOfMeasureForExpectedQuantity == null"
                 nzType="input"
                 [nzActive]="true"
                 [nzSize]="'small'"
                 style="width:75px"
-              ></nz-skeleton-element> 
-            
-            <span nz-tooltip nzTooltipTitle="{{ receipt.supplier?.description }}">{{ receipt.supplier?.name }}</span> 
-          
-          </td> 
-          <td>{{ 'RECEIPT-STATUS-' + receipt.receiptStatus | i18n}} </td>
-          <td>{{ receipt.totalLineCount }}</td>
-          <td>{{ receipt.totalItemCount }}</td>
-          <td>{{ receipt.totalExpectedQuantity }}</td>
-          <td>{{ receipt.totalReceivedQuantity }}</td>
-          <td *ngIf="!displayOnly">
-            
-          <nz-list>
-            <nz-list-item> 
-              <button
-                  nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" >
-                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-                <nz-dropdown-menu #menu="nzDropdownMenu">
-                  <ul nz-menu> 
-                    <li nz-menu-item *ngIf="receipt.receiptStatus === receiptStatus.OPEN && (!userPermissionMap.has('check-in-receipt') || userPermissionMap.get('check-in-receipt'))">                  
-                      
-                      <a   nz-type="primary" (click)="checkInReceipt(receipt)"
-                      >
-                      {{ 'receipt.check-in' | i18n }}</a>
-                    </li>
-                    <li nz-menu-item *ngIf="!displayOnly">                  
-                      
-                      <a routerLink="/inbound/printing-receiving-lpn-label" routerLinkActive="active"
-                      [queryParams]="{receiptId : receipt.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
-                    </li>
-                    <li nz-menu-item *ngIf="receipt.receiptStatus !== receiptStatus.CLOSED && (!userPermissionMap.has('complete-receipt') || userPermissionMap.get('complete-receipt'))">                   
-                      
-                      <a   nz-type="primary" (click)="closeReceipt(receipt)"
-                      >
-                      {{ 'complete' | i18n }}</a>
+              ></nz-skeleton-element>  
+                <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
+                  *ngIf="receiptLine.displayUnitOfMeasureForExpectedQuantity != null">
+                  {{receiptLine.displayUnitOfMeasureForExpectedQuantity.name}}
+                  <span nz-icon nzType="down"></span>
+                </a>
+                <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                    (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                    -->
+                    <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
+                    (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
                     </li> 
-                    <li nz-menu-item *ngIf="!userPermissionMap.has('add-receipt-billable-activity') || userPermissionMap.get('add-receipt-billable-activity')">                   
-                       
-  
-                      <a (click)="openAddReceiptActivityModal(receipt, tplBillableActivityModalTitle, 
-                          tplBillableActivityModalContent, tplBillableActivityModalFooter)" >
-                      {{ 'billable-activity-type.add' | i18n }}</a>
-                    </li> 
-                    
                   </ul>
-                </nz-dropdown-menu>
-            </nz-list-item> 
-          </nz-list>
+                </nz-dropdown-menu> 
+
+              </ng-template>
               
-          </td>
-        </tr>
-        <tr [nzExpand]="expandSet.has(receipt.id!)">
-          <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" >
-            <nz-tab nzTitle="{{'receipt.line' | i18n}}">
-              
-              <st #st [data]="receipt.receiptLines"  [columns]="receiptLineTableColumns"  
-               [expand]="expand"  expandAccordion 
-               [scroll]="{ x: '1315px' }">
-                
-               
-                <!--   billable activity  -->
-                <ng-template #expand let-receiptLine let-index="index" >
-                  
-                  <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" >
-                    <nz-tab nzTitle="{{'receipt.line.billable-activity-type' | i18n}}">
-                      <st #stLineBillableActivityTable [data]="receiptLine.receiptLineBillableActivities" 
-                        [columns]="receiptLineBillableActivityTableColumns"  >
-    
-                        <ng-template st-row="activityTimeColumn" let-billableActivity let-index="index">
-                          {{ billableActivity.activityTime | date:'short'}} 
-      
-                       </ng-template>
-                        <ng-template st-row="actionColumn" let-billableActivity let-index="index">
-                          <button nz-button nzDanger (click)="removeReceiptLineBillableActivity(receiptLine, billableActivity)"
-                              *ngIf="!userPermissionMap.has('remove-receipt-billable-activity') || userPermissionMap.get('remove-receipt-billable-activity')">
-                           {{'remove' | i18n}}
-                          </button>
-     
-                       </ng-template>
-                      </st>
-                    </nz-tab>
-                  </nz-tabset>
-                </ng-template>
+              <ng-template st-row="arrivedQuantityColumn" let-receiptLine let-index="index"> 
 
-                <ng-template st-row="expectedQuantityColumn" let-receiptLine let-index="index"> 
- 
-                  {{ receiptLine.displayExpectedQuantity }}  
-                  <nz-skeleton-element 
-                    *ngIf="receiptLine.displayUnitOfMeasureForExpectedQuantity == null"
-                  nzType="input"
-                  [nzActive]="true"
-                  [nzSize]="'small'"
-                  style="width:75px"
-                ></nz-skeleton-element>  
-                  <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
-                    *ngIf="receiptLine.displayUnitOfMeasureForExpectedQuantity != null">
-                    {{receiptLine.displayUnitOfMeasureForExpectedQuantity.name}}
-                    <span nz-icon nzType="down"></span>
-                  </a>
-                  <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
-                    <ul nz-menu nzSelectable>
-                      <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                      (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                      -->
-                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
-                      (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                      </li> 
-                    </ul>
-                  </nz-dropdown-menu> 
+                {{ receiptLine.displayArrivedQuantity }}  
+                <nz-skeleton-element 
+                  *ngIf="receiptLine.displayUnitOfMeasureForArrivedQuantity == null"
+                nzType="input"
+                [nzActive]="true"
+                [nzSize]="'small'"
+                style="width:75px"
+              ></nz-skeleton-element>  
+                <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
+                  *ngIf="receiptLine.displayUnitOfMeasureForArrivedQuantity != null">
+                  {{receiptLine.displayUnitOfMeasureForArrivedQuantity.name}}
+                  <span nz-icon nzType="down"></span>
+                </a>
+                <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                    (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                    -->
+                    <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
+                    (click)="changeDisplayItemUnitOfMeasureForArrivedQuantity(receiptLine, itemUnitOfMeasure)">
+                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                    </li> 
+                  </ul>
+                </nz-dropdown-menu> 
 
-                </ng-template>
-                
-                <ng-template st-row="arrivedQuantityColumn" let-receiptLine let-index="index"> 
- 
-                  {{ receiptLine.displayArrivedQuantity }}  
-                  <nz-skeleton-element 
-                    *ngIf="receiptLine.displayUnitOfMeasureForArrivedQuantity == null"
-                  nzType="input"
-                  [nzActive]="true"
-                  [nzSize]="'small'"
-                  style="width:75px"
-                ></nz-skeleton-element>  
-                  <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
-                    *ngIf="receiptLine.displayUnitOfMeasureForArrivedQuantity != null">
-                    {{receiptLine.displayUnitOfMeasureForArrivedQuantity.name}}
-                    <span nz-icon nzType="down"></span>
-                  </a>
-                  <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
-                    <ul nz-menu nzSelectable>
-                      <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                      (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                      -->
-                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
-                      (click)="changeDisplayItemUnitOfMeasureForArrivedQuantity(receiptLine, itemUnitOfMeasure)">
-                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                      </li> 
-                    </ul>
-                  </nz-dropdown-menu> 
-
-                </ng-template>
+              </ng-template>
 
 
-                <ng-template st-row="cubicMeterColumn" let-receiptLine let-index="index"> 
-                   {{ receiptLine.cubicMeter | number: '1.0-2'}} 
-                </ng-template>
-                <ng-template st-row="receivedQuantityColumn" let-receiptLine let-index="index"> 
- 
-                  {{ receiptLine.displayReceivedQuantity }}  
-                  <nz-skeleton-element 
-                    *ngIf="receiptLine.displayUnitOfMeasureForReceivedQuantity == null"
-                  nzType="input"
-                  [nzActive]="true"
-                  [nzSize]="'small'"
-                  style="width:75px"
-                ></nz-skeleton-element>  
-                  <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
-                    *ngIf="receiptLine.displayUnitOfMeasureForReceivedQuantity != null">
-                    {{receiptLine.displayUnitOfMeasureForReceivedQuantity.name}}
-                    <span nz-icon nzType="down"></span>
-                  </a>
-                  <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
-                    <ul nz-menu nzSelectable>
-                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                      (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
-                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                      </li> 
-                    </ul>
-                  </nz-dropdown-menu> 
+              <ng-template st-row="cubicMeterColumn" let-receiptLine let-index="index"> 
+                 {{ receiptLine.cubicMeter | number: '1.0-2'}} 
+              </ng-template>
+              <ng-template st-row="receivedQuantityColumn" let-receiptLine let-index="index"> 
 
-                </ng-template>
+                {{ receiptLine.displayReceivedQuantity }}  
+                <nz-skeleton-element 
+                  *ngIf="receiptLine.displayUnitOfMeasureForReceivedQuantity == null"
+                nzType="input"
+                [nzActive]="true"
+                [nzSize]="'small'"
+                style="width:75px"
+              ></nz-skeleton-element>  
+                <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
+                  *ngIf="receiptLine.displayUnitOfMeasureForReceivedQuantity != null">
+                  {{receiptLine.displayUnitOfMeasureForReceivedQuantity.name}}
+                  <span nz-icon nzType="down"></span>
+                </a>
+                <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                    (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
+                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                    </li> 
+                  </ul>
+                </nz-dropdown-menu> 
 
-                <ng-template st-row="itemNameColumn" let-receiptLine let-index="index"> 
+              </ng-template>
 
-                  <nz-skeleton-element 
-                      *ngIf="receiptLine.itemId && receiptLine.item == null"
-                      nzType="input"
-                      [nzActive]="true"
-                      [nzSize]="'small'"
-                      style="width:75px"
-                    ></nz-skeleton-element> 
-                   {{ receiptLine.item?.name }} 
+              <ng-template st-row="itemNameColumn" let-receiptLine let-index="index"> 
 
-                </ng-template>
-                <ng-template st-row="itemDescriptionColumn" let-receiptLine let-index="index">
-                  
-                  <nz-skeleton-element 
-                      *ngIf="receiptLine.itemId && receiptLine.item == null"
-                      nzType="input"
-                      [nzActive]="true"
-                      [nzSize]="'small'"
-                      style="width:75px"
-                    ></nz-skeleton-element> 
-                   {{ receiptLine.item?.description }} 
-
-                </ng-template>
-                <ng-template st-row="actionColumn" let-receiptLine let-index="index">
-                   
-                  <button
-                    nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" >
-                  {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-                  <nz-dropdown-menu #menu="nzDropdownMenu">
-                    <ul nz-menu> 
-                      <li nz-menu-item *ngIf="!displayOnly && (!userPermissionMap.has('add-receipt-line-billable-activity') || userPermissionMap.get('add-receipt-line-billable-activity'))">                  
-                        
-                        <a   nz-type="primary" (click)="openAddReceiptLineActivityModal(receipt, receiptLine, tplBillableActivityModalTitle, 
-                        tplBillableActivityModalContent, tplBillableActivityModalFooter)" 
-                        >
-                        {{ 'billable-activity-type.add' | i18n }}</a>
-                      </li>
-                      <li nz-menu-item *ngIf="!displayOnly">                  
-                        
-                        <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
-                        [queryParams]="{receiptLineId : receiptLine.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
-                      </li>
-                      <li nz-menu-item *ngIf="!displayOnly && (!userPermissionMap.has('modify-receipt-line') || userPermissionMap.get('modify-receipt-line'))">                  
-                        
-                        <a   nz-type="primary" (click)="openModifyReceiptLineModal(receipt, receiptLine, tplReceiptLineModalTitle, tplReceiptLineModalContent)" 
-                        >
-                        {{ 'modify' | i18n }}</a>
-                      </li>
-                    </ul>
-                  </nz-dropdown-menu> 
-
-               </ng-template>
-              </st> 
-            </nz-tab>  
-            
-            <nz-tab nzTitle="{{ 'receipt.receivedInventory' | i18n }}">
-              <nz-spin [nzSpinning]="isReceivedInventorySpinning" [nzSize]="'large'">
-                <st #stInventory [data]="listOfAllReceivedInventory[receipt.number]"  [columns]="receivedInventoryTableColumns" 
-                  [scroll]="{ x: '1515px' }">
-                
-                  <ng-template st-row="quantityColumn" let-item let-index="index"> 
-    
-                    {{ item.displayQuantity }}  
-                    <nz-skeleton-element 
-                      *ngIf="item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
-                        && item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
+                <nz-skeleton-element 
+                    *ngIf="receiptLine.itemId && receiptLine.item == null"
                     nzType="input"
                     [nzActive]="true"
                     [nzSize]="'small'"
                     style="width:75px"
-                  ></nz-skeleton-element>  
-                    <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" *ngIf="item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure != null">
-                      {{item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}<span nz-icon nzType="down"></span>
-                    </a>
-                    <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
-                      <ul nz-menu nzSelectable>
-                        <li nz-menu-item *ngFor="let itemUnitOfMeasure of item.itemPackageType?.itemUnitOfMeasures" 
-                        (click)="changeDisplayItemUnitOfMeasure(item, itemUnitOfMeasure)">
-                          {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                        </li> 
-                      </ul>
-                    </nz-dropdown-menu> 
-  
-                  </ng-template>
-                </st>
-              </nz-spin>
-              
-            </nz-tab>
-            
-            <nz-tab nzTitle="{{ 'receipt.billable-activity-type' | i18n }}"> 
-                <st #stReceiptBillableActivityTable 
-                    [data]="receipt.receiptBillableActivities"  [columns]="receiptBillableActivityTableColumns">
-                     
-                  <ng-template st-row="activityTimeColumn" let-billableActivity let-index="index">
-                    {{ billableActivity.activityTime | date:'short'}} 
+                  ></nz-skeleton-element> 
+                 {{ receiptLine.item?.name }} 
 
-                 </ng-template>
-                  <ng-template st-row="actionColumn" let-billableActivity let-index="index">
-                     <button nz-button nzDanger (click)="removeReceiptBillableActivity(receipt, billableActivity)" 
-                       *ngIf="!displayOnly && (!userPermissionMap.has('remove-receipt-line-billable-activity') || userPermissionMap.get('remove-receipt-line-billable-activity'))">
-                      {{'remove' | i18n}}
-                     </button>
-
-                  </ng-template>
-                </st>  
-            </nz-tab> 
-            
-            <nz-tab nzTitle="{{'receivingTransaction' | i18n}}"> 
-              <st *ngIf="receipt.receivingTransactions != null" 
-                  #receivingTransactionTable [data]="receipt.receivingTransactions"  [columns]="receivingTransactionTableColumns"  
+              </ng-template>
+              <ng-template st-row="itemDescriptionColumn" let-receiptLine let-index="index">
                 
-               [scroll]="{ x: '1315px' }"> 
+                <nz-skeleton-element 
+                    *ngIf="receiptLine.itemId && receiptLine.item == null"
+                    nzType="input"
+                    [nzActive]="true"
+                    [nzSize]="'small'"
+                    style="width:75px"
+                  ></nz-skeleton-element> 
+                 {{ receiptLine.item?.description }} 
 
-               
-              </st> 
-            </nz-tab>  
+              </ng-template>
+              <ng-template st-row="actionColumn" let-receiptLine let-index="index">
+                 
+                <button
+                  nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" >
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu> 
+                    <li nz-menu-item *ngIf="!displayOnly && (!userPermissionMap.has('add-receipt-line-billable-activity') || userPermissionMap.get('add-receipt-line-billable-activity'))">                  
+                      
+                      <a   nz-type="primary" (click)="openAddReceiptLineActivityModal(receipt, receiptLine, tplBillableActivityModalTitle, 
+                      tplBillableActivityModalContent, tplBillableActivityModalFooter)" 
+                      >
+                      {{ 'billable-activity-type.add' | i18n }}</a>
+                    </li>
+                    <li nz-menu-item *ngIf="!displayOnly">                  
+                      
+                      <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
+                      [queryParams]="{receiptLineId : receiptLine.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
+                    </li>
+                    <li nz-menu-item *ngIf="!displayOnly && (!userPermissionMap.has('modify-receipt-line') || userPermissionMap.get('modify-receipt-line'))">                  
+                      
+                      <a   nz-type="primary" (click)="openModifyReceiptLineModal(receipt, receiptLine, tplReceiptLineModalTitle, tplReceiptLineModalContent)" 
+                      >
+                      {{ 'modify' | i18n }}</a>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu> 
+
+             </ng-template>
+            </st> 
+          </nz-tab>  
+          
+          <nz-tab nzTitle="{{ 'receipt.receivedInventory' | i18n }}">
+            <nz-spin [nzSpinning]="isReceivedInventorySpinning" [nzSize]="'large'">
+              <st #stInventory [data]="listOfAllReceivedInventory[receipt.number]"  [columns]="receivedInventoryTableColumns" 
+                [scroll]="{ x: '1515px' }">
+              
+                <ng-template st-row="quantityColumn" let-item let-index="index"> 
+  
+                  {{ item.displayQuantity }}  
+                  <nz-skeleton-element 
+                    *ngIf="item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
+                      && item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element>  
+                  <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" *ngIf="item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure != null">
+                    {{item.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}<span nz-icon nzType="down"></span>
+                  </a>
+                  <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+                    <ul nz-menu nzSelectable>
+                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of item.itemPackageType?.itemUnitOfMeasures" 
+                      (click)="changeDisplayItemUnitOfMeasure(item, itemUnitOfMeasure)">
+                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                      </li> 
+                    </ul>
+                  </nz-dropdown-menu> 
+
+                </ng-template>
+              </st>
+            </nz-spin>
+            
+          </nz-tab>
+          
+          <nz-tab nzTitle="{{ 'receipt.billable-activity-type' | i18n }}"> 
+              <st #stReceiptBillableActivityTable 
+                  [data]="receipt.receiptBillableActivities"  [columns]="receiptBillableActivityTableColumns">
+                   
+                <ng-template st-row="activityTimeColumn" let-billableActivity let-index="index">
+                  {{ billableActivity.activityTime | date:'short'}} 
+
+               </ng-template>
+                <ng-template st-row="actionColumn" let-billableActivity let-index="index">
+                   <button nz-button nzDanger (click)="removeReceiptBillableActivity(receipt, billableActivity)" 
+                     *ngIf="!displayOnly && (!userPermissionMap.has('remove-receipt-line-billable-activity') || userPermissionMap.get('remove-receipt-line-billable-activity'))">
+                    {{'remove' | i18n}}
+                   </button>
+
+                </ng-template>
+              </st>  
+          </nz-tab> 
+          
+          <nz-tab nzTitle="{{'receivingTransaction' | i18n}}"> 
+            <st *ngIf="receipt.receivingTransactions != null" 
+                #receivingTransactionTable [data]="receipt.receivingTransactions"  [columns]="receivingTransactionTableColumns"  
+              
+             [scroll]="{ x: '1315px' }"> 
+
+             
+            </st> 
+          </nz-tab>  
+            
         </nz-tabset>
-
-
-        </tr>
+            
       </ng-template>
-    </tbody>
-  </nz-table>
+    
+  </st>
+
+
+  
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     <button nz-button nzDanger (click)="removeSelectedReceipts()" *ngIf="!userPermissionMap.has('remove-multiple-receipt') || userPermissionMap.get('remove-multiple-receipt')">
       {{ 'delete' | i18n }}
