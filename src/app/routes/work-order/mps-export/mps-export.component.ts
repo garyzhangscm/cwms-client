@@ -84,9 +84,9 @@ export class WorkOrderMpsExportComponent implements OnInit {
   search() { 
     this.isSpinning = true;
     let startTime : Date = this.searchForm.value.dateRanger ? 
-        this.searchForm.value.dateRanger.value[0] : undefined; 
+        this.searchForm.value.dateRanger[0] : undefined; 
     let endTime : Date = this.searchForm.value.dateRanger ? 
-        this.searchForm.value.dateRanger.value[1] : undefined;  
+        this.searchForm.value.dateRanger[1] : undefined;  
 
 
     this.masterProductionScheduleService.getMasterProductionSchedules(

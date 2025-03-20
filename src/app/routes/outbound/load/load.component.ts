@@ -191,9 +191,9 @@ export class OutboundLoadComponent implements OnInit {
     // this.checked = false;
     
     let startTime : Date = this.searchForm.value.dateTimeRanger ? 
-        this.searchForm.value.dateTimeRanger.value[0] : undefined; 
+        this.searchForm.value.dateTimeRanger[0] : undefined; 
     let endTime : Date = this.searchForm.value.dateTimeRanger ? 
-        this.searchForm.value.dateTimeRanger.value[1] : undefined; 
+        this.searchForm.value.dateTimeRanger[1] : undefined; 
     let specificDate : Date = this.searchForm.value.date;
 
     this.trailerAppointmentService.getTrailerAppointments(

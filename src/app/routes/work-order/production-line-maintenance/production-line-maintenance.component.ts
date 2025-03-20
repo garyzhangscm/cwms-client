@@ -10,6 +10,7 @@ import { PrintingService } from '../../common/services/printing.service';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { Printer } from '../../report/models/printer';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
@@ -72,6 +73,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private unitOfMeasureService: UnitOfMeasureService,
     private productionLineTypeService: ProductionLineTypeService,
+    private localCacheService: LocalCacheService,
     private itemService: ItemService,
     private mouldService: MouldService) {
     this.pageTitle = this.i18n.fanyi('menu.main.production-line.maintenance');
@@ -133,6 +135,9 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
           .subscribe({
             next: (productionLine) => {
               this.currentProductionLine = productionLine;
+
+              this.loadDetails(this.currentProductionLine);
+
               this.refreshListOfProductionLineCapacityItemData();
   
               this.newProductionLine = false;
@@ -158,6 +163,24 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     // Load all moulds
     this.mouldService.getMoulds().subscribe(mouldsRes =>
       this.availableMoulds = mouldsRes);
+  }
+
+  loadDetails(productionLine: ProductionLine) : void {
+    if (productionLine.inboundStageLocationId != null && productionLine.inboundStageLocation == null) {
+      this.localCacheService.getLocation(productionLine.inboundStageLocationId).subscribe({
+        next: (locationRes) => productionLine.inboundStageLocation = locationRes
+      });
+    }
+    if (productionLine.outboundStageLocationId != null && productionLine.outboundStageLocation == null) {
+      this.localCacheService.getLocation(productionLine.outboundStageLocationId).subscribe({
+        next: (locationRes) => productionLine.outboundStageLocation = locationRes
+      });
+    }
+    if (productionLine.productionLineLocationId != null && productionLine.productionLineLocation == null) {
+      this.localCacheService.getLocation(productionLine.productionLineLocationId).subscribe({
+        next: (locationRes) => productionLine.productionLineLocation = locationRes
+      });
+    }
   }
 
   loadAvailableProductionLineTypes() : void {
@@ -209,7 +232,8 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
 
 
       }
-    )
+    );
+    console.log(`capacity data is loaded for current production line  ${this.currentProductionLine.name}`);
 
   }
 
@@ -371,6 +395,16 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   }
   addProductionLineCapacityItemData(productionLineCapacity: ProductionLineCapacity, edit: boolean = false): void {
 
+    if (productionLineCapacity.item == null && productionLineCapacity.itemId != null) {
+      this.localCacheService.getItem(productionLineCapacity.itemId).subscribe({
+        next: (itemRes) => productionLineCapacity.item = itemRes
+      });
+    }
+    if (productionLineCapacity.unitOfMeasure == null && productionLineCapacity.unitOfMeasureId != null) {
+      this.localCacheService.getUnitOfMeasure(productionLineCapacity.unitOfMeasureId).subscribe({
+        next: (unitOfMeasureRes) => productionLineCapacity.unitOfMeasure = unitOfMeasureRes
+      });
+    }
 
     this.listOfProductionLineCapacityItemData = [
       ...this.listOfProductionLineCapacityItemData,
