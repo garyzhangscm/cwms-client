@@ -117,9 +117,9 @@ export class QcQcInspectionComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = ''; 
-    console.log(`this.searchForm.controls.qcInspectionRequestType.value: ${this.searchForm.value.qcInspectionRequestType.value}`) 
+    console.log(`this.searchForm.controls.qcInspectionRequestType.value: ${this.searchForm.value.qcInspectionRequestType}`) 
 
-      this.qcInspectionRequestService.getQCInspectionRequests(
+    this.qcInspectionRequestService.getQCInspectionRequests(
         undefined, undefined,
         this.searchForm.value.lpn,
         this.searchForm.value.number, 
@@ -280,6 +280,11 @@ export class QcQcInspectionComponent implements OnInit {
         
         this.router.navigateByUrl(
           `/qc/inspect-by-request?ids=${qcInspectionRequest.id}`);
+          break;
+      }
+      case QcInspectionRequestType.INBOUND_BY_INVENTORY: {
+        this.router.navigateByUrl(
+          `/qc/inspect-inventory?ids=${qcInspectionRequest.inventory?.id}`);
           break;
       }
 
