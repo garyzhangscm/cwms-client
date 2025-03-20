@@ -60,11 +60,12 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
      
-    
+    console.log(`this.searchForm.value.dateTimeRanger: ${JSON.stringify(this.searchForm.value.dateTimeRanger)}`);
+
     let startTime : Date = this.searchForm.value.dateTimeRanger ? 
-        this.searchForm.value.dateTimeRanger.value[0] : undefined; 
+        this.searchForm.value.dateTimeRanger[0] : undefined; 
     let endTime : Date = this.searchForm.value.dateTimeRanger ? 
-        this.searchForm.value.dateTimeRanger.value[1] : undefined; 
+        this.searchForm.value.dateTimeRanger[1] : undefined; 
 
     if (startTime == null || endTime == null) {
       this.isSpinning = false;

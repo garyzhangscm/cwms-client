@@ -440,9 +440,9 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.isSpinning = true;
     
     let startCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
-        this.searchForm.value.createdTimeRanger.value[0] : undefined; 
+        this.searchForm.value.createdTimeRanger[0] : undefined; 
     let endCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
-        this.searchForm.value.createdTimeRanger.value[1] : undefined; 
+        this.searchForm.value.createdTimeRanger[1] : undefined; 
     let specificCreatedDate : Date = this.searchForm.value.createdDate;
 
     this.waveService

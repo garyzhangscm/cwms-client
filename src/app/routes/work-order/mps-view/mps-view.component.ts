@@ -170,9 +170,9 @@ export class WorkOrderMpsViewComponent implements OnInit {
      */
     
     let startTime : Date = this.searchForm.value.mpsDateTimeRanger ? 
-        this.searchForm.value.mpsDateTimeRanger.value[0] : addDays(new Date(), -2000); 
+        this.searchForm.value.mpsDateTimeRanger[0] : addDays(new Date(), -2000); 
     let endTime : Date = this.searchForm.value.mpsDateTimeRanger ? 
-        this.searchForm.value.mpsDateTimeRanger.value[1] : addDays(new Date(), 2000); 
+        this.searchForm.value.mpsDateTimeRanger[1] : addDays(new Date(), 2000); 
 
       
     this.masterProductionScheduleService.getMasterProductionSchedules(      

@@ -104,9 +104,9 @@ export class WorkOrderProductionLineMonitorTransactionComponent implements OnIni
     this.searchResult = '';
      
     let startTime : Date = this.searchForm.value.transactionDateTimeRanger ? 
-        this.searchForm.value.transactionDateTimeRanger.value[0] : undefined; 
+        this.searchForm.value.transactionDateTimeRanger[0] : undefined; 
     let endTime : Date = this.searchForm.value.transactionDateTimeRanger ? 
-        this.searchForm.value.transactionDateTimeRanger.value[1] : undefined; 
+        this.searchForm.value.transactionDateTimeRanger[1] : undefined; 
     let specificDate : Date = this.searchForm.value.transactionDate;
 
     this.productionLineMonitorTransactionService.getProductionLineMonitorTransactions(

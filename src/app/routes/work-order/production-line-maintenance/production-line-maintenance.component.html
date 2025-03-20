@@ -30,7 +30,7 @@
 
 
 
-<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+<div class="small-card" *ngIf="stepIndex === 0 && currentProductionLine != null" style="padding-top: 20px;">
 
 
   <div nz-row [nzGutter]="24">
@@ -75,17 +75,19 @@
           {{ 'production-line.location' | i18n }}
         </nz-form-label>
         <nz-form-control nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          @if (currentProductionLine.productionLineLocation != null) {
 
-          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-            <input type="text" nz-input [(ngModel)]="currentProductionLine.productionLineLocation!.name"
-              (ngModelChange)="onProductionLineLocationChanged($event)" />
-          </nz-input-group>
-
-          <ng-template #suffixIconButton>
-            <app-warehouse-layout-location-query-popup
-              (recordSelected)="processProductionLineLocationQueryResult($event)">
-            </app-warehouse-layout-location-query-popup>
-          </ng-template>
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input type="text" nz-input [(ngModel)]="currentProductionLine.productionLineLocation!.name"
+                (ngModelChange)="onProductionLineLocationChanged($event)" />
+            </nz-input-group>
+  
+            <ng-template #suffixIconButton>
+              <app-warehouse-layout-location-query-popup
+                (recordSelected)="processProductionLineLocationQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
+          }
 
         </nz-form-control>
       </nz-form-item>
@@ -98,16 +100,18 @@
         </nz-form-label>
         <nz-form-control nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
-          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton2">
-            <input type="text" nz-input [(ngModel)]="currentProductionLine.inboundStageLocation!.name"
-              (ngModelChange)="onProductionLineInboundLocationChanged($event)" />
-          </nz-input-group>
+          @if (currentProductionLine.inboundStageLocation != null) {
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton2">
+              <input type="text" nz-input [(ngModel)]="currentProductionLine.inboundStageLocation!.name"
+                (ngModelChange)="onProductionLineInboundLocationChanged($event)" />
+            </nz-input-group>
 
-          <ng-template #suffixIconButton2>
-            <app-warehouse-layout-location-query-popup
-              (recordSelected)="processProductionLineInboundLocationQueryResult($event)">
-            </app-warehouse-layout-location-query-popup>
-          </ng-template>
+            <ng-template #suffixIconButton2>
+              <app-warehouse-layout-location-query-popup
+                (recordSelected)="processProductionLineInboundLocationQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
+          }
 
         </nz-form-control>
       </nz-form-item>
@@ -120,16 +124,18 @@
         </nz-form-label>
         <nz-form-control nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
-          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton3">
-            <input type="text" nz-input [(ngModel)]="currentProductionLine.outboundStageLocation!.name"
-              (ngModelChange)="onProductionLineOutboundLocationChanged($event)" />
-          </nz-input-group>
+          @if (currentProductionLine.outboundStageLocation != null) {
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton3">
+              <input type="text" nz-input [(ngModel)]="currentProductionLine.outboundStageLocation!.name"
+                (ngModelChange)="onProductionLineOutboundLocationChanged($event)" />
+            </nz-input-group>
 
-          <ng-template #suffixIconButton3>
-            <app-warehouse-layout-location-query-popup
-              (recordSelected)="processProductionLineOutboundLocationQueryResult($event)">
-            </app-warehouse-layout-location-query-popup>
-          </ng-template>
+            <ng-template #suffixIconButton3>
+              <app-warehouse-layout-location-query-popup
+                (recordSelected)="processProductionLineOutboundLocationQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
+          }
 
         </nz-form-control>
       </nz-form-item>
@@ -238,8 +244,12 @@
     <tbody>
 
       <tr *ngFor="let productionLineCapacityItem of editRowTable.data">
-        <td><input type="text" nz-input [ngModel]="productionLineCapacityItem.productionLineCapacity!.item!.name"
-            (ngModelChange)="itemNameChanged($event, productionLineCapacityItem.productionLineCapacity)" /></td>
+        <td>
+          @if (productionLineCapacityItem.productionLineCapacity!.item != null) {
+            <input type="text" nz-input [ngModel]="productionLineCapacityItem.productionLineCapacity!.item!.name"
+            (ngModelChange)="itemNameChanged($event, productionLineCapacityItem.productionLineCapacity)" />
+          }
+        </td>
 
         <td>
           <nz-input-group nzSize="large">
@@ -253,15 +263,18 @@
 
         <td><input type="text" nz-input [(ngModel)]="productionLineCapacityItem.productionLineCapacity.capacity" /></td>
         <td>
-          <nz-input-group nzSize="large">
-            <nz-select style="width: 100px;"
-              [ngModel]="productionLineCapacityItem.productionLineCapacity!.unitOfMeasure!.name"
-              (ngModelChange)="unitOfMeasureChanged($event, productionLineCapacityItem.productionLineCapacity)">
-              <nz-option *ngFor="let unitOfMeasure of availableUnitOfMeasures" [nzLabel]="unitOfMeasure.description"
-                [nzValue]="unitOfMeasure.name">
-              </nz-option>
-            </nz-select>
-          </nz-input-group>
+          @if (productionLineCapacityItem.productionLineCapacity!.unitOfMeasure != null) {
+
+            <nz-input-group nzSize="large">
+              <nz-select style="width: 100px;"
+                [ngModel]="productionLineCapacityItem.productionLineCapacity!.unitOfMeasure!.name"
+                (ngModelChange)="unitOfMeasureChanged($event, productionLineCapacityItem.productionLineCapacity)">
+                <nz-option *ngFor="let unitOfMeasure of availableUnitOfMeasures" [nzLabel]="unitOfMeasure.description"
+                  [nzValue]="unitOfMeasure.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          }
         </td>
 
 

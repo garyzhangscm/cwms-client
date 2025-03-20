@@ -799,9 +799,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
     this.searchResult = '';
     
     let startTime : Date = this.searchForm.value.activityDateTimeRanger ? 
-        this.searchForm.value.activityDateTimeRanger.value[0] : undefined;  
+        this.searchForm.value.activityDateTimeRanger[0] : undefined;  
     let endTime : Date = this.searchForm.value.activityDateTimeRanger ? 
-        this.searchForm.value.activityDateTimeRanger.value[1] : undefined; 
+        this.searchForm.value.activityDateTimeRanger[1] : undefined; 
     let specificDate : Date = this.searchForm.value.activityDate;
 
     let clients : Client[] = [];

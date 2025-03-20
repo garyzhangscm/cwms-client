@@ -319,15 +319,15 @@ export class OutboundOrderComponent implements OnInit {
     this.searchResult = '';
     
     let startCompleteTime : Date = this.searchForm.value.completeTimeRanger ? 
-        this.searchForm.value.completeTimeRanger.value[0] : undefined; 
+        this.searchForm.value.completeTimeRanger[0] : undefined; 
     let endCompleteTime : Date = this.searchForm.value.completeTimeRanger ? 
-        this.searchForm.value.completeTimeRanger.value[1] : undefined; 
+        this.searchForm.value.completeTimeRanger[1] : undefined; 
     let specificCompleteDate : Date = this.searchForm.value.completeDate;
     
     let startCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
-        this.searchForm.value.createdTimeRanger.value[0] : undefined; 
+        this.searchForm.value.createdTimeRanger[0] : undefined; 
     let endCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
-        this.searchForm.value.createdTimeRanger.value[1] : undefined; 
+        this.searchForm.value.createdTimeRanger[1] : undefined; 
     let specificCreatedDate : Date = this.searchForm.value.createdDate;
 
     console.log(`query by created date: ${startCreatedTime} - ${endCreatedTime} specificCreatedDate: ${specificCreatedDate}`);
