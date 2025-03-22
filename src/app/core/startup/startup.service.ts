@@ -153,7 +153,7 @@ export class StartupService {
     // return this.viaMockI18n();
     let siteInformationUrl = `resource/site-information`;
     
-    if (!this.tokenService.get()?.token) {
+    if (this.tokenService.get()?.token == null || this.companyService.getCurrentCompany()?.id == null) {
       // If the user has not been login, get the default
       // site information
 

@@ -43,6 +43,7 @@ import { WaveService } from '../services/wave.service';
 @Component({
     selector: 'app-outbound-wave',
     templateUrl: './wave.component.html',
+    styleUrls: ['./wave.component.less'],
     standalone: false
 })
 export class OutboundWaveComponent implements OnInit {
