@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core'; 
 import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
@@ -276,9 +276,26 @@ export class OutboundWaveComponent implements OnInit {
     ['cancel-wave', false], 
   ]);
 
+  private readonly fb = inject(FormBuilder);
+  
+    // initiate the search form 
+  searchForm = this.fb.nonNullable.group({ 
+    number: this.fb.control('', []), 
+    waveStatus: this.fb.control(null, []), 
+    includeCompletedWave: this.fb.control(null, []), 
+    includeCancelledWave:this.fb.control(null, []), 
+  });
+
+  searchUserForm = this.fb.nonNullable.group({ 
+    username: this.fb.control('', []), 
+    firstname: this.fb.control('', []), 
+    lastname: this.fb.control('', []),  
+  });
+   
+
+
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder, 
+  constructor( 
     private modalService: NzModalService,
     private waveService: WaveService,
     private shipmentLineService: ShipmentLineService,
@@ -576,8 +593,7 @@ export class OutboundWaveComponent implements OnInit {
       this.refreshWaveTableColumns();
   }
 
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  // Form related data and functions 
   unpickForm!: UntypedFormGroup;
   searching = false;
   searchResult = '';
@@ -610,8 +626,7 @@ export class OutboundWaveComponent implements OnInit {
   ];
  
   // Form related data and functions
-  queryUserModal!: NzModalRef;
-  searchUserForm!: UntypedFormGroup;
+  queryUserModal!: NzModalRef; 
   
   
   listOfAllAssignableUsers: User[] = []; 
@@ -628,32 +643,36 @@ export class OutboundWaveComponent implements OnInit {
   search(expandedWaveId?: number, tabSelectedIndex?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.waveService.getWaves(this.searchForm.value.number, 
-      this.searchForm.value.waveStatus, 
-      this.searchForm.value.includeCompletedWave, 
-      this.searchForm.value.includeCancelledWave).subscribe(
-      waveRes => {
-        // this.listOfAllWaves = this.calculateQuantities(waveRes); 
- 
-        // this.setupShortAllocationQuantities();
-        this.listOfAllWaves = waveRes;
-        this.setupStagedQuantities();
-        this.resetWaveNumberFilter();
+    this.waveService.getWaves(this.searchForm.value.number ? this.searchForm.value.number: undefined, 
+      this.searchForm.value.waveStatus ? this.searchForm.value.waveStatus : undefined, 
+      this.searchForm.value.includeCompletedWave ? this.searchForm.value.includeCompletedWave : undefined, 
+      this.searchForm.value.includeCancelledWave ? this.searchForm.value.includeCancelledWave : undefined)
+    .subscribe({
+         next: (waveRes) => {
+          // this.listOfAllWaves = this.calculateQuantities(waveRes); 
+   
+          // this.setupShortAllocationQuantities();
+          this.listOfAllWaves = waveRes;
+          this.setupStagedQuantities();
+          this.resetWaveNumberFilter();
+  
+          this.isSpinning = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: waveRes.length,
+          });
+          if (tabSelectedIndex) {
+            this.tabSelectedIndex = tabSelectedIndex;
+          }
 
-        this.isSpinning = false;
-        this.searchResult = this.i18n.fanyi('search_result_analysis', {
-          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-          rowCount: waveRes.length,
-        });
-        if (tabSelectedIndex) {
-          this.tabSelectedIndex = tabSelectedIndex;
-        }
-      },
-      () => {
-        this.isSpinning = false;
-        this.searchResult = '';
-      },
-    );
+         }, 
+         error: () => {
+          this.isSpinning = false;
+          this.searchResult = '';
+
+         }
+
+    }); 
   }
 
   resetWaveNumberFilter(){
@@ -992,17 +1011,10 @@ export class OutboundWaveComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.wave'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      waveStatus: [null],
-      includeCompletedWave: [null],
-      includeCancelledWave: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm.value.number.setValue(params['number']);
+        this.searchForm.controls.number.setValue(params['number']);
         this.search();
       }
     });
@@ -1394,7 +1406,7 @@ export class OutboundWaveComponent implements OnInit {
 
     this.selectedUserId = undefined;
 
-    this.createQueryForm();
+    this.clearUserForm();
 
     // show the model
     this.queryUserModal = this.modalService.create({
@@ -1405,15 +1417,11 @@ export class OutboundWaveComponent implements OnInit {
       nzWidth: 1000,
     });
 
-  }
-  createQueryForm(): void {
-    // initiate the search form
-    this.searchUserForm = this.fb.group({ 
-      username: [null], 
-      firstname: [null], 
-      lastname: [null],
-    });
- 
+  } 
+  clearUserForm() {
+    this.searchUserForm.controls.firstname.reset();
+    this.searchUserForm.controls.lastname.reset();
+    this.searchUserForm.controls.username.reset();
   }
   
   assignUser(wave: Wave, pick: PickWork, userId?: number) {
@@ -2098,11 +2106,11 @@ export class OutboundWaveComponent implements OnInit {
     }
     this.userService
       .getUsers( 
-        this.searchForm.value.username, 
+        this.searchUserForm.value.username ? this.searchUserForm.value.username : undefined, 
         undefined,
         undefined,
-        this.searchForm.value.firstname,
-        this.searchForm.value.lastname,
+        this.searchUserForm.value.firstname ? this.searchUserForm.value.firstname : undefined,
+        this.searchUserForm.value.lastname ? this.searchUserForm.value.lastname : undefined,
         this.currentPick.workTaskId
       )
       .subscribe({
