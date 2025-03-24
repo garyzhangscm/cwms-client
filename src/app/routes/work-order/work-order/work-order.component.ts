@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { STChange, STColumn, STComponent } from '@delon/abc/st';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -48,6 +48,7 @@ import { ProductionLineAssignmentService } from '../services/production-line-ass
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderService } from '../services/work-order.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WorkOrderLineSparePartDetailService } from '../services/work-order-line-spare-part-detail.service';
  
 @Component({
     selector: 'app-work-order-work-order',
@@ -386,10 +387,20 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       },
     }, 
   };
+  
+  private readonly fb = inject(FormBuilder);
+  
+    // initiate the search form 
+    // initiate the search form 
+  searchForm = this.fb.nonNullable.group({ 
+    number: this.fb.control('', []), 
+    item: this.fb.control('', []), 
+    status: this.fb.control(null, []),  
+  });
+
 
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder, 
+  constructor( 
     private modalService: NzModalService,
     private workOrderService: WorkOrderService,
     private messageService: NzMessageService,
@@ -424,8 +435,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
   workOrderStatuses = WorkOrderStatus;
   workOrderStatusesKeys = Object.keys(this.workOrderStatuses);
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  
   searching = false;
   searchResult = '';
   allocating = false;
@@ -463,6 +473,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   isSpinning = false;
   
 
+  isWorkOrderLineSpinning = false;
   isDeliveredInventorySpinning = false;
   isProducedInventorySpinning = false;
   isProducedByProductSpinning = false;
@@ -499,16 +510,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     // console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
     //   ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration["work-order.work-order.work-order.delivered-inventory"])}`);
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.work-order'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      item: [null],
-      status: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm.value.number.setValue(params['number']);
+        this.searchForm.controls.number.setValue(params['number']);
         this.search();
       }
     });
@@ -805,9 +810,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       );
     } else {
       this.workOrderService
-        .getPageableWorkOrders(this.searchForm.value.number, this.searchForm.value.item, 
-          undefined, this.searchForm.value.status, 
-          this.workOrderTable.pi, this.workOrderTable.ps)
+        .getPageableWorkOrders(this.searchForm.value.number? this.searchForm.value.number: undefined, 
+          this.searchForm.value.item ? this.searchForm.value.item : undefined, 
+          undefined, 
+          this.searchForm.value.status ? this.searchForm.value.status : undefined, 
+          this.workOrderTable?.pi, this.workOrderTable?.ps)
         .subscribe({
           next: (page) => {
             
@@ -1096,15 +1103,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     return workOrder;
   }
 
-
-  onExpandChange(workOrder: WorkOrder, expanded: boolean): void {
-    if (expanded) {
-      this.expandSet.add(workOrder.id!);
-      this.showWorkOrderDetails(workOrder);
-    } else {
-      this.expandSet.delete(workOrder.id!);
-    }
-  }
+ 
 
 
   loadAvailableProductionLine(): void {
@@ -1201,6 +1200,44 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     this.router.navigateByUrl(`/work-order/work-order/produce?id=${workOrder.id}`);
   }
 
+  showWorkOrderLines(workOrder: WorkOrder): void {
+    
+    let itemIdSet = new Set<number>(); 
+    
+    workOrder.workOrderLines.filter(
+      workOrderLine => workOrderLine.itemId != null && workOrderLine.item == null
+    ).forEach(
+      workOrderLine => itemIdSet.add(workOrderLine.itemId!)
+    )
+    
+    if (itemIdSet.size == 0) {
+      return;
+    }
+
+    this.isWorkOrderLineSpinning = true;
+    let itemIdList : string = Array.from(itemIdSet).join(',')
+    
+    this.itemService.getItemsByIdList(itemIdList).subscribe({
+      next: (items) => {
+        let itemMap = new Map();
+        items.forEach(
+          item => itemMap.set(item.id, item)
+        );
+        
+        workOrder.workOrderLines.filter(
+          workOrderLine => workOrderLine.itemId != null && workOrderLine.item == null
+        ).forEach(
+          workOrderLine => {
+            if (itemMap.has(workOrderLine.itemId)) {
+              workOrderLine.item = itemMap.get(workOrderLine.itemId);
+            }
+          }
+        );
+        this.isWorkOrderLineSpinning = false;
+      }, 
+      error: () =>  this.isWorkOrderLineSpinning = false
+    });
+  }
   showDeliveredInventory(workOrder: WorkOrder): void {
     
     this.isDeliveredInventorySpinning = true;
@@ -1313,9 +1350,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       });
   }
 
-  showWorkOrderDetails(workOrder: WorkOrder): void {
-    // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.expandSet.has(workOrder.id!)) {
+  showWorkOrderDetails(workOrder: WorkOrder): void { 
+      this.showWorkOrderLines(workOrder); 
       this.showDeliveredInventory(workOrder); 
       this.showProducedInventory(workOrder);
       this.showProducedByProduct(workOrder);
@@ -1323,8 +1359,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.showKPITransactions(workOrder);
       this.showKPIs(workOrder);
       this.showPicks(workOrder);
-      this.showShortAllocations(workOrder); 
-    }
+      this.showShortAllocations(workOrder);  
   }
 
   getConsumedQuantity(workOrder: WorkOrder, itemId: number): number {
@@ -1931,7 +1966,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
             this.messageService.success(this.i18n.fanyi("message.action.success"));
             this.isSpinning = false;
-            this.searchForm.value.number.setValue(workOrder.number);
+            this.searchForm.controls.number.setValue(workOrder.number!);
             this.search();
            },
           error: () => this.isSpinning = false, 
@@ -1963,7 +1998,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
           this.messageService.success(this.i18n.fanyi("message.action.success"));
           this.isSpinning = false;
-          this.searchForm.value.number.setValue(workOrder.number);
+          this.searchForm.controls.number.setValue(workOrder.number!);
           this.search();
          },
           error: () => this.isSpinning = false, 
@@ -1978,7 +2013,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
             this.messageService.success(this.i18n.fanyi("message.action.success"));
             this.isSpinning = false;
-            this.searchForm.value.number.setValue(workOrder.number);
+            this.searchForm.controls.number.setValue(workOrder.number!);
             this.search();
            },
           error: () => this.isSpinning = false, 
@@ -1999,7 +2034,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
             this.messageService.success(this.i18n.fanyi('message.action.success'));
             this.isSpinning = false;
-            this.searchForm.value.number.setValue(workOrder.number);
+            this.searchForm.controls.number.setValue(workOrder.number!);
             this.search();
           },
           error: () => this.isSpinning = false

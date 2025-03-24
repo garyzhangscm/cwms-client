@@ -65,6 +65,7 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
           {
             next: (workOrderRes) => {
               this.currentWorkOrder = workOrderRes;
+              this.loadItemInformation(this.currentWorkOrder);
               this.newWorkOrder = false;
               this.isSpinning = false;
             }
@@ -79,6 +80,72 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
     this.inventoryStatusService
       .loadInventoryStatuses()
       .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
+  }
+
+  
+  loadItemInformation(workOrder: WorkOrder) {
+
+    // ok, we will group the items all together then 
+    // load the item in one transaction
+    // to increase performance      
+    let itemIdSet = new Set<number>(); 
+    
+    if (workOrder.itemId != null && workOrder.item == null) {
+
+      itemIdSet.add(workOrder.itemId!); 
+    }
+    workOrder.workOrderLines.filter(
+      workOrderLine => workOrderLine.itemId != null && workOrderLine.item == null
+    ).forEach(
+      workOrderLine => itemIdSet.add(workOrderLine.itemId!)
+    )
+    workOrder.workOrderByProducts.filter(
+      workOrderByProduct => workOrderByProduct.itemId != null && workOrderByProduct.item == null
+    ).forEach(
+      workOrderByProduct => itemIdSet.add(workOrderByProduct.itemId!)
+    )
+    
+    if (itemIdSet.size > 0) {
+
+      let itemMap = new Map<number, Item>(); 
+      let itemIdList : string = Array.from(itemIdSet).join(',')
+      this.itemService.getItemsByIdList(itemIdList, false).subscribe({
+        next: (itemRes) => {
+
+          // add the result to a map so we can assign it to 
+          // the work order / work order line later on
+          itemRes.forEach(
+            item =>  itemMap.set(item.id!, item)
+          );
+
+          this.setupWorkOrderItems(workOrder, itemMap); 
+          
+        }
+      })
+    }
+  } 
+  setupWorkOrderItems(workOrder: WorkOrder, itemMap : Map<number, Item>) { 
+      // only assign if we get the item from the server
+      if (itemMap.has(workOrder.itemId!)) {
+        workOrder.item = itemMap.get(workOrder.itemId!);        
+      }
+
+      workOrder.workOrderLines.forEach(
+        workOrderLine => {                    
+          if (itemMap.has(workOrderLine.itemId!)) {
+            workOrderLine.item = itemMap.get(workOrderLine.itemId!)
+            // this.loadDefaultStockUom(workOrderLine.item!);
+          }
+        }
+      )
+      workOrder.workOrderByProducts.forEach(
+        byProduct => {                    
+          if (itemMap.has(byProduct.itemId!)) {
+            byProduct.item = itemMap.get(byProduct.itemId!)
+            // this.loadDefaultStockUom(byProduct.item!);
+          }
+        }
+      ) 
   }
   getEmptyWorkOrder(): WorkOrder {
     return {

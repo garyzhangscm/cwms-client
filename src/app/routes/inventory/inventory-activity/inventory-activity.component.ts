@@ -905,6 +905,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
       // sleep 50ms        
       await this.delay(100);
     }  
+
+    
+    this.inventoryActivityTable.reload();
  
   }
   

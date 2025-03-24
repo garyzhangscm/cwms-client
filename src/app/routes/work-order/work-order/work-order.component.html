@@ -287,6 +287,7 @@
             <nz-tab nzTitle=" {{ 'work-order.line' | i18n }}"
               *ngIf="isTabVisible('work-order.work-order.work-order.delivered-inventory')">
               
+              <nz-spin [nzSpinning]="isWorkOrderLineSpinning" [nzSize]="'large'">
                 <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="workOrder.workOrderLines" nzSize="middle"
                   [nzShowPagination]="false" #workOrderLineTable>
 
@@ -453,6 +454,7 @@
                     </tr>
                   </tbody>
                 </nz-table>
+              </nz-spin>
             </nz-tab>
 
             <nz-tab nzTitle=" {{ 'work-order.by-product' | i18n }}"
