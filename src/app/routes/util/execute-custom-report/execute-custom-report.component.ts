@@ -12,6 +12,7 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { CustomReport } from '../models/custom-report';
 import { CustomReportExecutionHistory } from '../models/custom-report-execution-history';
 import { CustomReportExecutionStatus } from '../models/custom-report-execution-status';
+import { CustomReportParameterType } from '../models/custom-report-parameter-type';
 import { CustomReportExecutionHistoryService } from '../services/custom-report-execution-history.service';
 import { CustomReportService } from '../services/custom-report.service';
 
@@ -23,6 +24,8 @@ import { CustomReportService } from '../services/custom-report.service';
 export class UtilExecuteCustomReportComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   // [x: string]: any;
+
+  customReportParameterTypes = CustomReportParameterType;
 
   paramStatus: Map<number, NzStatus>= new Map();
   currentCustomReport?: CustomReport;  

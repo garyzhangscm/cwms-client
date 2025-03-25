@@ -7,6 +7,7 @@ import { CompanyService } from '../../warehouse-layout/services/company.service'
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { CustomReport } from '../models/custom-report';
 import { CustomReportService } from '../services/custom-report.service';
+import { CustomReportParameterType } from "../models/custom-report-parameter-type";
 
 @Component({
     selector: 'app-util-custom-report-maintenance',
@@ -16,6 +17,8 @@ import { CustomReportService } from '../services/custom-report.service';
 export class UtilCustomReportMaintenanceComponent implements OnInit {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
+  customReportParameterTypes = Object.keys(CustomReportParameterType)
   currentCustomReport: CustomReport; 
   stepIndex = 0; 
   nameValidateStatus = 'warning'; 
@@ -28,6 +31,7 @@ export class UtilCustomReportMaintenanceComponent implements OnInit {
   newParameterDisplayText = "";
   newParameterValueRequired = false;
   newParameterDefaultValue = "";
+  newParameterType = CustomReportParameterType.TEXT;
 
   addParameterModalVisible = false;
  
@@ -197,7 +201,8 @@ export class UtilCustomReportMaintenanceComponent implements OnInit {
           name: this.newParameterName, 
           displayText: this.newParameterDisplayText,
           required: this.newParameterValueRequired,
-          defaultValue: this.newParameterDefaultValue
+          defaultValue: this.newParameterDefaultValue,
+          type: this.newParameterType,
 
         }];
         
