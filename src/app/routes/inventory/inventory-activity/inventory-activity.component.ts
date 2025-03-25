@@ -27,7 +27,7 @@ import { ItemFamilyService } from '../services/item-family.service';
 export class InventoryInventoryActivityComponent implements OnInit {
 
   inventoryActivityTablePI = 10;
-  inventoryActivityTablePS = -1;
+  inventoryActivityTablePS = 1;
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "inventory-activity";
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 

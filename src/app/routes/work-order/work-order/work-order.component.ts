@@ -65,7 +65,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     pageSizes: [5, 10, 25, 50, 100],
     front: false
   };
-  pageIndex = -1;
+  pageIndex = 1;
   pageSize = 10;
 
   listOfColumns: Array<ColumnItem<WorkOrder>> = [
@@ -770,6 +770,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
 
   workOrderTableChanged(event: STChange) : void {  
+    
     if (event.type === 'expand' && event.expand.expand === true) {
       // console.log(`expanded: ${event.expand.id}`)
       this.showWorkOrderDetails(event.expand);
@@ -779,6 +780,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
          
           this.pageIndex = this.workOrderTable.pi;
           this.pageSize = this.workOrderTable.ps;
+          
           this.search();
     }
 
@@ -880,13 +882,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.loadItemInformation(workOrders);
       this.loadInventoryStatusInformation(workOrders);
     }
-    workOrders.forEach(workOrder => {
-      // only refresh the detail information if it is expanded already
-      if (this.expandSet.has(workOrder.id!)) {
-
-        this.showWorkOrderDetails(workOrder);
-      }
-    });
+    
 
   } 
 

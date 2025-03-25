@@ -50,7 +50,7 @@ import * as XLSX from 'xlsx';
 export class InventoryInventoryComponent implements OnInit { 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   inventoryTablePI = 10;
-  inventoryTablePS = -1;
+  inventoryTablePS = 1;
 
   @ViewChild('inventoryTable', { static: false })
   inventoryTable!: STComponent;
