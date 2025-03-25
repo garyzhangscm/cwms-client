@@ -1,3 +1,5 @@
+import { CustomReportParameterType } from "./custom-report-parameter-type";
+
 export interface CustomReportParameter {
     id?: number;
     companyId: number;
@@ -10,5 +12,6 @@ export interface CustomReportParameter {
     
     required: boolean;
     defaultValue?: string;
+    type: CustomReportParameterType;
 
 }

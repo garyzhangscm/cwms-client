@@ -67,6 +67,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -143,6 +144,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzInputNumberModule ,
     NzInputModule,
     NzCheckboxModule ,
+    NzRadioModule,
     
   ],
   declarations: [

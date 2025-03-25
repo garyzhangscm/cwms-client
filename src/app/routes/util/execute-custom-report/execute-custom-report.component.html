@@ -43,10 +43,18 @@
                 [columns]="customReportParametersTableColumns" [page]="{ show: false }">
 
                 <ng-template st-row="valueColumn" let-customReportParameter let-index="index"> 
-                    
-                    <input   type="text" nz-input [ngModel]="customReportParameter.value"
-                    (ngModelChange)="customReportParameterValueChanged(customReportParameter.name, $event)" 
-                    [nzStatus] = "paramStatus.get(customReportParameter.id)!"  />
+                    @if(customReportParameter.type == customReportParameterTypes.BOOLEAN) {
+                        <nz-radio-group [(ngModel)]="customReportParameter.value">
+                            <label nz-radio nzValue="0">{{'false' | i18n}}</label>
+                            <label nz-radio nzValue="1">{{'true' | i18n}}</label>
+                          </nz-radio-group>
+                    }
+                    @else {
+
+                        <input   type="text" nz-input [ngModel]="customReportParameter.value"
+                              (ngModelChange)="customReportParameterValueChanged(customReportParameter.name, $event)" 
+                            [nzStatus] = "paramStatus.get(customReportParameter.id)!"  />
+                    }
 
                   @if(customReportParameter.required) {
 
