@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory'; 
 import { ReportHistory } from '../../report/models/report-history';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../../work-order/models/production-line';
 import { WorkOrder } from '../../work-order/models/work-order';
@@ -28,6 +29,7 @@ export class PickService {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
+    private companyService: CompanyService, 
     private bulkPickService: BulkPickService, 
     private pickListService: PickListService ) {}
 
@@ -573,15 +575,23 @@ export class PickService {
     containerId?: string,
   ): Observable<PickWork> {
     const confirmedQuantity = quantity === undefined ? pick.quantity - pick.pickedQuantity : quantity;
-    let url = `outbound/picks/${pick.id}/confirm?quantity=${confirmedQuantity}`;
+    let url = `outbound/picks/${pick.id}/confirm`;
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+    params = params.append('quantity', confirmedQuantity); 
+
 
     if (pickToContainer) {
-      url = `${url}&pickToContainer=${pickToContainer}`;
+      
+      params = params.append('pickToContainer', pickToContainer); 
     }
     if (containerId) {
-      url = `${url}&containerId=${containerId}`;
+      params = params.append('containerId', containerId);  
     }
-    return this.http.post(url).pipe(map(res => res.data));
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
 
   getPickedInventories(picks: PickWork[], includeVirturalInventory?: boolean): Observable<Inventory[]> {
