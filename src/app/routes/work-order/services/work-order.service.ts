@@ -19,6 +19,9 @@ import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
 import { WorkOrderLine } from '../models/work-order-line';
 import { WorkOrderMaterialConsumeTiming } from '../models/work-order-material-consume-timing';
+import { Apollo, gql } from 'apollo-angular';
+import { environment } from '@env/environment';
+ 
 
 @Injectable({
   providedIn: 'root',
@@ -26,11 +29,13 @@ import { WorkOrderMaterialConsumeTiming } from '../models/work-order-material-co
 export class WorkOrderService { 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
+
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
     private utilService: UtilService, 
+    private readonly apollo: Apollo,
   ) { }
 
   getPageableWorkOrders(number?: string, itemName?: string, productionPlanId?: number, statusList?:string, 
@@ -336,4 +341,72 @@ export class WorkOrderService {
     return this.http.post(url, workOrderLine.workOrderLineSpareParts).pipe(map(res => res.data));
   }
 
+  graphqlGetWorkOrderById(id: number) : Observable<any>{
+    return this.apollo
+      .watchQuery({
+        query: gql`
+          query {
+            workOrderById(id: ${id}) {
+              id
+              number 
+            }
+          }
+        `,
+        context: {
+          uri: environment.api.baseUrl + "workorder/graphql"
+        },
+      })
+      .valueChanges.pipe(map(result => result.data));
+  }
+  graphqlGetWorkOrdersgetWorkOrders(
+    number?: string, itemName?: string, productionPlanId?: number, statusList?:string, 
+    pageIndex?: number, pageSize?: number,
+    resultFields? : string): 
+  Observable<any> {
+    if (pageIndex == null) {
+      pageIndex = 0;
+    }
+    else {
+      pageIndex = pageIndex - 1;
+    }
+    if (pageSize == null) {
+      pageSize = 10;
+    }
+
+    return this.apollo
+      .watchQuery({
+        query: gql`
+          query ($warehouseId: Int!, 
+                $number: String, $itemName: String, $statusList: String, 
+                $productionPlanId: Int, 
+                $pageIndex: Int!,
+                $pageSize: Int!) {
+            findWorkOrders(warehouseId : $warehouseId, 
+                number: $number,
+                itemName: $itemName,
+                statusList:  $statusList,
+                productionPlanId: $productionPlanId,
+                pageIndex: $pageIndex,
+                pageSize: $pageSize)
+            {
+              ${resultFields}
+            }
+          }
+        `,
+        context: {
+          uri: environment.api.baseUrl + "workorder/graphql"
+        },
+        variables: {
+          warehouseId : this.warehouseService.getCurrentWarehouse().id, 
+          number: number,
+          itemName: itemName,
+          statusList:  statusList,
+          productionPlanId: productionPlanId,
+          pageIndex: pageIndex, 
+          pageSize: pageSize
+
+        },
+      })
+      .valueChanges.pipe(map(result => result.data));
+  }
 }

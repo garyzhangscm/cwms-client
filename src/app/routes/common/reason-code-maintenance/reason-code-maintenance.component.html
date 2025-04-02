@@ -69,7 +69,8 @@
               <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
                 <nz-select   nz-input [(ngModel)]="currentReasonCode.type" 
                     style="width: 250px"  >
-                
+                 
+      
                     <nz-option *ngFor="let reasonCodeType of reasonCodeTypes | keys"
                     nzLabel="{{ 'REASON-CODE-TYPE-' + reasonCodeType.key | i18n }}" [nzValue]="reasonCodeType.key">
                     </nz-option>

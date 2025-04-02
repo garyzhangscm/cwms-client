@@ -123,9 +123,15 @@
               <nz-select nzAllowClear  *ngIf='currentUser && currentUser.department' nz-input [ngModel]="currentUser!.department!.id"
               (ngModelChange)="departmentChanged($event)"
                     style="width: 250px"  >
-                  <nz-option *ngFor="let department of validDepartments"
-                      [nzLabel]="department.description" [nzValue]="department.id">
-                  </nz-option>
+                    
+                  @for (department of validDepartments; track department) {
+                  
+                    <nz-option 
+                        [nzLabel]="department.description" [nzValue]="department.id">
+                    </nz-option>
+                  }
+                  
+
               </nz-select> 
           </nz-form-control>
         </nz-form-item>
@@ -149,9 +155,13 @@
             <nz-select nzAllowClear  *ngIf='currentUser !== undefined' 
             nz-input [ngModel]="currentUser!.workerType" (ngModelChange)="workerTypeChanged($event)"
                     style="width: 250px"  >
-                  <nz-option *ngFor="let workerType of workerTypesKeys"
-                      nzLabel="{{ 'WORKER-TYPE-' + workerType | i18n }}" [nzValue]="workerType">
-                  </nz-option>
+
+                    @for (workerType of workerTypesKeys; track workerType) {
+                    
+                      <nz-option 
+                          nzLabel="{{ 'WORKER-TYPE-' + workerType | i18n }}" [nzValue]="workerType">
+                      </nz-option>
+                    }
               </nz-select>  
           </nz-form-control>
         </nz-form-item>

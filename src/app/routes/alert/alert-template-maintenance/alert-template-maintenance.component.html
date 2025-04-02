@@ -33,11 +33,15 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
             <nz-select  nzAllowClear [(ngModel)]="currentAlertTemplate.type" [disabled]="!newAlertTemplate">
-                <nz-option
-                    *ngFor="let alertType of alertTypeKeys"
+              
+              @for (alertType of alertTypeKeys; track alertType) {
+              
+                <nz-option 
                     [nzValue]="alertType"
                     nzLabel="{{ 'ALERT-TYPE-' + alertType | i18n}}"
                 ></nz-option>
+              }
+
           </nz-select> 
         </nz-form-control>
       </nz-form-item>
@@ -49,11 +53,15 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
             <nz-select  nzAllowClear [(ngModel)]="currentAlertTemplate.deliveryChannel" [disabled]="!newAlertTemplate">
-                <nz-option
-                  *ngFor="let alertDeliveryChannel of alertDeliveryChannelsKeys"
+              
+              @for (alertDeliveryChannel of alertDeliveryChannelsKeys; track alertDeliveryChannel) {
+              
+                <nz-option 
                   [nzValue]="alertDeliveryChannel"
                   nzLabel="{{ 'ALERT-DELIVERY-CHANNEL-' + alertDeliveryChannel | i18n}}"
-            ></nz-option>
+                ></nz-option>
+              }
+
           </nz-select> 
         </nz-form-control>
       </nz-form-item>

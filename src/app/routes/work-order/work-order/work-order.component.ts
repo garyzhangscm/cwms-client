@@ -517,6 +517,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         this.search();
       }
     });
+
+    
   }
 
   
@@ -811,6 +813,38 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         },
       );
     } else {
+      /**
+       * So far we didn't see a big increase on the download efficiency 
+       * between graphql and rest with pagination 
+       * 
+      this.workOrderService.graphqlGetWorkOrdersgetWorkOrders(
+          this.searchForm.value.number? this.searchForm.value.number: undefined, 
+          this.searchForm.value.item ? this.searchForm.value.item : undefined, 
+          undefined, 
+          this.searchForm.value.status ? this.searchForm.value.status : undefined,
+          this.workOrderTable?.pi, this.workOrderTable?.ps,
+          `id,
+          number ,
+          itemId,
+          item {
+            id,
+            name
+          },
+          expectedQuantity,
+          producedQuantity,`
+      ).subscribe({
+        next: () => {
+          console.log(`get result from graphsql`);
+
+        }, 
+        error: () => {
+          console.log(`error while graphsql`);
+          
+          this.isSpinning = false;
+          this.searchResult = '';
+        }
+      })
+       */
       this.workOrderService
         .getPageableWorkOrders(this.searchForm.value.number? this.searchForm.value.number: undefined, 
           this.searchForm.value.item ? this.searchForm.value.item : undefined, 
@@ -829,18 +863,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
               rowCount: this.listOfAllWorkOrder.length,
             });
             
-/**
- * 
-              this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
-              this.refreshDetailInformation(workOrderRes, true);
-              this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
-              this.isSpinning = false;
-              this.searchResult = this.i18n.fanyi('search_result_analysis', {
-                currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-                rowCount: workOrderRes.length,
-              });
- * 
- */
           }, 
           error: () => {
 
@@ -921,14 +943,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
               item =>  itemMap.set(item.id!, item)
             );
 
-            this.SetupWorkOrderItems(workOrders, itemMap);
+            this.setupWorkOrderItems(workOrders, itemMap);
             this.loadDefaultStockUoms(workOrders);
             
           }
         })
       }
   }
-  SetupWorkOrderItems(workOrders: WorkOrder[], itemMap : Map<number, Item>) {
+  setupWorkOrderItems(workOrders: WorkOrder[], itemMap : Map<number, Item>) {
     workOrders.forEach(
       workOrder => {
         // only assign if we get the item from the server

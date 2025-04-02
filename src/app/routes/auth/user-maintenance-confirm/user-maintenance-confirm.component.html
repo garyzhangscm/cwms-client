@@ -79,23 +79,30 @@
   <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #roleTable [nzData]="currentUser!.roles">
     <thead>
       <tr>
-        <th *ngFor="let column of listOfRoleTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
+        @for (column of listOfRoleTableColumns; track column) {
+        
+          <th  [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+        }
+        
 
 
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of roleTable.data">
+      @for (data of roleTable.data; track data) {
+      
+        <tr >
 
-        <td>
-          {{ data.name }}</td>
-        <td>{{ data.description }}</td>
-        <td>{{ data.enabled + '' | i18n}}</td>
-      </tr>
+          <td>
+            {{ data.name }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.enabled + '' | i18n}}</td>
+        </tr>
+      }
     </tbody>
   </nz-table>
 </nz-card>

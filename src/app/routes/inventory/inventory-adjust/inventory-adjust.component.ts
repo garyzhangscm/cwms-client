@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -202,8 +202,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     ['remove-inventory', false],
   ]);
 
-  constructor(
-    private fb: UntypedFormBuilder,
+  constructor( 
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService, 
@@ -239,7 +238,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   locationGroupTypes: Array<{ label: string; value: string }> = [];
   locationGroups: Array<{ label: string; value: string }> = [];
   // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    taggedLocationGroupTypes: this.fb.control("", []),
+    taggedLocationGroups: this.fb.control("", []),
+    location: this.fb.control("", []),
+  });
+   
   pageTitle: string;
   isSpinning = false;
   currentInventory!: Inventory;
@@ -277,12 +283,6 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.adjust.header.title'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      taggedLocationGroupTypes: [null],
-      taggedLocationGroups: [null],
-      location: [null],
-    });
 
     // initiate the select control
     this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
@@ -299,7 +299,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['locationName']) {
         const expand = params.hasOwnProperty('expand') ? params.hasOwnProperty('expand') : false;
-        this.searchForm.value.location.setValue(params['locationName']);
+        this.searchForm.controls.location.setValue(params['locationName']);
         this.search(expand);
       }
     });
@@ -346,9 +346,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.searchResult = '';
     this.locationService
       .getLocations(
-        this.searchForm.value.taggedLocationGroupTypes,
-        this.searchForm.value.taggedLocationGroups,
-        this.searchForm.value.location,
+        this.searchForm.value.taggedLocationGroupTypes ? this.searchForm.value.taggedLocationGroupTypes : undefined,
+        this.searchForm.value.taggedLocationGroups ? this.searchForm.value.taggedLocationGroups : undefined,
+        this.searchForm.value.location ? this.searchForm.value.location : undefined,
       )
       .subscribe(
         locationRes => {
@@ -438,7 +438,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.inventoryService.adjustDownInventory(this.inventoryToBeRemoved).subscribe({
       next: () => {
         // refresh only that location
-        this.searchForm.value.location.setValue(this.inventoryToBeRemoved.locationName);
+        this.searchForm.controls.location.setValue(this.inventoryToBeRemoved.locationName!);
         this.search(true);
       }
     }); 
@@ -692,7 +692,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.isSpinning = true; 
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
-      this.searchForm.value.location.setValue(inventory.locationName);
+      this.searchForm.controls.location.setValue(inventory.locationName ? inventory.locationName : null);
 
       if (inventoryRes.lockedForAdjust === true) {
         this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
@@ -709,7 +709,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   }
   processLocationQueryResult(selectedLocationName: any): void {
 
-    this.searchForm.value.location.setValue(selectedLocationName);
+    this.searchForm.controls.location.setValue(selectedLocationName);
   }
   processItemQueryResult(selectedItemName: any): void {
     this.newInventoryItemChanged(selectedItemName);

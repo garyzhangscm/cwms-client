@@ -34,11 +34,17 @@
     <thead>
       <tr>
         <th nzWidth="60px"></th>
-        <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
+        
+        @for (column of listOfColumns; track column) {
+        
+          <th [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+        }
+      
+
 
 
 
@@ -46,192 +52,197 @@
       </tr>
     </thead>
     <tbody>
-      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
-        <tr>
-          <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
-          <td>
-            {{ data.name }}</td>
-          <td>{{ data.description }}</td>
-          <td>{{ data.enabled + '' | i18n }}</td>
-          <td *ngIf="!displayOnly">
-
-            
-            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
-            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-            <nz-dropdown-menu #menu="nzDropdownMenu">
-              <ul nz-menu>
-                <!--  allow the user to assign the production line only when
-                the work order is not start yet
-                -->
-                <li nz-menu-item >                  
-                  <a  routerLink="/auth/role-menu" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
-                    'assign-menu' | i18n }}</a> 
-                </li>
-                <li nz-menu-item >                   
-                    <a  routerLink="/auth/role-user" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
-                      'assign-user' | i18n }}</a> 
-                </li> 
-                <li nz-menu-item >                   
-                    <a  routerLink="/auth/role-client" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
-                      'assign-clients' | i18n }}</a> 
-                </li> 
-                <li nz-menu-item >                   
-                    <a  routerLink="/auth/role-permission" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
-                      'assign-permission' | i18n }}</a> 
-                </li> 
-                <li nz-menu-item >                   
-                    <a  routerLink="/auth/role-operation-type" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
-                      'assign-operation-type' | i18n }}</a> 
-                </li> 
-                <li nz-menu-item *ngIf="data.enabled === true">
-                  <a  (click)="disableRole(data.id!)">{{ 'disable' | i18n }}</a>
-                </li>
-                <li nz-menu-item *ngIf="data.enabled === false">
-                  <a  (click)="enableRole(data.id!)">{{ 'enable' | i18n }}</a>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
-          </td>
-        </tr>
-        <tr [nzExpand]="expandSet.has(data.id!)">
-          <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
-            <nz-tab nzTitle="{{'menu.main.auth.user' | i18n}}">
-              <nz-table  #userTable [nzData]="data.users!" nzSize="middle"
-                [nzShowPagination]="false">
-                <thead>
-                  <tr>
-
-                    <th *ngFor="let column of listOfSubTableColumns" [nzSortOrder]="column.sortOrder"
-                      [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-                      [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
-                      [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-                      {{ column.name | i18n }}
-                    </th>
-
-                    <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let user of userTable.data">
-                    <td>
-                      {{ user.username }}</td>
-                    <td>{{ user.firstname }}</td>
-                    <td>{{ user.lastname }}</td>
-                    <td>{{ user.email }} </td>
-                    <td>{{ user.enabled + '' | i18n }}</td>
-                    <td>{{ user.locked + '' | i18n}}</td>
-                    <td *ngIf="!displayOnly">
-                      <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'role.unassign-user' | i18n }}</button>
-                    </td>
-                  </tr>
-                </tbody>
-            </nz-table>
-            </nz-tab>
-            <nz-tab nzTitle="{{'menu.main.auth.menu' | i18n}}">
-                <nz-table  #menuTable [nzData]="data.roleMenus" nzSize="middle"
-                  [nzShowPagination]="true">
+      
+      @for (data of nestedTable.data; track data) {
+      
+        <ng-template>
+          <tr>
+            <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
+            <td>
+              {{ data.name }}</td>
+            <td>{{ data.description }}</td>
+            <td>{{ data.enabled + '' | i18n }}</td>
+            <td *ngIf="!displayOnly">
+  
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>
+                  <!--  allow the user to assign the production line only when
+                  the work order is not start yet
+                  -->
+                  <li nz-menu-item >                  
+                    <a  routerLink="/auth/role-menu" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
+                      'assign-menu' | i18n }}</a> 
+                  </li>
+                  <li nz-menu-item >                   
+                      <a  routerLink="/auth/role-user" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
+                        'assign-user' | i18n }}</a> 
+                  </li> 
+                  <li nz-menu-item >                   
+                      <a  routerLink="/auth/role-client" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
+                        'assign-clients' | i18n }}</a> 
+                  </li> 
+                  <li nz-menu-item >                   
+                      <a  routerLink="/auth/role-permission" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
+                        'assign-permission' | i18n }}</a> 
+                  </li> 
+                  <li nz-menu-item >                   
+                      <a  routerLink="/auth/role-operation-type" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
+                        'assign-operation-type' | i18n }}</a> 
+                  </li> 
+                  <li nz-menu-item *ngIf="data.enabled === true">
+                    <a  (click)="disableRole(data.id!)">{{ 'disable' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="data.enabled === false">
+                    <a  (click)="enableRole(data.id!)">{{ 'enable' | i18n }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+            </td>
+          </tr>
+          <tr [nzExpand]="expandSet.has(data.id!)">
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
+              <nz-tab nzTitle="{{'menu.main.auth.user' | i18n}}">
+                <nz-table  #userTable [nzData]="data.users!" nzSize="middle"
+                  [nzShowPagination]="false">
                   <thead>
                     <tr>
-
-
-                      <th *ngFor="let column of listOfMenuTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-                        [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-                        [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+  
+                      <th *ngFor="let column of listOfSubTableColumns" [nzSortOrder]="column.sortOrder"
+                        [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                        [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                        [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
                         {{ column.name | i18n }}
                       </th>
+  
                       <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let roleMenu of menuTable.data">
+                    <tr *ngFor="let user of userTable.data">
                       <td>
-                        {{ roleMenu.menu.menuGroup }}</td>
-                      <td>{{ roleMenu.menu.menuSubGroup }}</td>
-                      <td>{{ roleMenu.menu.i18n | i18n }}</td>
-                      <td>{{ roleMenu.menu.sequence }} </td>
-                      <td>{{ roleMenu.menu.i18n }}</td>
-                      <td>{{ roleMenu.menu.link }}</td>
-                      <td>{{ roleMenu.displayOnlyFlag }}</td>
+                        {{ user.username }}</td>
+                      <td>{{ user.firstname }}</td>
+                      <td>{{ user.lastname }}</td>
+                      <td>{{ user.email }} </td>
+                      <td>{{ user.enabled + '' | i18n }}</td>
+                      <td>{{ user.locked + '' | i18n}}</td>
                       <td *ngIf="!displayOnly">
-                        <button nz-button (click)="deassignMenu(data.id!, roleMenu.menu.id)">{{ 'role.unassign-menu' | i18n }}</button>
+                        <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'role.unassign-user' | i18n }}</button>
+                      </td>
+                    </tr>
+                  </tbody>
+              </nz-table>
+              </nz-tab>
+              <nz-tab nzTitle="{{'menu.main.auth.menu' | i18n}}">
+                  <nz-table  #menuTable [nzData]="data.roleMenus" nzSize="middle"
+                    [nzShowPagination]="true">
+                    <thead>
+                      <tr>
+  
+  
+                        <th *ngFor="let column of listOfMenuTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+                          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                          {{ column.name | i18n }}
+                        </th>
+                        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let roleMenu of menuTable.data">
+                        <td>
+                          {{ roleMenu.menu.menuGroup }}</td>
+                        <td>{{ roleMenu.menu.menuSubGroup }}</td>
+                        <td>{{ roleMenu.menu.i18n | i18n }}</td>
+                        <td>{{ roleMenu.menu.sequence }} </td>
+                        <td>{{ roleMenu.menu.i18n }}</td>
+                        <td>{{ roleMenu.menu.link }}</td>
+                        <td>{{ roleMenu.displayOnlyFlag }}</td>
+                        <td *ngIf="!displayOnly">
+                          <button nz-button (click)="deassignMenu(data.id!, roleMenu.menu.id)">{{ 'role.unassign-menu' | i18n }}</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </nz-table>
+              </nz-tab>
+              <nz-tab nzTitle="{{'client' | i18n}}">
+                <div nz-row style="padding: 10px"  >                    
+                  <div nz-col nzSpan="12"  >
+                      <label nz-checkbox [ngModel]="data.nonClientDataAccessible" disabled="true" >
+                          {{ "nonClientDataAccessible" | i18n}}</label> 
+                    </div>  <div nz-col nzSpan="12" >
+                      <label nz-checkbox [ngModel]="data.allClientAccess"  disabled="true" >
+                          {{ "allClientAccess" | i18n}}</label> 
+                  </div>  
+                </div> 
+                <nz-table [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger [nzData]="data.clientAccesses"
+                #clientTable>
+                  <thead>
+                    <tr> 
+                      <th *ngFor="let column of listOfClientColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                        [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+                        [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                        {{ column.name | i18n }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let clientAccess of clientTable.data"> 
+          
+                      <td>{{ clientAccess.client?.name }}
+                      </td>
+                      <td> {{ clientAccess.client?.description }}
+                      </td>
+                      <td>{{ clientAccess.client?.contactorFirstname }}
+                      </td>
+                      <td>{{ clientAccess.client?.contactorLastname }}
+                      </td>
+                      <td>{{ clientAccess.client?.addressCountry }}
+                      </td>
+                      <td>{{ clientAccess.client?.addressState }}
+                      </td>
+                      <td>{{ clientAccess.client?.addressCounty }}
+                      </td>
+                      <td>{{ clientAccess.client?.addressCity }}
+                      </td>
+                      <td>{{ clientAccess.client?.addressDistrict }}
+                      </td>
+                      <td>{{ clientAccess.client?.addressLine1 }}
+                      </td>
+                      <td> {{ clientAccess.client?.addressLine2 }}
+                      </td>
+                      <td>{{ clientAccess.client?.addressPostcode }}
                       </td>
                     </tr>
                   </tbody>
                 </nz-table>
-            </nz-tab>
-            <nz-tab nzTitle="{{'client' | i18n}}">
-              <div nz-row style="padding: 10px"  >                    
-                <div nz-col nzSpan="12"  >
-                    <label nz-checkbox [ngModel]="data.nonClientDataAccessible" disabled="true" >
-                        {{ "nonClientDataAccessible" | i18n}}</label> 
-                  </div>  <div nz-col nzSpan="12" >
-                    <label nz-checkbox [ngModel]="data.allClientAccess"  disabled="true" >
-                        {{ "allClientAccess" | i18n}}</label> 
-                </div>  
-              </div> 
-              <nz-table [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger [nzData]="data.clientAccesses"
-              #clientTable>
-                <thead>
-                  <tr> 
-                    <th *ngFor="let column of listOfClientColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-                      [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-                      [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-                      {{ column.name | i18n }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let clientAccess of clientTable.data"> 
-        
-                    <td>{{ clientAccess.client?.name }}
-                    </td>
-                    <td> {{ clientAccess.client?.description }}
-                    </td>
-                    <td>{{ clientAccess.client?.contactorFirstname }}
-                    </td>
-                    <td>{{ clientAccess.client?.contactorLastname }}
-                    </td>
-                    <td>{{ clientAccess.client?.addressCountry }}
-                    </td>
-                    <td>{{ clientAccess.client?.addressState }}
-                    </td>
-                    <td>{{ clientAccess.client?.addressCounty }}
-                    </td>
-                    <td>{{ clientAccess.client?.addressCity }}
-                    </td>
-                    <td>{{ clientAccess.client?.addressDistrict }}
-                    </td>
-                    <td>{{ clientAccess.client?.addressLine1 }}
-                    </td>
-                    <td> {{ clientAccess.client?.addressLine2 }}
-                    </td>
-                    <td>{{ clientAccess.client?.addressPostcode }}
-                    </td>
-                  </tr>
-                </tbody>
-              </nz-table>
-            </nz-tab>
-            <nz-tab nzTitle="{{'permission' | i18n}}"> 
-              <nz-tree [nzData]="mapOfNzTreeNodeOptions[data.id!]"    
-                [nzCheckedKeys]="mapOfDefaultCheckedKeys[data.id!]"
-                nzCheckable
-                ></nz-tree>
-            </nz-tab>
-            <nz-tab nzTitle="{{'operation-type' | i18n}}">
-              <st #operationTypeTable [data]="data.operationTypes" [columns]="operationTypecolumns">
-                 
-                  <ng-template st-row="actionColumn" let-operationType>
-                    <button nz-button (click)="deassignOperationType(data.id!, operationType.id)" nzDanger>
-                      {{ 'deassign' | i18n }}</button>
-                      
-                  </ng-template>
-              </st>
-            </nz-tab>
-         </nz-tabset>
+              </nz-tab>
+              <nz-tab nzTitle="{{'permission' | i18n}}"> 
+                <nz-tree [nzData]="mapOfNzTreeNodeOptions[data.id!]"    
+                  [nzCheckedKeys]="mapOfDefaultCheckedKeys[data.id!]"
+                  nzCheckable
+                  ></nz-tree>
+              </nz-tab>
+              <nz-tab nzTitle="{{'operation-type' | i18n}}">
+                <st #operationTypeTable [data]="data.operationTypes" [columns]="operationTypecolumns">
+                   
+                    <ng-template st-row="actionColumn" let-operationType>
+                      <button nz-button (click)="deassignOperationType(data.id!, operationType.id)" nzDanger>
+                        {{ 'deassign' | i18n }}</button>
+                        
+                    </ng-template>
+                </st>
+              </nz-tab>
+           </nz-tabset>
+  
+  
+          </tr>
+        </ng-template>
+      }
 
-
-        </tr>
-      </ng-template>
     </tbody>
   </nz-table>
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">

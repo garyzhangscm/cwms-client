@@ -41,7 +41,12 @@
             <nz-form-control [nzSpan]="12" >
 
                 <nz-select [(ngModel)]="currentInvoice!.client" (ngModelChange)="clientChanged()">
-                    <nz-option *ngFor="let client of availableClients" [nzValue]="client" [nzLabel]="client.name"></nz-option>
+                  
+                  @for (client of availableClients; track client) {
+                  
+                    <nz-option [nzValue]="client" [nzLabel]="client.name"></nz-option>
+                  }
+      
                 </nz-select>
             </nz-form-control>
         </nz-form-item>
@@ -184,24 +189,28 @@
                   </tr>
               </thead>
               <tbody>
-                  <tr *ngFor="let data of billingRequestLine.data">   
-                        <td  >
-                                {{ data.startTime | date:'short'}}   </td> 
-                        <td  >
-                                    {{ data.endTime | date:'short'}}   </td> 
-                        <td  >
-                            {{ data.totalAmount | number: '1.0-2'}}  </td>
-                        <td  >
-                            {{ data.totalCharge | number: '1.0-2'}}  </td>
-                        <td  >
-                            {{ data.rate | number: '1.0-2'}}  </td>
-                        <td  >
-                                {{ data.documentNumber }}  </td>
-                        <td  >
-                                    {{ data.itemName  }}  </td>
-                        <td  >
-                                    {{ data.comment  }}  </td>
+                @for (data of billingRequestLine.data; track data) {
+                
+                  <tr >   
+                    <td  >
+                            {{ data.startTime | date:'short'}}   </td> 
+                    <td  >
+                                {{ data.endTime | date:'short'}}   </td> 
+                    <td  >
+                        {{ data.totalAmount | number: '1.0-2'}}  </td>
+                    <td  >
+                        {{ data.totalCharge | number: '1.0-2'}}  </td>
+                    <td  >
+                        {{ data.rate | number: '1.0-2'}}  </td>
+                    <td  >
+                            {{ data.documentNumber }}  </td>
+                    <td  >
+                                {{ data.itemName  }}  </td>
+                    <td  >
+                                {{ data.comment  }}  </td>
                   </tr>
+                }
+                
               </tbody>
               </nz-table>
                 
@@ -292,14 +301,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let data of invoieLine.data">  
-                            <td  >
-                                {{ data.date | date:'MM/dd/yyyy'}}   </td> 
-                            <td  >
-                                {{ data.totalAmount | number: '1.0-2'}}  </td>
-                            <td  >
-                                {{ data.totalCharge | number: '1.0-2'}}  </td>
-                        </tr>
+                      @for (data of invoieLine.data; track data) {
+                      
+                        <tr >  
+                          <td  >
+                              {{ data.date | date:'MM/dd/yyyy'}}   </td> 
+                          <td  >
+                              {{ data.totalAmount | number: '1.0-2'}}  </td>
+                          <td  >
+                              {{ data.totalCharge | number: '1.0-2'}}  </td>
+                      </tr>
+                      }
+                      
                     </tbody>
                     </nz-table>
                     

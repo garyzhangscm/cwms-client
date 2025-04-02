@@ -14,7 +14,13 @@
                 <nz-form-control [nzSpan]="12" >
 
                     <nz-select formControlName="clientId">
-                        <nz-option *ngFor="let client of availableClients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                      
+                    @for (client of availableClients; track client) {
+                    
+                      <nz-option [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    }
+      
+
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
@@ -119,12 +125,16 @@
                   </tr>
               </thead>
               <tbody>
-                  <tr *ngFor="let data of invoieLine.data">  
-                      <td  nzWidth="350px">{{ 'BILLABLE-CATEGORY-' + data.billableCategory | i18n}} </td>
-                      <td> {{ data.amount | number: '1.0-2'}} </td> 
-                      <td> {{ data.rate }} </td> 
-                      <td> {{ data.totalCharge | number: '1.0-2'}} </td> 
+                @for (data of invoieLine.data; track data) {
+                
+                  <tr >  
+                    <td  nzWidth="350px">{{ 'BILLABLE-CATEGORY-' + data.billableCategory | i18n}} </td>
+                    <td> {{ data.amount | number: '1.0-2'}} </td> 
+                    <td> {{ data.rate }} </td> 
+                    <td> {{ data.totalCharge | number: '1.0-2'}} </td> 
                   </tr>
+                }
+                
               </tbody>
               </nz-table>
                 

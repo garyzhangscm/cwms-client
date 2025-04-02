@@ -31,54 +31,66 @@
     [nzData]="listOfAllUsers" [nzFooter]="tableFoot">
     <thead nzSingleSort>
       <tr>
-        <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
+        
+        @for (column of listOfColumns; track column) {
+        
+          <th  [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+        }
+        
+
         <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>
-          {{ data.username }}</td>
-        <td>{{ data.firstname }}</td>
-        <td>{{ data.lastname }}</td>
-        <td>{{ data.email }} </td>
-        <td>{{ data.department?.name }} </td>
-        <td>{{ data.position }} </td>
-        <td>
-          {{ data.onBoardTime  | date:'short'}} 
+      
+      @for (data of rowSelectionTable.data; track data) {
+      
+
+        <tr >
+          <td>
+            {{ data.username }}</td>
+          <td>{{ data.firstname }}</td>
+          <td>{{ data.lastname }}</td>
+          <td>{{ data.email }} </td>
+          <td>{{ data.department?.name }} </td>
+          <td>{{ data.position }} </td>
+          <td>
+            {{ data.onBoardTime  | date:'short'}} 
+            </td>
+          <td>{{ data.enabled + '' | i18n }}</td>
+          <td>{{ data.locked + '' | i18n}}</td>
+          <td *ngIf="!displayOnly">
+            
+            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" [disabled]="data.systemAdmin === true || data.companyId! < 0">
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>
+                  <!--  allow the user to assign the production line only when
+                  the work order is not start yet
+                  -->
+                  <li nz-menu-item >  
+                    <a  routerLink="/auth/user-role" routerLinkActive="active" [queryParams]="{userId : data.id!}">{{
+                      'assign-role' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item >  
+                    <a  routerLink="/auth/user/maintenance" routerLinkActive="active"
+                      [queryParams]="{userId : data.id!}">{{ 'modify' | i18n }}</a>
+                  </li>
+                  
+                  <li nz-menu-item >  
+                    <a  (click)="openCopyUserModal(data, tplCopyUserModalTitle, tplCopyUserModalContent )">{{ 'copy' | i18n }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+   
           </td>
-        <td>{{ data.enabled + '' | i18n }}</td>
-        <td>{{ data.locked + '' | i18n}}</td>
-        <td *ngIf="!displayOnly">
-          
-          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" [disabled]="data.systemAdmin === true || data.companyId! < 0">
-            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-            <nz-dropdown-menu #menu="nzDropdownMenu">
-              <ul nz-menu>
-                <!--  allow the user to assign the production line only when
-                the work order is not start yet
-                -->
-                <li nz-menu-item >  
-                  <a  routerLink="/auth/user-role" routerLinkActive="active" [queryParams]="{userId : data.id!}">{{
-                    'assign-role' | i18n }}</a>
-                </li>
-                <li nz-menu-item >  
-                  <a  routerLink="/auth/user/maintenance" routerLinkActive="active"
-                    [queryParams]="{userId : data.id!}">{{ 'modify' | i18n }}</a>
-                </li>
-                
-                <li nz-menu-item >  
-                  <a  (click)="openCopyUserModal(data, tplCopyUserModalTitle, tplCopyUserModalContent )">{{ 'copy' | i18n }}</a>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
- 
-        </td>
-      </tr>
+        </tr>
+      }
+      
     </tbody>
   </nz-table>
 

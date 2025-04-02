@@ -13,7 +13,11 @@
 
                         <nz-select [(ngModel)]="selectedClient" (ngModelChange)="selectedClientChanged()"
                           [nzDisabled]="this.companySpecificFlag == true">
-                            <nz-option *ngFor="let client of availableClients" [nzValue]="client" [nzLabel]="client.name"></nz-option>
+                          @for (client of availableClients; track client) {
+                          
+                            <nz-option  [nzValue]="client" [nzLabel]="client.name"></nz-option>
+                          }
+                          
                         </nz-select>
                     </nz-form-control>
                 </nz-form-item>
@@ -41,7 +45,11 @@
                     <nz-form-control [nzSpan]="12" >
 
                         <nz-select [(ngModel)]="selectedWarehouse" (ngModelChange)="selectedWarehouseChanged()">
-                            <nz-option *ngFor="let warehouse of availableWarehouses" [nzValue]="warehouse" [nzLabel]="warehouse.name"></nz-option>
+                            @for (warehouse of availableWarehouses; track warehouse) {
+                            
+                                <nz-option  [nzValue]="warehouse" [nzLabel]="warehouse.name"></nz-option>
+                            }
+                            
                         </nz-select>
                     </nz-form-control>
                 </nz-form-item>
@@ -55,7 +63,10 @@
         (nzAdd)="openNewBillingRateByInventoryAgeModal(tplNewBillingRateByInventoryAgeModalTitle, tplNewBillingRateByInventoryAgeModalContent)"
         (nzClose)="removeBillingRateGroup($event)"
     >
-        <nz-tab *ngFor="let billingRateByInventoryAge of billingRateByInventoryAges" 
+    
+        @for (billingRateByInventoryAge of billingRateByInventoryAges; track billingRateByInventoryAge) {
+        
+          <nz-tab 
             nzClosable nzTitle="{{billingRateByInventoryAge.startInventoryAge}} - {{billingRateByInventoryAge.endInventoryAge}} days">
             
             <div nz-row [nzGutter]="24"> 
@@ -120,7 +131,9 @@
                 </nz-list>
             </nz-card>
         
-        </nz-tab>
+          </nz-tab>
+        }
+    
     </nz-tabset>
     
     <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
