@@ -175,20 +175,20 @@ export class LayoutBasicComponent {
       });
 
       // load all the warehouses so that the user can choose between them
-      this.warehouseService.getWarehouses().subscribe(warehouseRes => this.warehouses = warehouseRes)
       const warehouse = this.warehouseService.getCurrentWarehouse();
-      const company = this.companyService.getCurrentCompany();
-      if (company === null) {
+      const company = this.companyService.getCurrentCompany(); 
+      if (company == null) {
         console.log(`Not able to get current company, will force the user to log in again`);
         router.navigateByUrl('passport/login');
-      } else if (warehouse === null) {
+      } 
+      else if (warehouse == null) {
         console.log(`Not able to get current warehouse, will force the user to log in again`);
         router.navigateByUrl('passport/login');
-      } else {
-        this.currentWarehouse = warehouse.name;
-        this.currentWarehouseId = warehouse.id;
-        this.currentCompany = company;
       }
+      this.warehouseService.getWarehouses().subscribe(warehouseRes => this.warehouses = warehouseRes) 
+      this.currentWarehouse = warehouse.name;
+      this.currentWarehouseId = warehouse.id;
+      this.currentCompany = company!; 
   }
 
   warehouseChanged() {

@@ -301,6 +301,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       if (params['receiptNumber']) { 
         this.loadReceipt(params['receiptNumber']); 
         this.newBatch = false;
+         
       } else {
         this.listOfAllReceiptLines = [];
         this.listOfDisplayReceiptLines = [];
@@ -552,7 +553,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     // Setup the value
     this.isSpinning = true;
     this.currentReceipt.id = this.receiptForm!.value.receiptId ? this.receiptForm!.value.receiptId : undefined;
-    this.currentReceipt.number = this.receiptForm!.value.receiptNumber ? this.receiptForm!.value.receiptNumber : "";
+    this.currentReceipt.number = this.receiptForm!.controls.receiptNumber.getRawValue() ? 
+        this.receiptForm!.controls.receiptNumber.getRawValue()! : "";
 
     // Get the client by name
     const client = this.getClientByName(this.receiptForm!.value.client ? this.receiptForm!.value.client : "");
@@ -631,6 +633,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   setupDisplayForExistingReceipt(): void {
+    
+    
     this.listOfAllReceiptLines = this.currentReceipt.receiptLines;
     this.listOfDisplayReceiptLines = this.currentReceipt.receiptLines;
 
@@ -649,6 +653,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
     // setup the display quantity for each line
     this.calculateDisplayQuanties(this.currentReceipt);
+    
+    
 
   }
 
@@ -718,7 +724,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   refreshReceiptResults(selectedTabIndex: number = 0): void {
     this.isSpinning = true;
     this.selectedTabIndex = selectedTabIndex;
-    const receiptNumber = this.receiptForm!.value.receiptNumber;
+    
+
+    const receiptNumber = this.receiptForm!.controls.receiptNumber.getRawValue();
     if (receiptNumber) {
       this.loadReceipt(receiptNumber);
     } else {
@@ -741,7 +749,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         // in case the receipt doesn't exists yet, let's set the
         // receipt number control as the input value
         this.receiptForm!.controls.receiptNumber.setValue(receiptNumber);
-        console.log(`this.receiptForm.controls.receiptNumber: ${this.receiptForm!.value.receiptNumber}`);
+        
       }
       this.isSpinning = false;
     });
@@ -1382,7 +1390,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.receiptLineService
       .getNextReceiptLineNumber(this.currentReceipt.id!)
       .subscribe(nextNumber => (this.currentReceiptLine.number = nextNumber));
-    // show the model
+    // show the model 
+
     this.addReceiptLineModal = this.modalService.create({
       nzTitle: tplReceiptLineModalTitle,
       nzContent: tplReceiptLineModalContent,

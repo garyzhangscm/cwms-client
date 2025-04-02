@@ -304,19 +304,7 @@
         </nz-table>
         -->
       </div>
-
-      <ng-template #receiptLinesTableFoot>
-        <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 10px;'>
-          <button nz-button nzType="primary"
-            (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
-            {{ 'add' | i18n }}
-          </button>
-          <button nz-button nzDanger (click)="removeSelectedReceiptLines()">
-            {{ 'remove' | i18n }}
-          </button>
-
-        </div>
-      </ng-template>
+      
 
     </nz-tab>
 

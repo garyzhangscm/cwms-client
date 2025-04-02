@@ -210,11 +210,15 @@ export class InventoryInventoryComponent implements OnInit {
       error: () =>  this.setupInventoryTableColumns()
     });
 
+    /**
+     * 
+     * 
     this.inventoryService.graphqlGetInventoryById(37537).subscribe({
       next: (inventoryRes) => {
          console.log(`get inventory by graphql: \n ${JSON.stringify(inventoryRes)}`);
       }
     })
+     */
     
   }
   setupInventoryTableColumns() {
