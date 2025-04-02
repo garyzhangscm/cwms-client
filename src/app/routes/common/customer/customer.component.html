@@ -35,67 +35,76 @@
       <tr>
         <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
-        <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
+        
+          @for (column of listOfColumns; track column) {
+        
+            <th  [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+              {{ column.name | i18n }}
+            </th>
+          }
+          
         <th nzRight nzWidth="120px">{{'action' | i18n}}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
-        <td> 
-              {{ data.name }} 
-        </td>
-        <td> {{ data.description }} 
-        </td>
-        <td> {{ data.listPickEnabledFlag }} 
-        </td>
-        <td> {{ data.contactorFirstname }} 
-        </td>
-        <td> {{ data.contactorLastname }} 
-        </td>
-        <td> {{ data.addressCountry }} 
-        </td>
-        <td> {{ data.addressState }} 
-        </td>
-        <td> {{ data.addressCounty }} 
-        </td>
-        <td> {{ data.addressCity }} 
-        </td>
-        <td> {{ data.addressDistrict }} 
-        </td>
-        <td> {{ data.addressLine1 }} 
-        </td>
-        <td> {{ data.addressLine2 }} 
-        </td>
-        <td> {{ data.addressPostcode }} 
-        </td>
-        
-        <td> {{ data.customerIsTarget }} 
-        </td>
-        <td> {{ data.customerIsWalmart }} 
-        </td>
-        <td> {{ data.allowPrintShippingCartonLabel }} 
-        </td>
-        <td> {{ data.allowPrintShippingCartonLabelWithPalletLabel }} 
-        </td>
-        <td> {{ data.allowPrintShippingCartonLabelWithPalletLabelWhenShort }} 
-        </td>
-        <td> {{ data.maxPalletSize }} 
-        </td>
-        <td> {{ data.maxPalletHeight }} 
-        </td>
-        <td nzRight> 
-          <a routerLinkActive="active"
-          (click)="setupSessionCustomer(data.id!)">
-            {{'modify' | i18n}}
-          </a>
+      @for (data of rowSelectionTable.data; track data) {
+      
+        <tr  >
+          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+          <td> 
+                {{ data.name }} 
+          </td>
+          <td> {{ data.description }} 
+          </td>
+          <td> {{ data.listPickEnabledFlag }} 
+          </td>
+          <td> {{ data.contactorFirstname }} 
+          </td>
+          <td> {{ data.contactorLastname }} 
+          </td>
+          <td> {{ data.addressCountry }} 
+          </td>
+          <td> {{ data.addressState }} 
+          </td>
+          <td> {{ data.addressCounty }} 
+          </td>
+          <td> {{ data.addressCity }} 
+          </td>
+          <td> {{ data.addressDistrict }} 
+          </td>
+          <td> {{ data.addressLine1 }} 
+          </td>
+          <td> {{ data.addressLine2 }} 
+          </td>
+          <td> {{ data.addressPostcode }} 
+          </td>
           
-        </td>
-      </tr>
+          <td> {{ data.customerIsTarget }} 
+          </td>
+          <td> {{ data.customerIsWalmart }} 
+          </td>
+          <td> {{ data.allowPrintShippingCartonLabel }} 
+          </td>
+          <td> {{ data.allowPrintShippingCartonLabelWithPalletLabel }} 
+          </td>
+          <td> {{ data.allowPrintShippingCartonLabelWithPalletLabelWhenShort }} 
+          </td>
+          <td> {{ data.maxPalletSize }} 
+          </td>
+          <td> {{ data.maxPalletHeight }} 
+          </td>
+          <td nzRight> 
+            <a routerLinkActive="active"
+            (click)="setupSessionCustomer(data.id!)">
+              {{'modify' | i18n}}
+            </a>
+            
+          </td>
+        </tr>
+      }
+      
     </tbody>
   </nz-table>
 </div>

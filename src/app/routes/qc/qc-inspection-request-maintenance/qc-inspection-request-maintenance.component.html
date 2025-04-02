@@ -41,13 +41,15 @@
         <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="qcInspectionRequestNumberErrorTpl" [nzValidateStatus]="qcInspectionRequestNumberValidateStatus"
         >
 
-            <input appFkey variable="qc-inspection-request" type="text" nz-input [(ngModel)]="currentQCInspectionRequest.number" required 
+            <input appFkey variable="qc-inspection-request" type="text" nz-input [(ngModel)]="currentQCInspectionRequest.number" required 
             (blur)="qcInspectionRequestChange($event)" [disabled]="!newQCInspectionRequest"/> 
 
-            <ng-template #qcInspectionRequestNumberErrorTpl let-control>  
-              <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-              <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'numberExists'">QC Inspection Request Number already exists</ng-container>
-                      
+            <ng-template #qcInspectionRequestNumberErrorTpl let-control>  
+              <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'required'">
+                {{ 'error.form.field.required' | i18n }}</ng-container>
+              <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'numberExists'">
+                QC Inspection Request Number already exists</ng-container>
+             
           </ng-template>
         </nz-form-control>
       </nz-form-item>
@@ -140,12 +142,48 @@
 <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
     
   <div nz-row style="padding: 10px">
-    <div nz-col nzSpan="12" nzOffset="6">
-      <nz-transfer [nzDataSource]="qcRuleList" nzShowSearch [nzFilterOption]="transferListFilterOption"
-        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
-        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+    <div nz-col nzSpan="18" nzOffset="3">
+      <nz-transfer [nzDataSource]="qcRuleList" nzShowSearch [nzFilterOption]="transferListFilterOption" 
+        (nzChange)="transferListChange($event)" 
+        [nzRenderList]="[renderList, renderList]"
         [nzTitles]="[ unassignedQCRuleText, assignedQCRuleText]">
       </nz-transfer>
+      <ng-template
+          #renderList
+          let-items
+          let-direction="direction"
+          let-stat="stat"
+          let-disabled="disabled"
+          let-onItemSelectAll="onItemSelectAll"
+          let-onItemSelect="onItemSelect"> 
+          <nz-table #t [nzData]="$asTransferItems(items)" nzSize="small">
+            <thead>
+              <tr>
+                <th
+                  [nzDisabled]="disabled"
+                  [nzChecked]="stat.checkAll"
+                  [nzIndeterminate]="stat.checkHalf"
+                  (nzCheckedChange)="onItemSelectAll($event)"
+                ></th>
+                <th>Name</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              @for (data of t.data; track data) {
+                <tr (click)="onItemSelect(data)">
+                  <td
+                    [nzChecked]="!!data.checked"
+                    [nzDisabled]="disabled || data.disabled"
+                    (nzCheckedChange)="onItemSelect(data)"
+                  ></td>
+                  <td>{{ data.title }}</td>
+                  
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+      </ng-template>
     </div>
   </div>
  </div>

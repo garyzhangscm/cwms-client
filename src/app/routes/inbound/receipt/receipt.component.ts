@@ -37,6 +37,7 @@ import { ReceivingTransactionService } from '../services/receiving-transaction.s
 import { DateTimeService } from '../../util/services/date-time.service';
 import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { Item } from '../../inventory/models/item';
 
 @Component({
     selector: 'app-inbound-receipt',
@@ -473,8 +474,8 @@ export class InboundReceiptComponent implements OnInit {
          undefined,
          undefined,
       this.searchForm!.value.client ? this.searchForm!.value.client : undefined,
-      this.receiptTable.pi,
-      this.receiptTable.ps).subscribe({
+      this.receiptTable?.pi,
+      this.receiptTable?.ps).subscribe({
         next: (page) => {
 
           this.searching = false;
@@ -1065,6 +1066,100 @@ export class InboundReceiptComponent implements OnInit {
       }, 
     }); 
 
+  }
+
+  loadReceiptDetails(receipt: Receipt) {
+    
+    this.loadReceiptLine(receipt);
+    this.loadReceivedInventory(receipt);
+  }
+
+  loadReceiptLine(receipt: Receipt) {
+    this.loadItemInformation(receipt.receiptLines);
+
+  }
+  loadItemInformation(receiptLines: ReceiptLine[]) {
+
+    // ok, we will group the items all together then 
+    // load the item in one transaction
+    // to increase performance      
+    let itemIdSet = new Set<number>(); 
+    receiptLines.forEach(
+      receiptLine => {
+        itemIdSet.add(receiptLine.itemId!);
+      }
+    )
+    if (itemIdSet.size > 0) {
+
+      let itemMap = new Map<number, Item>(); 
+      let itemIdList : string = Array.from(itemIdSet).join(',')
+      this.itemService.getItemsByIdList(itemIdList, false).subscribe({
+        next: (itemRes) => {
+
+          // add the result to a map so we can assign it to 
+          // the work order / work order line later on
+          itemRes.forEach(
+            item =>  itemMap.set(item.id!, item)
+          );
+
+          this.setupReceiptLineItems(receiptLines, itemMap);
+          this.loadDefaultStockUoms(receiptLines);
+          
+        }
+      })
+    }
+  }
+  loadDefaultStockUoms(receiptLines: ReceiptLine[]) { 
+    let unitOfMeasureIdSet = new Set<number>(); 
+    let itemsMap = new Map<number, Set<Item>>()
+
+    // get all the unit of measure id we will need to load
+    receiptLines.forEach(
+      receiptLine => { 
+        
+        if (receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
+          receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null ) {
+            let unitOfMeasureId = receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId;
+            unitOfMeasureIdSet.add(unitOfMeasureId);
+            let items : Set<Item> = itemsMap.get(unitOfMeasureId) == null ? new Set() : itemsMap.get(unitOfMeasureId)!
+            items?.add(receiptLine.item);
+            itemsMap.set(unitOfMeasureId, items);
+        }
+        
+      }
+    );
+
+    // console.log(`we got ${unitOfMeasureIdSet.size} unit of measure to load`);
+
+    unitOfMeasureIdSet.forEach(
+      unitOfMeasureId => {
+
+        this.localCacheService.getUnitOfMeasure(unitOfMeasureId)
+            .subscribe({
+              next: (unitOfMeasureRes) => { 
+                itemsMap.get(unitOfMeasureId)?.forEach(
+                  item => item.defaultItemPackageType!.stockItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes
+                );  
+                // this.listOfAllWorkOrder = workOrders;
+              }
+            });
+      }
+    )
+
+  }
+  
+  setupReceiptLineItems(receiptLines: ReceiptLine[], itemMap : Map<number, Item>) {
+    receiptLines.forEach(
+      receiptLine => {
+        
+        if (itemMap.has(receiptLine.itemId!)) {
+          receiptLine.item = itemMap.get(receiptLine.itemId!)
+          
+          
+        }
+        
+      }
+    );
   }
 
   loadReceivedInventory(receipt: Receipt) {

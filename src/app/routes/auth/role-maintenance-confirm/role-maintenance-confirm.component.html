@@ -58,26 +58,37 @@
     <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #userTable [nzData]="currentRole!.users!">
       <thead>
         <tr>
-          <th *ngFor="let column of listOfUserTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+          
+          @for (column of listOfUserTableColumns; track column) {
+          
+            <th [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
 
-            {{ column.name | i18n }}
-          </th>
+              {{ column.name | i18n }}
+            </th>
+          }
+      
+
 
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of userTable.data">
+        
+        @for (data of userTable.data; track data) {
+        
+          <tr >
 
-          <td>
-            {{ data.username }}</td>
-          <td>{{ data.firstname }}</td>
-          <td>{{ data.lastname }}</td>
-          <td>{{ data.email }} </td>
-          <td>{{ data.enabled }}</td>
-          <td>{{ data.locked }}</td>
-        </tr>
+            <td>
+              {{ data.username }}</td>
+            <td>{{ data.firstname }}</td>
+            <td>{{ data.lastname }}</td>
+            <td>{{ data.email }} </td>
+            <td>{{ data.enabled }}</td>
+            <td>{{ data.locked }}</td>
+          </tr>
+        }
+      
       </tbody>
     </nz-table>
   </nz-card>
@@ -116,41 +127,52 @@
       #clientTable>
       <thead>
         <tr> 
-          <th *ngFor="let column of listOfClientColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-            {{ column.name | i18n }}
-          </th>
+          
+          @for (column of listOfClientColumns; track column) {
+          
+            <th [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+              {{ column.name | i18n }}
+            </th>
+          }
+      
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of clientTable.data"> 
+        
+        @for (data of clientTable.data; track data) {
+        
+          <tr > 
 
-          <td>{{ data.client?.name }}
-          </td>
-          <td> {{ data.client?.description }}
-          </td>
-          <td>{{ data.client?.contactorFirstname }}
-          </td>
-          <td>{{ data.client?.contactorLastname }}
-          </td>
-          <td>{{ data.client?.addressCountry }}
-          </td>
-          <td>{{ data.client?.addressState }}
-          </td>
-          <td>{{ data.client?.addressCounty }}
-          </td>
-          <td>{{ data.client?.addressCity }}
-          </td>
-          <td>{{ data.client?.addressDistrict }}
-          </td>
-          <td>{{ data.client?.addressLine1 }}
-          </td>
-          <td> {{ data.client?.addressLine2 }}
-          </td>
-          <td>{{ data.client?.addressPostcode }}
-          </td>
-        </tr>
+            <td>{{ data.client?.name }}
+            </td>
+            <td> {{ data.client?.description }}
+            </td>
+            <td>{{ data.client?.contactorFirstname }}
+            </td>
+            <td>{{ data.client?.contactorLastname }}
+            </td>
+            <td>{{ data.client?.addressCountry }}
+            </td>
+            <td>{{ data.client?.addressState }}
+            </td>
+            <td>{{ data.client?.addressCounty }}
+            </td>
+            <td>{{ data.client?.addressCity }}
+            </td>
+            <td>{{ data.client?.addressDistrict }}
+            </td>
+            <td>{{ data.client?.addressLine1 }}
+            </td>
+            <td> {{ data.client?.addressLine2 }}
+            </td>
+            <td>{{ data.client?.addressPostcode }}
+            </td>
+          </tr>
+        }
+      
+
       </tbody>
       </nz-table>
   </nz-card>

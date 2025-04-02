@@ -16,6 +16,17 @@ import { CompanyService } from '../../warehouse-layout/services/company.service'
 import { AllocationDryRunResult } from '../models/allocation-dry-run-result';
 import { Inventory } from '../models/inventory';
 import { ItemFamily } from '../models/item-family';
+import { Apollo, gql } from 'apollo-angular';
+
+const GET_INVENTORY = gql`
+query {
+  recentPosts(count: 10, offset: 0) {
+      id
+      title
+      category 
+  }
+}
+`;
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +37,8 @@ export class InventoryService {
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private systemControlledNumberService: SystemControlledNumberService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private readonly apollo: Apollo,
   ) {}
 
   getInventories(
@@ -385,5 +397,13 @@ export class InventoryService {
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  
+  graphqlGetInventoryById(id: number) : Observable<any>{
+    return this.apollo
+      .watchQuery({
+        query: GET_INVENTORY,
+      })
+      .valueChanges.pipe(map(result => result.data));
   }
 }

@@ -50,24 +50,34 @@
   <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #userTable [nzData]="currentWorkingTeam!.users">
     <thead>
       <tr>
-        <th *ngFor="let column of listOfUserTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
+        
+        @for (column of listOfUserTableColumns; track column) {
+        
+          <th  [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+        }
+      
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of userTable.data">
+      
+      @for (data of userTable.data; track data) {
+      
+        <tr  >
 
-        <td>
-          {{ data.username }}</td>
-        <td>{{ data.firstname }}</td>
-        <td>{{ data.lastname }}</td>
-        <td>{{ data.email }} </td>
-        <td>{{ data.enabled +''| i18n }}</td>
-        <td>{{ data.locked +''| i18n}}</td>
-      </tr>
+          <td>
+            {{ data.username }}</td>
+          <td>{{ data.firstname }}</td>
+          <td>{{ data.lastname }}</td>
+          <td>{{ data.email }} </td>
+          <td>{{ data.enabled +''| i18n }}</td>
+          <td>{{ data.locked +''| i18n}}</td>
+        </tr>
+      }
+      
     </tbody>
   </nz-table>
 </nz-card>

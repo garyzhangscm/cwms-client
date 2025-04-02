@@ -31,7 +31,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
   newQCInspectionRequest = true;
   filterBy = "None";
   qcInspectionRequestNumberValidateStatus = 'warning'; 
-  
+  $asTransferItems = (data: unknown): TransferItem[] => data as TransferItem[];
   qcRuleList: TransferItem[] = [];
   allQCRules: QCRule[] = [];
   assignedQCRuleIds: number[] = [];
@@ -278,14 +278,8 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
   transferListFilterOption(inputValue: string, item: any): boolean {
     return item.title.indexOf(inputValue) > -1;
   }
-
-  transferListSearch(ret: {}): void {
-    console.log('nzSearchChange', ret);
-  }
-
-  transferListSelect(ret: {}): void {
-    console.log('nzSelectChange', ret);
-  }
+ 
+ 
 
   transferListChange(ret: TransferChange): void { 
     const listKeys = ret.list.map(l => l['key']); 

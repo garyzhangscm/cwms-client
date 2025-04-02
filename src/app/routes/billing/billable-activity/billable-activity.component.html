@@ -12,7 +12,14 @@
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
               <nz-select formControlName="client" nzAllowClear>
-                <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+                
+              @for (client of availableClients; track client) {
+              
+                <nz-option [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+              }
+      
+      
+
               </nz-select>
             </nz-form-control>
           </nz-form-item>
@@ -97,20 +104,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let data of billingRequestLine.data">   
-                            <td  >
-                                    {{ data.startTime | date:'short'}}   </td> 
-                            <td  >
-                                        {{ data.endTime | date:'short'}}   </td> 
-                            <td  >
-                                {{ data.totalAmount | number: '1.0-2'}}  </td>
-                            <td  >
-                                {{ data.totalCharge | currency: 'USD'}}  </td>
-                            <td  >
-                                    {{ data.documentNumber }}  </td>
-                            <td  >
-                                        {{ data.itemName  }}  </td>
+                  @for (data of billingRequestLine.data; track data) {
+                  
+                    <tr >   
+                      <td  >
+                              {{ data.startTime | date:'short'}}   </td> 
+                      <td  >
+                                  {{ data.endTime | date:'short'}}   </td> 
+                      <td  >
+                          {{ data.totalAmount | number: '1.0-2'}}  </td>
+                      <td  >
+                          {{ data.totalCharge | currency: 'USD'}}  </td>
+                      <td  >
+                              {{ data.documentNumber }}  </td>
+                      <td  >
+                                  {{ data.itemName  }}  </td>
                     </tr>
+                  }
+                  
                 </tbody>
                 </nz-table>
                     
