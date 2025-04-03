@@ -98,9 +98,12 @@
       <ng-template #nzTreeTemplate let-node let-origin="origin">
         <span>   
             <span>{{ node.title }}
-              <nz-switch *ngIf="origin.displayOnly"  [ngModel]="true" nzDisabled="true"  nzCheckedChildren="{{'displayOnly'|i18n}}" >
+              @if(origin.displayOnly) {
+
+                <nz-switch  [ngModel]="true" nzDisabled="true"  nzCheckedChildren="{{'displayOnly'|i18n}}" >
                 
-              </nz-switch>
+                </nz-switch>
+              }
      
             </span> 
          
@@ -111,18 +114,21 @@
   </nz-card>
   
   <nz-card nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"  [nzActions]="[cardFoot]">
-    <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
-      <div nz-col nzSpan="12"  >
-          <label nz-checkbox [ngModel]="currentRole.nonClientDataAccessible" disabled="true" >
-              {{ "nonClientDataAccessible" | i18n}}</label> 
-        </div>  
-    </div>
-    <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
-        <div nz-col nzSpan="12" >
-            <label nz-checkbox [ngModel]="currentRole.allClientAccess"  disabled="true" >
-                {{ "allClientAccess" | i18n}}</label> 
-        </div>  
-    </div>
+    @if(currentRole != null) {
+
+      <div nz-row style="padding: 10px" >                    
+        <div nz-col nzSpan="12"  >
+            <label nz-checkbox [ngModel]="currentRole.nonClientDataAccessible" disabled="true" >
+                {{ "nonClientDataAccessible" | i18n}}</label> 
+          </div>  
+      </div>
+      <div nz-row style="padding: 10px" >                    
+          <div nz-col nzSpan="12" >
+              <label nz-checkbox [ngModel]="currentRole.allClientAccess"  disabled="true" >
+                  {{ "allClientAccess" | i18n}}</label> 
+          </div>  
+      </div>
+    }
       <nz-table [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger [nzData]="currentRole!.clientAccesses"
       #clientTable>
       <thead>

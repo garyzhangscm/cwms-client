@@ -40,20 +40,29 @@
             </nz-switch> 
             <br />
             <!--show keywords list or allow the user to add key word filter if the user subscribe to this alert-->
-            <div *ngIf="userAlertSubscriptionMap.has(alertType.toString() + '-' + alertDeliveryChannel.toString())">
+            @if(userAlertSubscriptionMap.has(alertType.toString() + '-' + alertDeliveryChannel.toString())) {
+
+              <div>
   
-              <span>{{'alert.filter_by_keywords' | i18n }}: </span>
-              <a (click)="openKeyWordsFilterModal(alertTypes[alertType], alertDeliveryChannels[alertDeliveryChannel], 
-                         tplKeyWordsFilterModalTitle, tplKeyWordsFilterModalContent)">                
-                <span *ngIf="userAlertSubscriptionMap.get(alertType.toString() + '-' + alertDeliveryChannel.toString())!.keyWords!.length === 0">                 
-                    <em>[N/A]</em>       
-                </span>
-                
-                <span *ngIf="userAlertSubscriptionMap.get(alertType.toString() + '-' + alertDeliveryChannel.toString())!.keyWords!.length > 0"> 
-                   {{ userAlertSubscriptionMap.get(alertType.toString() + '-' + alertDeliveryChannel.toString())!.keyWordsList }}              
-                </span>
-              </a> 
-            </div>
+                <span>{{'alert.filter_by_keywords' | i18n }}: </span>
+                <a (click)="openKeyWordsFilterModal(alertTypes[alertType], alertDeliveryChannels[alertDeliveryChannel], 
+                           tplKeyWordsFilterModalTitle, tplKeyWordsFilterModalContent)"> 
+                  @if(userAlertSubscriptionMap.get(alertType.toString() + '-' + alertDeliveryChannel.toString())!.keyWords!.length === 0) {
+
+                    <span >                 
+                      <em>[N/A]</em>       
+                    </span>
+                  }
+                  @else {
+                    
+                    <span> 
+                      {{ userAlertSubscriptionMap.get(alertType.toString() + '-' + alertDeliveryChannel.toString())!.keyWordsList }}              
+                    </span>
+                  }
+                  
+                </a> 
+              </div>
+            }
           </td>
         }
 
@@ -93,10 +102,12 @@
     }
 
   </form>
-  
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
-    <button nz-button nzType="primary" (click)="addKeyWord()">
-      {{ 'add' | i18n }}
-    </button>
-  </div>
+  @if(!displayOnly) {
+
+    <div nz-row nzType="flex" nzJustify="start">
+      <button nz-button nzType="primary" (click)="addKeyWord()">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  }
 </ng-template>

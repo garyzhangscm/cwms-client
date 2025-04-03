@@ -53,10 +53,16 @@
             
             <input nz-input [(ngModel)]="currentRole!.name" id="name" name="name"  required 
             (blur)="roleNameChange($event)"/>
-            <ng-template #roleNameErrorTpl let-control>  
-                <ng-container *ngIf="roleNameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                <ng-container *ngIf="roleNameValidationMessage === 'nameExists'">Role Name already exists</ng-container>
-                        
+            <ng-template #roleNameErrorTpl let-control>  
+              @if (roleNameValidateStatus === 'required') {
+
+                <ng-container>{{ 'error.form.field.required' | i18n }}</ng-container>
+              }
+              @if (roleNameValidationMessage === 'nameExists') {
+
+                <ng-container>Role Name already exists</ng-container>
+              }
+              
             </ng-template>
           
           </nz-form-control>

@@ -71,9 +71,13 @@
                     style="width: 250px"  >
                  
       
-                    <nz-option *ngFor="let reasonCodeType of reasonCodeTypes | keys"
-                    nzLabel="{{ 'REASON-CODE-TYPE-' + reasonCodeType.key | i18n }}" [nzValue]="reasonCodeType.key">
-                    </nz-option>
+                    @for (reasonCodeType of reasonCodeTypes; track reasonCodeType) {
+      
+                      <nz-option 
+                          nzLabel="{{ 'REASON-CODE-TYPE-' + reasonCodeType | i18n }}" [nzValue]="reasonCodeType">
+                      </nz-option>
+                    }
+                    
                 </nz-select>
   
               </nz-form-control>

@@ -41,10 +41,10 @@
             {{ column.name | i18n }}
           </th>
         }
-        
+        @if(!displayOnly) {
 
-
-        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
+          <th >{{ 'action' | i18n }}</th>
+        }
       </tr>
     </thead>
     <tbody>
@@ -59,16 +59,24 @@
               {{ data.name }}</td>
             <td>{{ data.description }}</td>
             <td>{{ data.enabled + '' | i18n }}</td>
-            <td *ngIf="!displayOnly">
+            @if(!displayOnly) {
+
+              <td >
   
-              <a nz-button routerLink="/auth/working-team/user" routerLinkActive="active"
-                [queryParams]="{workingTeamId : data.id!}">{{ 'assign-user' | i18n }}</a>
-              <nz-divider nzType="vertical"></nz-divider>
-              <button nz-button nzDanger *ngIf="data.enabled === true" (click)="disableWorkingTeam(data.id!)">{{
-                'disable' | i18n }}</button>
-              <button nz-button nzType="primary" *ngIf="data.enabled === false" (click)="enableWorkingTeam(data.id!)">{{
-                'enable' | i18n }}</button>
-            </td>
+                <a nz-button routerLink="/auth/working-team/user" routerLinkActive="active"
+                  [queryParams]="{workingTeamId : data.id!}">{{ 'assign-user' | i18n }}</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                @if(data.enabled === true) {
+
+                  <button nz-button nzDanger  (click)="disableWorkingTeam(data.id!)">{{
+                    'disable' | i18n }}</button>
+                }
+                @else {
+                  <button nz-button nzType="primary"  (click)="enableWorkingTeam(data.id!)">{{
+                    'enable' | i18n }}</button>
+                }
+              </td>
+            }
           </tr>
           <tr [nzExpand]="expandSet.has(data.id!)">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
@@ -77,30 +85,46 @@
                   [nzShowPagination]="false">
                   <thead>
                     <tr>
-                      <th *ngFor="let column of listOfUserTableColumns" [nzSortOrder]="column.sortOrder"
-                        [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-                        [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
-                        [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-                        {{ column.name | i18n }}
-                      </th>
+                      
+                      @for (column of listOfUserTableColumns; track column) {
+                      
+                        <th  [nzSortOrder]="column.sortOrder"
+                          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                          [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                          {{ column.name | i18n }}
+                        </th>
+                      }
+      
+
+                      @if(!displayOnly) {
+
+                        <th >{{ 'action' | i18n }}</th>
+                      }
   
-                      <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let user of userTable.data">
-                      <td>
-                        {{ user.username }}</td>
-                      <td>{{ user.firstname }}</td>
-                      <td>{{ user.lastname }}</td>
-                      <td>{{ user.email }} </td>
-                      <td>{{ user.enabled + '' | i18n }}</td>
-                      <td>{{ user.locked + '' | i18n}}</td>
-                      <td *ngIf="!displayOnly">
-                        <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'working-team.unassign-user' | i18n
-                          }}</button>
-                      </td>
-                    </tr>
+                    @for (user of userTable.data; track user) {
+                    
+                      <tr>
+                        <td>
+                          {{ user.username }}</td>
+                        <td>{{ user.firstname }}</td>
+                        <td>{{ user.lastname }}</td>
+                        <td>{{ user.email }} </td>
+                        <td>{{ user.enabled + '' | i18n }}</td>
+                        <td>{{ user.locked + '' | i18n}}</td>
+                        @if(!displayOnly) {
+  
+                          <td >
+                            <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'working-team.unassign-user' | i18n
+                              }}</button>
+                          </td>
+                        }
+                      </tr>
+                    }
+                    
                   </tbody>
                 </nz-table>
               </nz-tab>
@@ -116,10 +140,13 @@
   </tbody>
   </nz-table>
 
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;" *ngIf="!displayOnly">
+  @if(!displayOnly) {
 
-    <a nz-button routerLink="/auth/working-team/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
-  </div>
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;" >
+
+      <a nz-button routerLink="/auth/working-team/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
+    </div>
+  }
 
 </div>
 

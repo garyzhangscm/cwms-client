@@ -112,12 +112,15 @@
 
 
 <ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">  
-    <a nz-button nzType="primary" routerLink="/common/customer-maintenance" routerLinkActive="active"
-      (click)="clearSessionCustomer()">
-      {{'add' | i18n}}
-    </a>
+  @if(!displayOnly) {
 
-    <button nz-button nzDanger (click)="removeSelectedCustomers()">{{'delete' | i18n}}</button>
-  </div>
+    <div nz-row nzType="flex" nzJustify="start"  >  
+      <a nz-button nzType="primary" routerLink="/common/customer-maintenance" routerLinkActive="active"
+        (click)="clearSessionCustomer()">
+        {{'add' | i18n}}
+      </a>
+
+      <button nz-button nzDanger (click)="removeSelectedCustomers()">{{'delete' | i18n}}</button>
+    </div>
+  }
 </ng-template>

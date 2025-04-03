@@ -19,8 +19,8 @@ export class CommonReasonCodeMaintenanceComponent   {
   currentReasonCode!: ReasonCode;
   stepIndex = 0;
   pageTitle: string; 
-  isSpinning = false;
-  reasonCodeTypes = ReasonCodeType;
+  isSpinning = false; 
+  reasonCodeTypes = Object.keys(ReasonCodeType);
 
 
   constructor(private http: _HttpClient,

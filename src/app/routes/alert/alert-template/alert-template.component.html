@@ -69,8 +69,9 @@
             <a nz-tooltip [nzTooltipTitle]="item.type">{{ item.type}}</a>
         </ng-template>
           <ng-template st-row="actionColumn" let-item let-index="index"> 
-              
-              <button *ngIf="!displayOnly" nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+              @if(!displayOnly) {
+
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
                   {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                   <ul nz-menu>  
@@ -83,6 +84,7 @@
                     </li>
                   </ul>
                 </nz-dropdown-menu>
+              }
         </ng-template>
     </st>
   
@@ -91,15 +93,22 @@
 </nz-spin>
 <ng-template #tableFoot>
 
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-    {{searchResult}}
-  </div>
+  @if(searchResult != '') {
+
+    <div nz-row nzType="flex" nzJustify="start"  >
+      {{searchResult}}
+    </div>
+  }
+
+  @if(!displayOnly) {
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"  > 
+      <button nz-button nzType="primary" routerLink="/alert/template/maintenance" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  }
   
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
-    <button nz-button nzType="primary" routerLink="/alert/template/maintenance" routerLinkActive="active">
-      {{ 'add' | i18n }}
-    </button>
-  </div>
 </ng-template>
 
 

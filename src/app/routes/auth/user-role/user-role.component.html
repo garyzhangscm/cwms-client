@@ -21,21 +21,24 @@
 
 <nz-card [nzActions]="[cardFoot]">
 
-  <div nz-row style="padding: 10px" *ngIf="newUser">
-    <div nz-col nzSpan="12" nzOffset="6">
-      <nz-steps [nzCurrent]="1" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
-        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
-          nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
-        </nz-step>
-        <nz-step nzTitle="{{ 'steps.role.assign-roles.title' | i18n }}"
-          nzDescription="{{ 'steps.role.assign-roles.description' | i18n }}">
-        </nz-step>
+  @if(newUser) {
 
-        <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
-        </nz-step>
-      </nz-steps>
+    <div nz-row style="padding: 10px" >
+      <div nz-col nzSpan="12" nzOffset="6">
+        <nz-steps [nzCurrent]="1" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+          <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+            nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
+          </nz-step>
+          <nz-step nzTitle="{{ 'steps.role.assign-roles.title' | i18n }}"
+            nzDescription="{{ 'steps.role.assign-roles.description' | i18n }}">
+          </nz-step>
+  
+          <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
+          </nz-step>
+        </nz-steps>
+      </div>
     </div>
-  </div>
+  }
 
   <div nz-row style="padding: 10px">
     <div nz-col nzSpan="12" nzOffset="6">
@@ -50,15 +53,21 @@
 </nz-card>
 
 <ng-template #cardFoot>
-  <div nz-row nzType="flex" nzJustify="center" *ngIf="!newUser">
-    <button nz-button nzType="primary" (click)="assignRole()" [nzLoading]="processingRole">
-      {{ 'confirm' | i18n }}
-    </button>
-  </div>
-  <div nz-row nzType="flex" nzJustify="center" *ngIf="newUser">
-    <button nz-button nzType="primary" (click)="goToNextPage()">
-      {{ 'steps.next' | i18n }} :
-      {{ 'steps.confirm.title' | i18n }}
-    </button>
-  </div>
+  @if(!newUser) {
+
+    <div nz-row nzType="flex" nzJustify="center" >
+      <button nz-button nzType="primary" (click)="assignRole()" [nzLoading]="processingRole">
+        {{ 'confirm' | i18n }}
+      </button>
+    </div>
+  }
+  @else {
+
+    <div nz-row nzType="flex" nzJustify="center" >
+      <button nz-button nzType="primary" (click)="goToNextPage()">
+        {{ 'steps.next' | i18n }} :
+        {{ 'steps.confirm.title' | i18n }}
+      </button>
+    </div>
+  }
 </ng-template>

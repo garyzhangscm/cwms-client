@@ -48,12 +48,21 @@
               [ngModelOptions]="{updateOn: 'blur'}" />
 
             <ng-template #usernameErrorTpl let-control>
-              <div *ngIf="username.invalid && (username.dirty || username.touched)">
-                <ng-container *ngIf="username['errors'] && username['errors']['errorCode']">
-                  {{  username['errors']['errorCode'] | i18n}}</ng-container>
-                <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
-                </ng-container>
-              </div>
+              @if(username.invalid && (username.dirty || username.touched)) {
+
+                <div >
+                  @if(username['errors'] && username['errors']['errorCode']) {
+
+                    <ng-container >
+                      {{  username['errors']['errorCode'] | i18n}}</ng-container>
+                  }
+                  @if(control.hasError('required')) {
+
+                    <ng-container >{{ 'error.form.field.required' | i18n }}
+                    </ng-container>
+                  }
+                </div>
+              }
             </ng-template>
 
           </nz-form-control>
@@ -120,7 +129,9 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             
-              <nz-select nzAllowClear  *ngIf='currentUser && currentUser.department' nz-input [ngModel]="currentUser!.department!.id"
+            @if(currentUser && currentUser.department) {
+
+              <nz-select nzAllowClear   nz-input [ngModel]="currentUser!.department!.id"
               (ngModelChange)="departmentChanged($event)"
                     style="width: 250px"  >
                     
@@ -130,9 +141,9 @@
                         [nzLabel]="department.description" [nzValue]="department.id">
                     </nz-option>
                   }
-                  
 
               </nz-select> 
+            }
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -152,17 +163,20 @@
             {{ 'worker-type' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-            <nz-select nzAllowClear  *ngIf='currentUser !== undefined' 
-            nz-input [ngModel]="currentUser!.workerType" (ngModelChange)="workerTypeChanged($event)"
-                    style="width: 250px"  >
+            @if(currentUser !== undefined) {
 
-                    @for (workerType of workerTypesKeys; track workerType) {
-                    
-                      <nz-option 
-                          nzLabel="{{ 'WORKER-TYPE-' + workerType | i18n }}" [nzValue]="workerType">
-                      </nz-option>
-                    }
+              <nz-select nzAllowClear 
+                  nz-input [ngModel]="currentUser!.workerType" (ngModelChange)="workerTypeChanged($event)"
+                      style="width: 250px"  >
+  
+                      @for (workerType of workerTypesKeys; track workerType) {
+                      
+                        <nz-option 
+                            nzLabel="{{ 'WORKER-TYPE-' + workerType | i18n }}" [nzValue]="workerType">
+                        </nz-option>
+                      }
               </nz-select>  
+            }
           </nz-form-control>
         </nz-form-item>
       </div>

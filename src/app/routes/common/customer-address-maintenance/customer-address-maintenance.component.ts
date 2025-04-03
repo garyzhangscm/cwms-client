@@ -49,4 +49,45 @@ export class CommonCustomerAddressMaintenanceComponent implements OnInit {
         break;
     }
   }
+
+  handleNewCustomerAddressChange(address: google.maps.places.PlaceResult) {  
+    // this.warehouseAddress = address;
+    address.address_components!.forEach(
+      addressComponent => {
+         
+        if (addressComponent.types[0] === 'street_number') {
+          // street number
+          // address line 1 = street number + street name
+          this.currentCustomer!.addressLine1 = `${addressComponent.long_name  } ${  this.currentCustomer!.addressLine1}`;
+        }
+        else if (addressComponent.types[0] === 'route') {
+          // street name
+          // address line 1 = street number + street name
+          this.currentCustomer!.addressLine1 = `${this.currentCustomer!.addressLine1  } ${  addressComponent.long_name}`;
+        } 
+        else if (addressComponent.types[0] === 'locality') {
+          // city
+          this.currentCustomer!.addressCity = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_2') {
+          // county
+          this.currentCustomer!.addressCounty = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_1') {
+          // city
+          this.currentCustomer!.addressState = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'country') {
+          // city
+          this.currentCustomer!.addressCountry = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'postal_code') {
+          // city
+          this.currentCustomer!.addressPostcode = addressComponent.long_name;
+        } 
+      }
+
+    )
+  }
+
 }
