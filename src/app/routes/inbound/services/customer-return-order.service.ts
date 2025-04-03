@@ -1,4 +1,5 @@
  
+import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { _HttpClient, ALAIN_I18N_TOKEN } from '@delon/theme';
@@ -26,21 +27,26 @@ export class CustomerReturnOrderService {
   ) { }
 
   getCustomerReturnOrders(number?: string, loadDetails?: boolean, statusList?: string,): Observable<CustomerReturnOrder[]> {
-    let url = `inbound/customer-return-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    let url = `inbound/customer-return-orders`;
     
 
+    let params = new HttpParams(); 
+    
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+ 
+
     if (number) {
-      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
+      params = params.append('number', number.trim());  
     }
     if (loadDetails !== undefined && loadDetails!= null) {
-      url = `${url}&loadDetails=${loadDetails}`;
+      params = params.append('loadDetails', loadDetails);   
     }
     if (statusList) {
-      url = `${url}&receipt_status_list=${statusList}`;
+      params = params.append('receipt_status_list', statusList);   
     }
 
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getCustomerReturnOrder(id: number): Observable<CustomerReturnOrder> {

@@ -1,4 +1,5 @@
  
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -23,15 +24,18 @@ export class InventoryLockService {
 
   getInventoryLocks(name?: string): Observable<InventoryLock[]> {
     
-    let url = `inventory/inventory-lock?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    let url = `inventory/inventory-lock`;
      
+    let params = new HttpParams(); 
+    
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
     
     if (name) {
-      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
+      params = params.append('name', name.trim());  
     }
     
     
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
    
   getInventoryLock(id: number): Observable<InventoryLock> {

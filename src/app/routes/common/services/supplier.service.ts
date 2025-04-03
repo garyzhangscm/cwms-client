@@ -1,4 +1,5 @@
  
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -40,13 +41,19 @@ export class SupplierService {
   
   getSuppliers(name?: string): Observable<Supplier[]> {
     
-    let url = `common/suppliers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}`;
+    let url = `common/suppliers`;
  
+    let params = new HttpParams(); 
+    
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
     if (name) {
-      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
+      params = params.append('name', name.trim());  
     }
     return this.http
-      .get(url)
+      .get(url, params)
       .pipe(map(res => res.data));
   }
 
