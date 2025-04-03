@@ -51,10 +51,10 @@ export class BillableActivityTypeService {
 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
     if (name) {      
-        params = params.append('name', this.utilService.encodeValue(name.trim())); 
+        params = params.append('name', name.trim()); 
     }
     if (description) {      
-        params = params.append('description', this.utilService.encodeValue(description.trim())); 
+        params = params.append('description', description.trim()); 
     }
     
     return this.http

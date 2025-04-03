@@ -23,22 +23,26 @@ export class InvoiceService {
     private utilService: UtilService,) {}
 
   getInvoices(warehouseId?: number, clientId?: number, number?: string, referenceNumber?: string): Observable<Invoice[]> {
-    let url = `admin/invoices?companyId=${this.companyService.getCurrentCompany()!.id}`;
+    let url = `admin/invoices`;
+    
+    let params = new HttpParams(); 
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+
     if (warehouseId) {
-      url = `${url}&warehouseId=${warehouseId}`;
+      params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
     }
-    if (clientId) {
-      url = `${url}&clientId=${clientId}`;
+    if (clientId) { 
+      params = params.append('clientId', clientId);  
     }
      
     if (number) {
-      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
+      params = params.append('number', number);   
     }
     if (referenceNumber) {
-      url = `${url}&referenceNumber=${this.utilService.encodeValue(referenceNumber.trim())}`;
+      params = params.append('referenceNumber', referenceNumber.trim());   
     }
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
   
   generateInvoiceFromBillingRequest( number: string, startTime: Date, endTime:Date, billingRequest: BillingRequest[],

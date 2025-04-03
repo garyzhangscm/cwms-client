@@ -50,11 +50,13 @@ export class WorkOrderService {
       
 
       if (number) {
-        params = params.append('number', this.utilService.encodeValue(number.trim()));  
+        // params = params.append('number', this.utilService.encodeValue(number.trim()));  
+        params = params.append('number', number.trim()); 
       }
       if (itemName) {
         
-        params = params.append('itemName', this.utilService.encodeValue(itemName.trim()));   
+        // params = params.append('itemName', this.utilService.encodeValue(itemName.trim()));   
+        params = params.append('itemName', itemName.trim());   
       }
       if (productionPlanId) {
         params = params.append('productionPlanId', productionPlanId);    
@@ -84,11 +86,13 @@ export class WorkOrderService {
      
 
     if (number) {
-      params = params.append('number', this.utilService.encodeValue(number.trim()));  
+      // params = params.append('number', this.utilService.encodeValue(number.trim()));  
+      params = params.append('number', number.trim());  
     }
     if (itemName) {
       
-      params = params.append('itemName', this.utilService.encodeValue(itemName.trim()));   
+      // params = params.append('itemName', this.utilService.encodeValue(itemName.trim()));   
+      params = params.append('itemName', itemName.trim());   
     }
     if (productionPlanId) {
       params = params.append('productionPlanId', productionPlanId);    

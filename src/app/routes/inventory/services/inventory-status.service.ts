@@ -1,4 +1,5 @@
  
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -44,18 +45,21 @@ export class InventoryStatusService {
         ),
       );
   }
-  getInventoryStatuses(name?: string, availableStatusFlag?: boolean): Observable<InventoryStatus[]> {
-    let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+  getInventoryStatuses(name?: string, availableStatusFlag?: boolean): Observable<InventoryStatus[]> { 
     
+    let params = new HttpParams(); 
+    
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
     if (name) { 
-      params = `${params}&itemName=${this.utilService.encodeValue(name.trim())}`;
+      params = params.append('itemName', name.trim());  
     }
     if (availableStatusFlag != null) {
-      params = `${params}&availableStatusFlag=${availableStatusFlag}`;
+      params = params.append('availableStatusFlag', availableStatusFlag);   
     }
 
-    const url = `inventory/inventory-statuses?${params}`;
-    return this.http.get(url).pipe(map(res => res.data));
+    const url = `inventory/inventory-statuses`;
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
   getAvailableInventoryStatuses(): Observable<InventoryStatus[]> {
     return this.getInventoryStatuses(undefined, true);
