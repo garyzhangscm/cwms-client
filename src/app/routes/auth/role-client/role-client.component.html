@@ -23,61 +23,72 @@
     
     <nz-card [nzActions]="[cardFoot]" [nzTitle]="cardTitle">
 
-        <div nz-row style="padding: 10px" *ngIf="newRole">
-            <div nz-col nzSpan="20" nzOffset="2">
-            <nz-steps [nzCurrent]="3" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
-                <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
-                nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
-                </nz-step>
-                <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
-                nzDescription="{{ 'steps.role.assign-users.description' | i18n }}">
-                </nz-step>
-                <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
-                nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}" [nzDisabled]="true">
-                </nz-step>
-                <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
-                nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
-                </nz-step>
-                <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
-                [nzDisabled]="true">
-                </nz-step>
-            </nz-steps>
+        @if(newRole) {
+
+            <div nz-row style="padding: 10px">
+                <div nz-col nzSpan="20" nzOffset="2">
+                <nz-steps [nzCurrent]="3" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+                    <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+                    nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
+                    </nz-step>
+                    <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
+                    nzDescription="{{ 'steps.role.assign-users.description' | i18n }}">
+                    </nz-step>
+                    <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
+                    nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}" [nzDisabled]="true">
+                    </nz-step>
+                    <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
+                    nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
+                    </nz-step>
+                    <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
+                    [nzDisabled]="true">
+                    </nz-step>
+                </nz-steps>
+                </div>
             </div>
-        </div>
+        }
     
-        
-        <div *ngIf="!threePartyLogisticsFlag">
+        @if(!threePartyLogisticsFlag) {
+
+            <div>
     
-            <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'3pl-not-enabled-for-this-warehouse' | i18n}}"> 
-            </nz-result>
-        </div>
-        <div *ngIf="threePartyLogisticsFlag">
+                <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'3pl-not-enabled-for-this-warehouse' | i18n}}"> 
+                </nz-result>
+            </div>
+        }
+        @else {
+
+            <div>
         
-            <nz-card nzTitle="{{ 'assign-clients' | i18n}}">
-                <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
-                    <div nz-col nzSpan="12" nzOffset="6">
-                        <label nz-checkbox [(ngModel)]="currentRole!.nonClientDataAccessible"  >
-                            {{ "nonClientDataAccessible" | i18n}}</label> 
-                    </div>  
-                </div>
-                <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
-                    <div nz-col nzSpan="12" nzOffset="6">
-                        <label nz-checkbox [(ngModel)]="currentRole!.allClientAccess"  >
-                            {{ "allClientAccess" | i18n}}</label> 
-                    </div>  
-                </div>
-                <div nz-row style="padding: 10px">
-                    <div nz-col nzSpan="12" nzOffset="6">
-                        <nz-transfer [nzDataSource]="clientsList" nzShowSearch [nzFilterOption]="transferListFilterOption"
-                        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
-                        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
-                        [nzTitles]="[ unassignedClientText, assignedClientText]">
-                        </nz-transfer>
+                <nz-card nzTitle="{{ 'assign-clients' | i18n}}">
+                    @if(currentRole != null) {
+
+                        <div nz-row style="padding: 10px" >                    
+                            <div nz-col nzSpan="12" nzOffset="6">
+                                <label nz-checkbox [(ngModel)]="currentRole!.nonClientDataAccessible"  >
+                                    {{ "nonClientDataAccessible" | i18n}}</label> 
+                            </div>  
+                        </div>
+                        <div nz-row style="padding: 10px">                    
+                            <div nz-col nzSpan="12" nzOffset="6">
+                                <label nz-checkbox [(ngModel)]="currentRole!.allClientAccess"  >
+                                    {{ "allClientAccess" | i18n}}</label> 
+                            </div>  
+                        </div>
+                    }
+                    <div nz-row style="padding: 10px">
+                        <div nz-col nzSpan="12" nzOffset="6">
+                            <nz-transfer [nzDataSource]="clientsList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+                            (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+                            (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+                            [nzTitles]="[ unassignedClientText, assignedClientText]">
+                            </nz-transfer>
+                        </div>
                     </div>
-                </div>
-            </nz-card>
+                </nz-card>
             </div>
-        
+            
+        }
         </nz-card>
     
     
@@ -85,16 +96,22 @@
         <h4>{{ 'role.name' | i18n}} : {{ currentRole?.name}}</h4>
         </ng-template>
         <ng-template #cardFoot>
-            <div nz-row nzType="flex" nzJustify="center" *ngIf="!newRole">
-                <button nz-button nzType="primary" (click)="assignClients()">
-                {{ 'confirm' | i18n }}
-                </button>
-            </div>
-            <div nz-row nzType="flex" nzJustify="center" *ngIf="newRole">
-                <button nz-button nzType="primary" (click)="goToNextPage()">
-                {{ 'steps.next' | i18n }} :
-                {{ 'steps.confirm.title' | i18n }}
-                </button>
-            </div>
+            @if(!newRole) {
+
+                <div nz-row nzType="flex" nzJustify="center" >
+                    <button nz-button nzType="primary" (click)="assignClients()">
+                    {{ 'confirm' | i18n }}
+                    </button>
+                </div>
+            }
+            @else {
+
+                <div nz-row nzType="flex" nzJustify="center">
+                    <button nz-button nzType="primary" (click)="goToNextPage()">
+                    {{ 'steps.next' | i18n }} :
+                    {{ 'steps.confirm.title' | i18n }}
+                    </button>
+                </div>
+            }
         </ng-template>
 </nz-spin>

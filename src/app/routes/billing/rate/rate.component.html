@@ -86,48 +86,61 @@
             <nz-card *ngIf="billingRateByInventoryAge.billingRates.length > 0" >
 
                 <nz-list class="demo-loadmore-list" >
-                    <nz-list-item *ngFor="let billingRate of billingRateByInventoryAge.billingRates">
-                    <ng-container >
-                        <nz-list-item-meta
-                        >
-                        <nz-list-item-meta-title>
-                            {{'BILLABLE-CATEGORY-' + billingRate.billableCategory | i18n}}
-                        </nz-list-item-meta-title>
-                        </nz-list-item-meta>
-                        
-                        <ul nz-list-item-actions>
-                            <nz-list-item-action>
-                                
-                                <nz-input-number [(ngModel)]="billingRate.rate" [nzMin]="0" 
-                                    [nzFormatter]="formatterDollar"
-                                    [nzParser]="parserDollar"
-                                    ></nz-input-number>
-                                /
-                                <nz-select *ngIf="!billingRate.rateByQuantity"
-                                    [ngModel]="billingRate.rateUnit" style="width: 180px;" (ngModelChange)="billingRateUnitChanged(billingRate, $event)">
-                                    <nz-option *ngFor="let unit of volumeUnits"
-                                        [nzValue]="unit"
-                                        nzLabel="{{unit.description}}" ></nz-option>
-                                </nz-select> 
-                                <span style="width: 180px;" *ngIf="billingRate.rateByQuantity"> Unit </span>
-                            </nz-list-item-action>
-                            <nz-list-item-action>
+                  
+                    @for (billingRate of billingRateByInventoryAge.billingRates; track billingRate) {
+                    
+                      <nz-list-item>
+                        <ng-container >
+                            <nz-list-item-meta
+                            >
+                            <nz-list-item-meta-title>
+                                {{'BILLABLE-CATEGORY-' + billingRate.billableCategory | i18n}}
+                            </nz-list-item-meta-title>
+                            </nz-list-item-meta>
+                            
+                            <ul nz-list-item-actions>
+                                <nz-list-item-action>
+                                    
+                                    <nz-input-number [(ngModel)]="billingRate.rate" [nzMin]="0" 
+                                        [nzFormatter]="formatterDollar"
+                                        [nzParser]="parserDollar"
+                                        ></nz-input-number>
+                                    /
+                                    <nz-select *ngIf="!billingRate.rateByQuantity"
+                                        [ngModel]="billingRate.rateUnit" style="width: 180px;" (ngModelChange)="billingRateUnitChanged(billingRate, $event)">
+                                        
+                                      @for (unit of volumeUnits; track unit) {
+                                      
+                                        <nz-option 
+                                          [nzValue]="unit"
+                                          nzLabel="{{unit.description}}" ></nz-option>
+                                      }
+                                    </nz-select> 
+                                    <span style="width: 180px;" *ngIf="billingRate.rateByQuantity"> Unit </span>
+                                </nz-list-item-action>
+                                <nz-list-item-action>
+  
+                                    <nz-select [(ngModel)]="billingRate.billingCycle">
+                                      @for (billingCycle of billingCyclesKeys; track billingCycle) {
+                                      
+                                        <nz-option 
+                                            [nzValue]="billingCycle"
+                                            nzLabel="{{ 'BILLING-CYCLE-' + billingCycle | i18n }}" ></nz-option>
+                                      }
+                                    </nz-select> 
+                                </nz-list-item-action>
+                                <nz-list-item-action>
+                                    <label nz-checkbox [(ngModel)]="billingRate.enabled">
+                                    <span>{{'enabled' | i18n}}</span>
+                                    </label>
+                                </nz-list-item-action>
+                            </ul>
+  
+                        </ng-container>
+                      </nz-list-item>
+                    }
+      
 
-                                <nz-select [(ngModel)]="billingRate.billingCycle">
-                                    <nz-option *ngFor="let billingCycle of billingCyclesKeys"
-                                        [nzValue]="billingCycle"
-                                        nzLabel="{{ 'BILLING-CYCLE-' + billingCycle | i18n }}" ></nz-option>
-                                </nz-select> 
-                            </nz-list-item-action>
-                            <nz-list-item-action>
-                                <label nz-checkbox [(ngModel)]="billingRate.enabled">
-                                <span>{{'enabled' | i18n}}</span>
-                                </label>
-                            </nz-list-item-action>
-                        </ul>
-
-                    </ng-container>
-                    </nz-list-item>
                 </nz-list>
             </nz-card>
         

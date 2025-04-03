@@ -40,12 +40,12 @@
                 >
         
 
-                  <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentOrder!.number" required 
+                  <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentOrder!.number" required 
                     (blur)="orderNumberChange($event)" [disabled]="!newOrder"/>
-                  <ng-template #orderNumberErrorTpl let-control>  
-                      <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                      <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">Order Number already exists</ng-container>
-                              
+                  <ng-template #orderNumberErrorTpl let-control>  
+                      <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                      <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">Order Number already exists</ng-container>
+                     
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
@@ -106,7 +106,8 @@
                   {{ 'shipment.stage.locationGroup' | i18n }}
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12" nzHasFeedback  >
-                    <nz-select [(ngModel)]="currentOrder!.stageLocationGroupId" (ngModelChange)="stageLocationGroupChange()">
+                    <nz-select [(ngModel)]="currentOrder!.stageLocationGroupId" (ngModelChange)="stageLocationGroupChange()"
+                    nzAllowClear>
                         <nz-option *ngFor="let loocationGroup of avaiableLocationGroups" [nzValue]="loocationGroup.id" [nzLabel]="loocationGroup.description!"></nz-option>
                       </nz-select>
 
@@ -120,7 +121,7 @@
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12" nzHasFeedback  >
                     
-                        <nz-select [(ngModel)]="currentOrder!.stageLocationId">
+                        <nz-select [(ngModel)]="currentOrder!.stageLocationId" nzAllowClear>
                             <nz-option *ngFor="let location of avaiableLocations" [nzValue]="location.id!" [nzLabel]="location.name!"></nz-option>
                         </nz-select>
 

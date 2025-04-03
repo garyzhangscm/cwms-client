@@ -42,7 +42,10 @@
         }
         
 
-        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
+        @if(!displayOnly) {
+
+          <th>{{ 'action' | i18n }}</th>
+        }
       </tr>
     </thead>
     <tbody>
@@ -63,50 +66,59 @@
             </td>
           <td>{{ data.enabled + '' | i18n }}</td>
           <td>{{ data.locked + '' | i18n}}</td>
-          <td *ngIf="!displayOnly">
+          @if(!displayOnly) {
+
+            <td>
             
-            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" [disabled]="data.systemAdmin === true || data.companyId! < 0">
-              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-              <nz-dropdown-menu #menu="nzDropdownMenu">
-                <ul nz-menu>
-                  <!--  allow the user to assign the production line only when
-                  the work order is not start yet
-                  -->
-                  <li nz-menu-item >  
-                    <a  routerLink="/auth/user-role" routerLinkActive="active" [queryParams]="{userId : data.id!}">{{
-                      'assign-role' | i18n }}</a>
-                  </li>
-                  <li nz-menu-item >  
-                    <a  routerLink="/auth/user/maintenance" routerLinkActive="active"
-                      [queryParams]="{userId : data.id!}">{{ 'modify' | i18n }}</a>
-                  </li>
-                  
-                  <li nz-menu-item >  
-                    <a  (click)="openCopyUserModal(data, tplCopyUserModalTitle, tplCopyUserModalContent )">{{ 'copy' | i18n }}</a>
-                  </li>
-                </ul>
-              </nz-dropdown-menu>
-   
-          </td>
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" [disabled]="data.systemAdmin === true || data.companyId! < 0">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu>
+                    <!--  allow the user to assign the production line only when
+                    the work order is not start yet
+                    -->
+                    <li nz-menu-item >  
+                      <a  routerLink="/auth/user-role" routerLinkActive="active" [queryParams]="{userId : data.id!}">{{
+                        'assign-role' | i18n }}</a>
+                    </li>
+                    <li nz-menu-item >  
+                      <a  routerLink="/auth/user/maintenance" routerLinkActive="active"
+                        [queryParams]="{userId : data.id!}">{{ 'modify' | i18n }}</a>
+                    </li>
+                    
+                    <li nz-menu-item >  
+                      <a  (click)="openCopyUserModal(data, tplCopyUserModalTitle, tplCopyUserModalContent )">{{ 'copy' | i18n }}</a>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+     
+            </td>
+          }
         </tr>
       }
       
     </tbody>
   </nz-table>
 
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
-    <a nz-button routerLink="/auth/user/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
-    <nz-divider nzType="vertical"></nz-divider>
-    <button nz-button (click)="openNewTempUserModal(tplNewTempUserModalTitle, tplNewTempUserModalContent )">{{'new-temp-user' | i18n}}</button>
-    
-  </div>
+  @if(!displayOnly) {
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" >
+      <a nz-button routerLink="/auth/user/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
+      <nz-divider nzType="vertical"></nz-divider>
+      <button nz-button (click)="openNewTempUserModal(tplNewTempUserModalTitle, tplNewTempUserModalContent )">{{'new-temp-user' | i18n}}</button>
+      
+    </div>
+  }
 </div>
 
 <ng-template #tableFoot>
 
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-    {{searchResult}}
-  </div>
+  @if(searchResult != '') {
+
+    <div nz-row nzType="flex" nzJustify="start">
+      {{searchResult}}
+    </div>
+  }
 </ng-template>
 
 

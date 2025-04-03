@@ -21,21 +21,26 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">    
 
     <nz-card [nzActions]="[cardFoot]" [nzTitle]="cardTitle">  
-      <div nz-row style="padding: 10px" *ngIf="allOperationTypes != null && allOperationTypes.length > 0">
-            <div nz-col nzSpan="12" nzOffset="6">
-              <nz-transfer [nzDataSource]="operationTypeItems" nzShowSearch [nzFilterOption]="transferListFilterOption"
-                (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
-                (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
-                [nzTitles]="[ unassignedText, assignedText]"  > 
-              </nz-transfer>
-            </div>
-      </div>  
-      <nz-result nzStatus="warning" nzTitle="No operation type found" 
-        *ngIf="allOperationTypes == null || allOperationTypes.length == 0">
-        <div nz-result-extra>
-          <button nz-button nzType="primary" (click)="goToOperationTypePage()">Maintain Operation Type</button>
-        </div>
-      </nz-result>
+      @if(allOperationTypes != null && allOperationTypes.length > 0) {
+
+        <div nz-row style="padding: 10px" >
+          <div nz-col nzSpan="12" nzOffset="6">
+            <nz-transfer [nzDataSource]="operationTypeItems" nzShowSearch [nzFilterOption]="transferListFilterOption"
+              (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+              (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+              [nzTitles]="[ unassignedText, assignedText]"  > 
+            </nz-transfer>
+          </div>
+        </div>  
+      }
+      @else {
+
+        <nz-result nzStatus="warning" nzTitle="No operation type found"  >
+          <div nz-result-extra>
+            <button nz-button nzType="primary" (click)="goToOperationTypePage()">Maintain Operation Type</button>
+          </div>
+        </nz-result>
+      }
     </nz-card>
       
 </nz-spin>

@@ -6,21 +6,33 @@
 
 
     <ng-template st-row="alertTypeColumn" let-item let-index="index"> 
-        <span *ngIf="item.readFlag">
-            {{ 'ALERT-TYPE-' + item.alert.type | i18n }}
-        </span>
-        <strong *ngIf="!item.readFlag">
-            {{ 'ALERT-TYPE-' + item.alert.type | i18n }}
-        </strong>
+        @if(item.readFlag) {
+
+            <span >
+                {{ 'ALERT-TYPE-' + item.alert.type | i18n }}
+            </span>
+        }
+        @else {
+
+            <strong >
+                {{ 'ALERT-TYPE-' + item.alert.type | i18n }}
+            </strong>
+        }
             
     </ng-template>
     <ng-template st-row="titleColumn" let-item let-index="index"> 
-        <span *ngIf="item.readFlag">
-            {{ item.alert.title }}
-        </span>
-        <strong *ngIf="!item.readFlag">
-            {{ item.alert.title }}
-        </strong>
+        @if(item.readFlag) {
+            
+            <span >
+                {{ item.alert.title }}
+            </span>
+        }
+        @else {
+
+            <strong  >
+                {{ item.alert.title }}
+            </strong>
+        }
             
     </ng-template>
     <ng-template st-row="actionColumn" let-item let-index="index"> 

@@ -21,27 +21,30 @@
 
 <nz-card [nzActions]="[cardFoot]" [nzTitle]="cardTitle">
 
-  <div nz-row style="padding: 10px" *ngIf="newRole">
-    <div nz-col nzSpan="20" nzOffset="2">
-      <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
-        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
-          nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
-        </nz-step>
-        <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
-          nzDescription="{{ 'steps.role.assign-users.description' | i18n }}">
-        </nz-step>
-        <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
-          nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}" [nzDisabled]="true">
-        </nz-step>
-        <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
-          nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
-        </nz-step>
-        <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
-          [nzDisabled]="true">
-        </nz-step>
-      </nz-steps>
+  @if(newRole) {
+
+    <div nz-row style="padding: 10px">
+      <div nz-col nzSpan="20" nzOffset="2">
+        <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+          <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+            nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
+          </nz-step>
+          <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
+            nzDescription="{{ 'steps.role.assign-users.description' | i18n }}">
+          </nz-step>
+          <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
+            nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}" [nzDisabled]="true">
+          </nz-step>
+          <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
+            nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
+          </nz-step>
+          <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
+            [nzDisabled]="true">
+          </nz-step>
+        </nz-steps>
+      </div>
     </div>
-  </div>
+  }
 
   <nz-card nzTitle="{{ 'web' | i18n}}">
     <div nz-row style="padding: 10px">
@@ -54,8 +57,13 @@
           
           <ng-template #render let-menu> 
             {{ menu.title }} 
-            <nz-switch *ngIf="menu.direction == 'right'" style="padding-left: 10px"
-            [(ngModel)]="menu.displayOnly" nzCheckedChildren="{{'displayOnly'|i18n}}" nzUnCheckedChildren="{{'displayOnly'|i18n}}"></nz-switch>
+            @if(menu.direction == 'right') {
+
+              <nz-switch style="padding-left: 10px"
+                  [(ngModel)]="menu.displayOnly"
+                  nzCheckedChildren="{{'displayOnly'|i18n}}" nzUnCheckedChildren="{{'displayOnly'|i18n}}">
+              </nz-switch>
+            }
       
           </ng-template>
 
@@ -82,15 +90,21 @@
   <h4>{{ 'role.name' | i18n}} : {{ currentRole?.name}}</h4>
 </ng-template>
 <ng-template #cardFoot>
-  <div nz-row nzType="flex" nzJustify="center" *ngIf="!newRole">
-    <button nz-button nzType="primary" (click)="assignMenu()" [nzLoading]="processingMenu">
-      {{ 'confirm' | i18n }}
-    </button>
-  </div>
-  <div nz-row nzType="flex" nzJustify="center" *ngIf="newRole">
-    <button nz-button nzType="primary" (click)="goToNextPage()">
-      {{ 'steps.next' | i18n }} :
-      {{ 'steps.confirm.title' | i18n }}
-    </button>
-  </div>
+  @if(!newRole) {
+
+    <div nz-row nzType="flex" nzJustify="center" >
+      <button nz-button nzType="primary" (click)="assignMenu()" [nzLoading]="processingMenu">
+        {{ 'confirm' | i18n }}
+      </button>
+    </div>
+  }
+  @else {
+
+    <div nz-row nzType="flex" nzJustify="center">
+      <button nz-button nzType="primary" (click)="goToNextPage()">
+        {{ 'steps.next' | i18n }} :
+        {{ 'steps.confirm.title' | i18n }}
+      </button>
+    </div>
+  }
 </ng-template>

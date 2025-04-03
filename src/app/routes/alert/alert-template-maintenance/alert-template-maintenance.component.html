@@ -21,100 +21,113 @@
 </nz-steps>
 
 <!-- Show basic item information -->
-<div class="small-card" *ngIf="stepIndex === 0 
-    && currentAlertTemplate != null">
-  <div nz-row [nzGutter]="24">
-
-
-    <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">
-          {{ 'type' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="18">
-            <nz-select  nzAllowClear [(ngModel)]="currentAlertTemplate.type" [disabled]="!newAlertTemplate">
-              
-              @for (alertType of alertTypeKeys; track alertType) {
-              
-                <nz-option 
-                    [nzValue]="alertType"
-                    nzLabel="{{ 'ALERT-TYPE-' + alertType | i18n}}"
-                ></nz-option>
-              }
-
-          </nz-select> 
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">
-          {{ 'deliveryChannel' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="18">
-            <nz-select  nzAllowClear [(ngModel)]="currentAlertTemplate.deliveryChannel" [disabled]="!newAlertTemplate">
-              
-              @for (alertDeliveryChannel of alertDeliveryChannelsKeys; track alertDeliveryChannel) {
-              
-                <nz-option 
-                  [nzValue]="alertDeliveryChannel"
-                  nzLabel="{{ 'ALERT-DELIVERY-CHANNEL-' + alertDeliveryChannel | i18n}}"
-                ></nz-option>
-              }
-
-          </nz-select> 
-        </nz-form-control>
-      </nz-form-item>
-    </div> 
+@if(stepIndex === 0 && currentAlertTemplate != null) {
+  <div class="small-card">
+    <div nz-row [nzGutter]="24">
   
+  
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+              <nz-select  nzAllowClear [(ngModel)]="currentAlertTemplate.type" [disabled]="!newAlertTemplate">
+                
+                @for (alertType of alertTypeKeys; track alertType) {
+                
+                  <nz-option 
+                      [nzValue]="alertType"
+                      nzLabel="{{ 'ALERT-TYPE-' + alertType | i18n}}"
+                  ></nz-option>
+                }
+  
+            </nz-select> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'deliveryChannel' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+              <nz-select  nzAllowClear [(ngModel)]="currentAlertTemplate.deliveryChannel" [disabled]="!newAlertTemplate">
+                
+                @for (alertDeliveryChannel of alertDeliveryChannelsKeys; track alertDeliveryChannel) {
+                
+                  <nz-option 
+                    [nzValue]="alertDeliveryChannel"
+                    nzLabel="{{ 'ALERT-DELIVERY-CHANNEL-' + alertDeliveryChannel | i18n}}"
+                  ></nz-option>
+                }
+  
+            </nz-select> 
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="24"><nz-form-item>
+          <nz-form-label [nzSpan]="1">
+            {{ 'template' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+               
+              <textarea nz-input  [(ngModel)]="currentAlertTemplate.template" [nzAutosize]="{ minRows: 3, maxRows: 999 }"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      </div>
   </div>
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="24"><nz-form-item>
-        <nz-form-label [nzSpan]="1">
-          {{ 'template' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="18">
-             
-            <textarea nz-input  [(ngModel)]="currentAlertTemplate.template" [nzAutosize]="{ minRows: 3, maxRows: 999 }"></textarea>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    </div>
-</div>
+}
+
   
 <!-- Confirm the change -->
-<div class="small-card" *ngIf="stepIndex === 1">
-  <nz-card>
-    <nz-descriptions nzBordered="true">
+@if(stepIndex === 1) {
 
-      <nz-descriptions-item nzTitle="{{ 'type' | i18n }}">
+  <div class="small-card">
+    <nz-card>
+      <nz-descriptions nzBordered="true">
+  
+        <nz-descriptions-item nzTitle="{{ 'type' | i18n }}">
+  
+          {{ currentAlertTemplate.type  }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'deliveryChannel' | i18n }}" nzSpan="2">{{ currentAlertTemplate.deliveryChannel }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'template' | i18n }}">{{ currentAlertTemplate.template }}
+        </nz-descriptions-item>
+        
+      </nz-descriptions>
+    </nz-card>
+  </div>
+}
 
-        {{ currentAlertTemplate.type  }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'deliveryChannel' | i18n }}" nzSpan="2">{{ currentAlertTemplate.deliveryChannel }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'template' | i18n }}">{{ currentAlertTemplate.template }}
-      </nz-descriptions-item>
-      
-    </nz-descriptions>
-  </nz-card>
-</div>
+
+@if(stepIndex === 0) {
+
+  <div class="steps-action">
+    <button nz-button nzType="default" (click)="nextStep()">
+      <span>{{ 'steps.next' | i18n }}</span>
+    </button>
+  </div>
+}
 
 
-<div class="steps-action" *ngIf="stepIndex === 0">
-  <button nz-button nzType="default" (click)="nextStep()">
-    <span>{{ 'steps.next' | i18n }}</span>
-  </button>
-</div>
 
-<div class="steps-action" *ngIf="stepIndex === 1">
+@if(stepIndex === 1) {
+  
+  <div class="steps-action"  >
 
-  <button nz-button nzType="default" (click)="previousStep()">
-    <span>{{ 'steps.previous' | i18n }}</span>
-  </button>
-  <nz-divider nzType="vertical"></nz-divider>
-  <button nz-button nzType="primary" (click)="confirmAlertTemplate()">
-    <span> {{ 'confirm' | i18n }}</span>
-  </button>
-</div>
+    <button nz-button nzType="default" (click)="previousStep()">
+      <span>{{ 'steps.previous' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" (click)="confirmAlertTemplate()">
+      <span> {{ 'confirm' | i18n }}</span>
+    </button>
+  </div>
+}
 </nz-spin>
