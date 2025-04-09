@@ -31,8 +31,10 @@ import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
+import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Receipt } from '../models/receipt';
 import { ReceiptLine } from '../models/receipt-line';
@@ -40,6 +42,7 @@ import { ReceiptStatus } from '../models/receipt-status.enum';
 import { PutawayConfigurationService } from '../services/putaway-configuration.service';
 import { ReceiptLineService } from '../services/receipt-line.service';
 import { ReceiptService } from '../services/receipt.service';
+import { RfService } from '../../util/services/rf.service';
 
 @Component({
     selector: 'app-inbound-receipt-maintenance',
@@ -159,6 +162,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   receivedInventoryTableChecked = false;
   receivedInventoryTableIndeterminate = false;
   newBatch = false;
+
+  needPrintLabelForNewLPN = false;
  
   receivingForm!: UntypedFormGroup;
   pageTitle: string;
@@ -257,8 +262,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private modalService: NzModalService,
     private itemPackageTypeService: ItemPackageTypeService,
     private inventoryStatusService: InventoryStatusService,
+    private warehouseConfigurationService: WarehouseConfigurationService,
     private putawayConfigurationService: PutawayConfigurationService,
     private itemService: ItemService,
+    private rfService: RfService,
     private locationService: LocationService,
     private inventoryService: InventoryService,
     private message: NzMessageService, 
@@ -283,6 +290,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       } ,  
       error: () =>  this.setupReceivedInventoryTableColumns()
     });
+
+    
   }
 
   ngOnInit(): void {
@@ -336,6 +345,18 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           this.threePartyLogisticsFlag = false;
         }  
       },  
+    });
+
+
+    this.needPrintLabelForNewLPN = false;
+    
+    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfiguration) => {
+          if (warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA &&
+                warehouseConfiguration.newLPNPrintLabelAtReceivingFlag) {
+              this.needPrintLabelForNewLPN = true;
+          } 
+      }  
     });
 
   }
@@ -1279,7 +1300,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       }
 
     }
-    console.log(`actualReceivingInventory\n${JSON.stringify(actualReceivingInventory)}`)
+    
+    //console.log(`actualReceivingInventory\n${JSON.stringify(actualReceivingInventory)}`)
     
     // if (this.receivingForm.valid) { 
       this.receiptLineService
@@ -1288,7 +1310,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
             this.currentReceivingLine.id!,
             actualReceivingInventory
           ).subscribe({
-            next: () => {
+            next: (receivedInventory) => {
               this.message.success(this.i18n.fanyi('message.receiving.success'));
 
               this.receivingModal.destroy();
@@ -1296,6 +1318,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
               this.isSpinning = false;
 
               this.refreshReceiptResults();
+
+              console.log(`do we need to print lpn label for the new LPN ${receivedInventory.lpn}: ${this.needPrintLPNLabel()}`);
+              if (this.needPrintLPNLabel()) {
+                this.printLabelForNewLPN(receivedInventory);
+              }
             },
             error: 
               () => {
@@ -1309,6 +1336,45 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     //  this.receivingInProcess = false;
     //  this.isSpinning = false;
     // }
+  }
+
+  needPrintLPNLabel() : boolean {
+    return this.needPrintLabelForNewLPN;
+  }
+
+  printLabelForNewLPN(inventory: Inventory) : void {
+    this.inventoryService.generateLPNLabel(inventory.lpn!).subscribe({
+      next: (reportHistory) => {
+        if (this.rfService.getLoginRF() != null) {
+          this.rfService.getRFs(this.rfService.getLoginRF()!).subscribe({
+            next: (rfs) => {
+
+              if (rfs.length == 1 && rfs[0].printerName != null) {
+
+                this.printingService.printReportHistoryFromLocal(reportHistory, rfs[0].printerName);
+
+              }
+              else {
+                
+                this.printingService.printReportHistoryFromLocal(reportHistory,  "");
+              }
+            }, 
+            error: () => {
+
+              // print from default printer
+              this.printingService.printReportHistoryFromLocal(reportHistory, "");
+            }
+          })
+        }
+        else {
+          
+              // print from default printer
+          this.printingService.printReportHistoryFromLocal(reportHistory, "");
+        }
+
+      }
+    })
+
   }
   displayReceivingFormError(fromGroup: UntypedFormGroup): void {
     // tslint:disable-next-line: forin

@@ -55,7 +55,7 @@ export class InvoiceService {
       
       params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
       params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
-      params = params.append('number', this.utilService.encodeValue(number.trim())); 
+      params = params.append('number', number.trim()); 
       // params = params.append('startTime', this.dateTimeService.getISODateString(startTime)); 
       // params = params.append('endTime', this.dateTimeService.getISODateString(endTime));  
   
@@ -70,7 +70,7 @@ export class InvoiceService {
       }
       
       if (comment) {
-        params = params.append('comment', this.utilService.encodeValue(comment.trim()));    
+        params = params.append('comment', comment.trim());    
       }
 
       return this.http.post(url, billingRequest, params).pipe(map(res => res.data));

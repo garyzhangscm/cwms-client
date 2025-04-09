@@ -1,6 +1,7 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
+import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -26,6 +27,7 @@ import { PrintableBarcode } from '../models/printable-barcode';
 export class PrintingService {
   // printer related
   private lodop: Lodop | null = null;
+  private tokenService = inject(DA_SERVICE_TOKEN);
 
   constructor(
     public lodopService: LodopService,
@@ -264,6 +266,41 @@ export class PrintingService {
         }); 
   }
 
+  printReportHistoryFromLocal(reportHistory : ReportHistory, printerName: string): void { 
+
+    console.log(`start to print ${reportHistory.fileName} from printer ${printerName == null ? "N/A" : printerName}`);
+
+    let printers: Map<string, number> = new Map();
+    this.getAllLocalPrinters().forEach(
+      (printer, index) => { 
+        printers.set(printer, index);
+      });
+    
+    if (printerName == null || !printers.has(printerName)) {
+        console.log(`either pritner name not passed in or we can't find the printer, let's printer from the default printer`);
+        
+        this.printFromLocal(
+          reportHistory.fileName,
+          reportHistory.fileName, 
+          reportHistory.type,
+          0,
+          1,
+        );
+    }
+    else {
+      console.log(`found printer ${printerName} with index ${printers.get(printerName)}`);
+      
+      this.printFromLocal(
+        reportHistory.fileName,
+        reportHistory.fileName, 
+        reportHistory.type,
+        printers.get(printerName)!,
+        1,
+      );
+    }
+    
+
+  }
   printFromLocal(    
     name: string,
     fileName: string,
@@ -283,6 +320,8 @@ export class PrintingService {
     url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
     url = `${url}/${type}`;
     url = `${url}/${fileName}`;
+    url = `${url}?token=${this.tokenService.get()?.token}`;
+    url = `${url}&companyId=${this.companyService.getCurrentCompany()!.id}`
 
 
     // url = "https://localhost.lodop.net:8443/CLodopDemos/PDFDemo.pdf";

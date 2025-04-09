@@ -44,4 +44,13 @@ export class RfService {
     const url = `resource/rfs/${rf.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
+
+  // get work station id
+  // right now we will use the same RF data
+  getLoginRF() {
+    return  localStorage.getItem('work_station_name');
+  }
+  setLoginRF(name: string) {
+    return  localStorage.setItem('work_station_name', name);
+  }
 }
