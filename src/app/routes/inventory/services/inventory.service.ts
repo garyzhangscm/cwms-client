@@ -345,17 +345,22 @@ export class InventoryService {
   generateLPNLabel(lpn: string, quantity?: number, printerName?: string) : Observable<ReportHistory> {
     
     let url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/${lpn}/lpn-label`;
-    url = `${url}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`
+
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+ 
     if (quantity) {
-      url = `${url}&quantity=${quantity}`
+      params = params.append('quantity', quantity);  
     }
      
     if (printerName) {
-      url = `${url}&printerName=${printerName}`
+      params = params.append('printerName', printerName);   
     }
     
     
-    return this.http.post(url).pipe(map(res => res.data));
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
   getAvailableInventoryForMPS(itemId?: number, itemName?: string) : Observable<Inventory[]>{
     let url = `inventory/inventories/available-for-mps/inventory-ignore-order?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
