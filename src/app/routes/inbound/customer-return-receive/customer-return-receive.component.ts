@@ -37,12 +37,12 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   receivingForm = this.fb.nonNullable.group({
-    itemNumber: this.fb.control('', []),
-    lpn: this.fb.control('', []),
-    inventoryStatus: this.fb.control('', []),
-    itemPackageType: this.fb.control('', []),
-    quantity: this.fb.control(null, []),
-    locationName: this.fb.control('', []),
+    itemNumber: this.fb.control('', { nonNullable: true, validators: []}),
+    lpn: this.fb.control('', { nonNullable: true, validators: []}),
+    inventoryStatus: this.fb.control('', { nonNullable: true, validators: []}),
+    itemPackageType: this.fb.control('', { nonNullable: true, validators: []}),
+    quantity: this.fb.control(null, { nonNullable: true, validators: []}),
+    locationName: this.fb.control('',{ nonNullable: true, validators:  []}),
   });
   
 

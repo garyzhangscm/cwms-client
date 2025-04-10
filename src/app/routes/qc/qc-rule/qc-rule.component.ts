@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -19,9 +19,17 @@ import { QcRuleService } from '../services/qc-rule.service';
 export class QcQcRuleComponent implements OnInit {
   
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control('', { nonNullable: true, validators: []}),  
+  });
+ 
+
   displayOnly = false;
   constructor(  
-    private fb: UntypedFormBuilder, 
+ 
     private qcRuleService: QcRuleService,
     private userService: UserService,
     private router: Router, 
@@ -36,18 +44,14 @@ export class QcQcRuleComponent implements OnInit {
 listOfAllQCRules: QCRule[] = [];
 
 searchResult = '';
-isSpinning = false;
-searchForm!: UntypedFormGroup; 
+isSpinning = false; 
 
 ngOnInit(): void { 
 
-  this.searchForm = this.fb.group({
-    name: [null], 
-    }); 
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) {
-        this.searchForm.value.name.setValue(params['name']);
+        this.searchForm.controls.name.setValue(params['name']);
         this.search();
       }
     });

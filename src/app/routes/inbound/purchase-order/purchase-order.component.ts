@@ -31,9 +31,9 @@ export class InboundPurchaseOrderComponent implements OnInit {
   // initiate the search form 
   
   searchForm = this.fb.nonNullable.group({
-    number: this.fb.control('', []),
-    statusList: this.fb.control('', []),
-    supplier: this.fb.control('', []), 
+    number: this.fb.control('', { nonNullable: true, validators: []}),
+    statusList: this.fb.control('', { nonNullable: true, validators: []}),
+    supplier: this.fb.control('',{ nonNullable: true, validators:  []}), 
   });
   
 

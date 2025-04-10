@@ -346,10 +346,10 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   
   
   requestForm = this.fb.nonNullable.group({
-    batchId: this.fb.control('', [Validators.required]),
-    requestType: this.fb.control('', [Validators.required]),
-    startValue: this.fb.control('', []),
-    endValue: this.fb.control('', []),
+    batchId: this.fb.control('', { nonNullable: true, validators: [Validators.required]}),
+    requestType: this.fb.control('', { nonNullable: true, validators: [Validators.required]}),
+    startValue: this.fb.control('', { nonNullable: true, validators: []}),
+    endValue: this.fb.control('', { nonNullable: true, validators: []}),
     includeEmptyLocation: this.fb.control<boolean | null>(false),
     autoGenerateId: this.fb.control<boolean | null>(false),
   });

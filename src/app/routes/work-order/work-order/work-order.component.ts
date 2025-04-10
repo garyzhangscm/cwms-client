@@ -393,9 +393,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     // initiate the search form 
     // initiate the search form 
   searchForm = this.fb.nonNullable.group({ 
-    number: this.fb.control('', []), 
-    item: this.fb.control('', []), 
-    status: this.fb.control(null, []),  
+    number: this.fb.control('',{ nonNullable: true, validators:  []}), 
+    item: this.fb.control('', { nonNullable: true, validators: []}), 
+    status: this.fb.control(null,{ nonNullable: true, validators:  []}),  
   });
 
 

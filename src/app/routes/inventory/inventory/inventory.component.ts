@@ -154,16 +154,16 @@ export class InventoryInventoryComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   searchForm = this.fb.nonNullable.group({
-    client: this.fb.control<Client | undefined>(undefined, []),
-    locationGroups: this.fb.control<number | undefined>(undefined, []),
-    taggedItemFamilies: this.fb.control<ItemFamily[] | undefined>(undefined, []),
-    itemName: this.fb.control('', []),
-    location: this.fb.control('', []),
-    lpn: this.fb.control<string | undefined>(undefined, []),
-    inventoryStatus: this.fb.control<number | undefined>(undefined, []),
-    color: this.fb.control('', []),
-    style: this.fb.control('', []),
-    receiptNumber: this.fb.control<string | undefined>(undefined, []),
+    client: this.fb.control<Client | undefined>(undefined, { nonNullable: true, validators: []}),
+    locationGroups: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: []}),
+    taggedItemFamilies: this.fb.control<ItemFamily[] | undefined>(undefined, { nonNullable: true, validators: []}),
+    itemName: this.fb.control('', { nonNullable: true, validators: []}),
+    location: this.fb.control('', { nonNullable: true, validators: []}),
+    lpn: this.fb.control<string | undefined>(undefined, { nonNullable: true, validators: []}),
+    inventoryStatus: this.fb.control<number | undefined>(undefined,{ nonNullable: true, validators:  []}),
+    color: this.fb.control('', { nonNullable: true, validators: []}),
+    style: this.fb.control('', { nonNullable: true, validators: []}),
+    receiptNumber: this.fb.control<string | undefined>(undefined, { nonNullable: true, validators: []}),
   });
  
   

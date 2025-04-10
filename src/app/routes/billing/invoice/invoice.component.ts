@@ -29,9 +29,9 @@ export class BillingInvoiceComponent implements OnInit {
     private readonly fb = inject(FormBuilder);
   
     searchForm = this.fb.nonNullable.group({
-      number: this.fb.control('', []),
-      referenceNumber: this.fb.control('', []),
-      clientId: this.fb.control(null, []), 
+      number: this.fb.control('',{ nonNullable: true, validators:  []}),
+      referenceNumber: this.fb.control('', { nonNullable: true, validators: []}),
+      clientId: this.fb.control(null, { nonNullable: true, validators: []}), 
     });
 
 

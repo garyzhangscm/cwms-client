@@ -56,8 +56,8 @@ export class AlertAlertTemplateComponent implements OnInit {
     
 
   searchForm = this.fb.nonNullable.group({
-    type: this.fb.control('', []),
-    deliveryChannel: this.fb.control('', []),
+    type: this.fb.control('', { nonNullable: true, validators: []}),
+    deliveryChannel: this.fb.control('', { nonNullable: true, validators: []}),
     
   });
 

@@ -93,11 +93,10 @@
         <nz-form-label [nzSpan]="4">
           {{ 'bill-of-material.expectedQuantity' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="10" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-          <nz-input-group  style="width: 100%">
-            <nz-input-number [(ngModel)]="currentBillOfMaterial.expectedQuantity" required [nzMin]="1" [nzStep]="1" style="width: 100%"></nz-input-number>
-          
-          </nz-input-group>
+        <nz-form-control [nzSpan]="10" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
+            <nz-input-number [(ngModel)]="currentBillOfMaterial.expectedQuantity" required [nzMin]="1" 
+                [nzStep]="1" style="width: 100%"></nz-input-number>
+           
         </nz-form-control>
       </nz-form-item>
     </div>

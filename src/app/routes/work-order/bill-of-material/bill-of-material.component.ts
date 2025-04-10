@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef } from '@angular/core';
-import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -83,8 +83,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   expandSet = new Set<number>();
   isSpinning = false;
 
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  // Form related data and functions 
   newWorkOrder: WorkOrder = {
     id: undefined,
     number: undefined,
@@ -114,10 +113,17 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   listOfAllBillOfMaterial: BillOfMaterial[] = [];
   listOfDisplayBillOfMaterial: BillOfMaterial[] = [];
 
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    number: this.fb.control('', { nonNullable: true, validators: [] }),
+    item: this.fb.control('', { nonNullable: true, validators: [] }), 
+  }); 
+   
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder, 
+ 
     private titleService: TitleService,
     private modalService: NzModalService,
     private billOfMaterialService: BillOfMaterialService,
@@ -134,15 +140,10 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
    }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('bill-of-material'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      item: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm.value.number.setValue(params['number']);
+        this.searchForm.controls.number.setValue(params['number']);
         this.search();
       }
     });

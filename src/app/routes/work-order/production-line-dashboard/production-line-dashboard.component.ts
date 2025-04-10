@@ -88,13 +88,13 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   private readonly fb = inject(FormBuilder); 
 
   produceInventoryForm = this.fb.nonNullable.group({
-    lpn: this.fb.control('', []),
-    itemNumber: this.fb.control('', []),
-    itemDescription: this.fb.control('', []),
-    inventoryStatus: this.fb.control<number | undefined>(undefined, [Validators.required]),
-    itemPackageType: this.fb.control<number | undefined>(undefined, [Validators.required]),
-    quantity: this.fb.control<number | undefined>(undefined, [Validators.required]),
-    producingUnitOfMeasure: this.fb.control<number | undefined>(undefined, [Validators.required]),
+    lpn: this.fb.control('', { nonNullable: true, validators: []}),
+    itemNumber: this.fb.control('', { nonNullable: true, validators: []}),
+    itemDescription: this.fb.control('', { nonNullable: true, validators: []}),
+    inventoryStatus: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: [Validators.required]}),
+    itemPackageType: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: [Validators.required]}),
+    quantity: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: [Validators.required]}),
+    producingUnitOfMeasure: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: [Validators.required]}),
     
   });
 

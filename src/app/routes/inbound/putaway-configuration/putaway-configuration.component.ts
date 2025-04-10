@@ -142,9 +142,9 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   
   
   searchForm = this.fb.nonNullable.group({
-    itemName: this.fb.control('', []),
-    itemFamilyName: this.fb.control('', []),
-    inventoryStatus: this.fb.control('', []), 
+    itemName: this.fb.control('', { nonNullable: true, validators: []}),
+    itemFamilyName: this.fb.control('', { nonNullable: true, validators: []}),
+    inventoryStatus: this.fb.control('', { nonNullable: true, validators: []}), 
   });
   
    

@@ -42,7 +42,10 @@ import { ReceiptStatus } from '../models/receipt-status.enum';
 import { PutawayConfigurationService } from '../services/putaway-configuration.service';
 import { ReceiptLineService } from '../services/receipt-line.service';
 import { ReceiptService } from '../services/receipt.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { RfService } from '../../util/services/rf.service';
+import { RfConfigurationService } from '../../util/services/rf-configuration.service';
+import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 
 @Component({
     selector: 'app-inbound-receipt-maintenance',
@@ -50,6 +53,9 @@ import { RfService } from '../../util/services/rf.service';
     standalone: false
 })
 export class InboundReceiptMaintenanceComponent implements OnInit {
+  pageName = "receiptMaintenance";
+  tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
+
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   private readonly warehouseService = inject(WarehouseService);
   listOfReceiptLineTableColumns: Array<ColumnItem<ReceiptLine>> = [
@@ -132,7 +138,105 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     },
   ];
 
-  listOfReceivedInventoryTableColumns: Array<ColumnItem<Inventory>> = [];
+  
+  receiveToStage = false;
+  
+  @ViewChild('receivedInventoryTable', { static: false })
+  receivedInventoryTable!: STComponent;
+  receivedInventoryTableColumns: STColumn[] = [];
+  
+  defaultReceivedInventoryTableColumns: {[key: string]: STColumn } = {
+
+    "lpn" : { title: this.i18n.fanyi("lpn"), index: 'lpn', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.lpn, b.lpn)
+      },
+      
+    },
+    "item" : { title: this.i18n.fanyi("item"), index: 'item.name', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.item.name, b.item.name)
+      },
+      
+    },
+    "itemDescription" : { title: this.i18n.fanyi("item.description"), index: 'item.description', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.item.description, b.item.description)
+      },
+      
+    },   
+    "quantity" : { title: this.i18n.fanyi("quantity"), index: 'quantity', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.quantity, b.quantity)
+      },
+      
+    },   
+    "inventoryStatus" : { title: this.i18n.fanyi("inventory.status"), index: 'inventoryStatus.description', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.inventoryStatus.description, b.inventoryStatus.description)
+      },
+      
+    },   
+    "color" : { title: this.i18n.fanyi("color"), index: 'color', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.color, b.color)
+      },
+      
+    },   
+    "productSize" : { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.productSize, b.productSize)
+      },
+      
+    },   
+    "style" : { title: this.i18n.fanyi("style"), index: 'style', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.style, b.style)
+      },
+      
+    }, 
+    "inventoryAttribute1" : { title: this.i18n.fanyi("inventoryAttribute1"), index: 'inventoryAttribute1', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.inventoryAttribute1, b.inventoryAttribute1)
+      },
+      
+    }, 
+    "inventoryAttribute2" : { title: this.i18n.fanyi("inventoryAttribute2"), index: 'inventoryAttribute2', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.inventoryAttribute2, b.inventoryAttribute2)
+      },
+      
+    }, 
+    "inventoryAttribute3" : { title: this.i18n.fanyi("inventoryAttribute3"), index: 'inventoryAttribute3', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.inventoryAttribute3, b.inventoryAttribute3)
+      },
+      
+    }, 
+    "inventoryAttribute4" : { title: this.i18n.fanyi("inventoryAttribute4"), index: 'inventoryAttribute4', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.inventoryAttribute4, b.inventoryAttribute4)
+      },
+      
+    }, 
+    "inventoryAttribute5" : { title: this.i18n.fanyi("inventoryAttribute5"), index: 'inventoryAttribute5', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.inventoryAttribute5, b.inventoryAttribute5)
+      },
+      
+    },
+    "location" : { title: this.i18n.fanyi("location"),  render: 'locationColumn', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.locationName, b.locationName)
+      },
+      
+    }, 
+    "nextLocation" : { title: this.i18n.fanyi("nextLocation"),  render: 'nextLocationColumn', width: 150,  
+      
+    },  
+   
+  };
+
   
 
   listOfReceiptLinesTableSelection = [
@@ -143,24 +247,12 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       }
     },
   ];
-
-  listOfReceivedInventoryTableSelection = [
-    {
-      text: this.i18n.fanyi(`select-all-rows`),
-      onSelect: () => {
-        this.onReceivedInventoryTableAllChecked(true);
-      }
-    },
-  ];
-
+ 
   setOfReceiptLinesTableCheckedId = new Set<number>();
   receiptLinesTableChecked = false;
   receiptLinesTableIndeterminate = false;
 
-
-  setOfReceivedInventoryTableCheckedId = new Set<number>();
-  receivedInventoryTableChecked = false;
-  receivedInventoryTableIndeterminate = false;
+  
   newBatch = false;
 
   needPrintLabelForNewLPN = false;
@@ -238,11 +330,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   receiptForm = this.fb.nonNullable.group({
-    receiptId: this.fb.control<number | undefined>(undefined, []),
-    receiptNumber: this.fb.control('', [Validators.required]),
-    client: this.fb.control('', []),
-    supplier: this.fb.control('', []),
-    allowUnexpectedItem: this.fb.control<boolean | undefined>(undefined, []),
+    receiptId: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: []}),
+    receiptNumber: this.fb.control('', { nonNullable: true, validators: [Validators.required]}),
+    client: this.fb.control('', { nonNullable: true, validators: []}),
+    supplier: this.fb.control('', { nonNullable: true, validators: []}),
+    allowUnexpectedItem: this.fb.control<boolean | undefined>(undefined,{ nonNullable: true, validators:  []}),
   });
   
 
@@ -260,12 +352,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private clientService: ClientService,
     private supplierService: SupplierService,
     private modalService: NzModalService,
+    private companyService: CompanyService,
     private itemPackageTypeService: ItemPackageTypeService,
     private inventoryStatusService: InventoryStatusService,
     private warehouseConfigurationService: WarehouseConfigurationService,
     private putawayConfigurationService: PutawayConfigurationService,
     private itemService: ItemService,
     private rfService: RfService,
+    private rfConfigurationService: RfConfigurationService,
     private locationService: LocationService,
     private inventoryService: InventoryService,
     private message: NzMessageService, 
@@ -273,9 +367,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private router: Router,
     private printingService: PrintingService,
     private messageService: NzMessageService,
-    private localCacheService: LocalCacheService,
+    private localCacheService: LocalCacheService, 
     private notification: NzNotificationService,
-    private inventoryConfigurationService: InventoryConfigurationService,
+    private inventoryConfigurationService: InventoryConfigurationService, 
   ) {
     this.pageTitle = this.i18n.fanyi('page.inbound.receipt.title');
     
@@ -285,12 +379,23 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         if (inventoryConfigurationRes) { 
           this.inventoryConfiguration = inventoryConfigurationRes;
           
-          this.setupReceivedInventoryTableColumns();
         }  
+        this.initReceivedInventoryTableColumns();
       } ,  
-      error: () =>  this.setupReceivedInventoryTableColumns()
+      error: () =>  this.initReceivedInventoryTableColumns()
     });
 
+    this.rfConfigurationService.getRfConfiguration().subscribe({
+      next: (rfConfiguration) => {
+
+        this.receiveToStage = rfConfiguration.receiveToStage == null ? false : rfConfiguration.receiveToStage;
+      },
+      error: () => {
+
+        this.receiveToStage = false;
+      }
+    });
+ 
     
   }
 
@@ -371,203 +476,285 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
 
-  setupReceivedInventoryTableColumns() {
+  initReceivedInventoryTableColumns() {
+    console.log(`start initReceivedInventoryTableColumns`);
 
-    this.listOfReceivedInventoryTableColumns = [
-    {
-      name: 'lpn',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'item',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'item.description',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'quantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'inventory.status',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
+    this.localCacheService.getWebPageTableColumnConfiguration(this.pageName, "receivedInventoryTable")
+    .subscribe({
+      next: (webPageTableColumnConfigurationRes) => {
+        
+        if (webPageTableColumnConfigurationRes && webPageTableColumnConfigurationRes.length > 0){
+
+          this.tableConfigurations["receivedInventoryTable"] = webPageTableColumnConfigurationRes;
+          this.refreshReceivedInventoryTableColumns();
+
+        }
+        else {
+          this.tableConfigurations["receivedInventoryTable"] = this.getDefaultReceivedInventoryTableColumnsConfiguration();
+          this.refreshReceivedInventoryTableColumns();
+        }
+      }, 
+      error: () => {
+        
+        this.tableConfigurations["receivedInventoryTable"] = this.getDefaultReceivedInventoryTableColumnsConfiguration();
+        this.refreshReceivedInventoryTableColumns();
+      }
+    });
+  }
+  getDefaultReceivedInventoryTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
     
-    {
-      name: 'color',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.color, b.color),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'productSize',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.productSize, b.productSize),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'style',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.style, b.style),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }];
-    
-    if (this.inventoryConfiguration?.inventoryAttribute1Enabled) {      
-        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
-          {
-            name: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
-                this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,
-            showSort: true,
-            sortOrder: null,
-            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute1, b.attribute1),
-            sortDirections: ['ascend', 'descend'],
-            filterMultiple: true,
-            listOfFilter: [],
-            filterFn: null,
-            showFilter: false
-          },
-        ]
-    }
-    if (this.inventoryConfiguration?.inventoryAttribute2Enabled) {      
-        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
-          {
-            name: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
-                this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,
-            showSort: true,
-            sortOrder: null,
-            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute2, b.attribute2),
-            sortDirections: ['ascend', 'descend'],
-            filterMultiple: true,
-            listOfFilter: [],
-            filterFn: null,
-            showFilter: false
-          },
-        ]
-    }
-    if (this.inventoryConfiguration?.inventoryAttribute3Enabled) {      
-        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
-          {
-            name: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
-                this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,
-            showSort: true,
-            sortOrder: null,
-            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute3, b.attribute3),
-            sortDirections: ['ascend', 'descend'],
-            filterMultiple: true,
-            listOfFilter: [],
-            filterFn: null,
-            showFilter: false
-          },
-        ]
-    }
-    if (this.inventoryConfiguration?.inventoryAttribute4Enabled) {      
-        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
-          {
-            name: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
-                this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,
-            showSort: true,
-            sortOrder: null,
-            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute4, b.attribute4),
-            sortDirections: ['ascend', 'descend'],
-            filterMultiple: true,
-            listOfFilter: [],
-            filterFn: null,
-            showFilter: false
-          },
-        ]
-    }
-    if (this.inventoryConfiguration?.inventoryAttribute5Enabled) {      
-        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
-          {
-            name: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
-                this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,
-            showSort: true,
-            sortOrder: null,
-            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute5, b.attribute5),
-            sortDirections: ['ascend', 'descend'],
-            filterMultiple: true,
-            listOfFilter: [],
-            filterFn: null,
-            showFilter: false
-          },
-        ]
-    }
-    this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
+    return [
       {
-        name: 'location',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "lpn",
+        columnDisplayText: this.i18n.fanyi("lpn"),
+        columnWidth: 100,
+        columnSequence: 1, 
+        displayFlag: true
       },
       {
-        name: 'nextLocation',
-        showSort: false,
-        sortOrder: null,
-        sortFn: null,
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "item",
+        columnDisplayText: this.i18n.fanyi("item"),
+        columnWidth: 150,
+        columnSequence: 2, 
+        displayFlag: true
       },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "itemDescription",
+        columnDisplayText: this.i18n.fanyi("item.description"),
+        columnWidth: 150,
+        columnSequence: 3, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "quantity",
+        columnDisplayText: this.i18n.fanyi("quantity"),
+        columnWidth: 50,
+        columnSequence: 4, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "inventoryStatus",
+        columnDisplayText: this.i18n.fanyi("inventory.status"),
+        columnWidth: 100,
+        columnSequence: 5, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "location",
+        columnDisplayText: this.i18n.fanyi("location"),
+        columnWidth: 150,
+        columnSequence: 6, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "nextLocation",
+        columnDisplayText: this.i18n.fanyi("nextLocation"),
+        columnWidth: 150,
+        columnSequence: 7, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "color",
+        columnDisplayText: this.i18n.fanyi("color"),
+        columnWidth: 150,
+        columnSequence: 8, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "productSize",
+        columnDisplayText: this.i18n.fanyi("productSize"),
+        columnWidth: 150,
+        columnSequence: 9, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "style",
+        columnDisplayText: this.i18n.fanyi("style"),
+        columnWidth: 150,
+        columnSequence: 10, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "inventoryAttribute1",
+        columnDisplayText: this.i18n.fanyi("inventoryAttribute1"),
+        columnWidth: 150,
+        columnSequence: 11, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "inventoryAttribute2",
+        columnDisplayText: this.i18n.fanyi("inventoryAttribute2"),
+        columnWidth: 150,
+        columnSequence: 12, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "inventoryAttribute3",
+        columnDisplayText: this.i18n.fanyi("inventoryAttribute3"),
+        columnWidth: 150,
+        columnSequence: 13, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "inventoryAttribute4",
+        columnDisplayText: this.i18n.fanyi("inventoryAttribute4"),
+        columnWidth: 150,
+        columnSequence: 14, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "receivedInventoryTable",
+        columnName: "inventoryAttribute5",
+        columnDisplayText: this.i18n.fanyi("inventoryAttribute5"),
+        columnWidth: 150,
+        columnSequence: 15, 
+        displayFlag: true
+      },
+       
+    ]
+  } 
+
+
+  refreshReceivedInventoryTableColumns() {
+    
+    if (this.tableConfigurations["receivedInventoryTable"] == null) {
+      return;
+    } 
+    this.receivedInventoryTableColumns = [
+      { title: '', index: 'id', type: 'checkbox' },
     ];
+
+    // loop through the table column configuration and add
+    // the column if the display flag is checked, and by sequence
+    let receivedInventoryTableConfiguration = this.tableConfigurations["receivedInventoryTable"].filter(
+      column => column.displayFlag
+    );
+
+    receivedInventoryTableConfiguration.sort((a, b) => a.columnSequence - b.columnSequence);
+
+    receivedInventoryTableConfiguration.forEach(
+      columnConfig => {
+        let display = true;
+        let columnDisplayText = columnConfig.columnDisplayText;
+
+        if (columnConfig.columnName == "inventoryAttribute1") {
+            if (this.inventoryConfiguration?.inventoryAttribute1Enabled == true) {
+              columnDisplayText = this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+                  this.i18n.fanyi("inventoryAttribute1") : 
+                  this.inventoryConfiguration?.inventoryAttribute1DisplayName;
+            }
+            else {
+              display = false;
+            }
+        }
+        if (columnConfig.columnName == "inventoryAttribute2") {
+          if (this.inventoryConfiguration?.inventoryAttribute2Enabled == true) {
+            columnDisplayText = this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute2") : 
+                this.inventoryConfiguration?.inventoryAttribute2DisplayName;
+          }
+          else {
+            display = false;
+          }
+        }
+        if (columnConfig.columnName == "inventoryAttribute3") {
+          if (this.inventoryConfiguration?.inventoryAttribute3Enabled == true) {
+            columnDisplayText = this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute3") : 
+                this.inventoryConfiguration?.inventoryAttribute3DisplayName;
+          }
+          else {
+            display = false;
+          }
+        }
+        if (columnConfig.columnName == "inventoryAttribute4") {
+          if (this.inventoryConfiguration?.inventoryAttribute4Enabled == true) {
+            columnDisplayText = this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute4") : 
+                this.inventoryConfiguration?.inventoryAttribute4DisplayName;
+          }
+          else {
+            display = false;
+          }
+        }
+        if (columnConfig.columnName == "inventoryAttribute5") {
+          if (this.inventoryConfiguration?.inventoryAttribute5Enabled == true) {
+            columnDisplayText = this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute5") : 
+                this.inventoryConfiguration?.inventoryAttribute5DisplayName;
+          }
+          else {
+            display = false;
+          }
+        }
+        if (display) {
+
+
+          this.defaultReceivedInventoryTableColumns[columnConfig.columnName].title = columnDisplayText;
+
+          this.receivedInventoryTableColumns = [...this.receivedInventoryTableColumns, 
+            this.defaultReceivedInventoryTableColumns[columnConfig.columnName]
+          ]
+        }
+      }
+    )
+
+    this.receivedInventoryTableColumns = [...this.receivedInventoryTableColumns,  
+      {
+        title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
+        render: 'actionColumn',
+      }, 
+    ];
+ 
+    
+    if (this.receivedInventoryTable != null) {
+
+      this.receivedInventoryTable.resetColumns({ emitReload: true });
+    } 
   }
 
   saveReceipt(): void {
@@ -794,9 +981,60 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   loadReceivedInventory(receipt: Receipt): void {
     this.receiptService.getReceivedInventory(receipt).subscribe(inventories => {
-      this.listOfAllReceivedInventory = inventories;
-      this.listOfDisplayReceivedInventory = inventories;
+      this.listOfAllReceivedInventory = inventories; 
+
+      this.loadDetails(inventories);
+
     });
+  }
+  
+  loadDetails(inventories: Inventory[]) {
+ 
+      this.loadLocations(inventories)
+  }
+  
+  loadLocations(inventories: Inventory[]) {
+    let locationIdSet = new Set<number>(); 
+    
+    let locationMap = new Map<number, WarehouseLocation>(); 
+    inventories.filter(
+      inventory => inventory.locationId != null && inventory.location == null
+    )
+    .forEach(
+      inventory => {
+        locationIdSet.add(inventory.locationId!);
+      }
+    );
+    if (locationIdSet.size == 0) {
+      return;
+    }
+    
+    this.locationService.getLocations(undefined, undefined, 
+      undefined, undefined, undefined, 
+      Array.from(locationIdSet).join(',')).subscribe({
+        next: (locations) => {
+          locations.forEach(
+            location =>  locationMap.set(location.id!, location)
+          );
+
+          
+          inventories.filter(
+            inventory => inventory.locationId != null && inventory.location == null
+          )
+          .forEach(
+            inventory => {
+              if (locationMap.has(inventory.locationId!)) {
+
+                inventory.location = locationMap.get(inventory.locationId!); 
+                
+                this.receivedInventoryTable.reload();
+              }
+            }
+          );
+        }
+    });
+    
+    
   }
 
   updateReceiptLinesTableCheckedSet(id: number, checked: boolean): void {
@@ -828,36 +1066,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.receiptLinesTableIndeterminate =
       this.listOfDisplayReceivedInventory!.some(item => this.setOfReceiptLinesTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
   }
-
-  updateReceivedInventoryTableCheckedSet(id: number, checked: boolean): void {
-    if (checked) {
-      this.setOfReceivedInventoryTableCheckedId.add(id);
-    } else {
-      this.setOfReceivedInventoryTableCheckedId.delete(id);
-    }
-  }
-
-  onReceivedInventoryTableItemChecked(id: number, checked: boolean): void {
-    this.updateReceivedInventoryTableCheckedSet(id, checked);
-    this.refreshReceivedInventoryTableCheckedStatus();
-  }
-
-  onReceivedInventoryTableAllChecked(value: boolean): void {
-    this.listOfDisplayReceivedInventory!.forEach(item => this.updateReceivedInventoryTableCheckedSet(item.id!, value));
-    this.refreshReceivedInventoryTableCheckedStatus();
-  }
-
-  receivedInventoryTableCurrentPageDataChange($event: ReceiptLine[]): void {
-    this.listOfDisplayReceivedInventory! = $event;
-    this.refreshReceivedInventoryTableCheckedStatus();
-  }
-
-  refreshReceivedInventoryTableCheckedStatus(): void {
-    this.receivedInventoryTableChecked =
-      this.listOfDisplayReceivedInventory!.every(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!));
-    this.receivedInventoryTableIndeterminate =
-      this.listOfDisplayReceivedInventory!.some(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
-  }
+ 
 
   getSelectedReceiptLines(): ReceiptLine[] {
     /***
@@ -883,13 +1092,26 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   getSelectedReceivedInventory(): Inventory[] {
+    
     const selectedReceivedInventory: Inventory[] = [];
-    this.listOfDisplayReceivedInventory.forEach((inventory: Inventory) => {
-      if (this.setOfReceivedInventoryTableCheckedId.has(inventory.id!)) {
+
+    const selectedReceivedInventoryIdSet = new Set();
+    
+    const receivedInventoryDataList : STData[] = this.receivedInventoryTable.list;
+
+    receivedInventoryDataList.filter(inventoryRow => inventoryRow.checked).forEach(
+      inventoryRow => { 
+        selectedReceivedInventoryIdSet.add(inventoryRow["id"])}
+    )
+    
+    
+    this.listOfAllReceivedInventory.forEach((inventory: Inventory) => {
+      if (selectedReceivedInventoryIdSet.has(inventory.id!)) {
         selectedReceivedInventory.push(inventory);
       }
     });
     return selectedReceivedInventory;
+    
   }
 
   printPutawayWork(event: any) {
@@ -986,14 +1208,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   }
   printSelectedPutawayWork(event: any): void {
-    let selectedInventory = this.getSelectedInventory().map(
+    let selectedInventory = this.getSelectedReceivedInventory().map(
       inventory => inventory.id!
     );
     this.printPutawayDocument(event, this.currentReceipt,
       selectedInventory);
   }
   previewSelectedPutawayWork(event: any): void {
-    let selectedInventory = this.getSelectedInventory().map(
+    let selectedInventory = this.getSelectedReceivedInventory().map(
       inventory => inventory.id!
     );
     this.previewPutawayDocument(event, this.currentReceipt,
@@ -1022,15 +1244,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.previewPutawayDocument(event, this.currentReceipt,
       []);
   }
-  getSelectedInventory(): Inventory[] {
-    const selectedInventories: Inventory[] = [];
-    this.listOfAllReceivedInventory.forEach((inventory: Inventory) => {
-      if (this.setOfReceivedInventoryTableCheckedId.has(inventory.id!)) {
-        selectedInventories.push(inventory);
-      }
-    });
-    return selectedInventories;
-  }
+ 
 
   validateItemReadyForReceiving(receiptLine: ReceiptLine) : string {
     if (receiptLine.item == null) {
@@ -1308,7 +1522,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           .receiveInventory(
             this.currentReceipt.id!,
             this.currentReceivingLine.id!,
-            actualReceivingInventory
+            actualReceivingInventory,
+            this.receiveToStage
           ).subscribe({
             next: (receivedInventory) => {
               this.message.success(this.i18n.fanyi('message.receiving.success'));
@@ -1317,12 +1532,13 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
               this.receivingInProcess = false;
               this.isSpinning = false;
 
-              this.refreshReceiptResults();
-
               console.log(`do we need to print lpn label for the new LPN ${receivedInventory.lpn}: ${this.needPrintLPNLabel()}`);
               if (this.needPrintLPNLabel()) {
                 this.printLabelForNewLPN(receivedInventory);
               }
+
+              this.refreshReceiptResults();
+
             },
             error: 
               () => {
@@ -1351,25 +1567,25 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
               if (rfs.length == 1 && rfs[0].printerName != null) {
 
-                this.printingService.printReportHistoryFromLocal(reportHistory, rfs[0].printerName);
+                this.printingService.printReportHistoryFromLocal(reportHistory, undefined, rfs[0].printerName);
 
               }
               else {
                 
-                this.printingService.printReportHistoryFromLocal(reportHistory,  "");
+                this.printingService.printReportHistoryFromLocal(reportHistory);
               }
             }, 
             error: () => {
 
               // print from default printer
-              this.printingService.printReportHistoryFromLocal(reportHistory, "");
+              this.printingService.printReportHistoryFromLocal(reportHistory);
             }
           })
         }
         else {
           
               // print from default printer
-          this.printingService.printReportHistoryFromLocal(reportHistory, "");
+          this.printingService.printReportHistoryFromLocal(reportHistory);
         }
 
       }
