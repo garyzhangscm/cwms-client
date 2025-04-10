@@ -311,8 +311,96 @@
     <nz-tab nzTitle="{{ 'receipt.receivedInventory' | i18n }}">
       <!-- Table to Display the result  -->
       <div>
-        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfAllReceivedInventory"
-          [nzFooter]="receivedInventoryTableFoot" #receivedInventoryTable>
+        
+  
+        <st #receivedInventoryTable 
+          [data]="listOfAllReceivedInventory"  
+          [columns]="receivedInventoryTableColumns" 
+          [footer]="receivedInventoryTableFoot" [scroll]="{ x: '2650px' }"  
+          [widthMode]="{ type: 'strict' }" resizable>
+
+          
+          <ng-template st-row="locationColumn" let-receivedInventory>  
+            
+            @if(receivedInventory.locationId && receivedInventory.location == null) {
+            
+                <nz-skeleton-element  
+                nzType="input"
+                [nzActive]="true"
+                [nzSize]="'small'"
+                style="width:75px"
+              ></nz-skeleton-element> 
+            }
+            {{ receivedInventory.location?.name }}
+          </ng-template>
+
+          <ng-template st-row="nextLocationColumn" let-receivedInventory > 
+            @for (inventoryMovement of receivedInventory.inventoryMovements; ; track inventoryMovement; let i = $index) {
+
+              <p>
+                {{ i + 1 }} - {{ inventoryMovement.location.name}}
+              </p>
+            }
+          </ng-template>
+          
+
+          <ng-template st-row="actionColumn" let-receivedInventory > 
+            <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
+              {{ 'action' | i18n }}<i nz-icon nzType="down"></i>
+            </button>
+
+            <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
+              <ul nz-menu>
+                @if(receivedInventory.locationName === currentReceipt.number && receivedInventory.inventoryMovements!.length === 0) {
+
+                  <li nz-menu-item >
+                    <a (click)="allocateLocation(receivedInventory)">{{ 'allocateLocation' | i18n }}</a>
+                  </li>
+                }
+                <li nz-menu-item *ngIf="isInventoryReversible(receivedInventory)"> 
+                  <a (click)="openReverseInventoryModal(receivedInventory, tplReverseInventoryModalTitle, tplReverseInventoryModalContent)">{{ 'receipt.reverseInventory' | i18n }}</a>
+                </li>
+                @if(receivedInventory.inventoryMovements!.length > 0 && receivedInventory.locationName === currentReceipt.number) {
+                  
+                  <li nz-menu-item >
+                    <a (click)="reallocateLocation(receivedInventory)">{{ 'reallocateLocation' | i18n }}</a>
+                  </li>
+                }
+                @if(receivedInventory.inventoryMovements!.length ===1) {
+                  
+                  <li nz-menu-item >
+                    <a (click)="confirmPutaway(0, receivedInventory)">{{ 'putaway' | i18n }}</a>
+                  </li>
+                }
+                @if(receivedInventory.inventoryMovements!.length > 1) {
+                  
+                  <li nz-submenu nzTitle="{{ 'putaway' | i18n }}"  >
+                    <ul>
+                      <li nz-menu-item *ngFor="let inventoryMovement of receivedInventory.inventoryMovements; let i=index">
+                        <a (click)="confirmPutaway(i, receivedInventory)">
+                          {{ i+1 }} - {{ inventoryMovement.location.name}}</a>
+                      </li>
+                    </ul>
+                  </li>
+                }
+
+                @if(receivedInventory.locationName === currentReceipt.number || receivedInventory.location?.locationGroup?.locationGroupType?.receivingStage === true) {
+                    
+                  <li nz-menu-item >
+                    <a
+                      (click)="openManualPutawayModal(receivedInventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{
+                      'putaway.manual' | i18n }}</a>
+                  </li>
+                }
+              </ul>
+            </nz-dropdown-menu>
+
+          </ng-template>
+        </st>
+        <!-- 
+        <nz-table  #receivedInventoryTable
+          [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfAllReceivedInventory"
+          [nzFooter]="receivedInventoryTableFoot" >
           <thead>
             <tr>
               <th [nzSelections]="listOfReceivedInventoryTableSelection" [(nzChecked)]="receivedInventoryTableChecked"
@@ -373,11 +461,7 @@
                       *ngIf="receivedInventory.locationName === currentReceipt.number && receivedInventory.inventoryMovements!.length === 0">
                       <a (click)="allocateLocation(receivedInventory)">{{ 'allocateLocation' | i18n }}</a>
                     </li>
-                    <li nz-menu-item *ngIf="isInventoryReversible(receivedInventory)">
-                      <!--
-                      <a (click)="reverseInventory(data)">{{ 'receipt.reverseInventory' | i18n }}</a>
-
-                      -->
+                    <li nz-menu-item *ngIf="isInventoryReversible(receivedInventory)"> 
                       <a (click)="openReverseInventoryModal(receivedInventory, tplReverseInventoryModalTitle, tplReverseInventoryModalContent)">{{ 'receipt.reverseInventory' | i18n }}</a>
                     </li>
                     <li nz-menu-item
@@ -405,49 +489,13 @@
                   </ul>
                 </nz-dropdown-menu>
 
-                <!--
-
-              <button nz-button nzType="primary"
-                *ngIf="data.location.name === currentReceipt.number && data.inventoryMovements.length === 0"
-                (click)="allocateLocation(data)">{{ 'allocateLocation' | i18n }}</button>
-
-              <button nz-button nzType="primary" *ngIf="isInventoryReversible(data)"
-                (click)="reverseInventory(data)">{{ 'receipt.reverseInventory' | i18n }}</button>
-
-              <div *ngIf="data.inventoryMovements.length > 0">
-                <button nz-button nzType="primary" *ngIf="data.location.name === currentReceipt.number"
-                  (click)="reallocateLocation(data)">{{ 'reallocateLocation' | i18n }}</button>
-                <nz-divider nzType="vertical" *ngIf="data.location.name === currentReceipt.number"></nz-divider>
-                <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length === 1"
-                  (click)="confirmPutaway(0, data)">{{ 'putaway' | i18n }}</button>
-
-                <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
-                  *ngIf="data.inventoryMovements.length > 1">
-                  {{ 'putaway' | i18n }}<i nz-icon nzType="down"></i></button>
-                <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
-                  <ul nz-menu>
-                    <li nz-menu-item *ngFor="let inventoryMovement of data.inventoryMovements; let i=index">
-                      <a (click)="confirmPutaway(i, data)">
-                        {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
-                    </li>
-                  </ul>
-                </nz-dropdown-menu>
-
-
-
-    </div>
-    <button nz-button nzType="primary"
-      *ngIf="data.location.name === currentReceipt.number || data.location.locationGroup?.locationGroupType?.receivingStage === true "
-      (click)="openManualPutawayModal(data, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
-      {{ 'putaway.manual' | i18n }}</button>
-              -->
-
-
+                 
 
               </td>
             </tr>
           </tbody>
         </nz-table>
+      -->
       </div>
 
       <ng-template #receivedInventoryTableFoot>

@@ -9,7 +9,9 @@ import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service'; 
+import { ItemService } from '../../inventory/services/item.service';
 import { Printer } from '../../report/models/printer';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service'; 
 import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -76,6 +78,8 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private messageService: NzMessageService,
+    private itemService: ItemService,
+    private localCacheService: LocalCacheService,
     private warehouseConfigurationService: WarehouseConfigurationService,
     private router: Router,
   ) {
@@ -90,8 +94,23 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
       if (params['id']) {
         this.workOrderService.getWorkOrder(params['id']).subscribe(workOrderRes => {
           this.currentWorkOrder = workOrderRes;
-          this.setupEmptyWorkOrderProduceTransaction(this.currentWorkOrder);
-          this.loadMatchedBillOfMaterial(workOrderRes);
+          if (this.currentWorkOrder.item == null && this.currentWorkOrder.itemId != null) {
+            this.localCacheService.getItem(this.currentWorkOrder.itemId).subscribe({
+              next: (itemRes) => {
+                this.currentWorkOrder.item = itemRes;
+                this.setupEmptyWorkOrderProduceTransaction(this.currentWorkOrder);
+                this.loadMatchedBillOfMaterial(workOrderRes);
+              }, 
+              error: () => {                
+                this.setupEmptyWorkOrderProduceTransaction(this.currentWorkOrder);
+                this.loadMatchedBillOfMaterial(workOrderRes);
+              }
+            })
+          }
+          else {            
+            this.setupEmptyWorkOrderProduceTransaction(this.currentWorkOrder);
+            this.loadMatchedBillOfMaterial(workOrderRes);
+          }
         });
       }
     });

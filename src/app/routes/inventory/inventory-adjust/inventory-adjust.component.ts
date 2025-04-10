@@ -241,9 +241,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   searchForm = this.fb.nonNullable.group({
-    taggedLocationGroupTypes: this.fb.control("", []),
-    taggedLocationGroups: this.fb.control("", []),
-    location: this.fb.control("", []),
+    taggedLocationGroupTypes: this.fb.control("",{ nonNullable: true, validators:  []}),
+    taggedLocationGroups: this.fb.control("", { nonNullable: true, validators: []}),
+    location: this.fb.control("", { nonNullable: true, validators: []}),
   });
    
   pageTitle: string;
@@ -692,7 +692,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.isSpinning = true; 
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
-      this.searchForm.controls.location.setValue(inventory.locationName ? inventory.locationName : null);
+      this.searchForm.controls.location.setValue(inventory.locationName ? inventory.locationName : "");
 
       if (inventoryRes.lockedForAdjust === true) {
         this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));

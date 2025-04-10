@@ -117,20 +117,20 @@ export class InboundReceiptComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   searchForm = this.fb.nonNullable.group({
-    client: this.fb.control('', []),
-    number: this.fb.control('', []),
-    statusList: this.fb.control([], []),
-    supplier: this.fb.control('', []),
+    client: this.fb.control('', { nonNullable: true, validators: []}),
+    number: this.fb.control('', { nonNullable: true, validators: []}),
+    statusList: this.fb.control([], { nonNullable: true, validators: []}),
+    supplier: this.fb.control('', { nonNullable: true, validators: []}),
     checkInDateTimeRanger: this.fb.control<Date | null>(null),
     checkInDate: this.fb.control<Date | null>(null),
   }); 
   
   billableActivityForm = this.fb.nonNullable.group({ 
-    billableActivityType: this.fb.control<number | undefined>(undefined, [Validators.required]),
-    activityTime:  this.fb.control<Date | undefined>(undefined, [Validators.required]),
-    rate: this.fb.control<number | undefined>(undefined, []),
-    amount: this.fb.control<number | undefined>(undefined, []),
-    totalCharge: this.fb.control<number | undefined>(undefined, [Validators.required]),
+    billableActivityType: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: [Validators.required]}),
+    activityTime:  this.fb.control<Date | undefined>(undefined, { nonNullable: true, validators: [Validators.required]}),
+    rate: this.fb.control<number | undefined>(undefined,{ nonNullable: true, validators:  []}),
+    amount: this.fb.control<number | undefined>(undefined,{ nonNullable: true, validators:  []}),
+    totalCharge: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: [Validators.required]}),
   });
    
 

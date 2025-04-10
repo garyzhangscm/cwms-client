@@ -100,9 +100,9 @@ export class AlertAlertComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   searchForm = this.fb.nonNullable.group({
-    type: this.fb.control<string | undefined>('', []),
-    status: this.fb.control<string | undefined>('', []),
-    keyWords: this.fb.control<string | undefined>('', []),
+    type: this.fb.control<string | undefined>('', { nonNullable: true, validators: []}),
+    status: this.fb.control<string | undefined>('',{ nonNullable: true, validators:  []}),
+    keyWords: this.fb.control<string | undefined>('', { nonNullable: true, validators: []}),
     dateTimeRanger: this.fb.control<Date | undefined>(undefined),
     date: this.fb.control<Date | undefined>(undefined),
   });

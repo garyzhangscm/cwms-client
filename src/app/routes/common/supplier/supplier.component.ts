@@ -181,7 +181,7 @@ export class CommonSupplierComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   searchForm = this.fb.nonNullable.group({
-    name: this.fb.control('', []), 
+    name: this.fb.control('', { nonNullable: true, validators: []}), 
   });
 
 

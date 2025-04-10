@@ -25,7 +25,7 @@ export class AuthUserComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   searchForm = this.fb.nonNullable.group({
-    username: this.fb.control('', []), 
+    username: this.fb.control('', { nonNullable: true, validators: []}), 
   });
   
 

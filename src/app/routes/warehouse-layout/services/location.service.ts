@@ -18,7 +18,7 @@ export class LocationService {
     private utilService: UtilService) {}
 
   getLocations(locationGroupTypes?: string, locationGroupIds?: string, name?: string, emptyReservedCodeOnly?: boolean, 
-    locationStatus?: LocationStatus): Observable<WarehouseLocation[]> {
+    locationStatus?: LocationStatus, locationIds?: string): Observable<WarehouseLocation[]> {
      
 
     const url = `layout/locations`;
@@ -33,13 +33,16 @@ export class LocationService {
       params = params.append('locationGroupIds', locationGroupIds);  
     }
     if (name) {
-      params = params.append('name', this.utilService.encodeValue(name));  
+      params = params.append('name', name);  
     }
     if (emptyReservedCodeOnly !== undefined) {
       params = params.append('emptyReservedCodeOnly', emptyReservedCodeOnly);  
     }
     if (locationStatus) {
-      params = params.append('locationStatus', this.utilService.encodeValue(locationStatus));  
+      params = params.append('locationStatus', locationStatus);  
+    }
+    if (locationIds) {
+      params = params.append('ids', locationIds);  
     }
     return this.http.get(url, params).pipe(map(res => res.data));
   }

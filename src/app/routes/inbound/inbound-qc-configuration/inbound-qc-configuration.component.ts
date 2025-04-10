@@ -27,8 +27,8 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
   
   
   searchForm = this.fb.nonNullable.group({
-    supplier: this.fb.control(null, []),
-    item: this.fb.control('', []), 
+    supplier: this.fb.control(null,{ nonNullable: true, validators:  []}),
+    item: this.fb.control('', { nonNullable: true, validators: []}), 
   });
   
   displayOnly = false;

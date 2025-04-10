@@ -133,7 +133,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   
     // initiate the search form 
   searchForm = this.fb.nonNullable.group({
-    name: this.fb.control('', []), 
+    name: this.fb.control('', { nonNullable: true, validators: []}), 
   });
 
   displayOnly = false;

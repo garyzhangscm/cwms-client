@@ -76,7 +76,7 @@ export class UtilCustomReportComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   // initiate the search form 
   searchForm = this.fb.nonNullable.group({
-    name: this.fb.control('', []), 
+    name: this.fb.control('', { nonNullable: true, validators: []}), 
   });
   
   searchResult = "";

@@ -1,6 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+import { pa } from 'element-plus/es/locale';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -32,10 +33,17 @@ export class ReceiptLineService {
   }
 
 
-  receiveInventory(receiptId: number, receiptLineId: number, inventory: Inventory): Observable<Inventory> {
+  receiveInventory(receiptId: number, receiptLineId: number, inventory: Inventory, receiveToStage?: boolean): Observable<Inventory> {
      
+    let params = new HttpParams(); 
+    
+    if (receiveToStage != null) {
+      params = params.append('receiveToStage', receiveToStage); 
+    }
+
     return this.http
-      .post(`inbound/receipts/${receiptId}/lines/${receiptLineId}/receive`, inventory)
+      .post(`inbound/receipts/${receiptId}/lines/${receiptLineId}/receive`, 
+          inventory, params)
       .pipe(map(res => res.data));
   }
 

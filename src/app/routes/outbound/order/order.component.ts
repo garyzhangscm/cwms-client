@@ -1,6 +1,6 @@
 import { DatePipe, formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -132,8 +132,23 @@ export class OutboundOrderComponent implements OnInit {
     ['change-order-completed-time', false], 
   ]);
 
-  constructor(
-    private fb: UntypedFormBuilder, 
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    number: this.fb.control('', { nonNullable: true, validators: []}), 
+    orderStatus: this.fb.control<OrderStatus | undefined>(undefined, { nonNullable: true, validators: []}), 
+    customer: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: []}), 
+    completeTimeRanger: this.fb.control(undefined, { nonNullable: true, validators: []}), 
+    completeDate: this.fb.control(undefined, { nonNullable: true, validators: []}), 
+    orderCategory: this.fb.control<OrderCategory | undefined>(undefined, { nonNullable: true, validators: []}),  
+    createdTimeRanger: this.fb.control(undefined, { nonNullable: true, validators: []}), 
+    createdDate: this.fb.control(undefined, { nonNullable: true, validators: []}), 
+    client: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: []}),
+    poNumber: this.fb.control('', { nonNullable: true, validators: []}),
+  });
+   
+ 
+  constructor( 
     private modalService: NzModalService,
     private orderService: OrderService,
     private messageService: NzMessageService,
@@ -189,9 +204,7 @@ export class OutboundOrderComponent implements OnInit {
   printerModal!: NzModalRef;
   printerForm!: UntypedFormGroup;
   availablePrinters: Printer[] = [];
-
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+ 
   unpickForm!: UntypedFormGroup;
 
   searching = false;
@@ -245,25 +258,12 @@ export class OutboundOrderComponent implements OnInit {
   
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      orderStatus: [null],
-      customer: [null],
-      completeTimeRanger: [null],
-      completeDate: [null],
-      orderCategory: [null],
-      createdTimeRanger: [null],
-      createdDate: [null],
-      client: [null],
-      poNumber: [null],
-    });
 
     // IN case we get the number passed in, refresh the display
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm.value.number.setValue(params['number']);
+        this.searchForm.controls.number.setValue(params['number']);
         this.search();
       }
     });
@@ -318,17 +318,17 @@ export class OutboundOrderComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     
-    let startCompleteTime : Date = this.searchForm.value.completeTimeRanger ? 
+    let startCompleteTime : Date | undefined = this.searchForm.value.completeTimeRanger ? 
         this.searchForm.value.completeTimeRanger[0] : undefined; 
-    let endCompleteTime : Date = this.searchForm.value.completeTimeRanger ? 
+    let endCompleteTime : Date | undefined= this.searchForm.value.completeTimeRanger ? 
         this.searchForm.value.completeTimeRanger[1] : undefined; 
-    let specificCompleteDate : Date = this.searchForm.value.completeDate;
+    let specificCompleteDate : Date | undefined= this.searchForm.value.completeDate;
     
-    let startCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
+    let startCreatedTime : Date | undefined= this.searchForm.value.createdTimeRanger ? 
         this.searchForm.value.createdTimeRanger[0] : undefined; 
-    let endCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
+    let endCreatedTime : Date | undefined= this.searchForm.value.createdTimeRanger ? 
         this.searchForm.value.createdTimeRanger[1] : undefined; 
-    let specificCreatedDate : Date = this.searchForm.value.createdDate;
+    let specificCreatedDate : Date | undefined = this.searchForm.value.createdDate;
 
     console.log(`query by created date: ${startCreatedTime} - ${endCreatedTime} specificCreatedDate: ${specificCreatedDate}`);
 
@@ -1950,7 +1950,7 @@ export class OutboundOrderComponent implements OnInit {
             this.addActivityInProcess = false;
             this.billableActivityModal.destroy();
             
-            this.searchForm!.value.number.setValue(this.billableActivityOrder!.number);
+            this.searchForm!.controls.number.setValue(this.billableActivityOrder!.number);
             this.search();
           },
           error: () => this.addActivityInProcess = false
@@ -1973,7 +1973,7 @@ export class OutboundOrderComponent implements OnInit {
             this.addActivityInProcess = false;
             this.billableActivityModal.destroy();
             
-            this.searchForm!.value.number.setValue(this.billableActivityOrder!.number);
+            this.searchForm!.controls.number.setValue(this.billableActivityOrder!.number);
             this.search();
           }, 
           error: () => this.addActivityInProcess = false

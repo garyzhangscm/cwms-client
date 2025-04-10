@@ -122,9 +122,9 @@ export class PrintingService {
     name: string,
     fileName: string,
     type: ReportType,
-    printerIndex: number,
-    printerName: string,
-    physicalCopyCount: number,
+    printerIndex?: number,
+    printerName: string = "",
+    physicalCopyCount: number = 1,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
     findPrinterBy?: string, 
@@ -144,8 +144,8 @@ export class PrintingService {
            
             console.log(`will print remote file from server`);
             this.printFromServer(
-              name, fileName, type, printerIndex, printerName, 
-              physicalCopyCount, pageOrientation, pageSize, findPrinterBy
+               fileName, type,  printerName, 
+              physicalCopyCount, findPrinterBy
             );
           }
           else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) { 
@@ -153,16 +153,17 @@ export class PrintingService {
             // print it later on
             
             if (reportHistory) {
-              console.log(`will save request to the server`);
-              
-                this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
+                console.log(`will save request to the server`);
+                this.printReportHistoryFromLocal(reportHistory, printerIndex, printerName, 
+                  physicalCopyCount, pageOrientation, collated);
+                // this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
             }
           }
           else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
-              
-                this.printFromLocal(
-                  name, fileName, type, printerIndex, 
-                  physicalCopyCount, pageOrientation, collated); 
+              console.log(`print from local data is not supported at this moment`);
+                // this.printFromLocal(
+                //   name, fileName, type, printerIndex, 
+                //  physicalCopyCount, pageOrientation, collated); 
           }
           
         }, 
@@ -195,15 +196,11 @@ export class PrintingService {
   }
 
 
-  printFromServer(
-    name: string,
+  printFromServer( 
     fileName: string,
-    type: ReportType,
-    printerIndex: number,
+    type: ReportType, 
     printerName: string,
-    physicalCopyCount: number,
-    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
-    pageSize: PrintPageSize = PrintPageSize.A4,
+    physicalCopyCount: number, 
     findPrinterBy?: string, 
     collated?: boolean
   ): void { 
@@ -266,37 +263,63 @@ export class PrintingService {
         }); 
   }
 
-  printReportHistoryFromLocal(reportHistory : ReportHistory, printerName: string): void { 
+  printReportHistoryFromLocal(reportHistory : ReportHistory, printerIndex?: number, 
+        printerName?: string, 
+        physicalCopyCount: number = 1,
+        pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait, 
+        collated?: boolean): void { 
 
-    console.log(`start to print ${reportHistory.fileName} from printer ${printerName == null ? "N/A" : printerName}`);
-
-    let printers: Map<string, number> = new Map();
-    this.getAllLocalPrinters().forEach(
-      (printer, index) => { 
-        printers.set(printer, index);
-      });
-    
-    if (printerName == null || !printers.has(printerName)) {
-        console.log(`either pritner name not passed in or we can't find the printer, let's printer from the default printer`);
-        
-        this.printFromLocal(
-          reportHistory.fileName,
-          reportHistory.fileName, 
-          reportHistory.type,
-          0,
-          1,
-        );
-    }
-    else {
-      console.log(`found printer ${printerName} with index ${printers.get(printerName)}`);
+    console.log(`start to print ${reportHistory.fileName} from printer " +
+    " ${printerIndex == null ? "N/A" : printerIndex} - ${printerName == null ? "N/A" : printerName}`);
+  
+    if (printerIndex != null) {
       
       this.printFromLocal(
         reportHistory.fileName,
         reportHistory.fileName, 
         reportHistory.type,
-        printers.get(printerName)!,
-        1,
+        printerIndex,
+        physicalCopyCount, 
+        pageOrientation, 
+        collated
       );
+    }
+    else {
+      // printer index is not passed in, let's get from the printer name if it is passed in
+      let printers: Map<string, number> = new Map();
+
+      this.getAllLocalPrinters().forEach(
+        (printer, index) => { 
+          printers.set(printer, index);
+        });
+      
+      if (printerName == null || !printers.has(printerName)) {
+          console.log(`either pritner name not passed in or we can't find the printer, let's printer from the default printer`);
+          
+          this.printFromLocal(
+            reportHistory.fileName,
+            reportHistory.fileName, 
+            reportHistory.type,
+            0, // printer from default printer
+            physicalCopyCount, 
+            pageOrientation, 
+            collated
+          );
+      }
+      else {
+        console.log(`found printer ${printerName} with index ${printers.get(printerName)}`);
+        
+        this.printFromLocal(
+          reportHistory.fileName,
+          reportHistory.fileName, 
+          reportHistory.type,
+          printers.get(printerName)!,
+          physicalCopyCount, 
+          pageOrientation, 
+          collated
+        );
+      }
+      
     }
     
 

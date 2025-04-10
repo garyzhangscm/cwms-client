@@ -1,7 +1,10 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/work-order/work-order" routerLinkActive="active"
+  @if (currentWorkOrder != null) {
+
+    <a routerLink="/work-order/work-order" routerLinkActive="active"
     [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
+  }
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
@@ -47,12 +50,19 @@
           {{ 'production-line' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <nz-select style="width: 150px" [ngModel]="workOrderProduceTransaction.productionLine?.name"
+          @if (currentWorkOrder != null && workOrderProduceTransaction != null) {
+
+            <nz-select style="width: 150px" [ngModel]="workOrderProduceTransaction.productionLine?.name"
             (ngModelChange)="productionLineChanged($event)">
-            <nz-option *ngFor="let productionLineAssignment of currentWorkOrder?.productionLineAssignments"
-              [nzLabel]="productionLineAssignment.productionLine.name"
-              [nzValue]="productionLineAssignment.productionLine.name"></nz-option>
+                @for (productionLineAssignment of currentWorkOrder.productionLineAssignments; track productionLineAssignment) {
+                  
+                  <nz-option 
+                    [nzLabel]="productionLineAssignment.productionLine.name"
+                    [nzValue]="productionLineAssignment.productionLine.name"></nz-option>
+
+                }   
           </nz-select>
+          }
 
         </nz-form-control>
       </nz-form-item>

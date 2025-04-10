@@ -280,16 +280,16 @@ export class OutboundWaveComponent implements OnInit {
   
     // initiate the search form 
   searchForm = this.fb.nonNullable.group({ 
-    number: this.fb.control('', []), 
-    waveStatus: this.fb.control(null, []), 
-    includeCompletedWave: this.fb.control(null, []), 
-    includeCancelledWave:this.fb.control(null, []), 
+    number: this.fb.control('', { nonNullable: true, validators: []}), 
+    waveStatus: this.fb.control(null, { nonNullable: true, validators: []}), 
+    includeCompletedWave: this.fb.control(null, { nonNullable: true, validators: []}), 
+    includeCancelledWave:this.fb.control(null,{ nonNullable: true, validators:  []}), 
   });
 
   searchUserForm = this.fb.nonNullable.group({ 
-    username: this.fb.control('', []), 
-    firstname: this.fb.control('', []), 
-    lastname: this.fb.control('', []),  
+    username: this.fb.control('', { nonNullable: true, validators: []}), 
+    firstname: this.fb.control('', { nonNullable: true, validators: []}), 
+    lastname: this.fb.control('', { nonNullable: true, validators: []}),  
   });
    
 

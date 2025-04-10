@@ -8,10 +8,15 @@ import { PrintPageOrientation } from '../../common/models/print-page-orientation
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service'; 
 import { ReportType } from '../../report/models/report-type.enum'; 
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WorkOrderLineConsumeTransaction } from '../models/work-order-line-consume-transaction';
 import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction'; 
 import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
 import { WorkOrderService } from '../services/work-order.service';
+import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
+import { Inventory } from '../../inventory/models/inventory';
+import { InventoryService } from '../../inventory/services/inventory.service';
+import { RfService } from '../../util/services/rf.service';
 
 @Component({
     selector: 'app-work-order-work-order-produce-confirm',
@@ -40,6 +45,8 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   pageTitle: string;
   
   expandSet = new Set<number>(); 
+
+  printingStrategy = PrintingStrategy.SERVER_PRINTER;
   
 
   constructor(
@@ -48,9 +55,20 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
     private router: Router,
     private messageService: NzMessageService,
     private workOrderService: WorkOrderService,
-    private printingService: PrintingService
+    private printingService: PrintingService,
+    private inventoryService: InventoryService,
+    private rfService: RfService,
+    private warehouseConfigurationService: WarehouseConfigurationService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.work-order.produce.confirm');
+
+    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfiguration) => {
+          this.printingStrategy = warehouseConfiguration.printingStrategy ? 
+                  warehouseConfiguration.printingStrategy:
+                  PrintingStrategy.SERVER_PRINTER;
+      }  
+    });
   }
 
   ngOnInit(): void {
@@ -156,13 +174,27 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
       workOrderProduceTransactionRes => {
         this.messageService.success(this.i18n.fanyi('message.work-order.produced-success')); 
 
+        /**
+         * 
         if (this.workOrderProduceTransaction.printingNewLPNLabel == true 
             && this.workOrderProduceTransaction.labelPrinterName != ""
             && this.workOrderProduceTransaction.labelPrinterIndex != null
             && this.workOrderProduceTransaction.labelPrinterIndex > -1) {
           // we will print the lpn label for all lpns
+          
           this.printNewLPNLabels(workOrderProduceTransactionRes);
         } 
+         * 
+         */ 
+        console.log(`this.workOrderProduceTransaction.printingNewLPNLabel : ${this.workOrderProduceTransaction.printingNewLPNLabel}`);
+        console.log(`this.printingStrategy : ${this.printingStrategy}`);
+        if (this.workOrderProduceTransaction.printingNewLPNLabel == true  &&
+              this.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
+          // we will print the lpn label for all lpns
+          console.log(`start to print lpn label from printer ${this.workOrderProduceTransaction.labelPrinterName}`);
+          this.printNewLPNLabels(workOrderProduceTransactionRes, this.workOrderProduceTransaction.labelPrinterName); 
+        } 
+           
         setTimeout(() => {
           this.savingInProcess = false;
           this.isSpinning = false;
@@ -176,8 +208,9 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
       },
     );
   }
-  
-  printNewLPNLabels(workOrderProduceTransaction : WorkOrderProduceTransaction) { 
+   
+   
+  printNewLPNLabels(workOrderProduceTransaction : WorkOrderProduceTransaction, printerName?: string) { 
     let lpnQuantityMap : Map<string, number> = new Map();
     // setup the LPN quantity map
     // add the produced inventory and by product to the map
@@ -200,14 +233,18 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
         lpnQuantityMap.set(inventory.lpn!, quantity + inventory.quantity!);
       }
     );
-    
     lpnQuantityMap.forEach((value, key) => {
       // console.log(`(value, key): ${value}, ${key}`);
       // value : quantity
       // key: lpn
+      
+      console.log(`print for lpn ${key}, quantity ${value}`);
+      
       this.workOrderService.generatePrePrintLPNLabelInBatch(
         workOrderProduceTransaction.workOrder!.id!, key, value, 1, 
-        workOrderProduceTransaction.productionLine!.name, 1, this.workOrderProduceTransaction.labelPrinterName)
+        workOrderProduceTransaction.productionLine!.name, 1, 
+        // this.workOrderProduceTransaction.labelPrinterName
+        printerName)
         .subscribe({
           next: (printResult) => {
             // send the result to the printer
@@ -218,9 +255,9 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
               "Work Order LPN Label",
               printResult.fileName,
               ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL,
-              this.workOrderProduceTransaction.labelPrinterIndex!,
-              this.workOrderProduceTransaction.labelPrinterName!,
-              2, // event.physicalCopyCount,
+              this.workOrderProduceTransaction.labelPrinterIndex,
+              this.workOrderProduceTransaction.labelPrinterName,
+              1, // event.physicalCopyCount,
               // 1, // we will always only print one copy. If the user want to print multiple copies
                   // the paramter will be passed into the 'generate' command instead of the print command
                   // so that we will have labels printed in uncollated format, not collated format 
