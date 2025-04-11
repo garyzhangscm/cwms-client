@@ -92,9 +92,9 @@
       <tbody>
 
         <tr *ngFor="let data of workOrderLineTable.data">
-          <td>{{ data.workOrderLine!.number! }}</td>
-          <td>{{ data.workOrderLine!.item!.name }}</td>
-          <td>{{ data.workOrderLine!.item!.description }}</td>
+          <td>{{ data.workOrderLine!.number }}</td>
+          <td>{{ data.workOrderLine!.item?.name }}</td>
+          <td>{{ data.workOrderLine!.item?.description }}</td>
           <td>{{ data.workOrderLine!.expectedQuantity }}</td>
           <td>{{ data.workOrderLine!.openQuantity }}</td>
           <td>{{ data.workOrderLine!.inprocessQuantity }}</td>
