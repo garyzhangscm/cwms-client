@@ -188,7 +188,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="orderTableColumns" [expand]="expand"  expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '4405px' }">
+    (change)="orderTableChanged($event)" resizable [scroll]="{ x: '4405px' }" [widthMode]="{ type: 'strict' }" >
     
       <ng-template st-row="completedTimeColumn" let-order let-index="index">
             {{order.completeTime | date:'MM/dd/yyyy' }}
