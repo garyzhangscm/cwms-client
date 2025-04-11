@@ -21,8 +21,7 @@ export class InventoryItemFamilyMaintenanceComponent implements OnInit {
   currentItemFamily!: ItemFamily;
   pageTitle = '';
 
-  emptyItemFamily: ItemFamily = {
-    id: 0,
+  emptyItemFamily: ItemFamily = { 
     name: '',
     description: '',
     totalItemCount: 0,

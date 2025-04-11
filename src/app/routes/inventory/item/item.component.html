@@ -78,7 +78,8 @@
   
     
     <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" 
-         expandAccordion   (change)="itemTableChanged($event)"  [widthMode]="{ type: 'strict' }" 
+         expandAccordion   (change)="itemTableChanged($event)" resizable 
+          [widthMode]="{ type: 'strict' }" 
         [scroll]="{ x: '3300px'}">
       
         <ng-template st-row="thumbnailColumn" let-item let-index="index"> 
