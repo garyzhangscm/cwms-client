@@ -1068,6 +1068,17 @@
               (preview)="previewBillOfLading(order)">
             </cwms-common-print-button>
           </nz-list-item>
+
+          @if(order.allowForManualPick) {
+            
+            <nz-list-item >
+              {{ 'manual-pick-sheet' | i18n }}: 
+              <cwms-common-print-button style='padding-left: 20px;'
+                (print)="printManualPickSheet($event, order)"
+                (preview)="previewManualPickSheet(order)">
+              </cwms-common-print-button>
+            </nz-list-item>
+          }
         </nz-list>
         
       </ng-template>

@@ -181,6 +181,19 @@ export class OrderService {
 
     return this.http.post(`outbound/orders/${order.id}/bill-of-lading-report`, null, params).pipe(map(res => res.data));
   }
+  
+  generateOrderManualPickSheet(order: Order, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+
+    return this.http.post(`outbound/orders/${order.id}/manual-pick-report`, null, params).pipe(map(res => res.data));
+  }
+
 
   stageOrder(order: Order): Observable<Order> {
     return this.http.post(`outbound/orders/${order.id}/stage`).pipe(map(res => res.data));

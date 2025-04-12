@@ -480,6 +480,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
           quantity: this.currentInventory!.quantity,
           locationId: this.currentInventory!.locationId,
           location: this.currentInventory?.location,
+          locationName: this.currentInventory?.locationName,
           color: this.currentInventory?.color,
           style: this.currentInventory?.style,
           productSize: this.currentInventory?.productSize,
