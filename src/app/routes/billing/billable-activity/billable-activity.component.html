@@ -5,25 +5,28 @@
     <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
   
       <div nz-row [nzGutter]="24">
-        <div nz-col [nzSpan]="6" *ngIf="threePartyLogisticsFlag" >
-          <nz-form-item nzFlex>
-            <nz-form-label for="client" [nzSpan]="6">
-              {{ 'client' | i18n }}
-            </nz-form-label>
-            <nz-form-control [nzSpan]="18">
-              <nz-select formControlName="client" nzAllowClear>
+        @if(threePartyLogisticsFlag) {
+    
+          <div nz-col [nzSpan]="6"   >
+            <nz-form-item nzFlex>
+              <nz-form-label for="client" [nzSpan]="6">
+                {{ 'client' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18">
+                <nz-select formControlName="client" nzAllowClear>
+                  
+                @for (client of availableClients; track client) {
                 
-              @for (client of availableClients; track client) {
-              
-                <nz-option [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
-              }
-      
-      
-
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
+                  <nz-option [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+                }
+        
+        
+  
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        }
         <div nz-col [nzSpan]="12">
             <nz-form-item nzFlex>
               <nz-form-label [nzSpan]="6" nzFor="dateRanger">
@@ -135,11 +138,18 @@
   </nz-spin>
   <ng-template #tableFoot>
   
-    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-      {{searchResult}}
-    </div>
-    <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
-      <button nz-button nzType="primary">{{ 'generate-invoice' | i18n }}</button>
-    </div>
+
+    @if(searchResult != '') {
+
+      <div nz-row nzType="flex" nzJustify="start" >
+        {{searchResult}}
+      </div>
+    }
+    @if(!displayOnly) {
     
+      <div nz-row nzType="flex" nzJustify="start" >
+        <button nz-button nzType="primary">{{ 'generate-invoice' | i18n }}</button>
+      </div>
+      
+    }
   </ng-template>

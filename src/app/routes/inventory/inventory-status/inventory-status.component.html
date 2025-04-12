@@ -78,9 +78,12 @@
         </nz-dropdown-menu>
       </ng-template>
     </st>
-    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
-      {{searchResult}}
-    </div>
+    @if(searchResult != '') {
+  
+      <div nz-row nzType="flex" nzJustify="start">
+        {{searchResult}}
+      </div>
+    }
       <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
         <button nz-button nzType="primary" routerLink="/inventory/status/maintenance" routerLinkActive="active">
           {{ 'add' | i18n }}

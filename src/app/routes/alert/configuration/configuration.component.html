@@ -123,11 +123,14 @@
         </div>
         
         
-        <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
-            <button nz-button nzType="primary" (click)="saveConfiguration()">
-                {{ 'confirm' | i18n }}
-            </button>
-        </div>
+        @if(!displayOnly) {
+
+            <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="saveConfiguration()">
+                    {{ 'confirm' | i18n }}
+                </button>
+            </div>
+        }
         
     </div>
 }

@@ -18,9 +18,12 @@
     <a nz-button nzType="primary" (click)="refresh()">
       {{'fresh' | i18n}}
     </a>
-    <a nz-button nzType="primary" routerLink="/billing/billable-activity-type/maintenance" routerLinkActive="active"
-    *ngIf="!displayOnly">
-      {{'add' | i18n}}
-    </a> 
+    @if(!displayOnly) {
+    
+      <a nz-button nzType="primary" 
+        routerLink="/billing/billable-activity-type/maintenance" routerLinkActive="active" >
+        {{'add' | i18n}}
+      </a> 
+    }
   </div>
 </ng-template>

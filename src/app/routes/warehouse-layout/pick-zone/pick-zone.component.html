@@ -63,9 +63,12 @@
 
 <ng-template #tableFoot>
 
-    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+  @if(searchResult != '') {
+
+    <div nz-row nzType="flex" nzJustify="start">
       {{searchResult}}
     </div>
+  }
     
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
       

@@ -901,6 +901,8 @@ export class OutboundOrderComponent implements OnInit {
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
+        
+        sessionStorage.setItem('report_previous_page', `/outbound/order?number=${order.number}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
 
       },
@@ -953,6 +955,7 @@ export class OutboundOrderComponent implements OnInit {
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
+        sessionStorage.setItem('report_previous_page', `/outbound/order?number=${order.number}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
 
       },
@@ -1001,6 +1004,7 @@ export class OutboundOrderComponent implements OnInit {
       .subscribe({
           next: (printResult) => {
             this.isSpinning = false;
+            sessionStorage.setItem('report_previous_page', `/outbound/order?number=${order.number}`);
             this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
     
           }, 

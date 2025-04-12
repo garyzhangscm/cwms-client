@@ -341,9 +341,12 @@
       </st>
       <ng-template #openShipmentTableFoot>
       
-          <div nz-row nzType="flex" nzJustify="start" *ngIf="openShipmentTableSearchResult != ''">
-            {{openShipmentTableSearchResult}}
-          </div> 
+          @if(openShipmentTableSearchResult != '') {
+
+            <div nz-row nzType="flex" nzJustify="start">
+              {{openShipmentTableSearchResult}}
+            </div>
+          } 
       </ng-template>
         
     </div>
@@ -391,9 +394,13 @@
       </st>
       <ng-template #openOrderTableFoot>
       
-          <div nz-row nzType="flex" nzJustify="start" *ngIf="openOrderTableSearchResult != ''">
-            {{openOrderTableSearchResult}}
-          </div> 
+
+          @if(openOrderTableSearchResult != '') {
+
+            <div nz-row nzType="flex" nzJustify="start">
+              {{openOrderTableSearchResult}}
+            </div>
+          } 
       </ng-template>
         
     </div>

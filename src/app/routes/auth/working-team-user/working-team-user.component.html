@@ -22,21 +22,24 @@
 <nz-card [nzActions]="[cardFoot]" [nzTitle]="cardTitle">
 
 
-  <div nz-row style="padding: 10px" *ngIf="newWorkingTeam">
-    <div nz-col nzSpan="12" nzOffset="6">
-      <nz-steps [nzCurrent]="1" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
-        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
-          nzDescription="{{ 'steps.working-team.basic-info.description' | i18n }}">
-        </nz-step>
-        <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
-          nzDescription="{{ 'steps.working-team.assign-users.description' | i18n }}" [nzDisabled]="true">
-        </nz-step>
-        <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
-          [nzDisabled]="true">
-        </nz-step>
-      </nz-steps>
+  @if(newWorkingTeam) {
+
+    <div nz-row style="padding: 10px" >
+      <div nz-col nzSpan="12" nzOffset="6">
+        <nz-steps [nzCurrent]="1" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+          <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+            nzDescription="{{ 'steps.working-team.basic-info.description' | i18n }}">
+          </nz-step>
+          <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
+            nzDescription="{{ 'steps.working-team.assign-users.description' | i18n }}" [nzDisabled]="true">
+          </nz-step>
+          <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
+            [nzDisabled]="true">
+          </nz-step>
+        </nz-steps>
+      </div>
     </div>
-  </div>
+  }
 
   <div nz-row style="padding: 10px">
     <div nz-col nzSpan="12" nzOffset="6">
@@ -54,15 +57,21 @@
   <h4>{{ 'working-team.name' | i18n}} : {{ currentWorkingTeam?.name}}</h4>
 </ng-template>
 <ng-template #cardFoot>
-  <div nz-row nzType="flex" nzJustify="center" *ngIf="!newWorkingTeam">
-    <button nz-button nzType="primary" (click)="assignUser()" [nzLoading]="processingUser">
-      {{ 'confirm' | i18n }}
-    </button>
-  </div>
-  <div nz-row nzType="flex" nzJustify="center" *ngIf="newWorkingTeam">
-    <button nz-button nzType="primary" (click)="goToNextPage()">
-      {{ 'steps.next' | i18n }} :
-      {{ 'steps.confirm.title' | i18n }}
-    </button>
-  </div>
+  
+  @if(newWorkingTeam) {
+    <div nz-row nzType="flex" nzJustify="center" >
+      <button nz-button nzType="primary" (click)="goToNextPage()">
+        {{ 'steps.next' | i18n }} :
+        {{ 'steps.confirm.title' | i18n }}
+      </button>
+    </div>
+  }
+  @else {
+
+    <div nz-row nzType="flex" nzJustify="center">
+      <button nz-button nzType="primary" (click)="assignUser()" [nzLoading]="processingUser">
+        {{ 'confirm' | i18n }}
+      </button>
+    </div>
+  }
 </ng-template>

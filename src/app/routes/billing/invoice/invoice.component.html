@@ -6,25 +6,29 @@
 
     <div nz-row [nzGutter]="24">
         
-        <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="12">
-                {{ 'client' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="12" >
+      @if(threePartyLogisticsFlag) {
 
-                    <nz-select formControlName="clientId">
-                      
-                    @for (client of availableClients; track client) {
+        <div nz-col [nzSpan]="8"  >
+          <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+              {{ 'client' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" >
+
+                  <nz-select formControlName="clientId">
                     
-                      <nz-option [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
-                    }
-      
+                  @for (client of availableClients; track client) {
+                  
+                    <nz-option [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                  }
+    
 
-                    </nz-select>
-                </nz-form-control>
-            </nz-form-item>
+                  </nz-select>
+              </nz-form-control>
+          </nz-form-item>
         </div>
+
+      }
 
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
@@ -148,9 +152,12 @@
 </nz-spin>
 <ng-template #tableFoot>
 
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-    {{searchResult}}
-  </div>
+  @if(searchResult != '') {
+
+    <div nz-row nzType="flex" nzJustify="start">
+      {{searchResult}}
+    </div>
+  }
   
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     
