@@ -1114,9 +1114,12 @@
       -->
     </st>
     
-  <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
-    {{searchResult}}
-  </div>
+    @if(searchResult != '') {
+
+      <div nz-row nzType="flex" nzJustify="start">
+        {{searchResult}}
+      </div>
+    }
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
       <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active"
       *ngIf="!userPermissionMap.has('add-order') || userPermissionMap.get('add-order')">
@@ -1130,15 +1133,7 @@
     </div>
   </div> 
 
-</nz-spin>
-
-
-<ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-    {{searchResult}}
-  </div>
-</ng-template>
-
+</nz-spin> 
 
 
 <!-- Modal for unpick -->

@@ -151,9 +151,12 @@
   
 
   -->
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-    {{searchResult}}
-  </div>
+  @if(searchResult != '') {
+
+    <div nz-row nzType="flex" nzJustify="start">
+      {{searchResult}}
+    </div>
+  }
 </ng-template>
 
 

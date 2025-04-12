@@ -505,11 +505,14 @@
   </div>
 </div>
 
-<ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-    {{searchResult}}
-  </div>
-</ng-template>
+  <ng-template #tableFoot>
+    @if(searchResult != '') {
+
+      <div nz-row nzType="flex" nzJustify="start">
+        {{searchResult}}
+      </div>
+    }
+  </ng-template>
 </nz-spin>
 
 

@@ -93,9 +93,12 @@
       </ng-template>
     </st>
     
-    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
-      {{searchResult}}
-    </div> 
+    @if(searchResult != '') {
+
+      <div nz-row nzType="flex" nzJustify="start">
+        {{searchResult}}
+      </div>
+    }
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
       <button nz-button (click)="createFakeData(10)" *ngIf="!displayOnly"> 
         {{ 'add' | i18n }}

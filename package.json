@@ -1,6 +1,6 @@
 {
   "name": "CWMS_Client",
-  "version": "19.1.58",
+  "version": "19.1.60",
   "scripts": {
     "ng": "ng",
     "start": "ng s -o",
