@@ -92,31 +92,33 @@
             </th> 
           </thead>
           <tbody>
-            <tr *ngFor="let purchaseOrderLine of purchaseOrderLineTable.data">
-              <td>{{ purchaseOrderLine.number }}</td>
-              
-              <td>
+            @for (purchaseOrderLine of purchaseOrderLineTable.data; track purchaseOrderLine) { 
+              <tr >
+                <td>{{ purchaseOrderLine.number }}</td>
                 
-                  <nz-skeleton-element 
-                  *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
-                  nzType="input"
-                  [nzActive]="true"
-                  [nzSize]="'small'"
-                  style="width:75px"
-                ></nz-skeleton-element> 
-                {{ purchaseOrderLine.item?.name }}</td>
-              <td>{{ purchaseOrderLine.expectedQuantity }}</td>
-              <td>{{ purchaseOrderLine.receiptQuantity }}</td>
-              <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
-              <td> 
-                <nz-input-number   [nzMin]="0"  [nzStep]="1" [ngModel]="getReceiptLineQuantity(purchaseOrderLine.id!)" 
-                (ngModelChange)="currentReceiptLineQuantityChanged(purchaseOrderLine.id!, $event)">
-
-                </nz-input-number>
- 
-
-              </td>
-            </tr>
+                <td>
+                  
+                    <nz-skeleton-element 
+                    *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                    nzType="input"
+                    [nzActive]="true"
+                    [nzSize]="'small'"
+                    style="width:75px"
+                  ></nz-skeleton-element> 
+                  {{ purchaseOrderLine.item?.name }}</td>
+                <td>{{ purchaseOrderLine.expectedQuantity }}</td>
+                <td>{{ purchaseOrderLine.receiptQuantity }}</td>
+                <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
+                <td> 
+                  <nz-input-number   [nzMin]="0"  [nzStep]="1" [ngModel]="getReceiptLineQuantity(purchaseOrderLine.id!)" 
+                  (ngModelChange)="currentReceiptLineQuantityChanged(purchaseOrderLine.id!, $event)">
+  
+                  </nz-input-number>
+   
+  
+                </td>
+              </tr>
+            }  
           </tbody>
         </nz-table> 
       </nz-tab>

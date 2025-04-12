@@ -570,6 +570,13 @@
                           </cwms-common-print-button>
                         </nz-list-item>
                           
+                        <nz-list-item>
+                          {{ 'manual-pick-sheet' | i18n }}: 
+                          <cwms-common-print-button style='padding-left: 20px;'
+                            (print)="printManualPickSheet($event, productionLineAssignment)"
+                            (preview)="previewManualPickSheet(productionLineAssignment)">
+                          </cwms-common-print-button>
+                        </nz-list-item>
                         <!--
                           
                         <nz-list-item>

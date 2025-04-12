@@ -1785,7 +1785,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
     this.isSpinning = true;
 
-    this.productionLineAssignmentService.generateroductionLineAssignmentReport(
+    this.productionLineAssignmentService.generateProductionLineAssignmentReport(
       productionLineAssignment.id!)
       .subscribe(printResult => {
 
@@ -1818,11 +1818,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
 
     this.isSpinning = true;
-    this.productionLineAssignmentService.generateroductionLineAssignmentReport(
+    this.productionLineAssignmentService.generateProductionLineAssignmentReport(
       productionLineAssignment.id!)
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
+        sessionStorage.setItem('report_previous_page', `/work-order/work-order?number=${productionLineAssignment.workOrderNumber}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
 
       },
@@ -1875,6 +1876,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
+        sessionStorage.setItem('report_previous_page', `/work-order/work-order?number=${productionLineAssignment.workOrderNumber}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
 
       },
@@ -2152,5 +2154,50 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           this.isSpinning = false;
         },
       );
+  }
+
+  
+  printManualPickSheet(event: any,  productionLineAssignment: ProductionLineAssignment) {
+
+    this.isSpinning = true;
+
+    this.productionLineAssignmentService.generateWorkOrderManualPickSheet(
+      productionLineAssignment.id!)
+      .subscribe({
+        next: (printResult) => { 
+            this.printingService.printFileByName(
+              "Work Order Manual Pick Sheet",
+              printResult.fileName,
+              ReportType.WORK_ORDER_MANUAL_PICK_SHEET,
+              event.printerIndex,
+              event.printerName,
+              event.physicalCopyCount,
+              PrintPageOrientation.Portrait,
+              PrintPageSize.Letter,
+              productionLineAssignment.workOrderNumber, 
+              printResult, event.collated);
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi("report.print.printed"));
+        }, 
+        error: () => this.isSpinning = false
+      });  
+ 
+
+  }
+  previewManualPickSheet( productionLineAssignment: ProductionLineAssignment): void {
+
+
+    this.isSpinning = true;
+    this.productionLineAssignmentService.generateWorkOrderManualPickSheet(
+      productionLineAssignment.id!)
+      .subscribe({
+          next: (printResult) => {
+            this.isSpinning = false;
+            sessionStorage.setItem('report_previous_page', `/work-order/work-order?number=${productionLineAssignment.workOrderNumber}`);
+            this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+    
+          }, 
+          error: () =>  this.isSpinning = false
+      }); 
   }
 }

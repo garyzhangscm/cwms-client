@@ -43,7 +43,7 @@ export class ProductionLineAssignmentService {
       return this.http.get(url).pipe(map(res => res.data));
   }
 
-  generateroductionLineAssignmentReport(productionLineAssignmentId: number, locale?: string): Observable<ReportHistory> {
+  generateProductionLineAssignmentReport(productionLineAssignmentId: number, locale?: string): Observable<ReportHistory> {
     
     let params = new HttpParams();
     if (!locale) {
@@ -54,6 +54,18 @@ export class ProductionLineAssignmentService {
     const url = `workorder/production-line-assignments/${productionLineAssignmentId}/report`;
     return this.http.post(url, null, params).pipe(map(res => res.data));
   }
+  generateWorkOrderManualPickSheet(productionLineAssignmentId: number, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+    
+    const url = `workorder/production-line-assignments/${productionLineAssignmentId}/manual-pick-sheet`;
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
+
 
   
   generateroductionLineAssignmentLabel(productionLineAssignmentId: number, locale?: string): Observable<ReportHistory> {

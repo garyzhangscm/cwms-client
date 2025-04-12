@@ -68,6 +68,8 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
     case 403:
     case 404:
     case 500:
+      console.log(`get error http ${ev.status} `);
+      
       // goTo(injector, `/exception/${ev.status}?url=${req.urlWithParams}`);
         goTo(injector, `/exception/${ev.status}`);
       break;
