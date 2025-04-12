@@ -65,6 +65,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   avaiableLocations: WarehouseLocation[] = [];
   orderNumberValidateStatus = 'warning'; 
+  shipStageLocationGroupStatus = 'success'; 
+  shipStageLocationStatus = 'success'; 
 
   avaiableCarriers: Carrier[] = [];
   availableClients: Client[] = [];
@@ -375,6 +377,12 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     };
   }
 
+  allowForManualPickChanged(allowForManualPick: boolean) {
+    console.log(`allow for manual pick : ${allowForManualPick}`);
+
+    this.validateShipStageLocationAndGroupRequirement();
+  }
+
   previousStep() {
     this.stepIndex--;
   }
@@ -387,7 +395,9 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   passValidation() : boolean {
 
     if (this.stepIndex === 0) {
-      return this.orderNumberValidateStatus === 'success';
+      return this.orderNumberValidateStatus === 'success' && 
+      this.shipStageLocationGroupStatus === 'success' &&
+      this.shipStageLocationStatus === 'success'; 
     }
 
     return true;
@@ -571,8 +581,28 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
         {
           next: (locationRes) => this.avaiableLocations = locationRes
         }
-      )
+      ) 
+      this.validateShipStageLocationAndGroupRequirement();
   } 
+  stageLocationChanged(): void {
+    
+    this.validateShipStageLocationAndGroupRequirement();
+
+  }
+  validateShipStageLocationAndGroupRequirement() {
+    
+    this.shipStageLocationGroupStatus = "success";
+    this.shipStageLocationStatus = "success";
+
+    if (this.currentOrder!.allowForManualPick) {
+      if (this.currentOrder!.stageLocationId == null) {
+        this.shipStageLocationStatus = "requiredForManualPickOrder";
+      } 
+      if (this.currentOrder!.stageLocationGroupId == null) {
+        this.shipStageLocationGroupStatus = "requiredForManualPickOrder";
+      }  
+    }
+  }
   customerOptionChanged() {
     if (this.existingCustomer === 'true' && this.validCustomers.length === 0) {
 

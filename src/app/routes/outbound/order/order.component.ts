@@ -961,6 +961,52 @@ export class OutboundOrderComponent implements OnInit {
         },
       );
   }
+  
+  printManualPickSheet(event: any, order: Order) {
+
+    this.isSpinning = true;
+
+    this.orderService.generateOrderManualPickSheet(
+      order)
+      .subscribe({
+        next: (printResult) => {
+            const printFileUrl
+            = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+            // console.log(`will print file: ${printFileUrl}`);
+            this.printingService.printFileByName(
+              "Order Manual Pick Sheet",
+              printResult.fileName,
+              ReportType.ORDER_MANUAL_PICK_SHEET,
+              event.printerIndex,
+              event.printerName,
+              event.physicalCopyCount,
+              PrintPageOrientation.Portrait,
+              PrintPageSize.Letter,
+              order.number, 
+              printResult, event.collated);
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi("report.print.printed"));
+        }, 
+        error: () => this.isSpinning = false
+      });  
+ 
+
+  }
+  previewManualPickSheet(order: Order): void {
+
+
+    this.isSpinning = true;
+    this.orderService.generateOrderManualPickSheet(
+      order)
+      .subscribe({
+          next: (printResult) => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+    
+          }, 
+          error: () =>  this.isSpinning = false
+      }); 
+  }
 
   completeOrder(order: Order): void {
     if (order.category === OrderCategory.OUTSOURCING_ORDER) {
@@ -2014,7 +2060,7 @@ export class OutboundOrderComponent implements OnInit {
 
     this.stOrderLineTableColumns = [ 
       { title: this.i18n.fanyi("order.line.number"), index: 'number', width: 150 },  
-      { title: this.i18n.fanyi("item"), render: 'itemColumn',   width: 150 },  
+      { title: this.i18n.fanyi("item"), render: 'itemColumn',   width: 250 },  
       { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
       { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
       { title: this.i18n.fanyi("style"), index: 'style', width: 150 }, 

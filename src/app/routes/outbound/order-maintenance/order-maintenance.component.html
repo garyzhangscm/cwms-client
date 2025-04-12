@@ -36,15 +36,23 @@
                 <nz-form-label [nzSpan]="12">
                   {{ 'order.number' | i18n }}
                 </nz-form-label>
-                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl" [nzValidateStatus]="orderNumberValidateStatus"
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl" 
+                nzValidateStatus="{{ orderNumberValidateStatus == 'success' ? 'success' : 
+                    (orderNumberValidateStatus == 'warning' ? 'warning' : 'error') }}" 
                 >
         
 
                   <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentOrder!.number" required 
                     (blur)="orderNumberChange($event)" [disabled]="!newOrder"/>
                   <ng-template #orderNumberErrorTpl let-control>  
-                      <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                      <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">Order Number already exists</ng-container>
+                      @if (orderNumberValidateStatus === 'required') {
+
+                        <ng-container >{{ 'error.form.field.required' | i18n }}</ng-container>
+                      }
+                      @if (orderNumberValidateStatus === 'numberExists') {
+
+                        <ng-container >Order Number already exists</ng-container>
+                      }
                      
                   </ng-template>
                 </nz-form-control>
@@ -105,11 +113,21 @@
                 <nz-form-label [nzSpan]="12">
                   {{ 'shipment.stage.locationGroup' | i18n }}
                 </nz-form-label>
-                <nz-form-control [nzSpan]="12" nzHasFeedback  >
-                    <nz-select [(ngModel)]="currentOrder!.stageLocationGroupId" (ngModelChange)="stageLocationGroupChange()"
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="shipStageLocationGroupErrorTpl" 
+                nzValidateStatus="{{ shipStageLocationGroupStatus == 'success' ? 'success' : 'error'}}"  >
+                    <nz-select [(ngModel)]="currentOrder!.stageLocationGroupId" 
+                    (ngModelChange)="stageLocationGroupChange()"
                     nzAllowClear>
                         <nz-option *ngFor="let loocationGroup of avaiableLocationGroups" [nzValue]="loocationGroup.id" [nzLabel]="loocationGroup.description!"></nz-option>
                       </nz-select>
+
+                      <ng-template #shipStageLocationGroupErrorTpl let-control>  
+                          @if(shipStageLocationGroupStatus === 'requiredForManualPickOrder') {
+                            <ng-container >{{ 'shipment.stage.locationGroup' | i18n }} is required for manual pick order
+                            </ng-container>
+                          } 
+                         
+                      </ng-template>
 
                 </nz-form-control>
               </nz-form-item>
@@ -119,12 +137,21 @@
                 <nz-form-label [nzSpan]="12">
                   {{ 'shipment.stage.location' | i18n }}
                 </nz-form-label>
-                <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="shipStageLocationErrorTpl"  
+                    nzValidateStatus="{{ shipStageLocationStatus == 'success' ? 'success' : 'error'}}"   >
                     
-                        <nz-select [(ngModel)]="currentOrder!.stageLocationId" nzAllowClear>
+                        <nz-select [(ngModel)]="currentOrder!.stageLocationId" nzAllowClear 
+                            (ngModelChange)="stageLocationChanged()">
                             <nz-option *ngFor="let location of avaiableLocations" [nzValue]="location.id!" [nzLabel]="location.name!"></nz-option>
                         </nz-select>
 
+                        <ng-template #shipStageLocationErrorTpl let-control>  
+                          @if(shipStageLocationStatus === 'requiredForManualPickOrder') {
+                            <ng-container >{{ 'shipment.stage.location' | i18n }} is required for manual pick order
+                            </ng-container>
+                          } 
+                         
+                      </ng-template>
                       
                 </nz-form-control>
               </nz-form-item>
@@ -168,7 +195,7 @@
               <nz-form-control [nzSpan]="12" nzHasFeedback  >
                 
                 <label nz-checkbox [(ngModel)]="currentOrder!.allowForManualPick" 
-                [disabled]="currentOrder.status != orderStatuses.OPEN" >
+                [disabled]="currentOrder.status != orderStatuses.OPEN" (ngModelChange)="allowForManualPickChanged($event)" >
                   {{ "allowForManualPick" | i18n}}</label>  
 
               </nz-form-control>
