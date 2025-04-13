@@ -9,4 +9,6 @@ export interface RfConfiguration {
     
     printerName?: string;
     autoDepositForLpnWithSameDestination?: boolean;
+
+    pickToShipStage?:boolean;
 }
