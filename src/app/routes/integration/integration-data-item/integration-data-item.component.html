@@ -41,11 +41,14 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-              *ngFor="let status of integrationStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-            ></nz-option>
+            @for (status of integrationStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+              ></nz-option>
+            
+            }  
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -87,19 +90,22 @@
       <tr>
         <th nzWidth="40px"></th>
 
-        <th
-            *ngFor="let column of listOfColumns"
-            [nzShowSort]="column.showSort"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
-          >
-            {{ column.name | i18n }}
-          </th> 
+        @for (column of listOfColumns; track column) {
+            
+            <th 
+              [nzShowSort]="column.showSort"
+              [nzSortOrder]="column.sortOrder"
+              [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections"
+              [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter"
+              [nzFilterFn]="column.filterFn"        
+              [nzShowFilter]="column.showFilter"
+            >
+              {{ column.name | i18n }}
+            </th> 
+            
+        }  
 
        
           <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
@@ -141,83 +147,95 @@
         <tr  [nzExpand]="expandSet.has(data.id)" *ngIf="data.itemPackageTypes!.length > 0">
           
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-              <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
-                <nz-table 
-                [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
-                  [nzShowPagination]="false">
-                  <thead>
-                    <tr>
+              
+              @for (itemPackageType of data.itemPackageTypes; track itemPackageType) {
+              
+                <nz-tab [nzTitle]="itemPackageType.name">
+                  <nz-table  [nzScroll]="{ x: 'true', y: 'true' }" 
+                    #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
+                    [nzShowPagination]="false">
+                    <thead>
+                      <tr>
+  
+                        <th nzShowSort nzSortKey="id">id</th>
+                        <th>
+                          {{ 'item-id' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item-name' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item-package-type-id' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item-package-type-name' | i18n }}
+                        </th>
+  
+                        <th>
+                          {{'item-unit-of-measure.id' | i18n}}</th>
+                        <th nzShowSort nzSortKey="name">
+                          {{'item-unit-of-measure.name' | i18n}}</th>
+  
+                        <th>
+                          {{ 'quantity' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'weight' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'length' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'width' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'height' | i18n }}
+                        </th>
+  
+                        <th>
+                          {{ 'warehouse-id' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'warehouse-name' | i18n }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                      @for (data of innerTable.data; track data) {
+                      
+                        <tr >
+                          <td>{{ data.id }}</td>
+                  
+                          <td>{{ data.itemId }}</td>
+                          <td>{{ data.itemName }}</td>
+                  
+                  
+                          <td>{{ data.itemPackageTypeId }}</td>
+                          <td>{{ data.itemPackageTypeName }}</td>
+                  
+                          <td>{{ data.unitOfMeasureId }}</td>
+                          <td>{{ data.unitOfMeasureName }}</td>
+                  
+                          <td>{{ data.quantity }}</td>
+                          <td>{{ data.weight }}</td>
+                  
+                          <td>{{ data.length }}</td>
+                          <td>{{ data.width }}</td>
+                          <td>{{ data.height }}</td>
+                  
+                          <td>{{ data.warehouseId }}</td>
+                          <td>{{ data.warehouseName }}</td>
+                        </tr>
+                      
+                      }  
+            
 
-                      <th nzShowSort nzSortKey="id">id</th>
-                      <th>
-                        {{ 'item-id' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'item-name' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'item-package-type-id' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'item-package-type-name' | i18n }}
-                      </th>
-
-                      <th>
-                        {{'item-unit-of-measure.id' | i18n}}</th>
-                      <th nzShowSort nzSortKey="name">
-                        {{'item-unit-of-measure.name' | i18n}}</th>
-
-                      <th>
-                        {{ 'quantity' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'weight' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'length' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'width' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'height' | i18n }}
-                      </th>
-
-                      <th>
-                        {{ 'warehouse-id' | i18n }}
-                      </th>
-                      <th>
-                        {{ 'warehouse-name' | i18n }}
-                      </th>
-                    </tr>
-                  </thead>
-    <tbody>
-      <tr *ngFor="let data of innerTable.data">
-        <td>{{ data.id }}</td>
-
-        <td>{{ data.itemId }}</td>
-        <td>{{ data.itemName }}</td>
-
-
-        <td>{{ data.itemPackageTypeId }}</td>
-        <td>{{ data.itemPackageTypeName }}</td>
-
-        <td>{{ data.unitOfMeasureId }}</td>
-        <td>{{ data.unitOfMeasureName }}</td>
-
-        <td>{{ data.quantity }}</td>
-        <td>{{ data.weight }}</td>
-
-        <td>{{ data.length }}</td>
-        <td>{{ data.width }}</td>
-        <td>{{ data.height }}</td>
-
-        <td>{{ data.warehouseId }}</td>
-        <td>{{ data.warehouseName }}</td>
-      </tr>
-    </tbody>
-  </nz-table>
-  </nz-tab>
+                    </tbody>
+                  </nz-table>
+                </nz-tab>
+              
+              }  
   </nz-tabset>
 
  

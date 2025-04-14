@@ -165,10 +165,16 @@
               </a>
               <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
                 <ul nz-menu nzSelectable>
-                  <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                  (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                    {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                  </li> 
+                        
+                  @for (itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                  
+                    <li nz-menu-item 
+                      (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                    </li> 
+                  
+                  }  
+
                 </ul>
               </nz-dropdown-menu> 
 
@@ -191,10 +197,15 @@
               </a>
               <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
                 <ul nz-menu nzSelectable>
-                  <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                  (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
-                    {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                  </li> 
+                  
+                  @for (itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                  
+                    <li nz-menu-item 
+                    (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
+                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                    </li> 
+                  
+                  }  
                 </ul>
               </nz-dropdown-menu> 
 
@@ -252,57 +263,7 @@
             {{ 'remove' | i18n }}
           </button>
 
-        </div>
-
-        <!--
-
-
-        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfAllReceiptLines"
-          [nzFooter]="receiptLinesTableFoot" #receiptLinesTable>
-          <thead>
-            <tr>
-              <th [nzSelections]="listOfReceiptLinesTableSelection" [(nzChecked)]="receiptLinesTableChecked"
-                [nzIndeterminate]="receiptLinesTableIndeterminate"
-                (nzCheckedChange)="onReceiptLinesTableAllChecked($event)" nzWidth="60px"></th>
-              <th *ngFor="let column of listOfReceiptLineTableColumns" [nzShowSort]="column.showSort"
-                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
-                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-                {{ column.name | i18n }}
-              </th>
-
-              <th>{{ 'action' | i18n }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let data of receiptLinesTable.data">
-              <td [nzChecked]="setOfReceiptLinesTableCheckedId.has(data.id!)"
-                (nzCheckedChange)="onReceiptLinesTableItemChecked(data.id!, $event)"></td>
-              <td>{{ data.number }}</td>
-              <td>{{ data.item?.name }}</td>
-              <td>{{ data.item?.description }}</td>
-              <td>{{ data.expectedQuantity }}</td>
-              <td>{{ data.receivedQuantity }}</td>
-              <td>{{ data.overReceivingQuantity }}</td>
-              <td>{{ data.overReceivingPercent }}</td>
-              <td>
-                
-                <nz-list>
-                  <nz-list-item> 
-                    <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN"
-                      (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent, tplReceivingModalFooter)"
-                      nzType="primary">{{ 'receiving' | i18n }}</button>
-                  </nz-list-item>
-                  <nz-list-item>
-                    <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
-                      [queryParams]="{receiptLineId : data.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
-                    </nz-list-item>
-                </nz-list>
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
-        -->
+        </div> 
       </div>
       
 
@@ -376,10 +337,15 @@
                   
                   <li nz-submenu nzTitle="{{ 'putaway' | i18n }}"  >
                     <ul>
-                      <li nz-menu-item *ngFor="let inventoryMovement of receivedInventory.inventoryMovements; let i=index">
-                        <a (click)="confirmPutaway(i, receivedInventory)">
-                          {{ i+1 }} - {{ inventoryMovement.location.name}}</a>
-                      </li>
+                      
+                      @for (inventoryMovement of receivedInventory.inventoryMovements; track inventoryMovement; let i = $index) {
+                      
+                        <li nz-menu-item  >
+                          <a (click)="confirmPutaway(i, receivedInventory)">
+                            {{ i+1 }} - {{ inventoryMovement.location.name}}</a>
+                        </li>
+                      
+                      }  
                     </ul>
                   </li>
                 }
@@ -396,106 +362,7 @@
             </nz-dropdown-menu>
 
           </ng-template>
-        </st>
-        <!-- 
-        <nz-table  #receivedInventoryTable
-          [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfAllReceivedInventory"
-          [nzFooter]="receivedInventoryTableFoot" >
-          <thead>
-            <tr>
-              <th [nzSelections]="listOfReceivedInventoryTableSelection" [(nzChecked)]="receivedInventoryTableChecked"
-                [nzIndeterminate]="receivedInventoryTableIndeterminate"
-                (nzCheckedChange)="onReceivedInventoryTableAllChecked($event)" nzWidth="60px"></th>
-              <th *ngFor="let column of listOfReceivedInventoryTableColumns" [nzShowSort]="column.showSort"
-                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
-                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-                {{ column.name | i18n }}
-              </th>
-
-              <th>{{ 'action' | i18n }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let receivedInventory of receivedInventoryTable.data">
-              <td [nzChecked]="setOfReceivedInventoryTableCheckedId.has(receivedInventory.id!)"
-                (nzCheckedChange)="onReceivedInventoryTableItemChecked(receivedInventory.id!, $event)"></td>
-              <td>{{ receivedInventory.lpn }}</td>
-              <td>{{ receivedInventory.item?.name }}</td>
-              <td>{{ receivedInventory.item?.description }}</td>
-              <td>{{ receivedInventory.quantity }}</td>
-              <td>{{ receivedInventory.inventoryStatus!.description}}</td>
-              <td>{{ receivedInventory.color}}</td>
-              <td>{{ receivedInventory.productSize}}</td>
-              <td>{{ receivedInventory.style}}</td> 
-
-              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute1Enabled">
-                {{ receivedInventory.attribute1 }}</td>
-
-              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute2Enabled">
-                  {{ receivedInventory.attribute2 }}</td>
-
-              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute3Enabled">
-                    {{ receivedInventory.attribute3 }}</td>
-
-              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute4Enabled">
-                      {{ receivedInventory.attribute4 }}</td>
-
-              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute5Enabled">
-                        {{ receivedInventory.attribute5 }}</td>
-              <td>
-                  {{ receivedInventory.locationName }}</td>
-              <td>
-                <p *ngFor="let inventoryMovement of receivedInventory.inventoryMovements; let i = index">
-                  {{ i+1 }} - {{ inventoryMovement.location.name}}
-                </p>
-              </td>
-              <td>
-                <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
-                  {{ 'action' | i18n }}<i nz-icon nzType="down"></i>
-                </button>
-
-                <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
-                  <ul nz-menu>
-                    <li nz-menu-item
-                      *ngIf="receivedInventory.locationName === currentReceipt.number && receivedInventory.inventoryMovements!.length === 0">
-                      <a (click)="allocateLocation(receivedInventory)">{{ 'allocateLocation' | i18n }}</a>
-                    </li>
-                    <li nz-menu-item *ngIf="isInventoryReversible(receivedInventory)"> 
-                      <a (click)="openReverseInventoryModal(receivedInventory, tplReverseInventoryModalTitle, tplReverseInventoryModalContent)">{{ 'receipt.reverseInventory' | i18n }}</a>
-                    </li>
-                    <li nz-menu-item
-                      *ngIf="receivedInventory.inventoryMovements!.length > 0 && receivedInventory.locationName === currentReceipt.number">
-                      <a (click)="reallocateLocation(receivedInventory)">{{ 'reallocateLocation' | i18n }}</a>
-                    </li>
-                    <li nz-menu-item *ngIf="receivedInventory.inventoryMovements!.length ===1">
-                      <a (click)="confirmPutaway(0, receivedInventory)">{{ 'putaway' | i18n }}</a>
-                    </li>
-                    <li nz-submenu nzTitle="{{ 'putaway' | i18n }}" *ngIf="receivedInventory.inventoryMovements!.length > 1">
-                      <ul>
-                        <li nz-menu-item *ngFor="let inventoryMovement of receivedInventory.inventoryMovements; let i=index">
-                          <a (click)="confirmPutaway(i, receivedInventory)">
-                            {{ i+1 }} - {{ inventoryMovement.location.name}}</a>
-                        </li>
-                      </ul>
-                    </li>
-
-                    <li nz-menu-item
-                      *ngIf="receivedInventory.locationName === currentReceipt.number || receivedInventory.location?.locationGroup?.locationGroupType?.receivingStage === true">
-                      <a
-                        (click)="openManualPutawayModal(receivedInventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{
-                        'putaway.manual' | i18n }}</a>
-                    </li>
-                  </ul>
-                </nz-dropdown-menu>
-
-                 
-
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
-      -->
+        </st> 
       </div>
 
       <ng-template #receivedInventoryTableFoot>
@@ -616,9 +483,14 @@
                 name="inventoryStatus" 
                 (ngModelChange)="inventoryStatusChange($event)"
                 style="width: 250px" required>
-              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-                [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
-              </nz-option>
+
+                @for (inventoryStatus of validInventoryStatuses; track inventoryStatus) {
+                
+                  <nz-option 
+                    [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
+                  </nz-option>
+                
+                }  
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -636,9 +508,14 @@
             <nz-select nz-input [ngModel]="currentReceivingInventory!.itemPackageType?.id" 
              required (ngModelChange)="newInventoryItemPackageTypeChanged($event)" name="itemPackageType" 
               nzAllowClear>
-              <nz-option *ngFor=" let availableItemPackageType of currentReceivingLine.item!.itemPackageTypes!"
-                [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.id!">
-              </nz-option>
+              
+              @for (availableItemPackageType of currentReceivingLine.item!.itemPackageTypes!; track availableItemPackageType) {
+              
+                <nz-option 
+                  [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.id!">
+                </nz-option>
+              
+              }  
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -665,9 +542,13 @@
         <nz-select nz-input [ngModel]="currentReceivingUnitOfMeasure.id" required  name="receivingUnitOfMeasure" 
           (ngModelChange)="receivingUnitOfMeasureChanged($event)"
                 style = "width: 75px;"  >
-                <nz-option *ngFor=" let itemUnitOfMeasure of currentReceivingInventory.itemPackageType!.itemUnitOfMeasures"
-                  [nzLabel]="itemUnitOfMeasure.unitOfMeasure!.name" [nzValue]="itemUnitOfMeasure.id">
-                </nz-option>
+                @for (itemUnitOfMeasure of currentReceivingInventory.itemPackageType!.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                
+                
+                  <nz-option 
+                    [nzLabel]="itemUnitOfMeasure.unitOfMeasure!.name" [nzValue]="itemUnitOfMeasure.id">
+                  </nz-option>
+                }  
               </nz-select>
       </div> 
 
@@ -810,14 +691,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
-            <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-            <td>{{ itemUnitOfMeasure.quantity }}</td>
-            <td>{{ itemUnitOfMeasure.weight }}</td>
-            <td>{{ itemUnitOfMeasure.length }}</td>
-            <td>{{ itemUnitOfMeasure.width }}</td>
-            <td>{{ itemUnitOfMeasure.height }}</td>
-          </tr>
+          @for (itemUnitOfMeasure of itemPackageTypeDetailTable.data; track itemUnitOfMeasure) {
+          
+            <tr >
+              <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+              <td>{{ itemUnitOfMeasure.quantity }}</td>
+              <td>{{ itemUnitOfMeasure.weight }}</td>
+              <td>{{ itemUnitOfMeasure.length }}</td>
+              <td>{{ itemUnitOfMeasure.width }}</td>
+              <td>{{ itemUnitOfMeasure.height }}</td>
+            </tr>
+          
+          }  
+          
         </tbody>
       </nz-table>
     </div>
@@ -901,9 +787,14 @@
         <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-select nz-input [ngModel]="currentReceiptLine.inventoryStatus?.name"
             (ngModelChange)="receiptLineInventoryStatusChange()" style="width: 150px">
-            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
-            </nz-option>
+            @for (inventoryStatus of validInventoryStatuses; track inventoryStatus) {
+            
+              <nz-option  
+                [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
+              </nz-option>
+            
+            }  
+            
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -920,9 +811,13 @@
 
           <nz-select nz-input [ngModel]="currentReceiptLine.itemPackageType?.name"
             (ngModelChange)="receiptLineItemPackageTypeChange($event)">
-            <nz-option *ngFor="let availableItemPackageType of currentReceiptLine.item?.itemPackageTypes"
-              [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.name!">
-            </nz-option>
+              @for (availableItemPackageType of currentReceiptLine.item?.itemPackageTypes; track availableItemPackageType) {
+              
+                <nz-option 
+                  [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.name!">
+                </nz-option>
+              
+              }  
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -943,9 +838,13 @@
             [ngModel]="currentReceiptLineUnitOfMeasure.id" required  name="adjustUnitOfMeasure" 
               (ngModelChange)="receiptLineUnitOfMeasureChanged($event)"
               style = "width: 75px;"  >
-              <nz-option *ngFor=" let itemUnitOfMeasure of currentReceiptLine.itemPackageType!.itemUnitOfMeasures"
-                [nzLabel]="itemUnitOfMeasure.unitOfMeasure!.name" [nzValue]="itemUnitOfMeasure.id">
-              </nz-option>
+              @for (itemUnitOfMeasure of currentReceiptLine.itemPackageType!.itemUnitOfMeasures; track itemUnitOfMeasure) {
+              
+                <nz-option 
+                  [nzLabel]="itemUnitOfMeasure.unitOfMeasure!.name" [nzValue]="itemUnitOfMeasure.id">
+                </nz-option>
+              
+              }  
             </nz-select>
         </nz-form-control>        
       </nz-form-item>
@@ -1229,14 +1128,18 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable2.data">
-            <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-            <td>{{ itemUnitOfMeasure.quantity }}</td>
-            <td>{{ itemUnitOfMeasure.weight }}</td>
-            <td>{{ itemUnitOfMeasure.length }}</td>
-            <td>{{ itemUnitOfMeasure.width }}</td>
-            <td>{{ itemUnitOfMeasure.height }}</td>
-          </tr>
+          @for (itemUnitOfMeasure of itemPackageTypeDetailTable2.data; track itemUnitOfMeasure) {
+          
+            <tr  >
+              <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+              <td>{{ itemUnitOfMeasure.quantity }}</td>
+              <td>{{ itemUnitOfMeasure.weight }}</td>
+              <td>{{ itemUnitOfMeasure.length }}</td>
+              <td>{{ itemUnitOfMeasure.width }}</td>
+              <td>{{ itemUnitOfMeasure.height }}</td>
+            </tr>
+          
+          }  
         </tbody>
       </nz-table>
     </div>

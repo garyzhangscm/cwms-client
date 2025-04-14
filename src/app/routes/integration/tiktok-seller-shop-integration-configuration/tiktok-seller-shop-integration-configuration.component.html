@@ -22,7 +22,12 @@
                 <span>Choose a Client to Start: </span>
             
                 <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
-                    <nz-option *ngFor="let client of availableClients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    
+                    @for (client of availableClients; track client) {
+                    
+                        <nz-option [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    
+                    }  
                 </nz-select>
             </p>
             <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length == 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
@@ -31,9 +36,11 @@
                     this link</a> 
                     to allow CWMS to access your Tiktok Shop for this client
             </div>
-            <nz-card nzType="inner" 
-                *ngFor="let tiktokSellerShopIntegrationConfiguration of tiktokSellerShopIntegrationConfigurationList"
-                nzTitle="{{'shop' | i18n}}: {{tiktokSellerShopIntegrationConfiguration.sellerName}}" [nzExtra]="removeConfigurationTemplate">  
+            @for (tiktokSellerShopIntegrationConfiguration of tiktokSellerShopIntegrationConfigurationList; track tiktokSellerShopIntegrationConfiguration) {
+            
+                <nz-card nzType="inner"  
+                    nzTitle="{{'shop' | i18n}}: {{tiktokSellerShopIntegrationConfiguration.sellerName}}" 
+                    [nzExtra]="removeConfigurationTemplate">  
                 
                 <div nz-col [nzSpan]="12">
                     <nz-form-item nzFlex>
@@ -57,6 +64,8 @@
                         {{'remove' | i18n}}</a>
                   </ng-template>
             </nz-card>
+            
+            }  
             <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length > 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
                 Click 
                 <a [href]="tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">

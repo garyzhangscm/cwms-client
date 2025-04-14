@@ -38,11 +38,15 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-              *ngFor="let status of integrationStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-            ></nz-option>
+            @for (status of integrationStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+              ></nz-option>
+            
+            }  
+            
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -84,19 +88,23 @@
     <thead   nzSingleSort>
       <tr>
         
-        <th
-            *ngFor="let column of listOfColumns"
-            [nzShowSort]="column.showSort"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
-          >
-            {{ column.name | i18n }}
-          </th> 
+        @for (column of listOfColumns; track column) {
+            
+            
+            <th 
+              [nzShowSort]="column.showSort"
+              [nzSortOrder]="column.sortOrder"
+              [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections"
+              [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter"
+              [nzFilterFn]="column.filterFn"        
+              [nzShowFilter]="column.showFilter"
+            >
+              {{ column.name | i18n }}
+            </th> 
+        }  
+        
           
         <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="warehouseId">
@@ -153,32 +161,36 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
-        <td>{{ data.warehouseId }}</td>
-        <td>{{ data.warehouseName }}</td>
-        <td>{{ data.clientId }}</td>
-        <td>{{ data.clientName }}</td>
-        <td>{{ data.itemId }}</td>
-        <td>{{ data.itemName }}</td>
-        <td>{{ data.inventoryStatusId }}</td>
-        <td>{{ data.inventoryStatusName }}</td>
-        <td>{{ data.quantity }}</td>
-        <td>{{ data.attributeName }}</td>
-        <td>{{ data.originalValue }}</td>
-        <td>{{ data.newValue }}</td>
-
-        <td>{{ data.status }}</td>
-        <td>
-          {{ data.insertTime | date:'short'}}
-        </td>
-        <td>
-          {{ data.lastUpdateTime | date:'short'}}
-        </td>
-        <td>{{ data.errorMessage }}</td>
-
-
-      </tr>
+      @for (data of rowSelectionTable.data; track data) {
+      
+        <tr  >
+          <td>{{ data.id }}</td>
+          <td>{{ data.warehouseId }}</td>
+          <td>{{ data.warehouseName }}</td>
+          <td>{{ data.clientId }}</td>
+          <td>{{ data.clientName }}</td>
+          <td>{{ data.itemId }}</td>
+          <td>{{ data.itemName }}</td>
+          <td>{{ data.inventoryStatusId }}</td>
+          <td>{{ data.inventoryStatusName }}</td>
+          <td>{{ data.quantity }}</td>
+          <td>{{ data.attributeName }}</td>
+          <td>{{ data.originalValue }}</td>
+          <td>{{ data.newValue }}</td>
+  
+          <td>{{ data.status }}</td>
+          <td>
+            {{ data.insertTime | date:'short'}}
+          </td>
+          <td>
+            {{ data.lastUpdateTime | date:'short'}}
+          </td>
+          <td>{{ data.errorMessage }}</td>
+  
+  
+        </tr>
+      
+      }  
     </tbody>
   </nz-table>
 </div>

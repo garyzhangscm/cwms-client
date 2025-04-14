@@ -11,7 +11,14 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
           <nz-select formControlName="client" nzAllowClear>
-            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+            
+            @for (client of availableClients; track client) {
+            
+              <nz-option  [nzLabel]="client.name" [nzValue]="client.id">
+              </nz-option>
+            
+            }  
+            
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -54,9 +61,13 @@
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
             <nz-select nzShowSearch nzAllowClear formControlName="supplier" id="supplier" name="supplier">
-              <nz-option *ngFor="let supplier of validSuppliers"  [nzLabel]="supplier.description" [nzValue]="supplier.name"></nz-option>
-              <nz-option nzLabel="Lucy" nzValue="lucy"></nz-option>
-              <nz-option nzLabel="Tom" nzValue="tom"></nz-option>
+              
+              @for (supplier of validSuppliers; track supplier) {
+                <nz-option  [nzLabel]="supplier.description" [nzValue]="supplier.name">
+                </nz-option>
+                
+              }  
+              
             </nz-select> 
         </nz-form-control>
       </nz-form-item> 
@@ -273,14 +284,16 @@
                   <span nz-icon nzType="down"></span>
                 </a>
                 <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
-                  <ul nz-menu nzSelectable>
-                    <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                    (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                    -->
-                    <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
-                    (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                    </li> 
+                  <ul nz-menu nzSelectable> 
+                    @for (itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                    
+                      <li nz-menu-item  
+                      (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                      </li> 
+                    
+                    }  
+            
                   </ul>
                 </nz-dropdown-menu> 
 
@@ -302,14 +315,17 @@
                   <span nz-icon nzType="down"></span>
                 </a>
                 <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
-                  <ul nz-menu nzSelectable>
-                    <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                    (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                    -->
-                    <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
-                    (click)="changeDisplayItemUnitOfMeasureForArrivedQuantity(receiptLine, itemUnitOfMeasure)">
-                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                    </li> 
+                  <ul nz-menu nzSelectable> 
+                    
+                    @for (itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                    
+                      <li nz-menu-item  
+                      (click)="changeDisplayItemUnitOfMeasureForArrivedQuantity(receiptLine, itemUnitOfMeasure)">
+                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                      </li> 
+                    
+                    }  
+            
                   </ul>
                 </nz-dropdown-menu> 
 
@@ -336,10 +352,15 @@
                 </a>
                 <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
                   <ul nz-menu nzSelectable>
-                    <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                    (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
-                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                    </li> 
+                    
+                    @for (itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                    
+                      <li nz-menu-item  
+                      (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
+                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                      </li> 
+                    
+                    }  
                   </ul>
                 </nz-dropdown-menu> 
 
@@ -422,10 +443,14 @@
                   </a>
                   <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
                     <ul nz-menu nzSelectable>
-                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of item.itemPackageType?.itemUnitOfMeasures" 
-                      (click)="changeDisplayItemUnitOfMeasure(item, itemUnitOfMeasure)">
-                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                      </li> 
+                      @for (itemUnitOfMeasure of item.itemPackageType?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                      
+                        <li nz-menu-item  
+                          (click)="changeDisplayItemUnitOfMeasure(item, itemUnitOfMeasure)">
+                            {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                        </li> 
+                      
+                      }  
                     </ul>
                   </nz-dropdown-menu> 
 
@@ -540,9 +565,14 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="17" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
             <nz-select nz-input formControlName="billableActivityType" style="width: 250px" required>
-              <nz-option *ngFor="let billableActivityType of availableBillableActivityTypes"
-                [nzLabel]="billableActivityType.description!" [nzValue]="billableActivityType.id">
-              </nz-option>
+              @for (billableActivityType of availableBillableActivityTypes; track billableActivityType) {
+              
+              
+                <nz-option  
+                  [nzLabel]="billableActivityType.description!" [nzValue]="billableActivityType.id">
+                </nz-option>
+              }  
+              
             </nz-select>
           </nz-form-control>
         </nz-form-item>

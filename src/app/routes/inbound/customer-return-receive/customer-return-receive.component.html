@@ -51,8 +51,14 @@
                 </nz-form-label>
                 <nz-form-control [nzSpan]="18">
                     <nz-select name="itemNumber" id="itemNumber" formControlName="itemNumber"  style="width: 200px" (ngModelChange)="itemChanged($event)">
-                      <nz-option *ngFor="let csrLine of  currentCustomerReturnOrder!.customerReturnOrderLines" 
-                          [nzValue]="csrLine" [nzLabel]="csrLine.item!.name"></nz-option>
+                      
+                    @for (csrLine of currentCustomerReturnOrder!.customerReturnOrderLines; track csrLine) {
+                    
+                        <nz-option 
+                            [nzValue]="csrLine" [nzLabel]="csrLine.item!.name">
+                        </nz-option>
+                    
+                    }  
                     </nz-select> 
                 </nz-form-control>
             </nz-form-item>
@@ -104,9 +110,14 @@
                     (ngModelChange)="inventoryStatusChange($event)" style="width: 250px">
                 -->
                 <nz-select nz-input formControlName="inventoryStatus" style="width: 250px" required>
-                    <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-                    [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
-                    </nz-option>
+                    
+                    @for (inventoryStatus of availableInventoryStatuses; track inventoryStatus) {
+                        <nz-option 
+                            [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
+                        </nz-option>
+                    
+                    }  
+                  
                 </nz-select>
                 </nz-form-control>
             </nz-form-item>
@@ -122,9 +133,14 @@
                 <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
     
                 <nz-select nz-input formControlName="itemPackageType" required>
-                    <nz-option *ngFor=" let availableItemPackageType of  receivingItem!.itemPackageTypes!"
-                    [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.id!">
-                    </nz-option>
+                    
+                    @for (availableItemPackageType of receivingItem!.itemPackageTypes!; track availableItemPackageType) {
+                    
+                        <nz-option 
+                            [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.id!">
+                        </nz-option>
+                    
+                    }  
                 </nz-select>
                 </nz-form-control>
             </nz-form-item>

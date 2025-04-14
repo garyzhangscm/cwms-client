@@ -42,9 +42,16 @@
             
             <nz-select *ngIf='currentQCConfiguration !== undefined' nz-input [ngModel]="currentQCConfiguration.supplierId!"
             (ngModelChange)="supplierChanged($event)" style="width: 250px"  [disabled]="!newQCConfiguration">
-            <nz-option *ngFor="let supplier of validSuppliers"
-            [nzLabel]="supplier.description" [nzValue]="supplier.id">
-            </nz-option>
+            
+            
+              @for (supplier of validSuppliers; track supplier) {
+              
+                <nz-option 
+                  [nzLabel]="supplier.description" [nzValue]="supplier.id">
+                </nz-option>
+              
+              }  
+            
         </nz-select>
         
 
@@ -98,9 +105,15 @@
           <nz-select 
               *ngIf='currentQCConfiguration !== undefined' nz-input [ngModel]="currentQCConfiguration.itemFamilyId!"
               (ngModelChange)="itemFamilyChanged($event)" style="width: 250px"  [disabled]="!newQCConfiguration">
-              <nz-option *ngFor="let itemFamily of validItemFamilies"
-                  [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
-              </nz-option>
+              
+              @for (itemFamily of validItemFamilies; track itemFamily) {
+              
+                <nz-option 
+                    [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+                </nz-option>
+              
+              }  
+            
             </nz-select> 
         
         </nz-form-control>
@@ -119,10 +132,15 @@
                 (ngModelChange)="fromInventoryStatusChanged($event)"
               style="width: 250px"  >
           
-            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-                [nzLabel]="inventoryStatus.description"
-                [nzValue]="inventoryStatus.id">
-            </nz-option>
+              @for (inventoryStatus of validInventoryStatuses; track inventoryStatus) {
+            
+                <nz-option  
+                    [nzLabel]="inventoryStatus.description"
+                    [nzValue]="inventoryStatus.id">
+                </nz-option>
+            
+              }  
+              
         </nz-select>
         
 
@@ -141,10 +159,14 @@
               (ngModelChange)="toInventoryStatusChanged($event)"
               style="width: 250px"  >
           
-            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-                [nzLabel]="inventoryStatus.description"
-                [nzValue]="inventoryStatus.id">
-            </nz-option>
+              @for (inventoryStatus of validInventoryStatuses; track inventoryStatus) {
+            
+                <nz-option 
+                    [nzLabel]="inventoryStatus.description"
+                    [nzValue]="inventoryStatus.id">
+                </nz-option>
+            
+              }  
         </nz-select>
         
 

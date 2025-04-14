@@ -182,27 +182,33 @@
             </th> 
           </thead>
           <tbody>
-            <tr *ngFor="let purchaseOrderLine of purchaseOrderLineTable.data">
-              <td>{{ purchaseOrderLine.number }}</td>
+            
+            @for (purchaseOrderLine of purchaseOrderLineTable.data; track purchaseOrderLine) {
               
-              <td>
+              <tr >
+                <td>{{ purchaseOrderLine.number }}</td>
                 
-                  <nz-skeleton-element 
-                  *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
-                  nzType="input"
-                  [nzActive]="true"
-                  [nzSize]="'small'"
-                  style="width:75px"
-                ></nz-skeleton-element> 
-                {{ purchaseOrderLine.item?.name }}</td>
-              <td>{{ purchaseOrderLine.expectedQuantity }}</td>
-              <td>{{ purchaseOrderLine.receiptQuantity }}</td>
-              <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
-              <td> 
-                  {{getReceiptLineQuantity(purchaseOrderLine.id!)}}
+                <td>
+                  
+                    <nz-skeleton-element 
+                    *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                    nzType="input"
+                    [nzActive]="true"
+                    [nzSize]="'small'"
+                    style="width:75px"
+                  ></nz-skeleton-element> 
+                  {{ purchaseOrderLine.item?.name }}</td>
+                <td>{{ purchaseOrderLine.expectedQuantity }}</td>
+                <td>{{ purchaseOrderLine.receiptQuantity }}</td>
+                <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
+                <td> 
+                    {{getReceiptLineQuantity(purchaseOrderLine.id!)}}
 
-              </td>
-            </tr>
+                </td>
+              </tr>
+            }  
+            
+
           </tbody>
         </nz-table> 
       </nz-tab>

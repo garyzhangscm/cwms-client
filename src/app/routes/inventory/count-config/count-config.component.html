@@ -50,14 +50,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id! }}</td>
-        <td>{{ data.batchId }}</td>
-        <td>{{ data.requestLocationCount }}</td>
-        <td>{{ data.finishedLocationCount}}</td>
-        <td> </td>
-        <td> </td>
-      </tr>
+      @for (data of rowSelectionTable.data; track data) {
+      
+      
+        <tr >
+          <td>{{ data.id! }}</td>
+          <td>{{ data.batchId }}</td>
+          <td>{{ data.requestLocationCount }}</td>
+          <td>{{ data.finishedLocationCount}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+      }  
     </tbody>
   </nz-table>
 </div>

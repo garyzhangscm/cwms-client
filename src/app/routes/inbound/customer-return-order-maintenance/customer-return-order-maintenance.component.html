@@ -57,7 +57,15 @@
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12" nzHasFeedback  >
                     <nz-select [(ngModel)]="currentCustomerReturnOrder!.clientId">
-                        <nz-option *ngFor="let client of validClients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                      
+                    @for (client of validClients; track client) {
+                    
+                      <nz-option  [nzValue]="client.id" [nzLabel]="client.name">
+                      </nz-option>
+                    
+                    }  
+            
+
                       </nz-select>
 
                 </nz-form-control>
@@ -87,9 +95,16 @@
                   </ng-template>
                   <!-- Auto Complete -->
                   <nz-autocomplete #customerAutoCompleteTpl>
-                    <nz-auto-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.name">
-                      {{ customer.name }}
-                    </nz-auto-option>
+                    
+                    @for (customer of validCustomers; track customer) {
+                    
+                      <nz-auto-option [nzLabel]="customer.name" [nzValue]="customer.name">
+                        {{ customer.name }}
+                      </nz-auto-option>
+                    
+                    }  
+            
+
                   </nz-autocomplete>
 
                 </nz-form-control>
@@ -170,7 +185,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let data of csrOrderLineTable.data; let i = index"> 
+                  
+                    @for (data of csrOrderLineTable.data; track data; let i = $index) {
+                    
+                      <tr > 
                         <td nzWidth="150px">
                             <div *ngIf="data.id === undefined"  > 
                               <nz-input-number  [nzMin]="1" [nzStep]="1" [(ngModel)]="data.number" style="width: 100px">
@@ -204,7 +222,14 @@
                               <nz-select *ngIf="data.outboundOrder && data.outboundOrder.id && mapOfValidOrderLines[data.outboundOrder!.id!] &&
                               mapOfValidOrderLines[data.outboundOrder!.id!].length > 0" 
                                   [ngModel]="data.outboundOrderLine" (ngModelChange)="itemChanged($event, data)" style="width: 200px">
-                                <nz-option *ngFor="let orderLine of mapOfValidOrderLines[data.outboundOrder!.id!]" [nzValue]="orderLine" [nzLabel]="orderLine.item!.name"></nz-option>
+                                
+                              @for (orderLine of  mapOfValidOrderLines[data.outboundOrder!.id!]; track orderLine) {
+                              
+                                <nz-option 
+                                  [nzValue]="orderLine" [nzLabel]="orderLine.item!.name">
+                                </nz-option>
+                              
+                              }  
                               </nz-select> 
                             </div> 
                             <span *ngIf="data.id">
@@ -227,6 +252,8 @@
                               </button>
                         </td>
                     </tr>
+                    
+                    }  
                 </tbody>
             </nz-table>
         </div>
@@ -286,13 +313,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let data of displayOrderLineTable.data; let i = index">  
+                  
+                    @for (data of displayOrderLineTable.data; track data; let i = $index) {
+                    
+                      <tr>  
                         <td>{{ data.number }} </td>
                         <td>{{ data.outboundOrderNumber }} </td> 
                         <td>{{ data.item?.name }} </td>
                         <td>{{ data.item?.description }} </td>
                         <td>{{ data.expectedQuantity }} </td> 
-                    </tr>
+                      </tr>
+                    
+                    }  
                 </tbody>
             </nz-table>
         </div>

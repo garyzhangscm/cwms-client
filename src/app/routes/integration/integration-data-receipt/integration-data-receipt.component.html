@@ -37,11 +37,15 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-              *ngFor="let status of integrationStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-            ></nz-option>
+            @for (status of integrationStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+              ></nz-option>
+            
+            }  
+            
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -83,8 +87,10 @@
     <thead  >
       <tr>
         <th nzWidth="40px"></th>
-        <th
-            *ngFor="let column of listOfColumns"
+        @for (column of listOfColumns; track column) {
+        
+        
+          <th 
             [nzShowSort]="column.showSort"
             [nzSortOrder]="column.sortOrder"
             [nzSortFn]="column.sortFn"
@@ -96,6 +102,7 @@
           >
             {{ column.name | i18n }}
           </th>  
+        }  
  
  
           <th nzEllipsis nzWidth="250px">{{ 'integration.errorMessage' | i18n }}</th>
@@ -161,14 +168,18 @@
                     </th>
                   </thead>
     <tbody>
-      <tr *ngFor="let receiptLine of data.receiptLines">
-        <td>{{ receiptLine.number }}</td>
-        <td>{{ receiptLine.itemId }}</td>
-        <td>{{ receiptLine.itemName }}</td>
-        <td>{{ receiptLine.expectedQuantity }}</td>
-        <td>{{ receiptLine.overReceivingQuantity }}</td>
-        <td>{{ receiptLine.overReceivingPercent }}</td>
-      </tr>
+      @for (receiptLine of data.receiptLines; track receiptLine) {
+      
+      
+        <tr >
+          <td>{{ receiptLine.number }}</td>
+          <td>{{ receiptLine.itemId }}</td>
+          <td>{{ receiptLine.itemName }}</td>
+          <td>{{ receiptLine.expectedQuantity }}</td>
+          <td>{{ receiptLine.overReceivingQuantity }}</td>
+          <td>{{ receiptLine.overReceivingPercent }}</td>
+        </tr>
+      }  
     </tbody>
   </nz-table>
   </nz-tab>

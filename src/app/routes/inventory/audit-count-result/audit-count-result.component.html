@@ -38,58 +38,73 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of inventoryTable.data; let i = index">
-        <td>{{ data.inventory.id }} </td>
-        <td>
-          <div *ngIf="data.inventory?.id === undefined">
-            <div class="row">
-              <input appFkey variable="lpn" type="text" [ngModel]="data.inventory.lpn"
-                (blur)="lpnChanged($event, data)" name="lpn-{{ i }}" id="lpn-{{ i }}" />
+      @for (data of inventoryTable.data; track data; let i = $index) {
+      
+        <tr  >
+          <td>{{ data.inventory.id }} </td>
+          <td>
+            <div *ngIf="data.inventory?.id === undefined">
+              <div class="row">
+                <input appFkey variable="lpn" type="text" [ngModel]="data.inventory.lpn"
+                  (blur)="lpnChanged($event, data)" name="lpn-{{ i }}" id="lpn-{{ i }}" />
+              </div>
+  
             </div>
-
-          </div>
-          <span *ngIf="data.inventory?.id">
-            {{ data.inventory.lpn }}
-          </span>
-        </td>
-        <td>
-          <input type="text" [ngModel]="data.inventory!.item!.name!" (blur)="itemChanged($event, data)"
-            *ngIf="data.inventory?.id === undefined" name="item-{{ i }}" />
-          <span *ngIf="data.inventory?.id">
-            {{ data.inventory.item?.name }}
-          </span>
-        </td>
-        <td>
-          {{ data.inventory.item?.description }}
-        </td>
-        <td>
-          <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
-            [ngModel]="data.inventory!.itemPackageType!.name!" (ngModelChange)="itemPackageTypeChanged($event, data)"
-            nzShowSearch nzAllowClear>
-            <nz-option *ngFor="let itemPackageType of data.inventory?.item?.itemPackageTypes"
-              [nzLabel]="itemPackageType.name!" [nzValue]="itemPackageType.name!"></nz-option>
-          </nz-select>
-          <span *ngIf="data.inventory?.id">
-            {{ data.inventory.itemPackageType?.name }}
-          </span>
-        </td>
-        <td>{{ data.location.name }}</td>
-        <td>{{ data.quantity }}</td>
-        <td>
-          <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
-            [ngModel]="data.inventory!.inventoryStatus!.id!" (ngModelChange)="inventoryStatusChanged($event, data)"
-            nzShowSearch nzAllowClear>
-            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus?.id">
-            </nz-option>
-          </nz-select>
-
-          <span *ngIf="data.inventory?.id">
-            {{ data.inventory.inventoryStatus?.description}}
-          </span>
-        </td>
-        <td><input type="text" [(ngModel)]="data.countQuantity" name="result-{{ i }}" /></td>
-      </tr>
+            <span *ngIf="data.inventory?.id">
+              {{ data.inventory.lpn }}
+            </span>
+          </td>
+          <td>
+            <input type="text" [ngModel]="data.inventory!.item!.name!" (blur)="itemChanged($event, data)"
+              *ngIf="data.inventory?.id === undefined" name="item-{{ i }}" />
+            <span *ngIf="data.inventory?.id">
+              {{ data.inventory.item?.name }}
+            </span>
+          </td>
+          <td>
+            {{ data.inventory.item?.description }}
+          </td>
+          <td>
+            <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
+              [ngModel]="data.inventory!.itemPackageType!.name!" (ngModelChange)="itemPackageTypeChanged($event, data)"
+              nzShowSearch nzAllowClear>
+              
+              @for (itemPackageType of data.inventory.item?.itemPackageTypes; track itemPackageType) {
+              
+                <nz-option 
+                  [nzLabel]="itemPackageType.name!" [nzValue]="itemPackageType.name!">
+                </nz-option>
+              
+              }  
+            </nz-select>
+            <span *ngIf="data.inventory?.id">
+              {{ data.inventory.itemPackageType?.name }}
+            </span>
+          </td>
+          <td>{{ data.location.name }}</td>
+          <td>{{ data.quantity }}</td>
+          <td>
+            <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
+              [ngModel]="data.inventory!.inventoryStatus!.id!" (ngModelChange)="inventoryStatusChanged($event, data)"
+              nzShowSearch nzAllowClear>
+              @for (inventoryStatus of validInventoryStatuses; track inventoryStatus) {
+              
+                <nz-option 
+                  [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus?.id">
+                </nz-option>
+              
+              }  
+              
+            </nz-select>
+  
+            <span *ngIf="data.inventory?.id">
+              {{ data.inventory.inventoryStatus?.description}}
+            </span>
+          </td>
+          <td><input type="text" [(ngModel)]="data.countQuantity" name="result-{{ i }}" /></td>
+        </tr>
+      
+      }  
     </tbody>
   </nz-table>
 </div>

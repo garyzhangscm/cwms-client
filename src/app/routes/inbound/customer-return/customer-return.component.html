@@ -22,11 +22,17 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-              *ngFor="let status of receiptStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'RECEIPT-STATUS-' + status | i18n}}"
-            ></nz-option>
+            
+            @for (status of receiptStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'RECEIPT-STATUS-' + status | i18n}}" >
+              </nz-option>
+            
+            }  
+            
+
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -134,7 +140,10 @@
                   </tr>
               </thead>
               <tbody>
-                  <tr *ngFor="let data of displayOrderLineTable.data">  
+                
+                  @for (data of displayOrderLineTable.data; track data) {
+                  
+                    <tr >  
                       <td  nzWidth="150px">{{ data.number }} </td>
                       <td>
                         <nz-skeleton-element 
@@ -165,6 +174,9 @@
                           {{ data.item?.description }}  </td>
                       <td>{{ data.expectedQuantity }} </td> 
                   </tr>
+                  
+                  }  
+                  
               </tbody>
               </nz-table>
                 

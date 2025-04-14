@@ -41,11 +41,14 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-              *ngFor="let status of integrationStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-            ></nz-option>
+            @for (status of integrationStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+              ></nz-option>
+            
+            }  
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -86,8 +89,9 @@
     <thead  >
       <tr>
         
-        <th
-            *ngFor="let column of listOfColumns"
+        @for (column of listOfColumns; track column) {
+            
+          <th 
             [nzShowSort]="column.showSort"
             [nzSortOrder]="column.sortOrder"
             [nzSortFn]="column.sortFn"
@@ -99,6 +103,8 @@
           >
             {{ column.name | i18n }}
           </th> 
+            
+        } 
           <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
           <th nzRight>{{ 'action' | i18n }}</th>
 
@@ -106,45 +112,49 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
-
-        <td>{{ data.name }}</td>
-        <td nzEllipsis><a>
-          <span nz-tooltip nzTooltipTitle="{{ data.description }}">{{ data.description }}</span>
-          </a> </td>
-        <td>{{ data.contactorFirstname }}</td>
-        <td>{{ data.contactorLastname }}</td>
-        <td>{{ data.addressCountry }}</td>
-        <td>{{ data.addressState }}</td>
-        <td>{{ data.addressCounty }}</td>
-        <td>{{ data.addressCity }}</td>
-        <td>{{ data.addressDistrict }}</td>
-        <td nzEllipsis><a>
-          <span nz-tooltip nzTooltipTitle="{{ data.addressLine1 }}">{{ data.addressLine1 }}</span>
-          </a> </td>
-        <td nzEllipsis><a>
-          <span nz-tooltip nzTooltipTitle="{{ data.addressLine2 }}">{{ data.addressLine2 }}</span>
-          </a> </td>
-        <td>{{ data.addressPostcode }}</td>
-
-        <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
-        
-        <td>
-          {{data.createdTime  | date:'short'}} 
-        </td>
-        <td>
-          {{data.lastModifiedTime | date:'short'}} 
-        </td>
-        <td nzEllipsis>
-          <a>
-            <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
-          </a>
-        </td>
-        <td nzRight>
-          <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
-        </td>
-      </tr>
+      @for (data of rowSelectionTable.data; track data) {
+      
+        <tr >
+          <td>{{ data.id }}</td>
+  
+          <td>{{ data.name }}</td>
+          <td nzEllipsis><a>
+            <span nz-tooltip nzTooltipTitle="{{ data.description }}">{{ data.description }}</span>
+            </a> </td>
+          <td>{{ data.contactorFirstname }}</td>
+          <td>{{ data.contactorLastname }}</td>
+          <td>{{ data.addressCountry }}</td>
+          <td>{{ data.addressState }}</td>
+          <td>{{ data.addressCounty }}</td>
+          <td>{{ data.addressCity }}</td>
+          <td>{{ data.addressDistrict }}</td>
+          <td nzEllipsis><a>
+            <span nz-tooltip nzTooltipTitle="{{ data.addressLine1 }}">{{ data.addressLine1 }}</span>
+            </a> </td>
+          <td nzEllipsis><a>
+            <span nz-tooltip nzTooltipTitle="{{ data.addressLine2 }}">{{ data.addressLine2 }}</span>
+            </a> </td>
+          <td>{{ data.addressPostcode }}</td>
+  
+          <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
+          
+          <td>
+            {{data.createdTime  | date:'short'}} 
+          </td>
+          <td>
+            {{data.lastModifiedTime | date:'short'}} 
+          </td>
+          <td nzEllipsis>
+            <a>
+              <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
+            </a>
+          </td>
+          <td nzRight>
+            <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
+          </td>
+        </tr>
+      
+      }  
 
     </tbody>
   </nz-table>

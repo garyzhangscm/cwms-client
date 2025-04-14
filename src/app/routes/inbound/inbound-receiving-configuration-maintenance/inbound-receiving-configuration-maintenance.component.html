@@ -42,9 +42,15 @@
             
             <nz-select *ngIf='currentInboundReceivingConfiguration !== undefined' nz-input [ngModel]="currentInboundReceivingConfiguration.supplierId!"
             (ngModelChange)="supplierChanged($event)" style="width: 250px"  [disabled]="!currentInboundReceivingConfiguration">
-            <nz-option *ngFor="let supplier of validSuppliers"
-            [nzLabel]="supplier.description" [nzValue]="supplier.id">
-            </nz-option>
+            
+              @for (supplier of validSuppliers; track supplier) {
+              
+                <nz-option 
+                    [nzLabel]="supplier.description" [nzValue]="supplier.id">
+                </nz-option>
+              
+              }  
+            
         </nz-select>
         
 
@@ -98,9 +104,15 @@
           <nz-select 
               *ngIf='currentInboundReceivingConfiguration !== undefined' nz-input [ngModel]="currentInboundReceivingConfiguration.itemFamilyId!"
               (ngModelChange)="itemFamilyChanged($event)" style="width: 250px"  [disabled]="!newInboundReceivingConfiguration">
-              <nz-option *ngFor="let itemFamily of validItemFamilies"
-                  [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
-              </nz-option>
+              
+                @for (itemFamily of validItemFamilies; track itemFamily) {
+                
+                  <nz-option 
+                      [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+                  </nz-option>
+                
+                }  
+            
             </nz-select> 
         
         </nz-form-control>
@@ -161,9 +173,15 @@
             <nz-select nzAllowClear   
             nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeWhenUploadFile"
                     style="width: 150px"  >
-                  <nz-option *ngFor="let receiptStatus of receiptStatusListKeys"
+                  
+                @for (receiptStatus of receiptStatusListKeys; track receiptStatus) {
+                
+                
+                  <nz-option 
                       nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
                   </nz-option>
+                }  
+            
               </nz-select>  
   
           </nz-form-control>
@@ -178,9 +196,16 @@
               <nz-select nzAllowClear   
               nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeFromIntegration"
                       style="width: 150px"  >
-                    <nz-option *ngFor="let receiptStatus of receiptStatusListKeys"
-                        nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
-                    </nz-option>
+                      
+                    @for (receiptStatus of receiptStatusListKeys; track receiptStatus) {
+                    
+                      <nz-option 
+                          nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
+                      </nz-option>
+                    
+                    }  
+            
+
                 </nz-select>  
     
             </nz-form-control>
@@ -195,9 +220,15 @@
                 <nz-select nzAllowClear   
                 nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeFromWebUI"
                         style="width: 150px"  >
-                      <nz-option *ngFor="let receiptStatus of receiptStatusListKeys"
-                          nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
-                      </nz-option>
+                        
+                      @for (receiptStatus of receiptStatusListKeys; track receiptStatus) {
+                      
+                      
+                        <nz-option 
+                            nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
+                        </nz-option>
+                      }  
+            
                   </nz-select>  
       
               </nz-form-control>
