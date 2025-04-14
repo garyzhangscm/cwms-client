@@ -39,26 +39,34 @@
       <thead>
         <tr>
 
-          <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-            [nzShowFilter]="column.showFilter">
-            {{ column.name | i18n }}
-          </th>
+          @for (column of listOfColumns; track column) {
+            
+            <th  [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+              [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+              [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+              [nzShowFilter]="column.showFilter">
+              {{ column.name | i18n }}
+            </th>
+            
+          }  
 
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of rowSelectionTable.data">
-          <td><a routerLink="/inventory/count/cycle-count-maintenance" routerLinkActive="active"
-              [queryParams]="{batchId : data.batchId}">{{ data.batchId }}</a></td>
-          <td>{{ data.requestLocationCount }}</td>
-          <td>{{ data.openLocationCount }}</td>
-          <td>{{ data.finishedLocationCount }}</td>
-          <td>{{ data.cancelledLocationCount}}</td>
-          <td>{{ data.openAuditLocationCount}}</td>
-          <td>{{ data.finishedAuditLocationCount}}</td>
-        </tr>
+        @for (data of rowSelectionTable.data; track data) {
+        
+        
+          <tr  >
+            <td><a routerLink="/inventory/count/cycle-count-maintenance" routerLinkActive="active"
+                [queryParams]="{batchId : data.batchId}">{{ data.batchId }}</a></td>
+            <td>{{ data.requestLocationCount }}</td>
+            <td>{{ data.openLocationCount }}</td>
+            <td>{{ data.finishedLocationCount }}</td>
+            <td>{{ data.cancelledLocationCount}}</td>
+            <td>{{ data.openAuditLocationCount}}</td>
+            <td>{{ data.finishedAuditLocationCount}}</td>
+          </tr>
+        }  
       </tbody>
     </nz-table>
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">

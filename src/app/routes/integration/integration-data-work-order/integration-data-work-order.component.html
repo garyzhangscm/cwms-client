@@ -37,11 +37,14 @@
             <nz-form-control [nzSpan]="18">
               
               <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-                <nz-option
-                  *ngFor="let status of integrationStatusListKeys"
-                  [nzValue]="status"
-                  nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-                ></nz-option>
+                @for (status of integrationStatusListKeys; track status) {
+                
+                
+                  <nz-option 
+                    [nzValue]="status"
+                    nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+                  ></nz-option>
+                }  
               </nz-select>
             </nz-form-control>
           </nz-form-item>

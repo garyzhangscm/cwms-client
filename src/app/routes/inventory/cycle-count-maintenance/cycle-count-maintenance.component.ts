@@ -306,6 +306,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   pageTitle: string;
 
   availableRequestType = CycleCountRequestType;
+  availableRequestTypeKeys = Object.keys(this.availableRequestType);
   cycleCountRequestType!: CycleCountRequestType;
 
   listOfDisplayOpenCycleCountRequests: CycleCountRequest[] = [];

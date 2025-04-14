@@ -32,7 +32,12 @@
                 <span>Choose a Client to Start: </span>
             
                 <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
-                    <nz-option *ngFor="let client of availableClients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    
+                    @for (client of availableClients; track client) {
+                    
+                        <nz-option  [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    
+                    }  
                 </nz-select>
             </p>
             
@@ -46,15 +51,21 @@
                     this link</a> 
                     to allow CWMS to access your Shop for this client
             </div>
-            <nz-card nzType="inner" 
-                *ngFor="let shopifyIntegrationConfiguration of shopifyIntegrationConfigurationList"
-                nzTitle="{{'shop' | i18n}}: {{shopifyIntegrationConfiguration.shop}}" [nzExtra]="removeConfigurationTemplate">  
-                 <div>{{shopifyIntegrationConfiguration.access_token}}</div>
-                <ng-template #removeConfigurationTemplate>
-                    <a (click)="removeShopIntegrationConfiguration(shopifyIntegrationConfiguration)">
-                        {{'remove' | i18n}}</a>
-                  </ng-template>
-            </nz-card>
+            
+            @for (shopifyIntegrationConfiguration of shopifyIntegrationConfigurationList; track shopifyIntegrationConfiguration) {
+            
+                <nz-card nzType="inner"  
+                    nzTitle="{{'shop' | i18n}}: {{shopifyIntegrationConfiguration.shop}}" 
+                    [nzExtra]="removeConfigurationTemplate">  
+                    <div>{{shopifyIntegrationConfiguration.access_token}}</div>
+                    <ng-template #removeConfigurationTemplate>
+                        <a (click)="removeShopIntegrationConfiguration(shopifyIntegrationConfiguration)">
+                            {{'remove' | i18n}}</a>
+                    </ng-template>
+                </nz-card>
+            
+            }  
+
             <div *ngIf="shopifyIntegrationConfigurationList.length > 0 && selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) != null">
                 Click 
                 <a [href]="shopifyOAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">

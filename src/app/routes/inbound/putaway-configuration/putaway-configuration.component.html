@@ -41,9 +41,17 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <nz-select name="inventoryStatus" id="inventoryStatus" formControlName="inventoryStatus">
-            <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
-            </nz-option>
+            
+            @for (inventoryStatus of availableInventoryStatuses; track inventoryStatus) {
+            
+              <nz-option 
+                [nzLabel]="inventoryStatus.description" 
+                [nzValue]="inventoryStatus.name">
+              </nz-option>
+            
+            }  
+            
+
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -66,11 +74,17 @@
       <tr>
         <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
-        <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
+          
+          @for (column of listOfColumns; track column) {
+            
+            <th [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+              {{ column.name | i18n }}
+            </th>
+            
+          }  
+          
 
         <th *ngIf="!displayOnly">
           {{ 'action' | i18n}}
@@ -79,39 +93,45 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
+      
+      @for (data of rowSelectionTable.data; track data) {
+            
+        <tr >
 
-        <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
 
-        <td>{{ data.sequence }}</td>
-        <td><a nz-tooltip nzTooltipTitle="{{ data.item?.description}}">{{ data.item?.name}}</a></td>
-        <td><a nz-tooltip nzTooltipTitle="{{ data.itemFamily?.description}}">{{ data.itemFamily?.name}}</a></td>
-        <td><a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus?.description}}">{{ data.inventoryStatus?.name}}</a>
-        </td>
-        <td><a nz-tooltip nzTooltipTitle="{{ data.location?.name}}">{{ data.location?.name}}</a></td>
-        <td><a nz-tooltip nzTooltipTitle="{{ data.locationGroup?.description}}">{{ data.locationGroup?.name}}</a>
-        </td>
-        <td><a nz-tooltip nzTooltipTitle="{{ data.locationGroupType?.description}}">{{
-            data.locationGroupType?.name}}</a></td>
-        <td> {{ data.strategies}}</td>
+          <td>{{ data.sequence }}</td>
+          <td><a nz-tooltip nzTooltipTitle="{{ data.item?.description}}">{{ data.item?.name}}</a></td>
+          <td><a nz-tooltip nzTooltipTitle="{{ data.itemFamily?.description}}">{{ data.itemFamily?.name}}</a></td>
+          <td><a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus?.description}}">{{ data.inventoryStatus?.name}}</a>
+          </td>
+          <td><a nz-tooltip nzTooltipTitle="{{ data.location?.name}}">{{ data.location?.name}}</a></td>
+          <td><a nz-tooltip nzTooltipTitle="{{ data.locationGroup?.description}}">{{ data.locationGroup?.name}}</a>
+          </td>
+          <td><a nz-tooltip nzTooltipTitle="{{ data.locationGroupType?.description}}">{{
+              data.locationGroupType?.name}}</a></td>
+          <td> {{ data.strategies}}</td>
 
-        <td *ngIf="!displayOnly">
-          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
-            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-          <nz-dropdown-menu #menu="nzDropdownMenu">
-            <ul nz-menu> 
-  
-              <li nz-menu-item >
-                <a  (click)="modifyPutawayConfiguration(data)">{{ 'modify' | i18n }}</a>
-              </li>
-              <li nz-menu-item>
-                <a  (click)="removePutawayConfiguration(data)">{{ 'remove' | i18n }}</a>
-              </li>
-            </ul>
-          </nz-dropdown-menu>
+          <td *ngIf="!displayOnly">
+            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu> 
+    
+                <li nz-menu-item >
+                  <a  (click)="modifyPutawayConfiguration(data)">{{ 'modify' | i18n }}</a>
+                </li>
+                <li nz-menu-item>
+                  <a  (click)="removePutawayConfiguration(data)">{{ 'remove' | i18n }}</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
 
-        </td>
-      </tr>
+          </td>
+        </tr>
+            
+      }  
+      
     </tbody>
   </nz-table>
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
@@ -157,13 +177,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of itemTable.data">
+      
+      @for (data of itemTable.data; track data) {
+            
+        <tr >
 
-        <td>{{ data.id! }}</td>
-        <td><a (click)="lookupSelect(data.name)"> {{ data.name}}</a> </td>
-        <td> {{ data.description}} </td>
+          <td>{{ data.id! }}</td>
+          <td><a (click)="lookupSelect(data.name)"> {{ data.name}}</a> </td>
+          <td> {{ data.description}} </td>
 
-      </tr>
+        </tr>
+            
+      }  
+      
     </tbody>
   </nz-table>
 </nz-drawer>

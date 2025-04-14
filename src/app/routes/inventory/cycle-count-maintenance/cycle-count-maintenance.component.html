@@ -53,9 +53,13 @@
             <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
               <nz-select #requestTypeSelect formControlName="requestType" name="requestType"
                 (ngModelChange)="requestTypeChange($event)">
-                <nz-option *ngFor="let type of availableRequestType | keyvalue" nzValue="{{type.key}}"
-                  nzLabel="{{'CYCLE-COUNT-REQUEST-TYPE-' + type.value | i18n}}">
-                </nz-option>
+                @for (type of availableRequestTypeKeys; track type) {
+                
+                  <nz-option   nzValue="{{type}}"
+                    nzLabel="{{'CYCLE-COUNT-REQUEST-TYPE-' + type | i18n}}">
+                  </nz-option>
+                
+                }  
               </nz-select>
             </nz-form-control>
           </nz-form-item>
@@ -203,29 +207,40 @@
               <th [nzSelections]="listOfOpenCycleCountTableSelection" [(nzChecked)]="openCycleCountTableChecked"
                 [nzIndeterminate]="openCycleCountTableIndeterminate"
                 (nzCheckedChange)="onOpenCycleCountTableAllChecked($event)" nzWidth="60px"></th>
-              <th *ngFor="let column of listOfOpenCycleCountTableColumns" [nzShowSort]="column.showSort"
-                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
-                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-                {{ column.name | i18n }}
-              </th>
+                
+              @for (column of listOfOpenCycleCountTableColumns; track column) {
+              
+                <th [nzShowSort]="column.showSort"
+                  [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                  [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                  [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                  {{ column.name | i18n }}
+                </th>
+              
+              }  
+            
 
 
               <th>{{ 'action' | i18n }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let data of openCycleCountTable.data">
-              <td [nzChecked]="setOfOpenCycleCountTableCheckedId.has(data.id!)"
-                (nzCheckedChange)="onOpenCycleCountTableItemChecked(data.id!, $event)"></td>
-              <td>{{ data.batchId }}</td>
-              <td>{{ data.location.name }}</td>
-              <td>
-                <button nz-button
-                  (click)="openCountResultModal(data, tplCycleCountRequestConfirmModalTitle, tplCycleCountRequestConfirmModalContent)"
-                  nzType="primary">{{ 'cycle-count.complete' | i18n }}</button>
-              </td>
-            </tr>
+            @for (data of openCycleCountTable.data; track data) {
+            
+            
+              <tr >
+                <td [nzChecked]="setOfOpenCycleCountTableCheckedId.has(data.id!)"
+                  (nzCheckedChange)="onOpenCycleCountTableItemChecked(data.id!, $event)"></td>
+                <td>{{ data.batchId }}</td>
+                <td>{{ data.location.name }}</td>
+                <td>
+                  <button nz-button
+                    (click)="openCountResultModal(data, tplCycleCountRequestConfirmModalTitle, tplCycleCountRequestConfirmModalContent)"
+                    nzType="primary">{{ 'cycle-count.complete' | i18n }}</button>
+                </td>
+              </tr>
+            }  
+            
           </tbody>
         </nz-table>
       </div>

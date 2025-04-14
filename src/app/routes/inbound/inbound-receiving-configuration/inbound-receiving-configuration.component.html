@@ -16,9 +16,15 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select name="supplier" id="supplier" formControlName="supplier">
-            <nz-option *ngFor="let supplier of validSuppliers"
-            [nzLabel]="supplier.description" [nzValue]="supplier.id">
-            </nz-option>
+            
+            @for (supplier of validSuppliers; track supplier) {
+            
+              <nz-option 
+                  [nzLabel]="supplier.description" [nzValue]="supplier.id">
+              </nz-option>
+            
+            }  
+
           </nz-select>
         </nz-form-control>
       </nz-form-item>

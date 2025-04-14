@@ -80,9 +80,15 @@
             <nz-select 
                 *ngIf='currentPutawayConfiguration !== undefined' nz-input [ngModel]="currentPutawayConfiguration.itemFamilyId!"
                 (ngModelChange)="itemFamilyChanged($event)" style="width: 250px"  [disabled]="!newPutawayConfiguration">
-                <nz-option *ngFor="let itemFamily of validItemFamilies"
-                    [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
-                </nz-option>
+                
+                @for (itemFamily of validItemFamilies; track itemFamily) {
+                
+                  <nz-option  
+                      [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+                  </nz-option>
+                
+                }  
+            
               </nz-select> 
           
           </nz-form-control>
@@ -101,10 +107,15 @@
                   (ngModelChange)="inventoryStatusChanged($event)"
                 style="width: 250px"  >
             
-              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-                  [nzLabel]="inventoryStatus.description"
-                  [nzValue]="inventoryStatus.id">
-              </nz-option>
+                @for (inventoryStatus of validInventoryStatuses; track inventoryStatus) {
+            
+                  <nz-option 
+                      [nzLabel]="inventoryStatus.description"
+                      [nzValue]="inventoryStatus.id">
+                  </nz-option>
+            
+                }  
+                
           </nz-select>
           
   
@@ -142,8 +153,15 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
             <nz-select   [(ngModel)]="currentPutawayConfiguration.locationGroupId" (ngModelChange)="locationGroupChanged()">
-              <nz-option *ngFor="let locationGroup of validLocationGroups" [nzLabel]="locationGroup.description!"
-                [nzValue]="locationGroup.id"></nz-option>
+              
+                @for (locationGroup of validLocationGroups; track locationGroup) {
+                
+                  <nz-option  [nzLabel]="locationGroup.description!"
+                    [nzValue]="locationGroup.id">
+                  </nz-option>
+                
+                }  
+            
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -156,8 +174,14 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
             <nz-select  [(ngModel)]="currentPutawayConfiguration.locationGroupTypeId" (ngModelChange)="locationGroupTypeChanged()">
-              <nz-option *ngFor="let locationGroupType of validLocationGroupTypes" [nzLabel]="locationGroupType.description"
+              
+              @for (locationGroupType of validLocationGroupTypes; track locationGroupType) {
+              
+                <nz-option  [nzLabel]="locationGroupType.description"
                 [nzValue]="locationGroupType.id"></nz-option>
+              
+              }  
+            
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -173,11 +197,16 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="14">
             <nz-select nzMode="tags" [(ngModel)]="selectedStrategies" (ngModelChange)="selectedStrategiesChanged()">
-                <nz-option
-                    *ngFor="let putawayConfigurationStrategy of putawayConfigurationStrategiesKeys"
-                    [nzValue]="putawayConfigurationStrategy"
-                    [nzLabel]="putawayConfigurationStrategy"
-                ></nz-option>
+                
+            @for (putawayConfigurationStrategy of putawayConfigurationStrategiesKeys; track putawayConfigurationStrategy) {
+            
+              <nz-option 
+                [nzValue]="putawayConfigurationStrategy"
+                [nzLabel]="putawayConfigurationStrategy" >
+              </nz-option>
+            
+            }  
+            
             </nz-select>
           </nz-form-control>
         </nz-form-item>

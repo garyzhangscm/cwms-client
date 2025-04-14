@@ -37,11 +37,14 @@
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
             
-            <nz-option
-              *ngFor="let status of integrationStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-            ></nz-option>
+            @for (status of integrationStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+              ></nz-option>
+            
+            }  
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -82,9 +85,9 @@
     [nzData]="listOfAllIntegrationInventoryAdjustmentConfirmations" [nzFooter]="tableFoot">
     <thead  >
       <tr>
-
-        <th
-            *ngFor="let column of listOfColumns"
+        @for (column of listOfColumns; track column) {
+        
+          <th 
             [nzShowSort]="column.showSort"
             [nzSortOrder]="column.sortOrder"
             [nzSortFn]="column.sortFn"
@@ -96,6 +99,9 @@
           >
             {{ column.name | i18n }}
           </th> 
+        
+        }  
+
           <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
           <th nzRight>{{ 'action' | i18n }}</th>
           
@@ -103,37 +109,41 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
-        <td>{{ data.warehouseId }}</td>
-        <td>{{ data.warehouseName }}</td>
-        <td>{{ data.clientId }}</td>
-        <td>{{ data.clientName }}</td>
-        <td>{{ data.itemId }}</td>
-        <td>{{ data.itemName }}</td>
-        <td>{{ data.inventoryStatusId }}</td>
-        <td>{{ data.inventoryStatusName }}</td>
-        <td>{{ data.adjustQuantity }}</td>
-
-        <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
-        
-        <td>
-          {{data.createdTime| date:'short'}}  
-        </td>
-        <td>
-          {{data.lastModifiedTime | date:'short'}} 
-        </td>
-        <td nzEllipsis>
-          <a>
-            <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
-          </a>
-        </td>
-
-        <td nzRight>
-          <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
-        </td>
-
-      </tr>
+      @for (data of rowSelectionTable.data; track data) {
+      
+        <tr >
+          <td>{{ data.id }}</td>
+          <td>{{ data.warehouseId }}</td>
+          <td>{{ data.warehouseName }}</td>
+          <td>{{ data.clientId }}</td>
+          <td>{{ data.clientName }}</td>
+          <td>{{ data.itemId }}</td>
+          <td>{{ data.itemName }}</td>
+          <td>{{ data.inventoryStatusId }}</td>
+          <td>{{ data.inventoryStatusName }}</td>
+          <td>{{ data.adjustQuantity }}</td>
+  
+          <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
+          
+          <td>
+            {{data.createdTime| date:'short'}}  
+          </td>
+          <td>
+            {{data.lastModifiedTime | date:'short'}} 
+          </td>
+          <td nzEllipsis>
+            <a>
+              <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
+            </a>
+          </td>
+  
+          <td nzRight>
+            <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
+          </td>
+  
+        </tr>
+      
+      }  
     </tbody>
   </nz-table>
 </div>

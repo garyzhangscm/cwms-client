@@ -24,11 +24,15 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-                *ngFor="let status of purchaseOrderStatusListKeys"
+            @for (status of purchaseOrderStatusListKeys; track status) {
+            
+              <nz-option 
                 [nzValue]="status"
-                nzLabel="{{ 'PURCHASE-ORDER-STATUS-' + status | i18n}}"
-          ></nz-option>
+                nzLabel="{{ 'PURCHASE-ORDER-STATUS-' + status | i18n}}" >
+              </nz-option>
+            
+            }  
+            
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -52,9 +56,16 @@
         <i nz-icon nzType="search"></i>
       </ng-template>
       <nz-autocomplete #supplierAutoCompleteTpl>
-        <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
-          {{ supplier.description }}
-        </nz-auto-option>
+        
+        @for (supplier of validSuppliers; track supplier) {
+            
+          <nz-auto-option [nzLabel]="supplier.description" [nzValue]="supplier.name">
+            {{ supplier.description }}
+          </nz-auto-option>
+            
+        }  
+        
+
       </nz-autocomplete>
     </div>
 
@@ -127,19 +138,12 @@
                 </th> 
               </thead>
               <tbody>
-                <tr *ngFor="let purchaseOrderLine of purchaseOrderLineTable.data">
-                  <td>{{ purchaseOrderLine.number }}</td>
-                  
-                  <td>
+                
+                @for (purchaseOrderLine of  purchaseOrderLineTable.data; track purchaseOrderLine) {
+                
+                  <tr >
+                    <td>{{ purchaseOrderLine.number }}</td>
                     
-                      <nz-skeleton-element 
-                      *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
-                      nzType="input"
-                      [nzActive]="true"
-                      [nzSize]="'small'"
-                      style="width:75px"
-                    ></nz-skeleton-element> 
-                    {{ purchaseOrderLine.item?.name }}</td>
                     <td>
                       
                         <nz-skeleton-element 
@@ -149,11 +153,25 @@
                         [nzSize]="'small'"
                         style="width:75px"
                       ></nz-skeleton-element> 
-                      {{ purchaseOrderLine.item?.description }}</td>
-                  <td>{{ purchaseOrderLine.expectedQuantity }}</td>
-                  <td>{{ purchaseOrderLine.receiptQuantity }}</td>
-                  <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
-                </tr>
+                      {{ purchaseOrderLine.item?.name }}</td>
+                      <td>
+                        
+                          <nz-skeleton-element 
+                          *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                          nzType="input"
+                          [nzActive]="true"
+                          [nzSize]="'small'"
+                          style="width:75px"
+                        ></nz-skeleton-element> 
+                        {{ purchaseOrderLine.item?.description }}</td>
+                    <td>{{ purchaseOrderLine.expectedQuantity }}</td>
+                    <td>{{ purchaseOrderLine.receiptQuantity }}</td>
+                    <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
+                  </tr>
+                
+                }  
+            
+
               </tbody>
             </nz-table>
           </nz-tab> 
@@ -178,35 +196,42 @@
                 </th>
               </thead>
               <tbody>
-                <tr *ngFor="let receipt of receiptTable.data">
-                  <td><a routerLink="/inbound/receipt" routerLinkActive="active"
-                    [queryParams]="{number : receipt.number}">
-                    {{ receipt.number }}</a></td>
-                    
-                  <td> 
-                  {{ receipt.client?.name }}</td>
-                  <td>  
+                
+                @for (receipt of receiptTable.data; track receipt) {
+                
+                  <tr  >
+                    <td><a routerLink="/inbound/receipt" routerLinkActive="active"
+                      [queryParams]="{number : receipt.number}">
+                      {{ receipt.number }}</a></td>
                       
-                        <nz-skeleton-element 
-                        *ngIf="receipt.supplierId && receipt.supplier == null"
-                        nzType="input"
-                        [nzActive]="true"
-                        [nzSize]="'small'"
-                        style="width:75px"
-                      ></nz-skeleton-element> 
-                      {{ receipt.supplier?.name }}</td>
-                      <td>  
-                          
-                            <nz-skeleton-element 
-                            *ngIf="receipt.supplierId && receipt.supplier == null"
-                            nzType="input"
-                            [nzActive]="true"
-                            [nzSize]="'small'"
-                            style="width:75px"
-                          ></nz-skeleton-element> 
-                          {{ receipt.supplier?.description }}</td>
-                  <td>{{ 'RECEIPT-STATUS-' + receipt.receiptStatus | i18n}} </td>
-                </tr>
+                    <td> 
+                    {{ receipt.client?.name }}</td>
+                    <td>  
+                        
+                          <nz-skeleton-element 
+                          *ngIf="receipt.supplierId && receipt.supplier == null"
+                          nzType="input"
+                          [nzActive]="true"
+                          [nzSize]="'small'"
+                          style="width:75px"
+                        ></nz-skeleton-element> 
+                        {{ receipt.supplier?.name }}</td>
+                        <td>  
+                            
+                              <nz-skeleton-element 
+                              *ngIf="receipt.supplierId && receipt.supplier == null"
+                              nzType="input"
+                              [nzActive]="true"
+                              [nzSize]="'small'"
+                              style="width:75px"
+                            ></nz-skeleton-element> 
+                            {{ receipt.supplier?.description }}</td>
+                    <td>{{ 'RECEIPT-STATUS-' + receipt.receiptStatus | i18n}} </td>
+                  </tr>
+                
+                }  
+            
+
               </tbody>
             </nz-table>
           </nz-tab> 

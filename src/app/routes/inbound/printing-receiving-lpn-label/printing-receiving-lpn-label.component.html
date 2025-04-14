@@ -114,14 +114,18 @@
               <span nz-icon nzType="down"></span>
             </a>
             <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
-              <ul nz-menu nzSelectable>
-                <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                -->
-                <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
-                (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
-                  {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                </li> 
+              <ul nz-menu nzSelectable> 
+                
+                @for (itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                
+                  <li nz-menu-item  
+                    (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                  </li> 
+                
+                }  
+            
+
               </ul>
             </nz-dropdown-menu> 
 
@@ -148,10 +152,16 @@
             </a>
             <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
               <ul nz-menu nzSelectable>
-                <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
-                  {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                </li> 
+                @for (itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures; track itemUnitOfMeasure) {
+                
+                  <li nz-menu-item  
+                    (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
+                      {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                  </li> 
+                
+                }  
+                
+                
               </ul>
             </nz-dropdown-menu> 
 

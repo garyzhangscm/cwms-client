@@ -40,11 +40,14 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-              *ngFor="let status of integrationStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-            ></nz-option>
+            @for (status of integrationStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+              ></nz-option>
+            
+            }  
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -85,19 +88,22 @@
     [nzFooter]="tableFoot">
     <thead  >
       <tr><th nzWidth="40px"></th>
-        <th
-            *ngFor="let column of listOfColumns"
-            [nzShowSort]="column.showSort"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
-          >
-            {{ column.name | i18n }}
-          </th> 
+        @for (column of listOfColumns; track column) {
+        
+            <th 
+              [nzShowSort]="column.showSort"
+              [nzSortOrder]="column.sortOrder"
+              [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections"
+              [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter"
+              [nzFilterFn]="column.filterFn"        
+              [nzShowFilter]="column.showFilter"
+            >
+              {{ column.name | i18n }}
+            </th> 
+        
+        }  
  
           <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
           <th nzRight>{{ 'action' | i18n }}</th>
@@ -194,18 +200,22 @@
                     </th>
                   </thead>
     <tbody>
-      <tr *ngFor="let orderLine of data.orderLines">
-        <td>{{ orderLine.number }}</td>
-        <td>{{ orderLine.itemId }}</td>
-        <td>{{ orderLine.itemName }}</td>
-        <td>{{ orderLine.inventoryStatusId }}</td>
-        <td>{{ orderLine.inventoryStatusName }}</td>
-        <td>{{ orderLine.carrierId }}</td>
-        <td>{{ orderLine.carrierName }}</td>
-        <td>{{ orderLine.carrierServiceLevelId }}</td>
-        <td>{{ orderLine.carrierServiceLevelName }}</td>
-        <td>{{ orderLine.expectedQuantity }}</td> 
-      </tr>
+      @for (orderLine of data.orderLines; track orderLine) {
+      
+        <tr >
+          <td>{{ orderLine.number }}</td>
+          <td>{{ orderLine.itemId }}</td>
+          <td>{{ orderLine.itemName }}</td>
+          <td>{{ orderLine.inventoryStatusId }}</td>
+          <td>{{ orderLine.inventoryStatusName }}</td>
+          <td>{{ orderLine.carrierId }}</td>
+          <td>{{ orderLine.carrierName }}</td>
+          <td>{{ orderLine.carrierServiceLevelId }}</td>
+          <td>{{ orderLine.carrierServiceLevelName }}</td>
+          <td>{{ orderLine.expectedQuantity }}</td> 
+        </tr>
+      
+      }  
     </tbody>
   </nz-table>
   </nz-tab>

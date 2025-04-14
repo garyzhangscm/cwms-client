@@ -37,11 +37,14 @@
         <nz-form-control [nzSpan]="18">
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
-            <nz-option
-              *ngFor="let status of integrationStatusListKeys"
-              [nzValue]="status"
-              nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
-            ></nz-option>
+            @for (status of integrationStatusListKeys; track status) {
+            
+              <nz-option 
+                [nzValue]="status"
+                nzLabel="{{ 'INTEGRATION-STATUS-' + status | i18n}}"
+              ></nz-option>
+            
+            }  
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -85,8 +88,9 @@
 
         
         <th nzWidth="40px"></th>
-        <th
-            *ngFor="let column of listOfColumns"
+        @for (column of listOfColumns; track column) {
+        
+          <th 
             [nzShowSort]="column.showSort"
             [nzSortOrder]="column.sortOrder"
             [nzSortFn]="column.sortFn"
@@ -98,6 +102,8 @@
           >
             {{ column.name | i18n }}
           </th> 
+        
+        }  
           <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
           <th nzRight>{{ 'action' | i18n }}</th>
           
@@ -177,20 +183,24 @@
                       {{ 'inventory-status.name' | i18n }}</th>
                   </thead>
     <tbody>
-      <tr *ngFor="let workOrderLine of data.workOrderLineConfirmations">
-        <td>{{ workOrderLine.number }}</td>
-        <td>{{ workOrderLine.itemId }}</td>
-        <td>{{ workOrderLine.itemName }}</td>
-        <td>{{ workOrderLine.expectedQuantity }}</td>
-        <td>{{ workOrderLine.openQuantity }}</td>
-        <td>{{ workOrderLine.inprocessQuantity }}</td>
-        <td>{{ workOrderLine.deliveredQuantity }}</td>
-        <td>{{ workOrderLine.consumedQuantity }}</td>
-        <td>{{ workOrderLine.scrappedQuantity }}</td>
-        <td>{{ workOrderLine.returnedQuantity }}</td>
-        <td>{{ workOrderLine.inventoryStatusId }}</td>
-        <td>{{ workOrderLine.inventoryStatusName }}</td>
-      </tr>
+      @for (workOrderLine of data.workOrderLineConfirmations; track workOrderLine) {
+      
+        <tr >
+          <td>{{ workOrderLine.number }}</td>
+          <td>{{ workOrderLine.itemId }}</td>
+          <td>{{ workOrderLine.itemName }}</td>
+          <td>{{ workOrderLine.expectedQuantity }}</td>
+          <td>{{ workOrderLine.openQuantity }}</td>
+          <td>{{ workOrderLine.inprocessQuantity }}</td>
+          <td>{{ workOrderLine.deliveredQuantity }}</td>
+          <td>{{ workOrderLine.consumedQuantity }}</td>
+          <td>{{ workOrderLine.scrappedQuantity }}</td>
+          <td>{{ workOrderLine.returnedQuantity }}</td>
+          <td>{{ workOrderLine.inventoryStatusId }}</td>
+          <td>{{ workOrderLine.inventoryStatusName }}</td>
+        </tr>
+      
+      }  
     </tbody>
   </nz-table>
   </nz-tab>
@@ -216,16 +226,20 @@
           {{ 'inventory-status.name' | i18n }}</th>
       </thead>
       <tbody>
-        <tr *ngFor="let workOrderByProduct of data.workOrderByProductConfirmations!">
+        @for (workOrderByProduct of data.workOrderByProductConfirmations!; track workOrderByProduct) {
+        
+          <tr  >
 
-          <td>{{ workOrderByProduct.itemId }}</td>
-          <td>{{ workOrderByProduct.itemName }}</td>
-          <td>{{ workOrderByProduct.expectedQuantity }}</td>
-          <td>{{ workOrderByProduct.producedQuantity }}</td>
-
-          <td>{{ workOrderByProduct.inventoryStatusId }}</td>
-          <td>{{ workOrderByProduct.inventoryStatusName }}</td>
-        </tr>
+            <td>{{ workOrderByProduct.itemId }}</td>
+            <td>{{ workOrderByProduct.itemName }}</td>
+            <td>{{ workOrderByProduct.expectedQuantity }}</td>
+            <td>{{ workOrderByProduct.producedQuantity }}</td>
+  
+            <td>{{ workOrderByProduct.inventoryStatusId }}</td>
+            <td>{{ workOrderByProduct.inventoryStatusName }}</td>
+          </tr>
+        
+        }  
       </tbody>
     </nz-table>
   </nz-tab>
