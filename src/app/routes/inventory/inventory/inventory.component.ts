@@ -1375,6 +1375,7 @@ export class InventoryInventoryComponent implements OnInit {
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
+        sessionStorage.setItem('report_previous_page', `/inventory/inventory?lpn=${inventory.lpn}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
 
       },
