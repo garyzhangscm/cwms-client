@@ -119,14 +119,14 @@ export class InventoryActivityService {
     } 
     
     if (beginDate) {
-      params = params.append('beginDate', this.dateTimeService.getISODateString(beginDate));   
+      params = params.append('beginDate', this.dateTimeService.getLocalDateString(beginDate));   
     }
     if (endDate) {
-      params = params.append('endDate', this.dateTimeService.getISODateString(endDate));   
+      params = params.append('endDate', this.dateTimeService.getLocalDateString(endDate));   
     }
 
     if (date) {
-      params = params.append('date', this.dateTimeService.getISODateString(date));   
+      params = params.append('date', this.dateTimeService.getLocalDateString(date));   
     }
     if (username) {
       params = params.append('username', this.utilService.encodeHttpParameter(username.trim()));   

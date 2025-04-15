@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Warehouse } from '../models/warehouse';
@@ -14,6 +14,9 @@ export class WarehouseService {
   constructor(private http: _HttpClient, private companyService: CompanyService) { }
 
   getWarehouses(): Observable<Warehouse[]> {
+    if (this.companyService.getCurrentCompany() == null) {
+      return of([]);
+    }
     return this.http
       .get(`layout/warehouses?companyId=${this.companyService.getCurrentCompany()!.id}`)
       .pipe(map(res => res.data));

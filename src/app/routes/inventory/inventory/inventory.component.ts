@@ -450,6 +450,8 @@ export class InventoryInventoryComponent implements OnInit {
      
 
     this.activatedRoute.queryParams.subscribe(params => {
+      /**
+       * 
       if (params.hasOwnProperty('refresh')) {
         if (params['id']) {
           this.search(params['id']);
@@ -463,6 +465,18 @@ export class InventoryInventoryComponent implements OnInit {
           this.search();
         }
       }
+       * 
+       */
+      
+        if (params['id']) {
+          this.search(params['id']);
+        } else if (params['lpn']) {
+          this.searchForm.controls.lpn.setValue(params['lpn']);
+          this.search();
+        } else if (params['location']) {
+          this.searchForm.controls.location.setValue(params['location']);
+          this.search();
+        } 
     });
     
     this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
