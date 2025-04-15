@@ -145,6 +145,10 @@ export class UserService {
     if (data != null && data.username == this.getCurrentUsername()) {  
       user = data;
     }
+    else if (this.companyService.getCurrentCompany() == null) {
+      // the user has not login yet
+      return undefined;
+    }
     else if (this.getCurrentUsername()) {
 
       let users: User[] = await this.getUserByNameSynchronous(this.getCurrentUsername());
