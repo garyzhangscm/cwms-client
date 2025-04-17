@@ -6,6 +6,11 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { FormsModule } from '@angular/forms';
+import { RfService } from 'src/app/routes/util/services/rf.service';
+import { RF } from 'src/app/routes/util/models/rf';
 
 @Component({
   selector: 'header-user',
@@ -35,16 +40,52 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
         </div>
       </div>
     </nz-dropdown-menu>
+
+    <nz-modal [(nzVisible)]="isChooseDeviceModalVisible" 
+        nzTitle="The first Modal"  (nzOnOk)="changeCurrentRf()">
+      <ng-container *nzModalContent>
+          <nz-select [(ngModel)]="selectedRF">
+            @for (rf of validRFs; track rf) {
+              <nz-option   [nzValue]="rf" [nzLabel]="rf.rfCode"></nz-option> 
+            }   
+          </nz-select>
+      </ng-container>
+    </nz-modal>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NzDropDownModule, NzMenuModule, NzIconModule, I18nPipe, NzAvatarModule]
+  imports: [RouterLink, NzDropDownModule, NzMenuModule, NzIconModule, 
+    I18nPipe, NzAvatarModule, NzModalModule, NzSelectModule,FormsModule]
 })
 export class HeaderUserComponent {
+
+  isChooseDeviceModalVisible = false;
+  validRFs: RF[] = [];
+  selectedRF: RF | undefined;
   private readonly settings = inject(SettingsService);
+  private readonly rfService = inject(RfService); 
   private readonly router = inject(Router);
   private readonly tokenService = inject(DA_SERVICE_TOKEN);
   get user(): User {
     return this.settings.user;
+  }
+
+  constructor() {
+    this.rfService.getRFs().subscribe({
+      next: (rfs) => {
+        this.validRFs = rfs;
+      }
+
+    })
+  }
+
+  changeCurrentRf() {
+    if (this.selectedRF != null) {
+
+      this.rfService.setLoginRF(this.selectedRF.rfCode);
+    }
+    else {
+      this.rfService.setLoginRF("");
+    }
   }
 
   logout(): void {
