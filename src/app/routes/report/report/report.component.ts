@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute,  } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -103,8 +103,7 @@ export class ReportReportComponent implements OnInit {
   ];
 
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder, 
+  constructor( 
     private reportService: ReportService,
     private message: NzMessageService,
     private activatedRoute: ActivatedRoute,
@@ -116,9 +115,7 @@ export class ReportReportComponent implements OnInit {
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );            
   }
-
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+ 
 
   // Table data for display
   listOfAllReports: Report[] = [];
@@ -132,6 +129,14 @@ export class ReportReportComponent implements OnInit {
   reportTypesKeys = Object.keys(this.reportTypes);
    
 
+  private readonly fb = inject(FormBuilder); 
+  
+  searchForm = this.fb.nonNullable.group({
+    type: this.fb.control<string | undefined>('', { nonNullable: true, validators: []}),
+    companySpecific: this.fb.control(undefined,{ nonNullable: true, validators:  []}),
+    warehouseSpecific: this.fb.control(undefined, { nonNullable: true, validators: []}), 
+  });
+  
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllReports = [];
@@ -236,16 +241,10 @@ export class ReportReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.report'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      type: [null],
-      companySpecific: [null],
-      warehouseSpecific: [null]
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['type']) {
-        this.searchForm.value.type.setValue(params['type']);
+        this.searchForm.controls.type.setValue(params['type']);
         this.search();
       }
     });
