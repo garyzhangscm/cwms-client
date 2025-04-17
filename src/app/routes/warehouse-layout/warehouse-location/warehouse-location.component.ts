@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild, } from '@angular/core';
-import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
@@ -162,8 +162,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   // Select control for Location Group Types
   locationGroupTypes: LocationGroupType[] = [];
   locationGroups: LocationGroup[] = [];
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  // Form related data and functions 
 
   searching = false;
   searchResult = '';
@@ -177,6 +176,15 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
   isSpinning = false;
 
+  private readonly fb = inject(FormBuilder);
+   
+  
+  searchForm = this.fb.nonNullable.group({
+    taggedLocationGroupTypes: this.fb.control('', { nonNullable: true, validators: []}),
+    taggedLocationGroups: this.fb.control<string | undefined>('',{ nonNullable: true, validators:  []}),
+    locationName: this.fb.control<string | undefined>('', { nonNullable: true, validators: []}), 
+  });
+  
   displayOnly = false;
   
   // initial the user permission map so that all the permission is disable
@@ -186,8 +194,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     ['copy-location', false],
   ]);
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private fb: UntypedFormBuilder,
+    private activatedRoute: ActivatedRoute, 
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService, 
@@ -477,17 +484,10 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   
 
   ngOnInit(): void {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      taggedLocationGroupTypes: [null],
-      taggedLocationGroups: [null],
-      locationName: [null],
-      // locationStatus: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) {
-        this.searchForm.value.locationName.setValue(params['name']);
+        this.searchForm.controls.locationName.setValue(params['name']);
         this.search();
       } 
     });
@@ -659,7 +659,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
   processLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.value.locationName.setValue(selectedLocationName);
+    this.searchForm.controls.locationName.setValue(selectedLocationName);
   }
 
   

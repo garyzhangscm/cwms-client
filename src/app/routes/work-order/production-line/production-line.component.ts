@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -120,9 +120,14 @@ export class WorkOrderProductionLineComponent implements OnInit {
     },     
    
   };
+    
+  
+  private readonly fb = inject(FormBuilder);
    
-  // Form related data and functions
-  searchForm!: UntypedFormGroup;
+  searchForm = this.fb.nonNullable.group({
+    name: this.fb.control<string | undefined>('', { nonNullable: true, validators: []}),
+    type: this.fb.control<string | undefined>('',{ nonNullable: true, validators:  []}), 
+  });
 
   searching = false;
   searchResult = '';
@@ -135,8 +140,7 @@ export class WorkOrderProductionLineComponent implements OnInit {
   
 
   displayOnly = false;
-  constructor(
-    private fb: UntypedFormBuilder,
+  constructor( 
     private productionLineService: ProductionLineService,
     private messageService: NzMessageService,
     private utilService: UtilService,
@@ -154,16 +158,11 @@ export class WorkOrderProductionLineComponent implements OnInit {
    }
 
    ngOnInit(): void {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      name: [null],
-      type: [null],
-    });
 
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['name']) {
-        this.searchForm.value.name.setValue(params['name']);
+        this.searchForm.controls.name.setValue(params['name']);
         this.search();
       }
     });
