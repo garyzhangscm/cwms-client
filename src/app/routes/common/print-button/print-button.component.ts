@@ -89,8 +89,7 @@ export class CommonPrintButtonComponent implements OnInit {
     this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
       next: (warehouseConfiguration) => {
 
-        if (warehouseConfiguration.printingStrategy === PrintingStrategy.SERVER_PRINTER ||
-          warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
+        if (warehouseConfiguration.printingStrategy === PrintingStrategy.SERVER_PRINTER) {
 
           console.log(`will get printer from server`)
           this.printingService.getAllServerPrinters(warehouseConfiguration.printingStrategy).subscribe(printers => {
@@ -114,8 +113,9 @@ export class CommonPrintButtonComponent implements OnInit {
 
               }); 
           })
-        } 
-        else  if (warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {
+        }         
+        else  if (warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA ||
+          warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
           
           console.log(`will get printer from local tools`)
           this.printingService.getAllLocalPrinters().forEach(
