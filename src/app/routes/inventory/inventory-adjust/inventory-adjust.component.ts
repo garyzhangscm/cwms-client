@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder  } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -24,7 +24,9 @@ import { LocationGroupTypeService } from '../../warehouse-layout/services/locati
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service'; 
 import { Inventory } from '../models/inventory';
+import { InventoryConfiguration } from '../models/inventory-configuration';
 import { InventoryStatus } from '../models/inventory-status'; 
 import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
 import { InventoryStatusService } from '../services/inventory-status.service';
@@ -41,6 +43,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   threePartyLogisticsFlag = false;
+  inventoryConfiguration?: InventoryConfiguration;
 
   listOfColumns: Array<ColumnItem<WarehouseLocation>> = [
     {
@@ -214,6 +217,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private companyService: CompanyService,
     private itemService: ItemService,
+    private inventoryConfigurationService: InventoryConfigurationService,
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
     private utilService: UtilService,
@@ -232,6 +236,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       }
     }); 
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
+    
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        }  
+      } 
+    });
   }
 
   // Select control for Location Group Types

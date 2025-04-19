@@ -410,6 +410,79 @@
     </div>
 
   </div>
+  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingInventoryAttribute1Flag">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="12" nzFor="color">
+          {{ inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+            ("inventoryAttribute1" | i18n )
+            : this.inventoryConfiguration?.inventoryAttribute1DisplayName
+            }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.attribute1"  name="attribute1"    id="attribute1" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingInventoryAttribute2Flag">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="12" nzFor="color">
+          {{ inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+            ("inventoryAttribute2" | i18n )
+            : this.inventoryConfiguration?.inventoryAttribute2DisplayName
+            }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.attribute2"  name="attribute2"    id="attribute2" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingInventoryAttribute3Flag">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="12" nzFor="color">
+          {{ inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+            ("inventoryAttribute3" | i18n )
+            : this.inventoryConfiguration?.inventoryAttribute3DisplayName
+            }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.attribute3"  name="attribute3"    id="attribute3" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingInventoryAttribute4Flag">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="12" nzFor="color">
+          {{ inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+            ("inventoryAttribute4" | i18n )
+            : this.inventoryConfiguration?.inventoryAttribute4DisplayName
+            }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.attribute4"  name="attribute4"    id="attribute4" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingInventoryAttribute5Flag">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="12" nzFor="color">
+          {{ inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+            ("inventoryAttribute5" | i18n )
+            : this.inventoryConfiguration?.inventoryAttribute5DisplayName
+            }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.attribute5"  name="attribute5"    id="attribute5" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
