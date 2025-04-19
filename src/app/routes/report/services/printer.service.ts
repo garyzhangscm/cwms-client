@@ -46,4 +46,5 @@ export class PrinterService {
     const url = `resource/printers/${printer.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
+
 }

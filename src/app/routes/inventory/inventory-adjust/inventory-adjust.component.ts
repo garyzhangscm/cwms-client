@@ -241,8 +241,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   
   searchForm = this.fb.nonNullable.group({
-    taggedLocationGroupTypes: this.fb.control("",{ nonNullable: true, validators:  []}),
-    taggedLocationGroups: this.fb.control("", { nonNullable: true, validators: []}),
+    taggedLocationGroupTypes: this.fb.control([],{ nonNullable: true, validators:  []}),
+    taggedLocationGroups: this.fb.control([], { nonNullable: true, validators: []}),
     location: this.fb.control("", { nonNullable: true, validators: []}),
   });
    
@@ -341,13 +341,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   }
 
-  search(expand?: boolean): void { 
+  search(expand?: boolean): void {  
     this.isSpinning = true;
     this.searchResult = '';
     this.locationService
       .getLocations(
-        this.searchForm.value.taggedLocationGroupTypes ? this.searchForm.value.taggedLocationGroupTypes : undefined,
-        this.searchForm.value.taggedLocationGroups ? this.searchForm.value.taggedLocationGroups : undefined,
+         
+        this.searchForm.value.taggedLocationGroupTypes ? this.searchForm.value.taggedLocationGroupTypes.toString() : undefined,
+        this.searchForm.value.taggedLocationGroups ? this.searchForm.value.taggedLocationGroups.toString() : undefined,
         this.searchForm.value.location ? this.searchForm.value.location : undefined,
       )
       .subscribe(

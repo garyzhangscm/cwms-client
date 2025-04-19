@@ -500,7 +500,7 @@
                             </span>
                         </td>
                         <td>
-                            <nz-select style="width: 150px" *ngIf="data.id === undefined"
+                            <nz-select style="width: 200px" *ngIf="data.id === undefined"
                                 [(ngModel)]="data.allocationStrategyType" (ngModelChange)="allocationStratetyChanged(data)" >
                                 <nz-option *ngFor="let allocationStrategyType of allocationStrategiesKeys"
                                     nzLabel="{{ 'ALLOCATION-STRATEGY-TYPE-' + allocationStrategyType | i18n }}"

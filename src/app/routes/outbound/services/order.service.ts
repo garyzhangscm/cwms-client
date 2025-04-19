@@ -71,23 +71,23 @@ export class OrderService {
     }
     
     if (startCompleteTime) {
-      params = params.append('startCompleteTime', this.dateTimeService.getISODateTimeString(startCompleteTime));  
+      params = params.append('startCompleteTime', this.dateTimeService.getLocalDateString(startCompleteTime));  
     }
     if (endCompleteTime) {
-      params = params.append('endCompleteTime', this.dateTimeService.getISODateTimeString(endCompleteTime));   
+      params = params.append('endCompleteTime', this.dateTimeService.getLocalDateString(endCompleteTime));   
     }
     if (specificCompleteDate) {
-      params = params.append('specificCompleteDate', this.dateTimeService.getISODateString(specificCompleteDate));    
+      params = params.append('specificCompleteDate', this.dateTimeService.getLocalDateString(specificCompleteDate));    
     }
     
     if (startCreatedTime) {
-      params = params.append('startCreatedTime', this.dateTimeService.getISODateTimeString(startCreatedTime));  
+      params = params.append('startCreatedTime', this.dateTimeService.getLocalDateString(startCreatedTime));  
     }
     if (endCreatedTime) {
-      params = params.append('endCreatedTime', this.dateTimeService.getISODateTimeString(endCreatedTime));   
+      params = params.append('endCreatedTime', this.dateTimeService.getLocalDateString(endCreatedTime));   
     }
     if (specificCreatedDate) {
-      params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
+      params = params.append('specificCreatedDate', this.dateTimeService.getLocalDateString(specificCreatedDate));    
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));
