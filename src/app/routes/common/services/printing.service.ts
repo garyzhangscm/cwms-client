@@ -11,7 +11,9 @@ import { map } from 'rxjs/operators';
 import { Printer } from '../../report/models/printer';
 import { ReportHistory } from '../../report/models/report-history';
 import { ReportType } from '../../report/models/report-type.enum';
+import { PrinterService } from '../../report/services/printer.service';
 import { PrintingRequestService } from '../../report/services/printing-request.service';
+import { ReportService } from '../../report/services/report.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -31,6 +33,7 @@ export class PrintingService {
 
   constructor(
     public lodopService: LodopService,
+    public reportService: ReportService,
     private warehouseService: WarehouseService,
     private http: _HttpClient,
     private companyService: CompanyService,
@@ -77,6 +80,7 @@ export class PrintingService {
   getAllLocalPrinters(): string[] {
     var allLocalPrinters: string[] = [];
     const localPrinterCount = this.getLocalPrinterCount();
+    console.log(`localPrinterCount: ${localPrinterCount}`);
     if (localPrinterCount === 0) {
       return allLocalPrinters;
     }
@@ -132,6 +136,7 @@ export class PrintingService {
     collated?: boolean
   ): void {
 
+
     this.localCacheService.getWarehouseConfiguration().subscribe(
       {
         next: (warehouseConfigRes) => {
@@ -161,6 +166,7 @@ export class PrintingService {
           }
           else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
               console.log(`print from local data is not supported at this moment`);
+              this.messageService.error(`print from local data is not supported at this moment`)
                 // this.printFromLocal(
                 //   name, fileName, type, printerIndex, 
                 //  physicalCopyCount, pageOrientation, collated); 
@@ -515,4 +521,32 @@ export class PrintingService {
   getCurrentPageNumberHtml(pageNumber: number, pageCount: number): string {
     return `< div style = "text-align: right" > Page: ${pageNumber} / ${pageCount}</div > `;
   }
+
+  
+  setupCurrentStationDefaultLabelPrinter(printer: string) {
+    
+    return  localStorage.setItem('default_label_printer', printer);
+  }
+  setupCurrentStationDefaultReportPrinter(printer: string) {
+    
+    return  localStorage.setItem('default_report_printer', printer);
+  }
+  
+  getCurrentStationDefaultLabelPrinter() {
+    
+    return  localStorage.getItem('default_label_printer') == null ? 
+                 "" : localStorage.getItem('default_label_printer');
+  }
+  getCurrentStationDefaultReportPrinter() {
+    
+    return  localStorage.getItem('default_report_printer') == null ? 
+                 "" : localStorage.getItem('default_report_printer'); 
+  }
+
+  getCurrentStationDefaultPrinter(reportType: ReportType) { 
+      return this.reportService.isLabel(reportType) ?
+          this.getCurrentStationDefaultLabelPrinter() :
+          this.getCurrentStationDefaultReportPrinter();
+  }
+
 }

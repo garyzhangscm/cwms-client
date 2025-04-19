@@ -87,22 +87,11 @@
       </div>
 
       <div nz-col [nzSpan]="6">
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6"  nzFor="lpn">
-            {{ 'lpn' | i18n }}
-          </nz-form-label>
-          <nz-form-control [nzSpan]="18">
-            <input barcode variable="lpn" nz-input name="lpn" id="lpn" formControlName="lpn" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      
-      <div nz-col [nzSpan]="6">
         <nz-form-item>
-          <nz-form-label [nzSpan]="6">
+          <nz-form-label [nzSpan]="8">
             {{ 'inventory-status' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="16">
 
               
               <nz-select formControlName="inventoryStatus" nzAllowClear >
@@ -117,6 +106,18 @@
           </nz-form-control>
         </nz-form-item>
       </div> 
+
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6"  nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input barcode variable="lpn" nz-input name="lpn" id="lpn" formControlName="lpn" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
       
       <div nz-col [nzSpan]="6">
         <nz-form-item nzFlex>
@@ -143,10 +144,10 @@
       </div>
       <div nz-col [nzSpan]="6">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6" nzFor="receiptNumber">
+          <nz-form-label [nzSpan]="8" nzFor="receiptNumber">
             {{ 'receipt.number' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="16">
             <input nz-input name="receiptNumber" id="receiptNumber" formControlName="receiptNumber" />
           </nz-form-control>
         </nz-form-item>

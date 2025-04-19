@@ -561,8 +561,8 @@ export class InventoryInventoryComponent implements OnInit {
           undefined,
           undefined, 
           this.searchForm.value.receiptNumber ? this.searchForm.value.receiptNumber : undefined,
-          this.inventoryTable.pi,
-          this.inventoryTable.ps
+          this.inventoryTable?.pi,
+          this.inventoryTable?.ps
         )
         .subscribe({
           next: (page) => {
@@ -1742,8 +1742,8 @@ export class InventoryInventoryComponent implements OnInit {
       // we will need to redo the search since we use 
       // client size pagination
       const pipsChanged : boolean = 
-          (this.inventoryTablePI != this.inventoryTable.pi) ||
-          (this.inventoryTablePS != this.inventoryTable.ps);
+          (this.inventoryTablePI != this.inventoryTable?.pi) ||
+          (this.inventoryTablePS != this.inventoryTable?.ps);
  
       if (pipsChanged) {
         this.inventoryTablePI = this.inventoryTable.pi;
