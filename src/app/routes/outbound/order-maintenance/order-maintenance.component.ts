@@ -11,6 +11,7 @@ import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { SupplierService } from '../../common/services/supplier.service';
+import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
@@ -24,6 +25,7 @@ import { CompanyService } from '../../warehouse-layout/services/company.service'
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AllocationStrategyType } from '../models/allocation-strategy-type.enum';
 import { Order } from '../models/order';
@@ -52,6 +54,15 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   existingCustomer = 'true';
   validCustomers: Customer[] = [];
 
+  anyLineTrackingColor = false;
+  anyLineTrackingStyle = false;
+  anyLineTrackingProductSize = false;
+  anyLineTrackingInventoryAttribute1 = false;
+  anyLineTrackingInventoryAttribute2 = false;
+  anyLineTrackingInventoryAttribute3 = false;
+  anyLineTrackingInventoryAttribute4 = false;
+  anyLineTrackingInventoryAttribute5 = false;
+  inventoryConfiguration?: InventoryConfiguration;
   // supplier is only used by outsourcing orders
   existingSupplier = 'true';
   validSuppliers: Supplier[] = [];
@@ -86,6 +97,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     private orderService: OrderService,
     private userService: UserService,
     private itemService: ItemService,
+    private inventoryConfigurationService: InventoryConfigurationService,
     private router: Router,
     private inventoryStatusService: InventoryStatusService, 
     private locationGroupService: LocationGroupService, 
@@ -97,6 +109,15 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     private supplierService: SupplierService) { 
 
     this.pageTitle = this.i18n.fanyi('menu.main.outbound.order-maintenance');
+
+    
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        }  
+      } 
+    });
   }
 
   ngOnInit(): void {
@@ -260,6 +281,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
           // we should only get one item by the name
           orderLine.item = itemRes[0];
           orderLine.itemId = itemRes[0].id;
+          this.recalculateTrackingInventoryAttributeFlags();
         }
       }
     )
@@ -290,7 +312,51 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   addExtraOrderLine(): void {
     this.currentOrder!.orderLines = [...this.currentOrder!.orderLines, this.getEmptyOrderLine()];
 
+  }
 
+  recalculateTrackingInventoryAttributeFlags() {
+    
+    this.anyLineTrackingColor = false;
+    this.anyLineTrackingStyle = false;
+    this.anyLineTrackingProductSize = false;
+    this.anyLineTrackingInventoryAttribute1 = false;
+    this.anyLineTrackingInventoryAttribute2 = false;
+    this.anyLineTrackingInventoryAttribute3 = false;
+    this.anyLineTrackingInventoryAttribute4 = false;
+    this.anyLineTrackingInventoryAttribute5 = false;
+
+    if (this.currentOrder && this.currentOrder.orderLines.length > 0) {
+      this.currentOrder.orderLines.filter(
+        orderLine => orderLine.item != null
+      ).forEach(
+        orderLine => {
+          if (orderLine.item?.trackingColorFlag) {
+            this.anyLineTrackingColor = true;
+          }
+          if (orderLine.item?.trackingStyleFlag) {
+            this.anyLineTrackingStyle = true;
+          }
+          if (orderLine.item?.trackingProductSizeFlag) {
+            this.anyLineTrackingProductSize = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute1Flag) {
+            this.anyLineTrackingInventoryAttribute1 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute2Flag) {
+            this.anyLineTrackingInventoryAttribute2 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute3Flag) {
+            this.anyLineTrackingInventoryAttribute3 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute4Flag) {
+            this.anyLineTrackingInventoryAttribute4 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute5Flag) {
+            this.anyLineTrackingInventoryAttribute5 = true;
+          } 
+        }
+      )
+    }
   }
 
   getEmptyOrderLine(): OrderLine {
@@ -535,6 +601,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     console.log(`after splice, we still have ${this.currentOrder!.orderLines.length} lines`);
 
     this.currentOrder!.orderLines = [...this.currentOrder!.orderLines];
+
+    this.recalculateTrackingInventoryAttributeFlags();
  
   }
 

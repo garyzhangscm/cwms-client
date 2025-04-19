@@ -65,7 +65,7 @@
                   {{ 'client' | i18n }}
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12">
-                  <nz-select [(ngModel)]="currentOrder.clientId" (ngModelChange)="clientChanged()">
+                  <nz-select [(ngModel)]="currentOrder.clientId" (ngModelChange)="clientChanged()" nzAllowClear>
                     <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
                   </nz-select>
                 </nz-form-control>
@@ -426,10 +426,11 @@
     <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
  
 
-        <!-- Table to show order line  -->
+        <!-- Table to show order line  [nzScroll]="{ x: '100vw' }" -->
 
-        <div class="search-result-list" *ngIf="currentOrder" > 
-            <nz-table  [nzScroll]="{ x: '100vw' }" nzShowPagination [nzData]="currentOrder!.orderLines"
+        <div class="search-result-list" *ngIf="currentOrder"  > 
+            <nz-table  nzShowPagination [nzData]="currentOrder!.orderLines"
+            [nzScroll]="{ x: '100vw' }"
                 [nzFooter]="orderLineTableFoot" #orderLineTable>
                 <thead>
                     <tr> 
@@ -451,43 +452,98 @@
                         <th>
                           {{ 'order.line.allocationStrategyType' | i18n }}
                         </th> 
+                        @if(anyLineTrackingColor) {                          
+                          <th>
+                            {{ 'color' | i18n }}
+                          </th>
+                        }
+                        @if(anyLineTrackingStyle) {                          
+                          <th>
+                            {{ 'style' | i18n }}
+                          </th>
+                        }
+                        @if(anyLineTrackingProductSize) {                          
+                          <th>
+                            {{ 'production-size' | i18n }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute1) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+                              ("inventoryAttribute1" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute1DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute2) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+                              ("inventoryAttribute2" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute2DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute3) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+                              ("inventoryAttribute3" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute3DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute4) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+                              ("inventoryAttribute4" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute4DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute5) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+                              ("inventoryAttribute5" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute5DisplayName
+                              }}
+                          </th>
+                        }
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let data of orderLineTable.data; let i = index"> 
+                    <tr *ngFor="let orderLine of orderLineTable.data; let i = index"> 
                         <td>
-                            <div *ngIf="data.id === undefined">
+                            <div *ngIf="orderLine.id === undefined">
                                 <div class="row">
-                                    <input   type="text" [(ngModel)]="data.number"/>
+                                    <input   type="text" [(ngModel)]="orderLine.number"/>
                                 </div>
                             </div>
-                            <span *ngIf="data.id">
-                                {{ data.number }}
+                            <span *ngIf="orderLine.id">
+                                {{ orderLine.number }}
                             </span>
                         </td>
                         <td>
-                            <div *ngIf="data.id === undefined">
+                            <div *ngIf="orderLine.id === undefined">
                                 <div class="row">
-                                    <input  type="text" [ngModel]="data.item!.name"
-                                        (blur)="itemChanged($event, data)"  />
+                                    <input  type="text" [ngModel]="orderLine.item!.name"
+                                        (blur)="itemChanged($event, orderLine)"  />
                                 </div>
                             </div> 
-                            <span *ngIf="data.id">
-                                {{ data.item?.name }}
+                            <span *ngIf="orderLine.id">
+                                {{ orderLine.item?.name }}
                             </span>
                         </td>
                         <td>
-                            {{ data.item?.description }}
+                            {{ orderLine.item?.description }}
                         </td>                        
                         <td>
                             <div class="row">
-                                <input  type="text" [(ngModel)]="data.expectedQuantity"  />
+                                <input  type="text" [(ngModel)]="orderLine.expectedQuantity"  />
                             </div>
                         </td> 
                         <td>
-                            <nz-select style="width: 150px" *ngIf="data.id === undefined"
-                                [(ngModel)]="data.inventoryStatus!.id" (ngModelChange)="inventoryStatusChanged(data)"
+                            <nz-select style="width: 150px" *ngIf="orderLine.id === undefined"
+                                [(ngModel)]="orderLine.inventoryStatus!.id" (ngModelChange)="inventoryStatusChanged(orderLine)"
                                 >
                                 <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
                                     [nzLabel]="inventoryStatus.description"
@@ -495,22 +551,97 @@
                                 </nz-option>
                             </nz-select>
 
-                            <span *ngIf="data.id">
-                                {{  data.inventoryStatus?.description}}
+                            <span *ngIf="orderLine.id">
+                                {{  orderLine.inventoryStatus?.description}}
                             </span>
                         </td>
                         <td>
-                            <nz-select style="width: 200px" *ngIf="data.id === undefined"
-                                [(ngModel)]="data.allocationStrategyType" (ngModelChange)="allocationStratetyChanged(data)" >
+                            <nz-select style="width: 175px"  
+                                [(ngModel)]="orderLine.allocationStrategyType" (ngModelChange)="allocationStratetyChanged(orderLine)" >
                                 <nz-option *ngFor="let allocationStrategyType of allocationStrategiesKeys"
                                     nzLabel="{{ 'ALLOCATION-STRATEGY-TYPE-' + allocationStrategyType | i18n }}"
                                     [nzValue]="allocationStrategyType">
                                 </nz-option>
                             </nz-select>
+<!--
 
-                            <span *ngIf="data.id">{{ 'ALLOCATION-STRATEGY-TYPE-' + data.allocationStrategyType | i18n }}
+
+                            <span *ngIf="orderLine.id">{{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n }}
                             </span>
+-->
                         </td>
+                        @if(anyLineTrackingColor) {  
+                          <td>                            
+                            @if(orderLine?.item?.trackingColorFlag) {                          
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.color"  />
+                              </div>
+                            } 
+                          </td>
+                        }
+                        @if(anyLineTrackingStyle) {
+                          <td> 
+                            @if(orderLine?.item?.trackingStyleFlag) {                          
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.style"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingProductSize) { 
+                          <td> 
+                          @if(orderLine?.item?.trackingProductSizeFlag) {                          
+                            <div class="row" >
+                              <input  type="text" [(ngModel)]="orderLine.productSize"  />
+                            </div>
+                          } 
+                        </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute1) { 
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute1Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute1"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute2) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute2Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute2"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute3) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute3Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute3"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute4) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute4Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute4"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute5) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute5Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute5"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
                         <td>
                             <button nz-button nzDanger nzShape="circle" (click)="removeOrderLine(i)">
                                 <i nz-icon nzType="close"></i>
