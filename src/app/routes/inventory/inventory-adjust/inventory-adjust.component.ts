@@ -681,6 +681,10 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     
   }
   itemPackageTypeChange( ): void {
+    this.setupNewItemUnitOfMeasure();
+    /**
+     * 
+     * 
     const newItemPackageTypeName: string = this.currentInventory.itemPackageType!.name!;
     const itemPackageTypes = this.currentInventory.item!.itemPackageTypes.filter(
       itemPackageType => itemPackageType.name === newItemPackageTypeName,
@@ -689,6 +693,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       this.currentInventory.itemPackageType = itemPackageTypes[0];
       this.setupNewItemUnitOfMeasure();
     }
+     * 
+     */
   }
   inventoryStatusChange( ): void {
     const newInventoryStatusName: string = this.currentInventory.inventoryStatus!.name;

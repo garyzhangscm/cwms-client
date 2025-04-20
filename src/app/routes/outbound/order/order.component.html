@@ -468,6 +468,11 @@
                         {{ 'billable-activity-type.add' | i18n }}
                       </a>
                     </li>  
+                    <li nz-menu-item *ngIf="!userPermissionMap.has('change-order-line-allocation-strategy-type') || userPermissionMap.get('change-order-line-allocation-strategy-type')">
+                      <a  (click)="openChangeOrderLinAllocationStrategyTypeModal( orderLine)">
+                        {{ 'change' | i18n }} {{ 'allocationStrategyType' | i18n}}
+                      </a>
+                    </li>  
                     
                     <li nz-menu-item >
                       <a  (click)="dryrunInventoryAllocation(orderLine)">
@@ -1606,3 +1611,36 @@
     i18n}}</button>
 
 </ng-template>
+
+
+<!-- Modal for change order line allocation strategy type -->
+<nz-modal [(nzVisible)]="isChangeOrderLineAllocationStrategyTypeModalVisible" 
+        nzTitle="{{ 'allocationStrategyType' | i18n }}" 
+        (nzOnOk)="changeOrderLineAllocationStrategyType()" nzClosable="true" 
+        (nzOnCancel)="closeChangeOrderLinAllocationStrategyTypeModal()">
+    <ng-container *nzModalContent> 
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="8">
+              {{ 'allocationStrategyType' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                @if(currentOrderLine  != null) {
+
+                  <nz-select style="width: 175px"  
+                    [(ngModel)]="currentOrderLine.allocationStrategyType" >
+                    @for (allocationStrategyType of allocationStrategiesKeys; track allocationStrategyType) {
+                      <nz-option  
+                          nzLabel="{{ 'ALLOCATION-STRATEGY-TYPE-' + allocationStrategyType | i18n }}"
+                          [nzValue]="allocationStrategyType">
+                      </nz-option>
+                    }       
+                  </nz-select> 
+                }  
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+    </ng-container>
+</nz-modal>

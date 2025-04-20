@@ -338,10 +338,10 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="15" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
-          <nz-select nz-input [(ngModel)]="currentInventory.itemPackageType!.name"
-            (ngModelChange)="itemPackageTypeChange()">
+          <nz-select nz-input [(ngModel)]="currentInventory.itemPackageType"
+            (ngModelChange)="itemPackageTypeChange()" nzAllowClear>
             <nz-option *ngFor="let availableItemPackageType of currentInventory.item?.itemPackageTypes"
-              [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.name!">
+              [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType">
             </nz-option>
           </nz-select>
         </nz-form-control>

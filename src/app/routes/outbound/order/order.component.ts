@@ -53,6 +53,7 @@ import { OrderDocumentService } from '../services/order-document.service';
 import { OrderLineService } from '../services/order-line.service';
 import { OrderService } from '../services/order.service';
 import { ParcelPackageService } from '../services/parcel-package.service';
+import { AllocationStrategyType } from '../models/allocation-strategy-type.enum';
 import { PickService } from '../services/pick.service';
 import { ShipmentLineService } from '../services/shipment-line.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
@@ -84,6 +85,11 @@ export class OutboundOrderComponent implements OnInit {
  
   orderReassignShippingStageLocationModal!: NzModalRef;
   orderReassignShippingStageLocationForm!: UntypedFormGroup;
+
+  isChangeOrderLineAllocationStrategyTypeModalVisible = false;
+  
+  allocationStrategiesKeys = Object.keys(AllocationStrategyType);
+  currentOrderLine?: OrderLine;
 
   orderStatuses = OrderStatus;
   orderStatusesKeys = Object.keys(this.orderStatuses);
@@ -130,6 +136,7 @@ export class OutboundOrderComponent implements OnInit {
     ['clear-cancellation-request', false], 
     ['walmart-shipping-carton-label', false], 
     ['change-order-completed-time', false], 
+    ['change-order-line-allocation-strategy-type', false]
   ]);
 
   private readonly fb = inject(FormBuilder);
@@ -1036,6 +1043,7 @@ export class OutboundOrderComponent implements OnInit {
   isOrderModifiable(order: Order): boolean {
     return order.status != OrderStatus.ALLOCATING  &&
            order.status != OrderStatus.CANCELLED  &&
+           order.status != OrderStatus.INPROCESS  &&
            order.status != OrderStatus.COMPLETE;
 
   }
@@ -2785,8 +2793,7 @@ export class OutboundOrderComponent implements OnInit {
   order: Order, 
   tplChangeOrderCompletedTimeModalTitle: TemplateRef<{}>,
   tplChangeOrderCompletedTimeModalContent: TemplateRef<{}>,
-  tplChangeOrderCompletedTimeModalFooter: TemplateRef<{}>,
-): void {
+  tplChangeOrderCompletedTimeModalFooter: TemplateRef<{}>): void {
   // make sure the item is ready for receiving  
   this.currentCompletedOrder = order;  
   this.changeOrderCompletedTimeInProcess = false;
@@ -2800,34 +2807,55 @@ export class OutboundOrderComponent implements OnInit {
     nzWidth: 1000,
   });
   
-}
-closeChangeOrderCompletedTimeModal(): void {
-  this.currentCompletedOrder = undefined;
-  this.changeOrderCompletedTimeInProcess = false;
-  this.changeOrderCompletedTimeModal.destroy(); 
-}
-confirmChangeOrderCompletedTime(): void {  
-  
-  this.changeOrderCompletedTimeInProcess = true;
-  if (this.currentCompletedOrder!.completeTime == null) {
-    this.messageService.error("please choose a complete time for this order " + this.currentCompletedOrder?.number);
   }
-  else {
+  closeChangeOrderCompletedTimeModal(): void {
+    this.currentCompletedOrder = undefined;
+    this.changeOrderCompletedTimeInProcess = false;
+    this.changeOrderCompletedTimeModal.destroy(); 
+  }
+  confirmChangeOrderCompletedTime(): void {  
+    
+    this.changeOrderCompletedTimeInProcess = true;
+    if (this.currentCompletedOrder!.completeTime == null) {
+      this.messageService.error("please choose a complete time for this order " + this.currentCompletedOrder?.number);
+    }
+    else {
 
-    this.orderService.changeCompletedTime(this.currentCompletedOrder!.id!, this.currentCompletedOrder!.completeTime!)
-    .subscribe({
-      next: () => {
-        this.messageService.success(this.i18n.fanyi("message.action.success"));
-        this.closeChangeOrderCompletedTimeModal();
-        this.search();
-      }
-      , 
-      error: () => {
-        
-          this.changeOrderCompletedTimeInProcess = false;
-      }
-    })
+      this.orderService.changeCompletedTime(this.currentCompletedOrder!.id!, this.currentCompletedOrder!.completeTime!)
+      .subscribe({
+        next: () => {
+          this.messageService.success(this.i18n.fanyi("message.action.success"));
+          this.closeChangeOrderCompletedTimeModal();
+          this.search();
+        }
+        , 
+        error: () => {
+          
+            this.changeOrderCompletedTimeInProcess = false;
+        }
+      })
+    }
   }
-}
+
+  openChangeOrderLinAllocationStrategyTypeModal(orderLine: OrderLine) {
+    this.currentOrderLine = orderLine;
+    this.isChangeOrderLineAllocationStrategyTypeModalVisible = true;
+  }
+  closeChangeOrderLinAllocationStrategyTypeModal() {
+    this.currentOrderLine = undefined;
+    this.isChangeOrderLineAllocationStrategyTypeModalVisible = false;
+  }
+  changeOrderLineAllocationStrategyType() {
+    this.isSpinning = true;
+    this.orderLineService.changeAllocationStrategyType(this.currentOrderLine!.id!, 
+      this.currentOrderLine!.allocationStrategyType!).subscribe({
+        next: () => {
+          this.isSpinning = false;
+          this.closeChangeOrderLinAllocationStrategyTypeModal();
+        },
+        error: () => this.isSpinning = false
+      })
+
+  }
 
 }
