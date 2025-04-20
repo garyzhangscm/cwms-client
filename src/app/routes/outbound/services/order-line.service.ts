@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { AllocationStrategyType } from '../models/allocation-strategy-type.enum';
 import { OrderLine } from '../models/order-line';
 import { OrderLineBillableActivity } from '../models/order-line-billable-activity';
 
@@ -69,5 +70,18 @@ export class OrderLineService {
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
 
     return this.http.delete(url, params).pipe(map(res => res.data));
+  }
+
+  
+  changeAllocationStrategyType(orderLineId: number, allocationStrategyType : AllocationStrategyType): 
+      Observable<OrderLine> {
+
+    const url = `outbound/orders/lines/${orderLineId}/change-allocation-strategy-type`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    params = params.append('allocationStrategyType', allocationStrategyType);  
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
 }
