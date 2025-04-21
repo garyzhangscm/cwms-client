@@ -448,6 +448,7 @@ export class LocalCacheService {
     
       // clear the cache key
       this.removeExpiredCache();
+      // console.log(`localStorage.length: ${localStorage.length}`);
 
       // Set default values for optionals
       options.expirationMins = options.expirationMins || 0
@@ -537,11 +538,33 @@ export class LocalCacheService {
            for(var index = 0; index < recordToBeRemovedCount; index++) {
                 localStorage.removeItem(remainingLocalStorageRecords[index].key);
            }
+           remainingLocalStorageRecords = remainingLocalStorageRecords.slice(index + 1);
+        }
+        let size = this.getTotalLocalCacheSizeInKB();
+        // console.log(`current cache size ${size}`);
+        // max localstorage size is 5 MB
+        while (size > 4.5 * 1024) {
+          for(var index = 0; index < 5; index++) {
+              localStorage.removeItem(remainingLocalStorageRecords[index].key);
+          }
+          remainingLocalStorageRecords = remainingLocalStorageRecords.slice(index + 1);
+          size = this.getTotalLocalCacheSizeInKB();
+          // console.log(`current cache size ${size}`);
         }
         this.cleanInProcess = false;
     }, 500);
 
   }
+
+  getTotalLocalCacheSizeInKB() : number {
+    var values = "";
+    for(var key in localStorage) {
+      values += localStorage[key]
+    }
+    // return size in KB
+    return values ?  ((values.length*16)/(8*1024)) : 0;
+  }
+
   
 }
 export class LocalStorageSaveOptions {
