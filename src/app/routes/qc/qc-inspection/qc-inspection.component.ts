@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -35,8 +35,15 @@ export class QcQcInspectionComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   validLocationGroups: LocationGroup[] = [];
   // Form related data and functions
-  searchForm!: UntypedFormGroup;
-
+  
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    number: this.fb.control<string | undefined>('', { nonNullable: true, validators: []}),
+    lpn: this.fb.control<string | undefined>('',{ nonNullable: true, validators:  []}),
+    qcInspectionRequestType: this.fb.control(undefined, { nonNullable: true, validators: []}),
+    qcInspectionResult: this.fb.control(undefined, { nonNullable: true, validators: []}),
+  });
   searching = false;
   isSpinning = false;
   searchResult = '';
@@ -44,7 +51,6 @@ export class QcQcInspectionComponent implements OnInit {
 
   displayOnly = false;
   constructor(  
-    private fb: UntypedFormBuilder, 
     private messageService: NzMessageService, 
     private userService: UserService,
     private router: Router, 
@@ -70,27 +76,17 @@ export class QcQcInspectionComponent implements OnInit {
   qcInspectionResultsKeys = Object.keys(this.qcInspectionResults);
     
 
+   
+  
   ngOnInit(): void { 
-
-    this.searchForm = this.fb.group({ 
-     // locationGroups: [null], 
-     // locationName: [null], 
-      number: [null], 
-      lpn: [null], 
-      // itemName: [null], 
-      // qcInspectionRequestType: [QcInspectionRequestType.BY_INVENTORY],
-      // qcInspectionResult: [QCInspectionResult.PENDING]
-      qcInspectionRequestType: [null],
-      qcInspectionResult: [null]
-    }); 
 
     
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number'] || params['type'] || params['result']) { 
 
-        this.searchForm!.value.number.setValue(params['number'] ? params['number'] : "");
-        this.searchForm!.value.qcInspectionRequestType.setValue(params['type'] ? params['type'] : "");
-        this.searchForm!.value.qcInspectionResult.setValue(params['result'] ? params['result']  : "");
+        this.searchForm!.controls.number.setValue(params['number'] ? params['number'] : "");
+        this.searchForm!.controls.qcInspectionRequestType.setValue(params['type'] ? params['type'] : "");
+        this.searchForm!.controls.qcInspectionResult.setValue(params['result'] ? params['result']  : "");
         this.search();
       } 
     });
@@ -241,33 +237,7 @@ export class QcQcInspectionComponent implements OnInit {
 
     }
   }
-
-  processItemQueryResult(selectedItemName: any): void {
-    console.log(`start to query with location name ${selectedItemName}`);
-    this.itemService.getItems(selectedItemName).subscribe(
-      {
-        next: (itemsRes) => {
-          if (itemsRes.length === 1) { 
-            this.searchForm.value.itemName.setValue(itemsRes[0].name); 
-          }
-        }
-      }
-    )
-    
-  } 
-  processLocationQueryResult(selectedLocationName: any): void {
-    console.log(`start to query with location name ${selectedLocationName}`);
-    this.locationService.getLocations(undefined, undefined, selectedLocationName).subscribe(
-      {
-        next: (locationRes) => {
-          if (locationRes.length === 1) {
-            this.searchForm.value.locationName.setValue(locationRes[0].name); 
-          }
-        }
-      }
-    )
-    
-  } 
+  
   processQCInspection(qcInspectionRequest: QcInspectionRequest) {
     // console.log(`start to process qc inspection for ${qcInspectionRequest.number}`);
     switch (qcInspectionRequest.type) {

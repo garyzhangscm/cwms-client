@@ -5,7 +5,7 @@ export interface WebPageTableColumnConfiguration {
     id?: number;
     companyId: number;
 
-    user?: User;
+    // user?: User;
     webPageName: string;
     tableName: string;
     columnName: string;
