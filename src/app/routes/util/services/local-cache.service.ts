@@ -67,7 +67,7 @@ export class LocalCacheService {
   // by default, cache 30 minutes
   defaultCacheTime = 15;
   // at max we will only allow to have 200 items in the local storage
-  maxLocalStorageItemCount = 200;
+  maxLocalStorageItemCount = 150;
 
   constructor(
     private http: _HttpClient, 
@@ -500,7 +500,9 @@ export class LocalCacheService {
                   key.startsWith("inventory-status-") ||
                   key.startsWith("item-") ||
                   key.startsWith("pickwork-") ||
-                  key.startsWith("unitOfMeasure-")
+                  key.startsWith("unitOfMeasure-")||
+                  key.startsWith("web-page-table-column-config-")||
+                  key.startsWith("common.unit-of-measure-")
         );
 
         
@@ -541,7 +543,7 @@ export class LocalCacheService {
            remainingLocalStorageRecords = remainingLocalStorageRecords.slice(index + 1);
         }
         let size = this.getTotalLocalCacheSizeInKB();
-        // console.log(`current cache size ${size}`);
+        console.log(`current cache size ${size}`);
         // max localstorage size is 5 MB
         while (size > 4.5 * 1024) {
           for(var index = 0; index < 5; index++) {

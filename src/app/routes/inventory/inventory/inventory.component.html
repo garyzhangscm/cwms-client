@@ -174,13 +174,13 @@
   <div class="search-result-list">
     
     <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;text-align: left">
-      
-  <!--
-      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()">
+       
+      <app-util-table-column-selection [tableColumnsConfiguration]="tableConfigurations['inventoryTable']" 
+          (tableColumnConfigurationChanged)="inventoryTableColumnConfigurationChanged($event)">
 
       </app-util-table-column-selection>
-      <nz-divider nzType="vertical"></nz-divider>
-    -->
+      <nz-divider nzType="vertical"></nz-divider> 
+
       <button nz-button (click)="exportResult()">{{'export' | i18n}}</button> 
       <nz-divider nzType="vertical"></nz-divider>
       <span style="padding-left: 15px; padding-right:15px"> {{'inventory-display-options' | i18n}}:</span> 
@@ -194,7 +194,7 @@
     <!--[data]="listOfDisplayInventories" -->
     <st #inventoryTable 
     [data]="listOfDisplayInventories"  
-    [columns]="inventoryTablecolumns" [footer]="tableFoot" [scroll]="{ x: '2650px' }"
+    [columns]="inventoryTableColumns" [footer]="tableFoot" [scroll]="{ x: '2650px' }"
       [body]="bodyTpl" [page]="invetoryTablePagination"
       
       (change)="inventoryTableChanged($event)"
@@ -469,23 +469,36 @@
           }
       </ng-template>
       <!--  Statistics  -->
+      
       <ng-template #bodyTpl let-s>
         
         @if(inventoryTable.count > 0) {
         
           <ng-container >
             <tr>
+
+              @for(inventoryTableColumn of inventoryTableColumns ; track inventoryTableColumn) {
+                @if (inventoryTableColumn.key == "quantity") {
+                  {{ s.quantity?.text }}
+                }
+                @else {
+                  
+                  <td></td>
+                }
+              }
+              <!--
+
               <td></td>
               <td>{{'summary' | i18n}}</td> 
-              
               @if(threePartyLogisticsFlag) {
               
                 <td ></td> 
               }
               <td></td> 
               <td></td>  
-              <td></td>  
-              <td>{{ s.quantitySum.text }}</td> 
+              <td>{{ s.quantity?.text }}</td>  
+              <td></td> 
+              -->
             </tr> 
           </ng-container>
         }

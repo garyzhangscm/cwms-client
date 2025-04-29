@@ -5,7 +5,8 @@ import { FormBuilder, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup }
 // import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn, STData, STModule, STChange } from '@delon/abc/st';
+import { STComponent, STColumn, STData, STChange } from '@delon/abc/st';
+import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 import { XlsxService } from '@delon/abc/xlsx';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
@@ -40,6 +41,8 @@ import { InventoryService } from '../services/inventory.service';
 import { ItemFamilyService } from '../services/item-family.service';   
 import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WebPageTableColumnConfigurationService } from '../../util/services/web-page-table-column-configuration.service';
 
 @Component({
     selector: 'app-inventory-inventory',
@@ -49,6 +52,10 @@ import * as XLSX from 'xlsx';
 })
 export class InventoryInventoryComponent implements OnInit { 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  pageName = "inventory";
+  tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
+
+  
   inventoryTablePI = 10;
   inventoryTablePS = 1;
 
@@ -63,7 +70,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   inventoryTableRecordPerPages: number[] = [5, 10, 25, 50, 100]
 
-  inventoryTablecolumns: STColumn[] = [];
+  inventoryTableColumns: STColumn[] = [];
   
   customColumns: { label: string, value: string; checked: boolean; }[] = [];
 
@@ -71,14 +78,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   isChoose(key: string): boolean {
     return !!this.customColumns.find(w => w.value === key && w.checked);
-  }
-
-  columnChoosingChanged(): void{ 
-    if (this.inventoryTable !== undefined && this.inventoryTable.columns !== undefined) {
-        this.inventoryTable!.resetColumns({ emitReload: true });
-
-    }
-  }
+  } 
 
   // Select control for clients and item families 
   availableClients: Client[] = [];
@@ -188,7 +188,9 @@ export class InventoryInventoryComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private workOrderService: WorkOrderService,
     private xlsx: XlsxService,
+    private companyService: CompanyService,
     private inventoryConfigurationService: InventoryConfigurationService,
+    private webPageTableColumnConfigurationService: WebPageTableColumnConfigurationService,
   ) { 
     userService.isCurrentPageDisplayOnly("/inventory/inventory").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -205,9 +207,9 @@ export class InventoryInventoryComponent implements OnInit {
         if (inventoryConfigurationRes) { 
           this.inventoryConfiguration = inventoryConfigurationRes;
         } 
-        this.setupInventoryTableColumns();
+        this.initWebPageTableColumnConfiguration();
       } , 
-      error: () =>  this.setupInventoryTableColumns()
+      error: () =>  this.initWebPageTableColumnConfiguration()
     });
 
     /**
@@ -220,91 +222,201 @@ export class InventoryInventoryComponent implements OnInit {
     })
      */
     
+    
   }
-  setupInventoryTableColumns() {
-    this.inventoryTablecolumns = [
-      { title: '', index: 'number', type: 'checkbox' },
-      { title: this.i18n.fanyi("client"),  index: 'client.name' ,  width: 100,
-          sort: {
-            compare: (a, b) => a.client.name.localeCompare(b.client.name)
-          },
-          filter: {
-            menus:  [] ,
-            fn: (filter, record) => record.client.name ===  filter.value,
-            multiple: true
-          },
-          iif: () => this.isChoose('client')  && this.threePartyLogisticsFlag }, 
-      { title: this.i18n.fanyi("lpn"),  index: 'lpn' , width: 150,
-          sort: {
-            compare: (a, b) => a.lpn.localeCompare(b.lpn)
-          },
-          filter: {
-            menus:  [] ,
-            fn: (filter, record) => record.lpn ===  filter.value,
-            multiple: true
-          },
-          iif: () => this.isChoose('lpn')  }, 
-      { title: this.i18n.fanyi("item"),  render: 'itemColumn',width: 150,
-            sort: {
-              compare: (a, b) => a.item.name.localeCompare(b.item.name)
-            },
-            filter: {
-              menus:  [] ,
-              fn: (filter, record) => record.item.name ===  filter.value,
-              multiple: true
-            },
-          iif: () => this.isChoose('item')  }, 
-      { title: this.i18n.fanyi("item.package-type"),  render: 'itemPackageTypeColumn',
-          iif: () => this.isChoose('itemPackageType')  }, 
-      { title: this.i18n.fanyi("location"),  render: 'locationColumn' ,
-          sort: {
-            compare: (a, b) => a.location.name.localeCompare(b.location.name)
-          },
-          filter: {
-            menus:  [] ,
-            fn: (filter, record) => record.location.name ===  filter.value,
-            multiple: true
-          },
-          iif: () => this.isChoose('location')  }, 
-      { title: this.i18n.fanyi("quantity"),  render: 'quantityColumn' , 
-          sort: {
-            compare: (a, b) => a.quantity - b.quantity
-          },
-          index: 'quantity',
-          iif: () => this.isChoose('quantity') , statistical: 'sum', key: 'quantitySum'}, 
-      { title: this.i18n.fanyi("inventory.status"),  render: 'inventoryStatusColumn' ,
-            sort: {
-              compare: (a, b) => a.inventoryStatus.name.localeCompare(b.inventoryStatus.name)
-            },
-            filter: {
-              menus:  [] ,
-              fn: (filter, record) => record.inventoryStatus.name ===  filter.value,
-              multiple: true
-            },
-          iif: () => this.isChoose('inventoryStatus')  }, 
-      { title: this.i18n.fanyi("fifoDate"),  render: 'fifoDateColumn' ,
-          sort: {
-            compare: (a, b) => a.fifoDate.localeCompare(b.fifoDate)
-          },
-          iif: () => this.isChoose('fifoDate')  }, 
-      { title: this.i18n.fanyi("inWarehouseDatetime"),  render: 'inWarehouseDatetimeColumn' ,
-          sort: {
-            compare: (a, b) => a.inWarehouseDatetime.localeCompare(b.inWarehouseDatetime)
-          },
-          iif: () => this.isChoose('inWarehouseDatetime') , width: 200 }, 
-          
-      { title: this.i18n.fanyi("receipt"),  render: 'receiptColumn' ,
-      sort: {
-        compare: (a, b) => a.receipt.name.localeCompare(b.receipt.name)
-      },
-      filter: {
-        menus:  [] ,
-        fn: (filter, record) => record.receipt.name ===  filter.value,
-        multiple: true
-      },
-      iif: () => this.isChoose('receipt')  }, 
+  
+  initWebPageTableColumnConfiguration() {
+    this.initInventoryTableColumnConfiguration();
+  }
+  
+  initInventoryTableColumnConfiguration() {
+    
+    console.log(`start to get web page table column configuration for ${this.pageName} inventory table`)
+    this.localCacheService.getWebPageTableColumnConfiguration(this.pageName, "inventoryTable")
+    .subscribe({
+      next: (webPageTableColumnConfigurationRes) => {
+        
+        if (webPageTableColumnConfigurationRes && webPageTableColumnConfigurationRes.length > 0){
 
-      { title: this.i18n.fanyi("color"),  index: 'color' ,
+          this.tableConfigurations["inventoryTable"] = webPageTableColumnConfigurationRes;
+          this.refreshInventoryTableColumns();
+
+        }
+        else {
+          this.tableConfigurations["inventoryTable"] = this.getDefaultInventoryTableColumnsConfiguration();
+          this.refreshInventoryTableColumns();
+        }
+      }, 
+      error: () => {
+        
+        this.tableConfigurations["inventoryTable"] = this.getDefaultInventoryTableColumnsConfiguration();
+        this.refreshInventoryTableColumns();
+      }
+    })
+  }
+
+  refreshInventoryTableColumns() {
+    
+      if (this.tableConfigurations["inventoryTable"] == null) {
+        return;
+      }
+      
+      this.inventoryTableColumns = [
+        { title: '', index: 'number', type: 'checkbox' },
+      ];
+
+      // loop through the table column configuration and add
+      // the column if the display flag is checked, and by sequence
+      let inventoryTableConfiguration = this.tableConfigurations["inventoryTable"].filter(
+        column => column.displayFlag
+      );
+
+      inventoryTableConfiguration.sort((a, b) => a.columnSequence - b.columnSequence);
+
+      let defaultInventoryTableColumns = this.getDefaultInventoryTableConlums();
+
+      inventoryTableConfiguration.forEach(
+        columnConfig => {
+          defaultInventoryTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
+          defaultInventoryTableColumns[columnConfig.columnName].width = columnConfig.columnWidth;
+
+          this.inventoryTableColumns = [...this.inventoryTableColumns, 
+            defaultInventoryTableColumns[columnConfig.columnName]
+          ]
+        }
+      )
+
+      this.inventoryTableColumns = [...this.inventoryTableColumns,  
+        {
+          title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
+          render: 'actionColumn',
+          iif: () => !this.displayOnly
+        }, 
+      ];
+
+      // console.log(`wave table columns: ${this.waveTableColumns.length}`);
+      // this.waveTableColumns.forEach(
+      //   column =>  console.log(`${JSON.stringify(column)}`) 
+      // )
+
+      if (this.inventoryTable != null) {
+
+        this.inventoryTable.resetColumns({ emitReload: true });
+      }
+/**
+ * 
+      this.waveTable.resetColumns();
+      this.waveTable.reset();
+      this.waveTable.reload();
+ * 
+ */
+      
+
+
+  }
+
+
+  getDefaultInventoryTableConlums(): {[key: string]: STColumn } {
+    return {
+
+      "client" : { key: "client", 
+        title: this.i18n.fanyi("client"), index: 'client.name' , width: 100, 
+        sort: {
+          compare: (a, b) => a.client.name.localeCompare(b.client.name)
+        },
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.client.name === filter.value,
+          multiple: true
+        }
+      },   
+      "lpn" : {  key: "lpn", 
+        title: this.i18n.fanyi("lpn"), index: 'lpn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.lpn.localeCompare(b.lpn)
+        }, 
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.lpn === filter.value,
+          multiple: true
+        }
+      },  
+      "item" : {  key: "item", 
+        title: this.i18n.fanyi("item"), render: 'itemColumn', width: 150,  
+        sort: {
+          compare: (a, b) => a.item.name.localeCompare(b.item.name)
+        },
+        filter: {
+          menus:  [ 
+          ] ,
+          fn: (filter, record) => record.item.name === filter.value,
+          multiple: true
+        }
+      },   
+      "itemPackageType" : {   key: "itemPackageType", 
+        title: this.i18n.fanyi("item.package-type"), render: 'itemPackageTypeColumn', width: 150, 
+        sort: {
+          compare: (a, b) => a.itemPackageType.name.localeCompare(b.itemPackageType.name)
+        },
+      },  
+      "location" : {   key: "location", 
+        title: this.i18n.fanyi("location"), render: 'locationColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.location.name.localeCompare(b.location.name)
+        },
+        filter: {
+          menus:  [ 
+          ] ,
+          fn: (filter, record) => record.location.name === filter.value,
+          multiple: true
+        }
+      },  
+      "quantity" : {   key: "quantity", 
+        title: this.i18n.fanyi("quantity"), render: 'quantityColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.quantity - b.quantity
+        },
+        index: 'quantity',
+        statistical: 'sum', 
+      },  
+      // { title: this.i18n.fanyi("assign"), render: 'assignColumn'  },  
+      // { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
+      "inventoryStatus" : {   key: "inventoryStatus", 
+        title: this.i18n.fanyi("inventory.status"),  render: 'inventoryStatusColumn' ,width: 150 , 
+        sort: {
+          compare: (a, b) => a.inventoryStatus.name.localeCompare(b.inventoryStatus.name)
+        },
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.inventoryStatus.name ===  filter.value,
+          multiple: true
+        },
+      },  
+      "fifoDate" : {    key: "fifoDate", 
+        title: this.i18n.fanyi("fifoDate"), render: 'fifoDateColumn' ,width: 150 , 
+        sort: {
+          compare: (a, b) => a.fifoDate.localeCompare(b.fifoDate)
+        },
+      },  
+      "inWarehouseDatetime" : {    key: "clieinWarehouseDatetiment", 
+        title: this.i18n.fanyi("inWarehouseDatetime"), render: 'inWarehouseDatetimeColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.inWarehouseDatetime.localeCompare(b.inWarehouseDatetime)
+        },
+      },  
+      "receipt" : {    key: "receipt", 
+        title: this.i18n.fanyi("receipt"), render: 'receiptColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.receipt.name.localeCompare(b.receipt.name)
+        },
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.receipt.name ===  filter.value,
+          multiple: true
+        },
+      },  
+      "color": {    key: "color", 
+        title: this.i18n.fanyi("color"),  index: 'color' ,  width: 150, 
           sort: {
             compare: (a, b) => a.color.localeCompare(b.color)
           },
@@ -313,8 +425,9 @@ export class InventoryInventoryComponent implements OnInit {
             fn: (filter, record) => record.color ===  filter.value,
             multiple: true
           },
-          iif: () => this.isChoose('color')  }, 
-      { title: this.i18n.fanyi("productSize"),  index: 'productSize' ,
+      }, 
+      "productSize": {    key: "productSize", 
+        title: this.i18n.fanyi("productSize"),  index: 'productSize' ,  width: 150, 
           sort: {
             compare: (a, b) => a.productSize.localeCompare(b.productSize)
           },
@@ -323,8 +436,9 @@ export class InventoryInventoryComponent implements OnInit {
             fn: (filter, record) => record.productSize ===  filter.value,
             multiple: true
           },
-          iif: () => this.isChoose('productSize')  }, 
-      { title: this.i18n.fanyi("style"),  index: 'style' ,
+      }, 
+      "style":    {    key: "style", 
+        title: this.i18n.fanyi("style"),  index: 'style' , width: 150, 
           sort: {
             compare: (a, b) => a.style.localeCompare(b.style)
           },
@@ -333,10 +447,11 @@ export class InventoryInventoryComponent implements OnInit {
             fn: (filter, record) => record.style ===  filter.value,
             multiple: true
           },
-          iif: () => this.isChoose('style')  },  
-      { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+      },  
+      "attribute1":    {    key: "attribute1", 
+        title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
             this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
-            index: 'attribute1' ,
+            index: 'attribute1' ,  width: 150, 
             sort: {
               compare: (a, b) => a.attribute1.localeCompare(b.attribute1)
             },
@@ -344,11 +459,12 @@ export class InventoryInventoryComponent implements OnInit {
               menus:  [] ,
               fn: (filter, record) => record.attribute1 ===  filter.value,
               multiple: true
-            },
-          iif: () => this.isChoose('attribute1') && this.inventoryConfiguration?.inventoryAttribute1Enabled == true,  }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+            }, 
+      }, 
+      "attribute2": {    key: "attribute2", 
+        title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
                this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,    
-               index: 'attribute2' ,
+               index: 'attribute2' , width: 150, 
                sort: {
                  compare: (a, b) => a.attribute2.localeCompare(b.attribute2)
                },
@@ -356,11 +472,12 @@ export class InventoryInventoryComponent implements OnInit {
                  menus:  [] ,
                  fn: (filter, record) => record.attribute2 ===  filter.value,
                  multiple: true
-               },
-          iif: () => this.isChoose('attribute2') && this.inventoryConfiguration?.inventoryAttribute2Enabled == true,  }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+               }, 
+      }, 
+      "attribute3": {    key: "attribute3", 
+        title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
               this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,    
-          index: 'attribute3' ,
+          index: '' , width: 150, 
           sort: {
             compare: (a, b) => a.attribute3.localeCompare(b.attribute3)
           },
@@ -368,11 +485,12 @@ export class InventoryInventoryComponent implements OnInit {
             menus:  [] ,
             fn: (filter, record) => record.attribute3 ===  filter.value,
             multiple: true
-          },
-          iif: () => this.isChoose('attribute3') && this.inventoryConfiguration?.inventoryAttribute3Enabled == true,  }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+          }, 
+      }, 
+      "attribute4":{    key: "attribute4", 
+        title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
               this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
-          index: 'attribute4' ,
+          index: 'attribute4' , width: 150, 
           sort: {
             compare: (a, b) => a.attribute4.localeCompare(b.attribute4)
           },
@@ -380,11 +498,12 @@ export class InventoryInventoryComponent implements OnInit {
             menus:  [] ,
             fn: (filter, record) => record.attribute4 ===  filter.value,
             multiple: true
-          },
-          iif: () => this.isChoose('attribute4') && this.inventoryConfiguration?.inventoryAttribute4Enabled == true,  },
-      { title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+          }, 
+      },
+      "attribute5" : {    key: "attribute5", 
+        title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
               this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
-              index: 'attribute5' ,
+              index: 'attribute5' , width: 150, 
               sort: {
                 compare: (a, b) => a.attribute5.localeCompare(b.attribute5)
               },
@@ -393,57 +512,245 @@ export class InventoryInventoryComponent implements OnInit {
                 fn: (filter, record) => record.attribute5 ===  filter.value,
                 multiple: true
               },
-          iif: () => this.isChoose('attribute5') && this.inventoryConfiguration?.inventoryAttribute5Enabled == true,  },
-      { title: this.i18n.fanyi("inventory.locked-for-adjustment"),  render: 'lockedForAdjustColumn' ,
-          iif: () => this.isChoose('lockedForAdjust')  }, 
-      { title: this.i18n.fanyi("inventory.pick-id"),  render: 'pickColumn' ,
-          iif: () => this.isChoose('pick')  },   
-      { title: this.i18n.fanyi("inventory.allocated-by-pick-id"),  render: 'allocateByPickColumn' ,
-          iif: () => this.isChoose('allocateByPick')  },   
-      { title: this.i18n.fanyi("movement-path"),  render: 'movementPathColumn' ,
-          iif: () => this.isChoose('movementPath')  },   
-      { title: this.i18n.fanyi("action"),  render: 'actionColumn' , 
-        iif: () => (!this.displayOnly) && (this.inventoryDisplayOption == null || this.inventoryDisplayOption == InventoryDisplayOption.NONE),
-        width: 350,
-        fixed: 'right',},  
-    ]; 
-    
-    this.customColumns = [
+      },
+      "lockedForAdjust" :{    key: "lockedForAdjust", 
+        title: this.i18n.fanyi("inventory.locked-for-adjustment"),  
+        render: 'lockedForAdjustColumn' , width: 150, 
+      }, 
+      "pick": {    key: "pick", 
+        title: this.i18n.fanyi("inventory.pick-id"),  render: 'pickColumn' ,  width: 150, },   
+      "allocateByPick" : {    key: "allocateByPick", 
+        title: this.i18n.fanyi("inventory.allocated-by-pick-id"),  
+          render: 'allocateByPickColumn' ,  width: 150, },   
+      "movementPath" : {    key: "movementPath", 
+        title: this.i18n.fanyi("movement-path"),  render: 'movementPathColumn' ,  width: 150, },   
+     
+    };
   
-      { label: this.i18n.fanyi("client"), value: 'client', checked: true },
-      { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
-      { label: this.i18n.fanyi("item"), value: 'item', checked: true },
-      { label: this.i18n.fanyi("item.package-type"), value: 'itemPackageType', checked: true },
-      { label: this.i18n.fanyi("location"), value: 'location', checked: true },
-      { label: this.i18n.fanyi("quantity"), value: 'quantity', checked: true },
-      { label: this.i18n.fanyi("inventory.status"), value: 'inventoryStatus', checked: true },
-      { label: this.i18n.fanyi("fifoDate"), value: 'fifoDate', checked: true }, 
-      { label: this.i18n.fanyi("inWarehouseDatetime"), value: 'inWarehouseDatetime', checked: true }, 
-      { label: this.i18n.fanyi("receipt"), value: 'receipt', checked: true }, 
-      { label: this.i18n.fanyi("color"), value: 'color', checked: true }, 
-      { label: this.i18n.fanyi("productSize"), value: 'productSize', checked: true }, 
-      { label: this.i18n.fanyi("style"), value: 'style', checked: true }, 
-      { label: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,
-         value: 'attribute1', checked: true }, 
-      { label: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
-          this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,
-          value: 'attribute2', checked: true }, 
-      { label: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
-          this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,
-          value: 'attribute3', checked: true }, 
-      { label: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,
-            value: 'attribute4', checked: true }, 
-      { label: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
-          this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,
-          value: 'attribute5', checked: true }, 
-      { label: this.i18n.fanyi("inventory.locked-for-adjustment"), value: 'lockedForAdjust', checked: true }, 
-      { label: this.i18n.fanyi("inventory.pick-id"), value: 'pick', checked: true }, 
-      { label: this.i18n.fanyi("inventory.allocated-by-pick-id"), value: 'allocateByPick', checked: true }, 
-      { label: this.i18n.fanyi("movement-path"), value: 'movementPath', checked: true }, 
-    ];
   }
+  
+  getDefaultInventoryTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
+    
+    return [
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "client",
+        columnDisplayText: this.i18n.fanyi("client.name"),
+        columnWidth: 150,
+        columnSequence: 1, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "lpn",
+        columnDisplayText: this.i18n.fanyi("lpn"),
+        columnWidth: 150,
+        columnSequence: 2, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "itemPackageType",
+        columnDisplayText: this.i18n.fanyi("item.package-type"),
+        columnWidth: 150,
+        columnSequence: 3, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "location",
+        columnDisplayText: this.i18n.fanyi("location"),
+        columnWidth: 150,
+        columnSequence: 4, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "quantity",
+        columnDisplayText: this.i18n.fanyi("quantity"),
+        columnWidth: 150,
+        columnSequence: 5, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "inventoryStatus",
+        columnDisplayText: this.i18n.fanyi("inventory.status"),
+        columnWidth: 150,
+        columnSequence: 6, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "fifoDate",
+        columnDisplayText: this.i18n.fanyi("fifoDate"),
+        columnWidth: 150,
+        columnSequence: 7, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "inWarehouseDatetime",
+        columnDisplayText: this.i18n.fanyi("inWarehouseDatetime"),
+        columnWidth: 150,
+        columnSequence: 8, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "receipt",
+        columnDisplayText: this.i18n.fanyi("receipt"),
+        columnWidth: 150,
+        columnSequence: 9, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "color",
+        columnDisplayText: this.i18n.fanyi("color"),
+        columnWidth: 150,
+        columnSequence: 10, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "productSize",
+        columnDisplayText: this.i18n.fanyi("productSize"),
+        columnWidth: 150,
+        columnSequence: 11, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "style",
+        columnDisplayText: this.i18n.fanyi("style"),
+        columnWidth: 150,
+        columnSequence: 12, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute1",
+        columnDisplayText: this.i18n.fanyi("attribute1"),
+        columnWidth: 150,
+        columnSequence: 13, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute2",
+        columnDisplayText: this.i18n.fanyi("attribute2"),
+        columnWidth: 150,
+        columnSequence: 14, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute3",
+        columnDisplayText: this.i18n.fanyi("attribute3"),
+        columnWidth: 150,
+        columnSequence: 15, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute4",
+        columnDisplayText: this.i18n.fanyi("attribute4"),
+        columnWidth: 150,
+        columnSequence: 16, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute5",
+        columnDisplayText: this.i18n.fanyi("attribute5"),
+        columnWidth: 150,
+        columnSequence: 17, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "lockedForAdjust",
+        columnDisplayText: this.i18n.fanyi("inventory.locked-for-adjustment"),
+        columnWidth: 150,
+        columnSequence: 18, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "pick",
+        columnDisplayText: this.i18n.fanyi("inventory.pick-id"),
+        columnWidth: 150,
+        columnSequence: 19, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "allocateByPick",
+        columnDisplayText: this.i18n.fanyi("inventory.allocated-by-pick-id"),
+        columnWidth: 150,
+        columnSequence: 20, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "movementPath",
+        columnDisplayText: this.i18n.fanyi("movement-path"),
+        columnWidth: 150,
+        columnSequence: 21, 
+        displayFlag: true
+      }, 
+    ];
+  } 
+
+  inventoryTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]){
+    
+      this.tableConfigurations["inventoryTable"] = tableColumnConfigurationList;
+      this.refreshInventoryTableColumns();
+  }
+  
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
     this.initSearchForm();
@@ -942,6 +1249,7 @@ export class InventoryInventoryComponent implements OnInit {
       .catch(reason => console.log(reason)).finally(
         () =>  this.loadingDetailsRequest-- 
       );
+      console.log(`set inventory ${inventory.lpn}'s receipt to ${receipt?.number}`);
       if (receipt != null) {
         inventory.receipt = receipt;
       }
@@ -1752,7 +2060,39 @@ export class InventoryInventoryComponent implements OnInit {
       }
 
     }
+    if (event.type === 'resize') {
+      console.log(`resize: \n ${JSON.stringify(event.resize)}`);
+      console.log(`${event.resize?.key} is resided to ${event.resize?.width}`);
+      this.saveInventoryTableColumnSize(event.resize?.key, event.resize?.width);
+    }
 
+  }
+
+  saveInventoryTableColumnSize(key?: string, width?: string | number) {
+      if (key == null || width == null) {
+
+        return;
+      }
+
+      const newWidth = parseFloat(`${width}`);
+
+      this.tableConfigurations["inventoryTable"].filter(
+        column => column.columnName == key
+      ).forEach(
+        column => { 
+          console.log(`column ${column.columnName}'s width is changed to ${newWidth}`);
+          column.columnWidth = newWidth
+        }
+      );
+
+      this.webPageTableColumnConfigurationService.changeWebPageTableColumnConfigurations(
+        this.tableConfigurations["inventoryTable"]
+      ).subscribe({
+        next: () => {
+
+          console.log(`table column configuration is saved`);
+        }, 
+      })
   }
 
 }

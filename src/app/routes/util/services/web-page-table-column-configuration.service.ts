@@ -54,4 +54,17 @@ export class WebPageTableColumnConfigurationService {
         webPageTableColumnConfigurations, params).pipe(map(res => res.data));
   }
 
+  changeWebPageTableColumnConfigurations(webPageTableColumnConfigurations: WebPageTableColumnConfiguration[]): Observable<WebPageTableColumnConfiguration[]> {
+    
+    if (webPageTableColumnConfigurations.length == 0) {
+      return of(webPageTableColumnConfigurations);
+    }
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id);   
+
+    return this.http.post('resource/web-page-table-column-configuration/modify-by-page-and-table', 
+        webPageTableColumnConfigurations, params).pipe(map(res => res.data));
+  }
+
 }
