@@ -288,7 +288,7 @@ export class InventoryInventoryComponent implements OnInit {
 
       this.inventoryTableColumns = [...this.inventoryTableColumns,  
         {
-          title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
+          title: this.i18n.fanyi("action"), fixed: 'right', width: 250, 
           render: 'actionColumn',
           iif: () => !this.displayOnly
         }, 
