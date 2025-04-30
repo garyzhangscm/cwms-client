@@ -1,14 +1,16 @@
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
+import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UserService } from '../../auth/services/user.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { RF } from '../models/rf';
 import { RFAppVersion } from '../models/rf-app-version';
 import { RfAppVersionService } from '../services/rf-app-version.service';
@@ -67,7 +69,15 @@ export class UtilRfAppVersionComponent implements OnInit {
   ];
 
   
-  searchForm!: UntypedFormGroup;
+  private tokenService = inject(DA_SERVICE_TOKEN);
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    versionNumber: this.fb.control(undefined, { nonNullable: true, validators: []}),
+    isLatestVersion: this.fb.control(undefined, { nonNullable: true, validators: []}),
+  });
+  
+  
   rfAppVersions: RFAppVersion[] = [];
   searchResult = "";
    
@@ -75,10 +85,10 @@ export class UtilRfAppVersionComponent implements OnInit {
   constructor( 
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
-    private rfAppVersionService: RfAppVersionService,
+    private rfAppVersionService: RfAppVersionService, 
+    private companyService: CompanyService,
     private messageService: NzMessageService,
-    private userService: UserService,
-    private fb: UntypedFormBuilder,) { 
+    private userService: UserService,) { 
       userService.isCurrentPageDisplayOnly("/util/rf-app-version").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );                        
@@ -86,15 +96,10 @@ export class UtilRfAppVersionComponent implements OnInit {
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.rf-app-version'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      versionNumber: [null],
-      isLatestVersion: [null],
-    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['versionNumber']) {
-        this.searchForm.value.versionNumber.setValue(params['versionNumber']);
+        this.searchForm.controls.versionNumber.setValue(params['versionNumber']);
         this.search();
       }
     });}
@@ -134,6 +139,8 @@ export class UtilRfAppVersionComponent implements OnInit {
     rfAppVersions.forEach(
       rfAppVersion => {
         rfAppVersion.apkDownloadUrl = `${environment.api.baseUrl}resource/rf-apk-files/${rfAppVersion.id!}`;
+        rfAppVersion.apkDownloadUrl = `${rfAppVersion.apkDownloadUrl}?token=${this.tokenService.get()?.token}`;
+        rfAppVersion.apkDownloadUrl = `${rfAppVersion.apkDownloadUrl}&companyId=${this.companyService.getCurrentCompany()!.id}`
       }
     )
   }
