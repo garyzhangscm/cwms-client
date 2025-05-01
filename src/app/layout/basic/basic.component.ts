@@ -9,8 +9,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { FormsModule } from '@angular/forms';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { FormsModule } from '@angular/forms'; 
 
 import { HeaderClearStorageComponent } from './widgets/clear-storage.component';
 import { HeaderFullScreenComponent } from './widgets/fullscreen.component';
@@ -27,7 +26,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 @Component({
   selector: 'layout-basic',
   template: `
-    <layout-default [options]="{logo: logoTpl }" [asideUser]="asideUserTpl" [content]="contentTpl" [customError]="null">
+    <layout-default nz-resizable  [options]="{logo: logoTpl }" [asideUser]="asideUserTpl" [content]="contentTpl" [customError]="null">
       <!--
         <layout-default-header-item direction="left">
         <a layout-default-header-item-trigger href="//github.com/ng-alain/ng-alain" target="_blank">
