@@ -28,12 +28,15 @@
   </nz-steps>
 
   <nz-card>
-    <nz-descriptions nzTitle="{{ 'work-order' | i18n}}" nzBordered>
-      <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">{{workOrder.number}}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{workOrder.item?.name}}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'work-order.expected-quantity' | i18n}}">{{workOrder.expectedQuantity}}
-      </nz-descriptions-item>
-    </nz-descriptions>
+    @if(workOrder != null) {
+
+      <nz-descriptions nzTitle="{{ 'work-order' | i18n}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">{{workOrder.number}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{workOrder.item?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'work-order.expected-quantity' | i18n}}">{{workOrder.expectedQuantity}}
+        </nz-descriptions-item>
+      </nz-descriptions>
+    }
   </nz-card>
 
 
