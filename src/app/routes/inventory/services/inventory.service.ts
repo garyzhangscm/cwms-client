@@ -1,35 +1,34 @@
- 
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+import { Apollo, gql } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Client } from '../../common/models/client'; 
+import { Client } from '../../common/models/client';
 import { ReportHistory } from '../../report/models/report-history';
 import { Page } from '../../util/models/Page';
 import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AllocationDryRunResult } from '../models/allocation-dry-run-result';
 import { Inventory } from '../models/inventory';
 import { ItemFamily } from '../models/item-family';
-import { Apollo, gql } from 'apollo-angular';
 
 const GET_INVENTORY = gql`
-query {
-  recentPosts(count: 10, offset: 0) {
+  query {
+    recentPosts(count: 10, offset: 0) {
       id
       title
-      category 
+      category
+    }
   }
-}
 `;
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class InventoryService {
   constructor(
@@ -38,7 +37,7 @@ export class InventoryService {
     private companyService: CompanyService,
     private systemControlledNumberService: SystemControlledNumberService,
     private utilService: UtilService,
-    private readonly apollo: Apollo,
+    private readonly apollo: Apollo
   ) {}
 
   getInventories(
@@ -60,85 +59,84 @@ export class InventoryService {
     attribute5?: string,
     receiptNumber?: string,
     pageIndex?: number,
-    recordPerPage?:number,
-    compression?:boolean,
-  ): Observable<{data: Inventory[], total: number}> {
-    
-    let params = new HttpParams(); 
+    recordPerPage?: number,
+    compression?: boolean
+  ): Observable<{ data: Inventory[]; total: number }> {
+    let params = new HttpParams();
 
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
- 
-     
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
 
-    if (itemName) { 
-      params = params.append('itemName', itemName.trim()); 
+    if (itemName) {
+      params = params.append('itemName', itemName.trim());
     }
-    
-    if (color) { 
-      params = params.append('color', color.trim()); 
+
+    if (color) {
+      params = params.append('color', color.trim());
     }
-    if (style) { 
-      params = params.append('style', style.trim()); 
+    if (style) {
+      params = params.append('style', style.trim());
     }
-    if (productSize) { 
-      params = params.append('productSize', productSize.trim()); 
+    if (productSize) {
+      params = params.append('productSize', productSize.trim());
     }
-    if (attribute1) { 
-      params = params.append('attribute1', attribute1.trim()); 
+    if (attribute1) {
+      params = params.append('attribute1', attribute1.trim());
     }
-    if (attribute2) { 
-      params = params.append('attribute2', attribute2.trim()); 
+    if (attribute2) {
+      params = params.append('attribute2', attribute2.trim());
     }
-    if (attribute3) { 
-      params = params.append('attribute3', attribute3.trim()); 
+    if (attribute3) {
+      params = params.append('attribute3', attribute3.trim());
     }
-    if (attribute4) { 
-      params = params.append('attribute4', attribute4.trim()); 
+    if (attribute4) {
+      params = params.append('attribute4', attribute4.trim());
     }
-    if (attribute5) { 
-      params = params.append('attribute5', attribute5.trim()); 
+    if (attribute5) {
+      params = params.append('attribute5', attribute5.trim());
     }
 
     if (client) {
-      params = params.append('client', client.id!.toString());  
+      params = params.append('client', client.id!.toString());
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = params.append('item_families', itemFamilies.join(','));   
+      params = params.append('item_families', itemFamilies.join(','));
     }
     if (locationName) {
-      params = params.append('location', locationName.trim());    
+      params = params.append('location', locationName.trim());
     }
     if (lpn) {
-      params = params.append('lpn', lpn.trim());     
-    } 
+      params = params.append('lpn', lpn.trim());
+    }
     if (locationGroupId) {
-      params = params.append('locationGroupId', locationGroupId);     
-    } 
+      params = params.append('locationGroupId', locationGroupId);
+    }
     if (inventoryStatusId) {
-      params = params.append('inventoryStatusId', inventoryStatusId);   
-    } 
+      params = params.append('inventoryStatusId', inventoryStatusId);
+    }
     if (includeDetails !== undefined && includeDetails !== null) {
-
-      params = params.append('includeDetails', includeDetails);     
+      params = params.append('includeDetails', includeDetails);
     }
     if (receiptNumber) {
-      params = params.append('receiptNumber', receiptNumber);   
-    } 
+      params = params.append('receiptNumber', receiptNumber);
+    }
     if (pageIndex != null) {
-      params = params.append('pageIndex', pageIndex);   
-    } 
+      params = params.append('pageIndex', pageIndex);
+    }
     if (recordPerPage != null) {
-      params = params.append('recordPerPage', recordPerPage);   
-    }  
+      params = params.append('recordPerPage', recordPerPage);
+    }
     if (compression !== undefined && compression !== null) {
-
-      params = params.append('compression', compression);     
+      params = params.append('compression', compression);
     }
 
     const url = `inventory/inventories`;
-    return this.http.get(url, params).pipe(map(res => {return {data: res.data, total: res.total}}));
+    return this.http.get(url, params).pipe(
+      map(res => {
+        return { data: res.data, total: res.total };
+      })
+    );
   }
-  
+
   getPageableInventories(
     client?: Client,
     itemFamilies?: ItemFamily[],
@@ -157,88 +155,83 @@ export class InventoryService {
     attribute4?: string,
     attribute5?: string,
     receiptNumber?: string,
-    pageIndex?: number, 
+    pageIndex?: number,
     pageSize?: number
   ): Observable<Page<Inventory[]>> {
-    
-    let params = new HttpParams(); 
+    let params = new HttpParams();
 
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
- 
-     
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
 
-    if (itemName) { 
-      params = params.append('itemName', itemName.trim()); 
+    if (itemName) {
+      params = params.append('itemName', itemName.trim());
     }
-    
-    if (color) { 
-      params = params.append('color', color.trim()); 
+
+    if (color) {
+      params = params.append('color', color.trim());
     }
-    if (style) { 
-      params = params.append('style', style.trim()); 
+    if (style) {
+      params = params.append('style', style.trim());
     }
-    if (productSize) { 
-      params = params.append('productSize', productSize.trim()); 
+    if (productSize) {
+      params = params.append('productSize', productSize.trim());
     }
-    if (attribute1) { 
-      params = params.append('attribute1', attribute1.trim()); 
+    if (attribute1) {
+      params = params.append('attribute1', attribute1.trim());
     }
-    if (attribute2) { 
-      params = params.append('attribute2', attribute2.trim()); 
+    if (attribute2) {
+      params = params.append('attribute2', attribute2.trim());
     }
-    if (attribute3) { 
-      params = params.append('attribute3', attribute3.trim()); 
+    if (attribute3) {
+      params = params.append('attribute3', attribute3.trim());
     }
-    if (attribute4) { 
-      params = params.append('attribute4', attribute4.trim()); 
+    if (attribute4) {
+      params = params.append('attribute4', attribute4.trim());
     }
-    if (attribute5) { 
-      params = params.append('attribute5', attribute5.trim()); 
+    if (attribute5) {
+      params = params.append('attribute5', attribute5.trim());
     }
 
     if (client) {
-      params = params.append('client', client.id!.toString());  
+      params = params.append('client', client.id!.toString());
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = params.append('itemFamilies', itemFamilies.join(','));   
+      params = params.append('itemFamilies', itemFamilies.join(','));
     }
     if (locationName) {
-      params = params.append('location', locationName.trim());    
+      params = params.append('location', locationName.trim());
     }
     if (lpn) {
-      params = params.append('lpn', lpn.trim());     
-    } 
+      params = params.append('lpn', lpn.trim());
+    }
     if (locationGroupId) {
-      params = params.append('locationGroupId', locationGroupId);     
-    } 
+      params = params.append('locationGroupId', locationGroupId);
+    }
     if (inventoryStatusId) {
-      params = params.append('inventoryStatusId', inventoryStatusId);   
-    } 
-    
+      params = params.append('inventoryStatusId', inventoryStatusId);
+    }
+
     if (receiptNumber) {
-      params = params.append('receiptNumber', receiptNumber);   
-    } 
+      params = params.append('receiptNumber', receiptNumber);
+    }
     if (pageIndex != null) {
       // st table is 1 indexed
-      params = params.append('pageIndex', pageIndex - 1);   
-    } 
+      params = params.append('pageIndex', pageIndex - 1);
+    }
     if (pageSize != null) {
-      params = params.append('pageSize', pageSize);   
-    } 
-    
+      params = params.append('pageSize', pageSize);
+    }
+
     const url = `inventory/inventories/pagination`;
     return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getInventoryById(id: number): Observable<Inventory> {
     const url = `inventory/inventory/${id}`;
-    return this.http.get(url).pipe(map(res => res.data)); 
+    return this.http.get(url).pipe(map(res => res.data));
   }
 
   getInventoriesByLocationName(location: string): Observable<Inventory[]> {
-    const url = `inventory/inventories?location=${location}&warehouseId=${
-      this.warehouseService.getCurrentWarehouse().id
-    }`;
+    const url = `inventory/inventories?location=${location}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
   getInventoriesByLocationNameAndItemNameAndInventoryStatusId(
@@ -252,9 +245,7 @@ export class InventoryService {
     return this.http.get(url).pipe(map(res => res.data));
   }
   getInventoriesByLocationId(locationId: number): Observable<Inventory[]> {
-    const url = `inventory/inventories?locationId=${locationId}&warehouseId=${
-      this.warehouseService.getCurrentWarehouse().id
-    }`;
+    const url = `inventory/inventories?locationId=${locationId}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
   getInventoriesByLpn(lpn: string): Observable<Inventory[]> {
@@ -262,20 +253,19 @@ export class InventoryService {
     return this.http.get(url).pipe(map(res => res.data));
   }
   removeInventory(inventory: Inventory): Observable<Inventory> {
-    const url = `inventory/inventory/${  inventory.id}`;
+    const url = `inventory/inventory/${inventory.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
-  
-  removeInventories(inventoryIds: string, asyncronized : boolean = false): Observable<string> {
+
+  removeInventories(inventoryIds: string, asyncronized: boolean = false): Observable<string> {
     const url = `inventory/inventory/batch-remove`;
 
-    
-    let params = new HttpParams(); 
+    let params = new HttpParams();
 
-    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
-    params = params.append('asyncronized', asyncronized); 
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id);
+    params = params.append('asyncronized', asyncronized);
 
-    return this.http.delete(url, params, {body: inventoryIds}).pipe(map(res => res.data));
+    return this.http.delete(url, params, { body: inventoryIds }).pipe(map(res => res.data));
   }
   adjustDownInventory(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
     let url = `inventory/inventory-adj/${inventory.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
@@ -323,9 +313,7 @@ export class InventoryService {
   }
 
   unpick(inventory: Inventory, destinationLocationName?: string, immediateMove?: boolean): Observable<Inventory> {
-    let url = `inventory/inventory/${inventory.id}/unpick?warehouseId=${
-      this.warehouseService.getCurrentWarehouse().id
-    }`;
+    let url = `inventory/inventory/${inventory.id}/unpick?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (destinationLocationName) {
       url = `${url}&destinationLocationName=${destinationLocationName}`;
     }
@@ -335,38 +323,33 @@ export class InventoryService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
-  reverseReceivedInventory(inventory: Inventory, 
-    reverseQCQuantity: boolean, allowReuseLPN: boolean) {
-    const url = `inventory/inventory/${inventory.id}/reverse-receiving?reverseQCQuantity=${reverseQCQuantity}&allowReuseLPN=${allowReuseLPN}`;
+  reverseReceivedInventory(inventory: Inventory, reverseQCQuantity: boolean, allowReuseLPN: boolean) {
+    const url = `inventory/inventory/${inventory.id}/reverse-receiving?reverseQCQuantity=${!!reverseQCQuantity}&allowReuseLPN=${!!allowReuseLPN}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
-   
-  
-  generateLPNLabel(lpn: string, quantity?: number, printerName?: string) : Observable<ReportHistory> {
-    
+
+  generateLPNLabel(lpn: string, quantity?: number, printerName?: string): Observable<ReportHistory> {
     let url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/${lpn}/lpn-label`;
 
-    
-    let params = new HttpParams(); 
+    let params = new HttpParams();
 
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
- 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
+
     if (quantity) {
-      params = params.append('quantity', quantity);  
+      params = params.append('quantity', quantity);
     }
-     
+
     if (printerName) {
-      params = params.append('printerName', printerName);   
+      params = params.append('printerName', printerName);
     }
-    
-    
+
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
-  getAvailableInventoryForMPS(itemId?: number, itemName?: string) : Observable<Inventory[]>{
+  getAvailableInventoryForMPS(itemId?: number, itemName?: string): Observable<Inventory[]> {
     let url = `inventory/inventories/available-for-mps/inventory-ignore-order?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    if (itemId) {    
+    if (itemId) {
       url = `${url}&itemId=${itemId}`;
-    } 
+    }
 
     if (itemName) {
       url = `${url}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
@@ -374,40 +357,44 @@ export class InventoryService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
-  emptyLocation(locationId: number): Observable<WarehouseLocation>{
+  emptyLocation(locationId: number): Observable<WarehouseLocation> {
     let url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/empty-location`;
     url = `${url}?locationId=${locationId}`;
     return this.http.post(url).pipe(map(res => res.data));
   }
 
-  
-  getAllocationDryRunResult(itemId: number, inventoryStatusId: number, 
-    clientId?: number, locationId?: number, lpn?: string): Observable<AllocationDryRunResult[]>{
-    const url = `inventory/inventories/dry-run-allocation`;    
-    
+  getAllocationDryRunResult(
+    itemId: number,
+    inventoryStatusId: number,
+    clientId?: number,
+    locationId?: number,
+    lpn?: string
+  ): Observable<AllocationDryRunResult[]> {
+    const url = `inventory/inventories/dry-run-allocation`;
+
     let params = new HttpParams();
-           
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
-    params = params.append('itemId', itemId); 
-    params = params.append('inventoryStatusId', inventoryStatusId); 
-     
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
+    params = params.append('itemId', itemId);
+    params = params.append('inventoryStatusId', inventoryStatusId);
+
     if (clientId) {
-      params = params.append('clientId', clientId);  
+      params = params.append('clientId', clientId);
     }
     if (locationId) {
-      params = params.append('locationId', locationId);  
+      params = params.append('locationId', locationId);
     }
     if (lpn) {
-      params = params.append('lpn', lpn);  
+      params = params.append('lpn', lpn);
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));
   }
-  
-  graphqlGetInventoryById(id: number) : Observable<any>{
+
+  graphqlGetInventoryById(id: number): Observable<any> {
     return this.apollo
       .watchQuery({
-        query: GET_INVENTORY,
+        query: GET_INVENTORY
       })
       .valueChanges.pipe(map(result => result.data));
   }
