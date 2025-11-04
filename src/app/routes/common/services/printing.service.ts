@@ -21,7 +21,6 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { PrintPageOrientation } from '../models/print-page-orientation.enum';
 import { PrintPageSize } from '../models/print-page-size.enum';
 import { PrintableBarcode } from '../models/printable-barcode';
- 
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +38,7 @@ export class PrintingService {
     private companyService: CompanyService,
     private localCacheService: LocalCacheService,
     private printingRequestService: PrintingRequestService,
-    private messageService: NzMessageService,
+    private messageService: NzMessageService
   ) {
     this.lodopService.cog.url = 'http://localhost:18000/CLodopfuncs.js';
     this.lodopService.lodop.subscribe(({ lodop, ok }) => {
@@ -67,14 +66,13 @@ export class PrintingService {
     // const url = 'resource/server-printers';
     const url = 'resource/printers';
     let params = new HttpParams();
-    
+
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
-    console.log(`printing strategy: ${printingStrategy}`)
-    
+    console.log(`printing strategy: ${printingStrategy}`);
+
     if (printingStrategy) {
       params = params.append('printingStrategy', printingStrategy);
-
-    } 
+    }
     return this.http.get(url, params).pipe(map(res => res.data));
   }
   getAllLocalPrinters(): string[] {
@@ -94,147 +92,110 @@ export class PrintingService {
   // print the file by URL. The URL may be a 3rd party URL
   // such as a parcel label from UPS / USPS / Fedex / etc
 
-  printFileByURL(url: string, reportType: ReportType, printerName: string, physicalCopyCount: number) : void{
-    
-    this.localCacheService.getWarehouseConfiguration().subscribe(
-      {
-        next: (warehouseConfigRes) => {
+  printFileByURL(url: string, reportType: ReportType, printerName: string, physicalCopyCount: number): void {
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: warehouseConfigRes => {
+        console.log(`warehouseConfigRes: ${warehouseConfigRes?.printingStrategy}`);
 
-          console.log(`warehouseConfigRes: ${warehouseConfigRes?.printingStrategy}`);
-
-          // by default, we will print from the server
-          if (warehouseConfigRes?.printingStrategy == null ||
-                warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) { 
-            this.messageService.error("print from server by URL is not supported");
-          }
-          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) { 
-            // save the request to the save so the local installed printing service will
-            // print it later on 
-              console.log(`will save request to the server`);
-              this.savePrintingRequestByUrl(url, reportType, printerName, physicalCopyCount); 
-          }
-          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
-              
-            this.messageService.error("print from local by URL is not supported");
-          }
-          
-        }, 
+        // by default, we will print from the server
+        if (warehouseConfigRes?.printingStrategy == null || warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) {
+          this.messageService.error('print from server by URL is not supported');
+        } else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
+          // save the request to the save so the local installed printing service will
+          // print it later on
+          console.log(`will save request to the server`);
+          this.savePrintingRequestByUrl(url, reportType, printerName, physicalCopyCount);
+        } else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {
+          this.messageService.error('print from local by URL is not supported');
+        }
       }
-    )
+    });
   }
   printFileByName(
     name: string,
     fileName: string,
     type: ReportType,
     printerIndex?: number,
-    printerName: string = "",
+    printerName: string = '',
     physicalCopyCount: number = 1,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
-    findPrinterBy?: string, 
+    findPrinterBy?: string,
     reportHistory?: ReportHistory,
     collated?: boolean
   ): void {
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: warehouseConfigRes => {
+        console.log(`warehouseConfigRes: ${JSON.stringify(warehouseConfigRes)}`);
 
+        // by default, we will print from the server
+        if (warehouseConfigRes?.printingStrategy == null || warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) {
+          console.log(`will print remote file from server`);
+          this.printFromServer(fileName, type, printerName, physicalCopyCount, findPrinterBy);
+        } else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
+          // save the request to the save so the local installed printing service will
+          // print it later on
 
-    this.localCacheService.getWarehouseConfiguration().subscribe(
-      {
-        next: (warehouseConfigRes) => {
-
-          console.log(`warehouseConfigRes: ${JSON.stringify(warehouseConfigRes)}`);
-
-          // by default, we will print from the server
-          if (warehouseConfigRes?.printingStrategy == null ||
-                warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) { 
-           
-            console.log(`will print remote file from server`);
-            this.printFromServer(
-               fileName, type,  printerName, 
-              physicalCopyCount, findPrinterBy
-            );
+          if (reportHistory) {
+            console.log(`will save request to the server`);
+            this.printReportHistoryFromLocal(reportHistory, printerIndex, printerName, physicalCopyCount, pageOrientation, collated);
+            // this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
           }
-          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) { 
-            // save the request to the save so the local installed printing service will
-            // print it later on
-            
-            if (reportHistory) {
-                console.log(`will save request to the server`);
-                this.printReportHistoryFromLocal(reportHistory, printerIndex, printerName, 
-                  physicalCopyCount, pageOrientation, collated);
-                // this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
-            }
-          }
-          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
-              console.log(`print from local data is not supported at this moment`);
-              this.messageService.error(`print from local data is not supported at this moment`)
-                // this.printFromLocal(
-                //   name, fileName, type, printerIndex, 
-                //  physicalCopyCount, pageOrientation, collated); 
-          }
-          
-        }, 
+        } else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {
+          console.log(`print from local data is not supported at this moment`);
+          this.messageService.error(`print from local data is not supported at this moment`);
+          // this.printFromLocal(
+          //   name, fileName, type, printerIndex,
+          //  physicalCopyCount, pageOrientation, collated);
+        }
       }
-    )
+    });
   }
 
-   
-  savePrintingRequest(reportHistory: ReportHistory, 
-    printerName: string, copies: number) : void {
-
-      this.printingRequestService.generatePrintingRequestByReportHistory(
-        reportHistory.id, 
-        printerName, copies
-      ).subscribe({
-        next: () => console.log(` printing request sent`)
-      })
-       
+  savePrintingRequest(reportHistory: ReportHistory, printerName: string, copies: number): void {
+    this.printingRequestService.generatePrintingRequestByReportHistory(reportHistory.id, printerName, copies).subscribe({
+      next: () => console.log(` printing request sent`)
+    });
   }
-  savePrintingRequestByUrl(url: string, reportType: ReportType, 
-    printerName: string, copies: number) : void {
-
-      this.printingRequestService.generatePrintingRequestByUrl(
-        url, reportType, 
-        printerName, copies
-      ).subscribe({
-        next: () => console.log(` printing request sent`)
-      })
-       
+  savePrintingRequestByUrl(url: string, reportType: ReportType, printerName: string, copies: number): void {
+    this.printingRequestService.generatePrintingRequestByUrl(url, reportType, printerName, copies).subscribe({
+      next: () => console.log(` printing request sent`)
+    });
   }
 
-
-  printFromServer( 
+  printFromServer(
     fileName: string,
-    type: ReportType, 
+    type: ReportType,
     printerName: string,
-    physicalCopyCount: number, 
-    findPrinterBy?: string, 
+    physicalCopyCount: number,
+    findPrinterBy?: string,
     collated?: boolean
-  ): void { 
-      console.log(`will print from the server side`);
-      let params = new HttpParams();
-      const url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
-        this.warehouseService.getCurrentWarehouse().id
-      }/${type}/${fileName}`;
-      if (findPrinterBy) {
-        params = params.append('findPrinterBy', findPrinterBy);
-      }
-      if (printerName) {
-        params = params.append('printerName', printerName);
-      }
-      if (physicalCopyCount) {
-        params = params.append('copies', physicalCopyCount.toString());
-      }
-      if (collated != null) {
-        params = params.append('collated', collated);
-      }
-      this.http
-        .post(url, params)
-        .pipe(map(res => res.data))
-        .subscribe(res => {
-          console.log(` file printed!`);
-        }); 
+  ): void {
+    console.log(`will print from the server side`);
+    let params = new HttpParams();
+    const url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
+      this.warehouseService.getCurrentWarehouse().id
+    }/${type}/${fileName}`;
+    if (findPrinterBy) {
+      params = params.append('findPrinterBy', findPrinterBy);
+    }
+    if (printerName) {
+      params = params.append('printerName', printerName);
+    }
+    if (physicalCopyCount) {
+      params = params.append('copies', physicalCopyCount.toString());
+    }
+    if (collated != null) {
+      params = params.append('collated', collated);
+    }
+    this.http
+      .post(url, params)
+      .pipe(map(res => res.data))
+      .subscribe(res => {
+        console.log(` file printed!`);
+      });
   }
-  
+
   printInBatchFromServer(
     name: string,
     fileNames: string,
@@ -245,103 +206,98 @@ export class PrintingService {
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
     findPrinterBy?: string
-  ): void { 
-      console.log(`will print from the server side in a batch`);
-      let params = new HttpParams();
-      const url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
-        this.warehouseService.getCurrentWarehouse().id
-      }/${type}`;
-      params = params.append('filenames', fileNames);
-      if (findPrinterBy) {
-        params = params.append('findPrinterBy', findPrinterBy);
-      }
-      if (printerName) {
-        params = params.append('printerName', printerName);
-      }
-      if (physicalCopyCount) {
-        params = params.append('copies', physicalCopyCount.toString());
-      }
-      this.http
-        .post(url, params)
-        .pipe(map(res => res.data))
-        .subscribe(res => {
-          console.log(` file printed!`);
-        }); 
+  ): void {
+    console.log(`will print from the server side in a batch`);
+    let params = new HttpParams();
+    const url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
+      this.warehouseService.getCurrentWarehouse().id
+    }/${type}`;
+    params = params.append('filenames', fileNames);
+    if (findPrinterBy) {
+      params = params.append('findPrinterBy', findPrinterBy);
+    }
+    if (printerName) {
+      params = params.append('printerName', printerName);
+    }
+    if (physicalCopyCount) {
+      params = params.append('copies', physicalCopyCount.toString());
+    }
+    this.http
+      .post(url, params)
+      .pipe(map(res => res.data))
+      .subscribe(res => {
+        console.log(` file printed!`);
+      });
   }
 
-  printReportHistoryFromLocal(reportHistory : ReportHistory, printerIndex?: number, 
-        printerName?: string, 
-        physicalCopyCount: number = 1,
-        pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait, 
-        collated?: boolean): void { 
-
+  printReportHistoryFromLocal(
+    reportHistory: ReportHistory,
+    printerIndex?: number,
+    printerName?: string,
+    physicalCopyCount: number = 1,
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
+    collated?: boolean
+  ): void {
     console.log(`start to print ${reportHistory.fileName} from printer " +
-    " ${printerIndex == null ? "N/A" : printerIndex} - ${printerName == null ? "N/A" : printerName}`);
-  
+    " ${printerIndex == null ? 'N/A' : printerIndex} - ${printerName == null ? 'N/A' : printerName}`);
+
     if (printerIndex != null) {
-      
       this.printFromLocal(
         reportHistory.fileName,
-        reportHistory.fileName, 
+        reportHistory.fileName,
         reportHistory.type,
         printerIndex,
-        physicalCopyCount, 
-        pageOrientation, 
+        physicalCopyCount,
+        pageOrientation,
         collated
       );
-    }
-    else {
+    } else {
       // printer index is not passed in, let's get from the printer name if it is passed in
       let printers: Map<string, number> = new Map();
 
-      this.getAllLocalPrinters().forEach(
-        (printer, index) => { 
-          printers.set(printer, index);
-        });
-      
+      this.getAllLocalPrinters().forEach((printer, index) => {
+        printers.set(printer, index);
+        console.log(`index: ${index} . printer: ${printer}`);
+      });
+
       if (printerName == null || !printers.has(printerName)) {
-          console.log(`either pritner name not passed in or we can't find the printer, let's printer from the default printer`);
-          
-          this.printFromLocal(
-            reportHistory.fileName,
-            reportHistory.fileName, 
-            reportHistory.type,
-            0, // printer from default printer
-            physicalCopyCount, 
-            pageOrientation, 
-            collated
-          );
-      }
-      else {
-        console.log(`found printer ${printerName} with index ${printers.get(printerName)}`);
-        
+        console.log(`either pritner name not passed in or we can't find the printer, let's printer from the default printer`);
+
         this.printFromLocal(
           reportHistory.fileName,
-          reportHistory.fileName, 
+          reportHistory.fileName,
+          reportHistory.type,
+          -1, // printer from default printer
+          physicalCopyCount,
+          pageOrientation,
+          collated
+        );
+      } else {
+        console.log(`found printer ${printerName} with index ${printers.get(printerName)}`);
+
+        this.printFromLocal(
+          reportHistory.fileName,
+          reportHistory.fileName,
           reportHistory.type,
           printers.get(printerName)!,
-          physicalCopyCount, 
-          pageOrientation, 
+          physicalCopyCount,
+          pageOrientation,
           collated
         );
       }
-      
     }
-    
-
   }
-  printFromLocal(    
+  printFromLocal(
     name: string,
     fileName: string,
     type: ReportType,
-    printerIndex: number, 
+    printerIndex: number,
     physicalCopyCount: number,
-    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait, 
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     collated?: boolean
   ): void {
-    
     // NOTE: use preview instead of download, which will download the label file
-    // as PDF file as well. in download mode, label file will be download as 
+    // as PDF file as well. in download mode, label file will be download as
     // ZPL file. LODOP can't process ZPL file
     // let url = `${environment.api.baseUrl}resource/report-histories/download`;
     let url = `${environment.api.baseUrl}resource/report-histories/preview`;
@@ -350,41 +306,38 @@ export class PrintingService {
     url = `${url}/${type}`;
     url = `${url}/${fileName}`;
     url = `${url}?token=${this.tokenService.get()?.token}`;
-    url = `${url}&companyId=${this.companyService.getCurrentCompany()!.id}`
-
+    url = `${url}&companyId=${this.companyService.getCurrentCompany()!.id}`;
 
     // url = "https://localhost.lodop.net:8443/CLodopDemos/PDFDemo.pdf";
 
     console.log(`start to print remote file in orientation: ${pageOrientation}`);
     console.log(`START TO PRINT ${url}`);
-    
+
     const LODOP = this.lodop!;
-    LODOP.SET_LICENSES("","BE2FE2DFCE6366AF345F088D1D910455F10","","");
+    LODOP.SET_LICENSES('', 'BE2FE2DFCE6366AF345F088D1D910455F10', '', '');
     //LODOP.PRINT_INITA(0, 0, 810, 610, name);
     LODOP.PRINT_INIT(name);
     // LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
-    LODOP.SET_PRINTER_INDEX(printerIndex); 
+    LODOP.SET_PRINTER_INDEX(printerIndex);
     // LODOP.ADD_PRINT_TEXT(0, 0, '20', '20',"This is a test printing");
     LODOP.ADD_PRINT_PDF(0, 0, '100%', '100%', this.demoDownloadPDF(url));
     // LODOP.ADD_PRINT_URL(0, 0, '100%', '100%', url);
     // LODOP.ADD_PRINT_URL(0,0, "100%","100%","http://www.baidu.com ");
     // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
     // LODOP.ADD_PRINT_PDF(-30,0,"100%","100%","e:\\AAA.pdf");
-    LODOP.SET_PRINT_COPIES(physicalCopyCount); 
+    LODOP.SET_PRINT_COPIES(physicalCopyCount);
     if (!collated) {
-
       console.log(`print with NON collated`);
-      LODOP.SET_PRINT_MODE("PRINT_NOCOLLATE", "true")
-    }
-    else {
+      LODOP.SET_PRINT_MODE('PRINT_NOCOLLATE', 'true');
+    } else {
       console.log(`print with collated`);
-      LODOP.SET_PRINT_MODE("PRINT_NOCOLLATE", "false")
+      LODOP.SET_PRINT_MODE('PRINT_NOCOLLATE', 'false');
     }
     LODOP.PRINT();
   }
 
   // download the PDF to print from lodop
-  async lodopDownloadPDF(pdfUrl: string): Promise<string> { 
+  async lodopDownloadPDF(pdfUrl: string): Promise<string> {
     console.log(`start to download files from url \n${pdfUrl}`);
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
@@ -393,19 +346,18 @@ export class PrintingService {
     console.log(`responseData \n${responseData}`);
     let result = this.getBase64(responseData);
 
-    return result == null ? "" : result.toString();
+    return result == null ? '' : result.toString();
   }
 
-  demoDownloadPDF(pdfUrl: string)  {
-    let xhr : XMLHttpRequest = new XMLHttpRequest();
-    xhr.open('GET', pdfUrl, false); 
+  demoDownloadPDF(pdfUrl: string) {
+    let xhr: XMLHttpRequest = new XMLHttpRequest();
+    xhr.open('GET', pdfUrl, false);
     var arraybuffer = false;
     try {
       xhr.responseType = 'arraybuffer';
       var arraybuffer = true;
       console.log(`set arraybuffer to true`);
-    } 
-    catch(err) {
+    } catch (err) {
       xhr.overrideMimeType('text/plain;charset=x-user-defined');
       console.log(`set arraybuffer to false`);
     }
@@ -419,43 +371,40 @@ export class PrintingService {
     if (typeof Uint8Array !== 'undefined') {
       if (arraybuffer) {
         dataArray = new Uint8Array(data);
-      }
-      else {
+      } else {
         dataArray = new Uint8Array(data.length);
         for (var i = 0; i < dataArray.length; i++) {
           dataArray[i] = data.charCodeAt(i);
         }
       }
-      
-       console.log(`convert the data into Uint8Array\n${dataArray}`);
+
+      console.log(`convert the data into Uint8Array\n${dataArray}`);
     }
-    
+
     return this.getBase64(dataArray);
   }
 
   getBase64(dataArray: any) {
     console.log(`start to process base 64 for the data array\n${dataArray}`);
 
-    var digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+    var digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
     var strData = '';
-    for (var i= 0, ii = dataArray.length; i < ii; i += 3)  {
-      if (isNaN(dataArray[i]))  {
+    for (var i = 0, ii = dataArray.length; i < ii; i += 3) {
+      if (isNaN(dataArray[i])) {
         break;
       }
       var b1 = dataArray[i] & 0xff;
       var b2 = dataArray[i + 1] & 0xff;
-      var b3 = dataArray[i + 2] & 0xff;       
+      var b3 = dataArray[i + 2] & 0xff;
       var d1 = b1 >> 2;
       var d2 = ((b1 & 3) << 4) | (b2 >> 4);
       var d3 = i + 1 < ii ? ((b2 & 0xf) << 2) | (b3 >> 6) : 64;
       var d4 = i + 2 < ii ? b3 & 0x3f : 64;
-      strData += digits.substring(d1, d1 + 1) + digits.substring(d2, d2 + 1)  +
-           digits.substring(d3, d3 + 1) + digits.substring(d4, d4 + 1);
+      strData += digits.substring(d1, d1 + 1) + digits.substring(d2, d2 + 1) + digits.substring(d3, d3 + 1) + digits.substring(d4, d4 + 1);
     }
-  
+
     console.log(`result is saved into base 64 format\n${strData}`);
     return strData;
-    
   }
   print(
     name: string,
@@ -522,31 +471,23 @@ export class PrintingService {
     return `< div style = "text-align: right" > Page: ${pageNumber} / ${pageCount}</div > `;
   }
 
-  
   setupCurrentStationDefaultLabelPrinter(printer: string) {
-    
-    return  localStorage.setItem('default_label_printer', printer);
+    return localStorage.setItem('default_label_printer', printer);
   }
   setupCurrentStationDefaultReportPrinter(printer: string) {
-    
-    return  localStorage.setItem('default_report_printer', printer);
+    return localStorage.setItem('default_report_printer', printer);
   }
-  
+
   getCurrentStationDefaultLabelPrinter() {
-    
-    return  localStorage.getItem('default_label_printer') == null ? 
-                 "" : localStorage.getItem('default_label_printer');
+    return localStorage.getItem('default_label_printer') == null ? '' : localStorage.getItem('default_label_printer');
   }
   getCurrentStationDefaultReportPrinter() {
-    
-    return  localStorage.getItem('default_report_printer') == null ? 
-                 "" : localStorage.getItem('default_report_printer'); 
+    return localStorage.getItem('default_report_printer') == null ? '' : localStorage.getItem('default_report_printer');
   }
 
-  getCurrentStationDefaultPrinter(reportType: ReportType) { 
-      return this.reportService.isLabel(reportType) ?
-          this.getCurrentStationDefaultLabelPrinter() :
-          this.getCurrentStationDefaultReportPrinter();
+  getCurrentStationDefaultPrinter(reportType: ReportType) {
+    return this.reportService.isLabel(reportType)
+      ? this.getCurrentStationDefaultLabelPrinter()
+      : this.getCurrentStationDefaultReportPrinter();
   }
-
 }
