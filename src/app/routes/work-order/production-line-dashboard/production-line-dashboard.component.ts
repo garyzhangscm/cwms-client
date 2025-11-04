@@ -31,7 +31,8 @@ import { WorkOrderService } from '../services/work-order.service';
 @Component({
   selector: 'app-work-order-production-line-dashboard',
   templateUrl: './production-line-dashboard.component.html',
-  styleUrls: ['./production-line-dashboard.component.less']
+  styleUrls: ['./production-line-dashboard.component.less'],
+  standalone: false
 })
 export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDestroy {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
@@ -621,7 +622,9 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     this.workOrderService.generatePrePrintLPNLabel(workOrderId, lpn, quantity, productionLineName, printerName).subscribe({
       next: reportHistory => {
         // print from default printer
-        this.printingService.printReportHistoryFromLocal(reportHistory);
+        this.printingService.printReportHistoryFromLocal(reportHistory,
+          undefined, undefined, 2
+        );
       }
     });
   }

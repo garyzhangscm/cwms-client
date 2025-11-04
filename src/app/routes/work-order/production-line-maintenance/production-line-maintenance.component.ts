@@ -34,7 +34,8 @@ interface ProductionLineCapacityItemData {
 @Component({
   selector: 'app-work-order-production-line-maintenance',
   templateUrl: './production-line-maintenance.component.html',
-  styleUrls: ['./production-line-maintenance.component.less']
+  styleUrls: ['./production-line-maintenance.component.less'],
+  standalone: false
 })
 export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
