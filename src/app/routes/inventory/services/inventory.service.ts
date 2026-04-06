@@ -38,7 +38,7 @@ export class InventoryService {
     private systemControlledNumberService: SystemControlledNumberService,
     private utilService: UtilService,
     private readonly apollo: Apollo
-  ) {}
+  ) { }
 
   getInventories(
     client?: Client,
@@ -226,7 +226,7 @@ export class InventoryService {
   }
 
   getInventoryById(id: number): Observable<Inventory> {
-    const url = `inventory/inventory/${id}`;
+    const url = `inventory/inventories/${id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
 
@@ -239,9 +239,8 @@ export class InventoryService {
     itemName: string,
     inventoryStatusId: number
   ): Observable<Inventory[]> {
-    const url = `inventory/inventories?inventoryStatusId=${inventoryStatusId}&locationId=${locationId}&itemName=${itemName}&warehouseId=${
-      this.warehouseService.getCurrentWarehouse().id
-    }`;
+    const url = `inventory/inventories?inventoryStatusId=${inventoryStatusId}&locationId=${locationId}&itemName=${itemName}&warehouseId=${this.warehouseService.getCurrentWarehouse().id
+      }`;
     return this.http.get(url).pipe(map(res => res.data));
   }
   getInventoriesByLocationId(locationId: number): Observable<Inventory[]> {
