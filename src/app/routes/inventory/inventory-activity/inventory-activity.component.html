@@ -197,7 +197,7 @@
   </div>
 
   <st #inventoryActivityTable [data]="listOfAllInventoryActivities" [columns]="inventoryActivityTableColumns" 
-        
+        [page]="inventoryActivityTablePagination"
       (change)="inventoryActivityTableChanged($event)"
         [footer]="tableFoot" [scroll]="{ x: '1615px' }"
         [widthMode]="{ type: 'strict' }" resizable>

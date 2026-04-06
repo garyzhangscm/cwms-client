@@ -17,11 +17,11 @@ import { ItemFamily } from '../models/item-family';
   providedIn: 'root',
 })
 export class InventoryActivityService {
-  constructor(private http: _HttpClient, 
-    private warehouseService: WarehouseService, 
+  constructor(private http: _HttpClient,
+    private warehouseService: WarehouseService,
     private utilService: UtilService,
-    private dateTimeService: DateTimeService) {}
-    
+    private dateTimeService: DateTimeService) { }
+
   getInventoryActivities(
     clients?: Client[],
     itemFamilies?: ItemFamily[],
@@ -33,52 +33,52 @@ export class InventoryActivityService {
     endDate?: Date,
     date?: Date,
     username?: string,
-    rfCode?: string, 
+    rfCode?: string,
   ): Observable<InventoryActivity[]> {
-    
-    let params = new HttpParams(); 
-     
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
+    let params = new HttpParams();
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
 
     if (itemName) {
-      params = params.append('itemName', this.utilService.encodeHttpParameter(itemName.trim())); 
+      params = params.append('itemName', this.utilService.encodeHttpParameter(itemName.trim()));
     }
     if (clients && clients.length > 0) {
-      params = params.append('clients', this.utilService.encodeHttpParameter(clients.join(',')));  
+      params = params.append('clients', this.utilService.encodeHttpParameter(clients.join(',')));
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = params.append('item_families', this.utilService.encodeHttpParameter(itemFamilies.join(',')));  
+      params = params.append('item_families', this.utilService.encodeHttpParameter(itemFamilies.join(',')));
     }
     if (location) {
-      params = params.append('location', this.utilService.encodeHttpParameter(location.trim()));   
+      params = params.append('location', this.utilService.encodeHttpParameter(location.trim()));
     }
     if (lpn) {
-      params = params.append('lpn', this.utilService.encodeHttpParameter(lpn.trim()));   
+      params = params.append('lpn', this.utilService.encodeHttpParameter(lpn.trim()));
     }
     if (inventoryActivityType) {
-      params = params.append('inventoryActivityType',inventoryActivityType);   
-    } 
-    
+      params = params.append('inventoryActivityType', inventoryActivityType);
+    }
+
     if (beginDate) {
-      params = params.append('beginDate', this.dateTimeService.getISODateString(beginDate));   
+      params = params.append('beginDate', this.dateTimeService.getISODateString(beginDate));
     }
     if (endDate) {
-      params = params.append('endDate', this.dateTimeService.getISODateString(endDate));   
+      params = params.append('endDate', this.dateTimeService.getISODateString(endDate));
     }
 
     if (date) {
-      params = params.append('date', this.dateTimeService.getISODateString(date));   
+      params = params.append('date', this.dateTimeService.getISODateString(date));
     }
     if (username) {
-      params = params.append('username', this.utilService.encodeHttpParameter(username.trim()));   
+      params = params.append('username', this.utilService.encodeHttpParameter(username.trim()));
     }
     if (rfCode) {
-      params = params.append('rfCode', this.utilService.encodeHttpParameter(rfCode.trim()));   
-    } 
-    
+      params = params.append('rfCode', this.utilService.encodeHttpParameter(rfCode.trim()));
+    }
+
     return this.http.get(`inventory/inventory-activities`, params).pipe(map(res => res.data));
   }
-  
+
   getPageableInventoryActivities(
     clients?: Client[],
     itemFamilies?: ItemFamily[],
@@ -90,51 +90,59 @@ export class InventoryActivityService {
     endDate?: Date,
     date?: Date,
     username?: string,
-    rfCode?: string, 
-    pageIndex?: number, 
+    rfCode?: string,
+    pageIndex?: number,
     pageSize?: number
   ): Observable<Page<InventoryActivity[]>> {
-    
-    let params = new HttpParams(); 
-     
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
+    let params = new HttpParams();
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
 
     if (itemName) {
-      params = params.append('itemName', this.utilService.encodeHttpParameter(itemName.trim())); 
+      params = params.append('itemName', this.utilService.encodeHttpParameter(itemName.trim()));
     }
     if (clients && clients.length > 0) {
-      params = params.append('clients', this.utilService.encodeHttpParameter(clients.join(',')));  
+      params = params.append('clients', this.utilService.encodeHttpParameter(clients.join(',')));
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = params.append('item_families', this.utilService.encodeHttpParameter(itemFamilies.join(',')));  
+      params = params.append('item_families', this.utilService.encodeHttpParameter(itemFamilies.join(',')));
     }
     if (location) {
-      params = params.append('location', this.utilService.encodeHttpParameter(location.trim()));   
+      params = params.append('location', this.utilService.encodeHttpParameter(location.trim()));
     }
     if (lpn) {
-      params = params.append('lpn', this.utilService.encodeHttpParameter(lpn.trim()));   
+      params = params.append('lpn', this.utilService.encodeHttpParameter(lpn.trim()));
     }
     if (inventoryActivityType) {
-      params = params.append('inventoryActivityType',inventoryActivityType);   
-    } 
-    
+      params = params.append('inventoryActivityType', inventoryActivityType);
+    }
+
     if (beginDate) {
-      params = params.append('beginDate', this.dateTimeService.getLocalDateString(beginDate));   
+      params = params.append('beginDate', this.dateTimeService.getLocalDateString(beginDate));
     }
     if (endDate) {
-      params = params.append('endDate', this.dateTimeService.getLocalDateString(endDate));   
+      params = params.append('endDate', this.dateTimeService.getLocalDateString(endDate));
     }
 
     if (date) {
-      params = params.append('date', this.dateTimeService.getLocalDateString(date));   
+      params = params.append('date', this.dateTimeService.getLocalDateString(date));
     }
     if (username) {
-      params = params.append('username', this.utilService.encodeHttpParameter(username.trim()));   
+      params = params.append('username', this.utilService.encodeHttpParameter(username.trim()));
     }
     if (rfCode) {
-      params = params.append('rfCode', this.utilService.encodeHttpParameter(rfCode.trim()));   
-    } 
-    
+      params = params.append('rfCode', this.utilService.encodeHttpParameter(rfCode.trim()));
+    }
+
+    if (pageIndex != null) {
+      // st table is 1 indexed
+      params = params.append('pageIndex', pageIndex - 1);
+    }
+    if (pageSize != null) {
+      params = params.append('pageSize', pageSize);
+    }
+
     return this.http.get(`inventory/inventory-activities/pagination`, params).pipe(map(res => res.data));
   }
 }
