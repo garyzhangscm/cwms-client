@@ -5,10 +5,10 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
-        <nz-form-label for="client" [nzSpan]="6">
+        <nz-form-label for="client" class="inventory-quantity-change-label" [nzSpan]="11">
           {{ 'inventory-quantity-change-type' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="14">
+        <nz-form-control [nzSpan]="13">
           <nz-select nzMode="tags" formControlName="inventoryQuantityChangeType">
             <nz-option *ngFor="let inventoryQuantityChangeType of inventoryQuantityChangeTypes | keyvalue"
               [nzLabel]="inventoryQuantityChangeType.value" [nzValue]="inventoryQuantityChangeType.key"></nz-option>
