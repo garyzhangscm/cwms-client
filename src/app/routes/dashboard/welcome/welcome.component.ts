@@ -7,6 +7,7 @@ import { PickService } from '../../outbound/services/pick.service';
 @Component({
     selector: 'app-dashboard-welcome',
     templateUrl: './welcome.component.html',
+    styleUrls: ['./welcome.component.less'],
     standalone: false
 })
 export class DashboardWelcomeComponent implements OnInit {
