@@ -16,6 +16,13 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       // { path: 'dashboard', component: DashboardComponent },      
       { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
+      {
+        path: 'pro/account',
+        children: [
+          { path: 'center', loadComponent: () => import('./account/account.component').then(m => m.AccountCenterComponent) },
+          { path: 'settings', loadComponent: () => import('./account/account.component').then(m => m.AccountSettingsComponent) }
+        ]
+      },
       { path: 'warehouse-layout', loadChildren: () => import('./warehouse-layout/warehouse-layout.module').then((m) => m.WarehouseLayoutModule) },
       { path: 'util', loadChildren: () => import('./util/util.module').then((m) => m.UtilModule) },
       { path: 'auth', loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule) },

@@ -5,6 +5,7 @@ import { DashboardWelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'welcome', pathMatch: 'full' }, 
+  { path: 'v1', redirectTo: 'welcome', pathMatch: 'full' },
   { path: 'welcome', component: DashboardWelcomeComponent }];
 
 @NgModule({

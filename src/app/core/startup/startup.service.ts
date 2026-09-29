@@ -206,6 +206,18 @@ export class StartupService {
         // ACL：设置权限为全量
         // this.aclService.setFull(true);
 
+        // The backend still points this menu entry at a removed dashboard route.
+        // Keep the server menu intact while directing the client to its current page.
+        const updateDefaultDashboardLink = (menus: Menu[]): void => {
+          menus.forEach(menu => {
+            if (menu.i18n === 'menu.dashboard.default' && menu.link === '/dashboard/v1') {
+              menu.link = '/dashboard/welcome';
+            }
+            if (menu.children) updateDefaultDashboardLink(menu.children);
+          });
+        };
+        updateDefaultDashboardLink(res.menu);
+
         // 初始化菜单 
         this.menuService.add(res.menu);
         // setup the ACL based on the user's accessible menu
