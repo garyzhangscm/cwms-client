@@ -6,12 +6,64 @@
   border-radius: 6px;
 }
 
-[nz-form-label] {
-  overflow: visible;
+.threshold-search-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px 24px;
+  align-items: center;
 }
 
-.inventory-quantity-change-label {
-  padding-right: 8px;
+.threshold-search-grid--collapsed {
+  display: none;
+}
+
+.threshold-search-field {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  column-gap: 8px;
+  min-width: 0;
+}
+
+.threshold-search-field--wide {
+  grid-column: span 2;
+}
+
+.threshold-search-label {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.85);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.threshold-search-field nz-select,
+.threshold-search-field input {
+  width: 100%;
+  min-width: 0;
+}
+
+.threshold-search-checkbox {
+  justify-self: start;
+}
+
+@media (max-width: 1100px) {
+  .threshold-search-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .threshold-search-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .threshold-search-field--wide {
+    grid-column: span 1;
+  }
+
+  .threshold-search-field {
+    grid-template-columns: minmax(100px, max-content) minmax(0, 1fr);
+  }
 }
 
 button {
