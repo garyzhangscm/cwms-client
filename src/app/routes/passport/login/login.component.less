@@ -2,8 +2,13 @@
 
 :host {
   display: block;
-  width: 368px;
+  width: min(400px, calc(100% - 32px));
   margin: 0 auto;
+  padding: 30px 30px 8px;
+  border: 1px solid #e5e9ef;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgb(25 47 82 / 8%);
 
   ::ng-deep {
     .ant-tabs .ant-tabs-bar {
@@ -15,6 +20,16 @@
     .ant-tabs-tab {
       font-size: 16px;
       line-height: 24px;
+    }
+
+    .ant-input-affix-wrapper,
+    .ant-select-selector {
+      border-radius: 9px;
+    }
+
+    .ant-btn-primary {
+      border-radius: 9px;
+      font-weight: 600;
     }
 
     .ant-input-affix-wrapper .ant-input:not(:first-child) {

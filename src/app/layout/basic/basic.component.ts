@@ -26,7 +26,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 @Component({
   selector: 'layout-basic',
   template: `
-    <layout-default nz-resizable  [options]="{logo: logoTpl }" [asideUser]="asideUserTpl" [content]="contentTpl" [customError]="null">
+    <layout-default class="mes-shell" nz-resizable [options]="{logo: logoTpl }" [asideUser]="asideUserTpl" [content]="contentTpl" [customError]="null">
       <!--
         <layout-default-header-item direction="left">
         <a layout-default-header-item-trigger href="//github.com/ng-alain/ng-alain" target="_blank">
@@ -44,22 +44,16 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 -->
       
       <ng-template #logoTpl>
-        @if (collapsed) {
-          <h1 style="padding: 25px">
-          <a href="./" target="_blank"  style="color: white;">{{ 
-          currentCompany?.shortName ? 
-             currentCompany?.shortName : 
-             currentCompany?.name ?  currentCompany!.name.substring(0, 1) : "" }}
-          </a></h1>  
-        }
-        @else {
-          <h1 style="padding: 25px"  >
-          <a href="./" target="_blank" style="color: white;">{{ currentCompany?.name}}</a></h1>  
-        }
-        
+        <a class="mes-brand" routerLink="/" [attr.aria-label]="currentCompany?.name || 'MES'">
+          <span class="mes-brand__mark">{{ currentCompany?.shortName?.substring(0, 1) || currentCompany?.name?.substring(0, 1) || 'M' }}</span>
+          @if (!collapsed) {
+            <span class="mes-brand__name">{{ currentCompany?.name || 'MES Workspace' }}</span>
+          }
+        </a>
       </ng-template>
       <layout-default-header-item direction="left"  >
-        <div  >
+        <div class="mes-warehouse">
+          <span class="mes-warehouse__label">{{ 'warehouse' | i18n }}</span>
           <nz-select [(ngModel)]="currentWarehouseId" (ngModelChange)="warehouseChanged()">
             @for (warehouse of warehouses; track warehouse) {
               <nz-option   [nzValue]="warehouse.id" [nzLabel]="warehouse.name"></nz-option> 
