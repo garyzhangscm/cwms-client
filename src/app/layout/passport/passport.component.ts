@@ -14,7 +14,7 @@ import { HeaderI18nComponent } from '../basic/widgets/i18n.component';
       <!--
       <header-i18n  showLangText="true" class="langs" /> 
 -->
-      <header-i18n  showLangText="true"   /> 
+      <header-i18n showLangText="true" class="langs" />
       <div class="wrap">
         <div class="top">
           <div class="head">
