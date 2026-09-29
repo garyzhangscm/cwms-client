@@ -1,19 +1,44 @@
 // A quiet workspace shell that keeps dense MES tables easy to scan.
 :root {
   --mes-ink: #182235;
-  --mes-muted: #697588;
-  --mes-line: #e5e9ef;
-  --mes-blue: #3478f6;
-  --mes-blue-soft: #e8f0fe;
+  --mes-muted: #657286;
+  --mes-line: #dce3ed;
+  --mes-line-strong: #cbd5e2;
+  --mes-blue: #2867dc;
+  --mes-blue-soft: #e2edff;
+  --mes-canvas: #f0f3f8;
+  --mes-surface: #fff;
+  --mes-surface-soft: #f7f9fc;
+  --mes-field: #fff;
+  --mes-hover: #edf2f8;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   -webkit-font-smoothing: antialiased;
+  color: var(--mes-ink);
+  background: var(--mes-canvas);
+}
+
+body[data-theme='dark'] {
+  --mes-ink: #e7edf7;
+  --mes-muted: #a8b4c5;
+  --mes-line: #343e4d;
+  --mes-line-strong: #465264;
+  --mes-blue: #75a7ff;
+  --mes-blue-soft: #20385f;
+  --mes-canvas: #171c24;
+  --mes-surface: #202733;
+  --mes-surface-soft: #252e3b;
+  --mes-field: #171e28;
+  --mes-hover: #2b3543;
+  color: var(--mes-ink);
+  background: var(--mes-canvas);
 }
 
 .alain-default__header {
   border-bottom: 1px solid var(--mes-line);
+  background: var(--mes-surface);
 }
 
 .alain-default__header-logo {
@@ -77,11 +102,35 @@ body {
 
 .alain-default__nav-item {
   border-radius: 9px;
-  color: #475366;
+  color: var(--mes-muted);
 
   &:hover {
     color: var(--mes-ink);
-    background: #f0f3f8;
+    background: var(--mes-hover);
+  }
+}
+
+.mes-theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 4px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--mes-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+
+  &:hover {
+    border-color: var(--mes-line);
+    color: var(--mes-blue);
+    background: var(--mes-hover);
+  }
+
+  nz-icon {
+    font-size: 17px;
   }
 }
 
@@ -93,10 +142,10 @@ body {
   .ant-input-group-addon,
   .ant-input {
     color: var(--mes-ink);
-    background: #f3f5f8;
+    background: var(--mes-surface-soft);
 
     &::placeholder {
-      color: #8a95a4;
+      color: var(--mes-muted);
     }
   }
 
@@ -113,6 +162,7 @@ body {
 
 .alain-default__aside {
   border-right: 1px solid var(--mes-line);
+  background: var(--mes-surface-soft);
 
   &::after {
     display: none;
@@ -150,7 +200,7 @@ body {
     transition: background-color 160ms ease, color 160ms ease;
 
     &:hover {
-      background: #edf0f5;
+      background: var(--mes-hover);
     }
   }
 
@@ -179,6 +229,7 @@ body {
     > .sidebar-nav__item-link {
       color: #2366d1;
       background: var(--mes-blue-soft);
+      box-shadow: inset 3px 0 0 var(--mes-blue);
       font-weight: 600;
     }
   }
@@ -192,15 +243,25 @@ body {
 }
 
 .alain-default__content {
+  color: var(--mes-ink);
+  background: var(--mes-canvas);
+
   .page-header {
     border-bottom: 0;
     background: transparent;
+
+    h1,
+    h2 {
+      color: var(--mes-ink);
+      font-weight: 650;
+    }
   }
 
   .ant-card {
     border: 1px solid var(--mes-line);
     border-radius: 14px;
-    box-shadow: 0 2px 10px rgb(24 34 53 / 3%);
+    background: var(--mes-surface);
+    box-shadow: 0 3px 12px rgb(24 34 53 / 5%);
   }
 
   .ant-table {
@@ -208,9 +269,171 @@ body {
   }
 
   .ant-table-thead > tr > th {
-    color: #657184;
-    background: #f7f8fa;
+    color: var(--mes-muted);
+    background: var(--mes-surface-soft);
     font-weight: 600;
+    border-bottom-color: var(--mes-line-strong);
+  }
+}
+
+body[data-theme='dark'] {
+  .alain-default__header,
+  .alain-default__header-logo,
+  .alain-default__content,
+  .alain-default__content-body,
+  .alain-default__aside {
+    color: var(--mes-ink);
+    background: var(--mes-canvas);
+  }
+
+  .alain-default__header,
+  .alain-default__aside {
+    border-color: var(--mes-line);
+  }
+
+  .alain-default__aside-user,
+  .alain-default__content .ant-card,
+  .ant-card-head,
+  .alain-default__content .ant-form,
+  .alain-default__content .search-result-list,
+  .alain-default__content .ant-table-footer,
+  .mes-account__intro,
+  .mes-account__card {
+    color: var(--mes-ink);
+    border-color: var(--mes-line);
+    background: var(--mes-surface);
+    box-shadow: 0 3px 14px rgb(0 0 0 / 16%);
+  }
+
+  .alain-default__aside-user-info strong,
+  .alain-default__content .page-header h1,
+  .alain-default__content .page-header h2,
+  .mes-brand,
+  .mes-brand:hover,
+  .mes-account__intro h2,
+  .mes-account__card h3,
+  .mes-account__card dd {
+    color: var(--mes-ink);
+  }
+
+  .sidebar-nav__item-link {
+    color: var(--mes-muted);
+
+    &:hover {
+      color: var(--mes-ink);
+      background: var(--mes-hover);
+    }
+  }
+
+  .sidebar-nav__group-title,
+  .mes-warehouse__label,
+  .alain-default__aside-user-info p,
+  .mes-dashboard__empty {
+    color: var(--mes-muted);
+  }
+
+  .sidebar-nav__selected > .sidebar-nav__item-link {
+    color: #a9c8ff;
+    background: var(--mes-blue-soft);
+    box-shadow: inset 3px 0 0 var(--mes-blue);
+  }
+
+  .alain-default__content .ant-table,
+  .alain-default__content .ant-table-container,
+  .alain-default__content .ant-table-content,
+  .alain-default__content .ant-table-tbody > tr > td {
+    color: var(--mes-ink);
+    background: var(--mes-surface);
+    border-color: var(--mes-line);
+  }
+
+  .alain-default__content .ant-table-thead > tr > th {
+    color: var(--mes-ink);
+    background: var(--mes-surface-soft);
+    border-color: var(--mes-line-strong);
+  }
+
+  .alain-default__content .ant-table-tbody > tr:hover > td {
+    background: var(--mes-hover);
+  }
+
+  .mes-dashboard__progress {
+    background: #343f4d;
+  }
+
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-group-addon,
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+  .ant-picker,
+  .ant-input-number,
+  .ant-mentions,
+  .ant-picker-range-separator {
+    color: var(--mes-ink);
+    border-color: var(--mes-line-strong);
+    background: var(--mes-field);
+  }
+
+  .ant-input::placeholder,
+  .ant-select-selection-placeholder,
+  .ant-picker-input > input::placeholder {
+    color: #8794a7;
+  }
+
+  .ant-select-dropdown,
+  .ant-dropdown-menu,
+  .ant-picker-panel-container,
+  .ant-modal-content,
+  .ant-modal-header,
+  .ant-modal-footer,
+  .ant-drawer-content,
+  .ant-popover-inner,
+  .ant-tooltip-inner {
+    color: var(--mes-ink);
+    border-color: var(--mes-line);
+    background: var(--mes-surface);
+  }
+
+  .ant-dropdown-menu-item,
+  .ant-select-item,
+  .ant-picker-cell,
+  .ant-pagination-item a,
+  .ant-pagination-item-link {
+    color: var(--mes-ink);
+  }
+
+  .ant-dropdown-menu-item:hover,
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+  .ant-picker-cell:hover .ant-picker-cell-inner {
+    background: var(--mes-hover);
+  }
+
+  .ant-modal-title,
+  .ant-drawer-title,
+  .ant-empty-description,
+  .ant-breadcrumb,
+  .ant-breadcrumb a,
+  .ant-form-item-label > label,
+  .ant-pagination,
+  .mes-account__card dt,
+  .mes-account__intro p,
+  .mes-account__card p {
+    color: var(--mes-muted);
+  }
+
+  .ant-btn:not(.ant-btn-primary) {
+    color: var(--mes-ink);
+    border-color: var(--mes-line-strong);
+    background: var(--mes-surface-soft);
+  }
+
+  .mes-account__card dl > div {
+    border-color: var(--mes-line);
+  }
+
+  .mes-account__control {
+    color: var(--mes-ink);
+    background: var(--mes-surface-soft);
   }
 }
 
@@ -219,6 +442,12 @@ body {
 .ant-input-affix-wrapper,
 .ant-select-selector {
   border-radius: 8px;
+}
+
+.ant-btn-primary {
+  border-color: var(--mes-blue);
+  background: var(--mes-blue);
+  box-shadow: 0 2px 5px rgb(40 103 220 / 17%);
 }
 
 :where(a, button, input, .ant-select-selector):focus-visible {

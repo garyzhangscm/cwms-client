@@ -16,6 +16,7 @@ import { HeaderI18nComponent } from './widgets/i18n.component';
 import { Company } from 'src/app/routes/warehouse-layout/models/company';
 import { Warehouse } from 'src/app/routes/warehouse-layout/models/warehouse';
 import { StartupService } from '@core';
+import { MesThemeService } from '../../core/theme/mes-theme.service';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
 import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -85,6 +86,18 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
         </nz-dropdown-menu>
       </layout-default-header-item>
       <layout-default-header-item direction="right">
+        <button
+          type="button"
+          class="mes-theme-toggle"
+          [attr.aria-pressed]="mesTheme.isDark"
+          [attr.aria-label]="mesTheme.isDark ? 'Switch to white color theme' : 'Switch to dark color theme'"
+          [title]="mesTheme.isDark ? 'Switch to white color theme' : 'Switch to dark color theme'"
+          (click)="mesTheme.toggle()"
+        >
+          <nz-icon [nzType]="mesTheme.isDark ? 'bulb' : 'moon'" />
+        </button>
+      </layout-default-header-item>
+      <layout-default-header-item direction="right">
         <header-user />
       </layout-default-header-item>
       <ng-template #asideUserTpl>
@@ -129,6 +142,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 })
 export class LayoutBasicComponent {
   private readonly settings = inject(SettingsService);
+  readonly mesTheme = inject(MesThemeService);
   collapsed = false;
   options: LayoutDefaultOptions = {
     logoExpanded: `./assets/logo-full.svg`, 

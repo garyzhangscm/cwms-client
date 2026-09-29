@@ -1,5 +1,5 @@
 // Custom icon static resources
 
-import { AppstoreOutline } from '@ant-design/icons-angular/icons';
+import { AppstoreOutline, BulbOutline, MoonOutline } from '@ant-design/icons-angular/icons';
 
-export const ICONS = [AppstoreOutline];
+export const ICONS = [AppstoreOutline, BulbOutline, MoonOutline];
