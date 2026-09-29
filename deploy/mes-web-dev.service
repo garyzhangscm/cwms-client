@@ -1,0 +1,15 @@
+[Unit]
+Description=Colton MES frontend development server
+
+[Service]
+Type=simple
+WorkingDirectory=%h/mes-web/cwms-client
+Environment=PATH=%h/.local/opt/node-v22.23.3-linux-x64/bin:/usr/bin:/bin
+Environment=NG_CLI_ANALYTICS=false
+Environment=NODE_OPTIONS=--max-old-space-size=8000
+ExecStart=%h/.local/opt/node-v22.23.3-linux-x64/bin/node node_modules/@angular/cli/bin/ng.js serve --host 0.0.0.0 --port 4200 --configuration development
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

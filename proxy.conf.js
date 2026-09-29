@@ -6,6 +6,10 @@
  * Note: The proxy is only valid for real requests, Mock does not actually generate requests, so the priority of Mock will be higher than the proxy
  */
 module.exports = {
+  '/api/**': {
+    target: process.env.COLTON_API_TARGET || 'http://10.0.10.159:31252',
+    changeOrigin: true
+  },
   /**
    * The following means that all requests are directed to the backend `https://localhost:9000/`
    */

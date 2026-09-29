@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng s -o",
+    "start:colton": "ng serve --host 0.0.0.0 --port 4200 --configuration development",
     "build": "npm run ng-high-memory build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

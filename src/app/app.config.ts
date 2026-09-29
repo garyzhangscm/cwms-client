@@ -78,7 +78,7 @@ const providers: Array<Provider | EnvironmentProviders> = [
       return {
         link: httpLink.create({
           // uri: environment.api.baseUrl,
-          uri: 'https://staging.claytechsuite.com/api/inventory/graphql'
+          uri: new URL('inventory/graphql', new URL(environment.api.baseUrl, document.baseURI)).href
         }),
         cache: new InMemoryCache(),
       };
