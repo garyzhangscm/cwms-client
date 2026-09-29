@@ -1,24 +1,24 @@
 <page-header title="{{'welcome' |  i18n}}" ></page-header>
-<div style="background: #ECECEC;padding:30px;">
+<div class="mes-dashboard__stats">
    
     
-    <div nz-row [nzGutter]="8">
-      <div nz-col [nzSpan]="6">
+    <div nz-row [nzGutter]="[16, 16]">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
             <nz-statistic [nzValue]="(openOrders | number)!" [nzTitle]="'Open Orders'"></nz-statistic>
         </nz-card>
       </div>
-      <div nz-col [nzSpan]="6">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
             <nz-statistic [nzValue]="(newOrdersToday | number)!" [nzTitle]="'New Orders Today'"></nz-statistic>
         </nz-card>
       </div>
-      <div nz-col [nzSpan]="6">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
             <nz-statistic [nzValue]="(completedOrdersToday | number)!" [nzTitle]="'Completed Orders Today'"></nz-statistic>
         </nz-card>
       </div>
-      <div nz-col [nzSpan]="6">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
             <nz-statistic [nzValue]="(openReceipt | number)!" [nzTitle]="'Open Receipt'"></nz-statistic>
         </nz-card>
@@ -26,41 +26,36 @@
     </div> 
   </div>
 
-<div nz-row [nzGutter]="8">
-  <div nz-col [nzSpan]="12"  style="padding: 20px">
+<div nz-row [nzGutter]="[16, 16]" class="mes-dashboard__panels">
+  <div nz-col [nzXs]="24" [nzLg]="12">
     <nz-spin [nzSpinning]="loadingPickCount">
 
       <nz-card nzTitle="Picks">
         <div  *ngIf="totalPicks > 0">
-            <span >Open Picks({{ openPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" openPicks * 100 / totalPicks" strokeWidth="14" target="100" color="red"></g2-mini-progress> 
+          <span>Open Picks ({{ openPicks * 100 / totalPicks | number : '1.0-1' }}%)</span>
+          <div class="mes-dashboard__progress"><span [style.width.%]="openPicks * 100 / totalPicks"></span></div>
+          <span>Completed Picks ({{ completedPicks * 100 / totalPicks | number : '1.0-1' }}%)</span>
+          <div class="mes-dashboard__progress mes-dashboard__progress--complete"><span [style.width.%]="completedPicks * 100 / totalPicks"></span></div>
         </div>
-        <div  *ngIf="totalPicks == 0">
-          <span >Open Picks(0 %)</span> <g2-mini-progress [percent]=" 0" strokeWidth="14" target="100" color="red"></g2-mini-progress> 
+        <div class="mes-dashboard__empty" *ngIf="totalPicks == 0">
+          Pick metrics are not available in this view.
         </div>
-        <div *ngIf="totalPicks > 0">
-            <span>Completed Picks({{ completedPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" completedPicks * 100 / totalPicks" strokeWidth="14" target="100" color="orange"></g2-mini-progress> 
-        </div>
-        <div  *ngIf="totalPicks == 0">
-            <span>Completed Picks(0 %)</span> <g2-mini-progress [percent]="0" strokeWidth="14" target="100" color="orange"></g2-mini-progress> 
-        </div>
-        <!--
-
-        <div>
-            <span>Staged Picks({{ stagedPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" stagedPicks * 100 / totalPicks" strokeWidth="14" target="100" color="green"></g2-mini-progress> 
-        </div>
-        -->
     </nz-card>
     </nz-spin>
   </div>
-  <div nz-col [nzSpan]="12"   style="padding: 20px">
+  <div nz-col [nzXs]="24" [nzLg]="12">
     
     <nz-spin [nzSpinning]="loadingPickByLocationGroupCount">
 
       <nz-card  nzTitle="Picks By Location Group">
+        @if (picksByLocationGroup.size === 0) {
+          <div class="mes-dashboard__empty">Location group metrics are not available in this view.</div>
+        }
         @for (pick of picksByLocationGroup; track pick) {
         
           <div>
-            <span>{{ pick[0] }} ({{pick[1][1] }} /  {{ pick[1][0]}})</span> <g2-mini-progress [percent]=" pick[1][1] * 100 / pick[1][0]" strokeWidth="14" [target]="pick[1][0]"></g2-mini-progress> 
+            <span>{{ pick[0] }} ({{ pick[1][1] }} / {{ pick[1][0] }})</span>
+            <div class="mes-dashboard__progress"><span [style.width.%]="pick[1][0] > 0 ? pick[1][1] * 100 / pick[1][0] : 0"></span></div>
           </div>
         }
 

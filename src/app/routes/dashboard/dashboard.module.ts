@@ -10,7 +10,6 @@ import { G2CardModule } from '@delon/chart/card';
 import { G2GaugeModule } from '@delon/chart/gauge';
 import { G2MiniAreaModule } from '@delon/chart/mini-area';
 import { G2MiniBarModule } from '@delon/chart/mini-bar';
-import { G2MiniProgressModule } from '@delon/chart/mini-progress';
 import { NumberInfoModule } from '@delon/chart/number-info';
 import { G2PieModule } from '@delon/chart/pie';
 import { G2RadarModule } from '@delon/chart/radar';
@@ -42,7 +41,6 @@ const COMPONENTS = [
     G2GaugeModule,
     G2MiniAreaModule,
     G2MiniBarModule,
-    G2MiniProgressModule,
     G2PieModule,
     G2RadarModule,
     G2SingleBarModule,

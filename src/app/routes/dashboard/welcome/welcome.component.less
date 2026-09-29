@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+.mes-dashboard__stats {
+  margin-bottom: 16px;
+}
+
+:host ::ng-deep {
+  .mes-dashboard__stats .ant-card {
+    height: 100%;
+  }
+
+  .mes-dashboard__panels .ant-card {
+    min-height: 135px;
+  }
+}
+
+.mes-dashboard__empty {
+  padding: 8px 0;
+  color: #8791a0;
+  font-size: 13px;
+}
+
+.mes-dashboard__progress {
+  overflow: hidden;
+  height: 7px;
+  margin: 8px 0 18px;
+  border-radius: 7px;
+  background: #edf1f6;
+
+  > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #3478f6;
+  }
+
+  &--complete > span {
+    background: #41b78a;
+  }
+}
