@@ -8,7 +8,7 @@ import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin, goTo, COD
 import { tryRefreshToken } from './refresh-token';
 
 function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
-  checkStatus(injector, ev);
+  if (!req.url.includes('/integration-settings/')) checkStatus(injector, ev);
   // 业务处理：一些通用操作
   switch (ev.status) {
     case 200:
@@ -56,6 +56,7 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
         }
         break;
     case 401:
+      if (req.url.includes('/integration-settings/')) break;
       if (environment.api.refreshTokenEnabled && environment.api.refreshTokenType === 're-request') {
         return tryRefreshToken(injector, ev, req, next);
       }
@@ -68,6 +69,7 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
     case 403:
     case 404:
     case 500:
+      if (req.url.includes('/integration-settings/')) break;
       console.log(`get error http ${ev.status} `);
       
       // goTo(injector, `/exception/${ev.status}?url=${req.urlWithParams}`);
@@ -116,6 +118,8 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       const errortext = CODEMESSAGE[err.status] || err.statusText; 
       // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
       console.log(`!! will throw error ${err.status}`);
+      // The settings page displays its own access and service errors.
+      if (url.includes('/integration-settings/')) return throwError(() => err);
       if (err.status === 401) {
           console.log('reloging required')
           toLogin(injector);
