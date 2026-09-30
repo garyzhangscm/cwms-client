@@ -36,6 +36,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { STModule } from '@delon/abc/st';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataComponent,
@@ -80,6 +81,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     STModule,
     NzCardModule ,
     NzInputNumberModule ,
+    NzModalModule,
   ],
   declarations: [
     ...COMPONENTS,
