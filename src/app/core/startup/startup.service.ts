@@ -237,6 +237,22 @@ export class StartupService {
                 if (user != null && user.systemAdmin) {
                   this.aclService.attachRole(['system-admin']);
                 }
+                if (user != null && (user.admin || user.systemAdmin)) {
+                  const addSettings = (menus: Menu[]): boolean => {
+                    for (const menu of menus) {
+                      if (menu.i18n === 'menu.main.integration') {
+                        menu.children = menu.children ?? [];
+                        if (!menu.children.some(child => child.link === '/integration/settings')) {
+                          menu.children.push({text: 'Integration Setting', link: '/integration/settings'});
+                        }
+                        return true;
+                      }
+                      if (menu.children && addSettings(menu.children)) return true;
+                    }
+                    return false;
+                  };
+                  if (addSettings(res.menu)) this.menuService.add(res.menu);
+                }
               }
             )
         }

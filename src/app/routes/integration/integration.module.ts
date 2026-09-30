@@ -19,6 +19,7 @@ import { IntegrationIntegrationDataComponent } from './integration-data/integrat
 import { IntegrationRoutingModule } from './integration-routing.module';
 import { IntegrationTiktokSellerShopIntegrationConfigurationComponent } from './tiktok-seller-shop-integration-configuration/tiktok-seller-shop-integration-configuration.component';
 import { IntegrationShopifyIntegrationConfigurationComponent } from './shopify-integration-configuration/shopify-integration-configuration.component';
+import { IntegrationSettingsComponent } from './integration-settings/integration-settings.component';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '@delon/abc/page-header';
@@ -37,6 +38,7 @@ import { STModule } from '@delon/abc/st';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataComponent,
@@ -57,7 +59,8 @@ const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataWorkOrderConfirmComponent,
   IntegrationIntegrationDataWorkOrderComponent,
   IntegrationTiktokSellerShopIntegrationConfigurationComponent,
-  IntegrationShopifyIntegrationConfigurationComponent];
+  IntegrationShopifyIntegrationConfigurationComponent,
+  IntegrationSettingsComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -82,6 +85,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzCardModule ,
     NzInputNumberModule ,
     NzModalModule,
+    NzInputModule,
   ],
   declarations: [
     ...COMPONENTS,
