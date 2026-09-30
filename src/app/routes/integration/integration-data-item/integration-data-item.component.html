@@ -108,7 +108,7 @@
         }  
 
        
-          <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
+          <th nzWidth="320px">{{ 'integration.errorMessage' | i18n }}</th>
           <th nzRight>{{ 'action' | i18n }}</th>
       </tr>
     </thead>
@@ -135,10 +135,14 @@
           <td>
             {{data.lastModifiedTime | date:'short'}} 
           </td>
-          <td nzEllipsis>
-            <a>
-              <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
-            </a>
+          <td>
+            @if (data.errorMessage) {
+              <button nz-button nzType="link" class="error-message-trigger" (click)="showError(data)">
+                {{ data.errorMessage }}
+              </button>
+            } @else if (data.status === 'ERROR') {
+              <span>—</span>
+            }
           </td>
           <td nzRight>
             <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
@@ -245,6 +249,20 @@
   </tbody>
   </nz-table>
 </div>
+
+<nz-modal
+  [nzVisible]="selectedError !== null"
+  [nzTitle]="'integration.errorMessage' | i18n"
+  [nzFooter]="null"
+  [nzWidth]="720"
+  (nzOnCancel)="closeError()"
+>
+  <ng-container *nzModalContent>
+    <p>{{ 'id' | i18n }}: {{ selectedError?.id }}</p>
+    <p>{{ 'name' | i18n }}: {{ selectedError?.name }}</p>
+    <pre class="error-message-details">{{ selectedError?.errorMessage }}</pre>
+  </ng-container>
+</nz-modal>
 
 
 <ng-template #tableFoot>

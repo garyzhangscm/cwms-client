@@ -168,6 +168,7 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
   searchResult = '';
   expandSet = new Set<number>();
   isSpinning = false;
+  selectedError: IntegrationItemData | null = null;
 
   // Table data for display
   listOfAllIntegrationItemData: IntegrationItemData[] = [];
@@ -250,6 +251,14 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
     } else {
       this.expandSet.delete(id);
     }
+  }
+
+  showError(data: IntegrationItemData): void {
+    this.selectedError = data;
+  }
+
+  closeError(): void {
+    this.selectedError = null;
   }
   
   resendIntegration(id: number) : void {
