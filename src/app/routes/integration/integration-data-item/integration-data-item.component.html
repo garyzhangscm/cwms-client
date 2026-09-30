@@ -109,7 +109,6 @@
 
        
           <th nzWidth="320px">{{ 'integration.errorMessage' | i18n }}</th>
-          <th nzRight>{{ 'action' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
@@ -143,9 +142,6 @@
             } @else if (data.status === 'ERROR') {
               <span>—</span>
             }
-          </td>
-          <td nzRight>
-            <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
           </td>
         </tr>
         <tr  [nzExpand]="expandSet.has(data.id)" *ngIf="data.itemPackageTypes!.length > 0">
