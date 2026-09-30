@@ -20,8 +20,16 @@ import { IntegrationIntegrationDataWorkOrderComponent } from './integration-data
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
 import { IntegrationTiktokSellerShopIntegrationConfigurationComponent } from './tiktok-seller-shop-integration-configuration/tiktok-seller-shop-integration-configuration.component';
 import { IntegrationShopifyIntegrationConfigurationComponent } from './shopify-integration-configuration/shopify-integration-configuration.component';
+import { IntegrationSettingsComponent } from './integration-settings/integration-settings.component';
 
 const routes: Routes = [
+  { path: 'settings', component: IntegrationSettingsComponent,
+    canActivate: [aclCanActivate],
+    data: {
+      guard: {role: ['admin', 'system-admin']} as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
   { path: 'integration-data', component: IntegrationIntegrationDataComponent , 
     canActivate: [aclCanActivate], 
     data: { 

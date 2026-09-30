@@ -1,0 +1,38 @@
+<div class="integration-settings">
+  <h2>Integration Setting</h2>
+  <p>Map each Oracle Item Type code to an existing MES Item Family. New CSV batches use the saved mapping on the next FTP scan.</p>
+
+  <nz-card nzTitle="Oracle Item Type → MES Item Family">
+    <nz-spin [nzSpinning]="loading">
+      <nz-table [nzData]="rows" [nzShowPagination]="false" nzSize="middle">
+        <thead>
+          <tr>
+            <th>Oracle Item Type</th>
+            <th>MES Item Family</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows; let index = index">
+            <td>
+              <input nz-input [(ngModel)]="row.code" maxlength="20" placeholder="e.g. 01" [disabled]="saving" />
+            </td>
+            <td>
+              <nz-select [(ngModel)]="row.family" nzPlaceHolder="Select Item Family" [nzDisabled]="saving">
+                <nz-option *ngFor="let family of families" [nzValue]="family" [nzLabel]="family"></nz-option>
+              </nz-select>
+            </td>
+            <td>
+              <button nz-button nzDanger nzType="default" (click)="removeRow(index)" [disabled]="saving">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <div class="actions">
+        <button nz-button nzType="default" (click)="addRow()" [disabled]="loading || saving">Add Mapping</button>
+        <button nz-button nzType="primary" (click)="save()" [nzLoading]="saving" [disabled]="loading">Save</button>
+        <button nz-button nzType="default" (click)="load()" [disabled]="loading || saving">Reload</button>
+      </div>
+    </nz-spin>
+  </nz-card>
+</div>
