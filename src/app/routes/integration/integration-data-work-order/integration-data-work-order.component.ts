@@ -4,7 +4,6 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationStatus } from '../models/integration-status.enum';
@@ -62,11 +61,6 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
       iif: () => this.isChoose('errorMessage'),
       width: 150
     },     
-    {
-      title: this.i18n.fanyi("action"),  
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
-      render: 'actionColumn',
-    },  
     
   ]; 
   customColumns = [
@@ -128,7 +122,6 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private integrationWorkOrderService: IntegrationWorkOrderDataService, 
     private utilService: UtilService,
-    private messageService: NzMessageService,
   ) {}
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -190,15 +183,4 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
     });
   }
   
-  resendIntegration(id: number) : void {
-    this.integrationWorkOrderService.resend(id).subscribe({
-      next: () => {
-        
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-        this.search();
-      }
-    })
-
-  }
-
 }
