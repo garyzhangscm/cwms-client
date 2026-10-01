@@ -62,6 +62,7 @@ import { InventoryMovementPathComponent } from './movement-path/movement-path.co
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 import { InventoryItemBarcodeTypeComponent } from './item-barcode-type/item-barcode-type.component';
+import { HandoffLocationsComponent } from './handoff-locations/handoff-locations.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '@delon/abc/page-header';
 import { I18nPipe } from '@delon/theme';
@@ -134,7 +135,8 @@ const COMPONENTS: Array<Type<void>> = [
   InventoryInventoryMixRestrictionMaintenanceComponent,
   InventoryInventoryAgingSnapshotComponent, 
   InventoryDryrunInventoryAllocationComponent,
-  InventoryItemBarcodeTypeComponent];
+  InventoryItemBarcodeTypeComponent,
+  HandoffLocationsComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

@@ -6,6 +6,11 @@
  * Note: The proxy is only valid for real requests, Mock does not actually generate requests, so the priority of Mock will be higher than the proxy
  */
 module.exports = {
+  '/api/inventory-handoff/**': {
+    target: process.env.MES_INVENTORY_HANDOFF_TARGET || 'http://10.0.10.159:18791',
+    changeOrigin: true,
+    pathRewrite: {'^/api': ''}
+  },
   '/api/integration-settings/**': {
     target: process.env.MES_ITEM_SETTINGS_TARGET || 'http://10.0.10.101:18790',
     changeOrigin: true,

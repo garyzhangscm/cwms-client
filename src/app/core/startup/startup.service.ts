@@ -239,19 +239,36 @@ export class StartupService {
                 }
                 if (user != null && (user.admin || user.systemAdmin)) {
                   const addSettings = (menus: Menu[]): boolean => {
+                    let foundIntegration = false;
                     for (const menu of menus) {
                       if (menu.i18n === 'menu.main.integration') {
                         menu.children = menu.children ?? [];
                         if (!menu.children.some(child => child.link === '/integration/settings')) {
                           menu.children.push({text: 'Integration Setting', link: '/integration/settings'});
                         }
-                        return true;
+                        foundIntegration = true;
                       }
-                      if (menu.children && addSettings(menu.children)) return true;
+                      if (menu.children && addSettings(menu.children)) foundIntegration = true;
                     }
-                    return false;
+                    return foundIntegration;
                   };
-                  if (addSettings(res.menu)) this.menuService.add(res.menu);
+                  const addHandoff = (menus: Menu[]): boolean => {
+                    let foundInventory = false;
+                    for (const menu of menus) {
+                      if (menu.i18n === 'menu.main.inventory') {
+                        menu.children = menu.children ?? [];
+                        if (!menu.children.some(child => child.link === '/inventory/handoff-locations')) {
+                          menu.children.push({text: 'External Handoff Locations', link: '/inventory/handoff-locations'});
+                        }
+                        foundInventory = true;
+                      }
+                      if (menu.children && addHandoff(menu.children)) foundInventory = true;
+                    }
+                    return foundInventory;
+                  };
+                  const integrationFound = addSettings(res.menu);
+                  const inventoryFound = addHandoff(res.menu);
+                  if (integrationFound || inventoryFound) this.menuService.add(res.menu);
                 }
               }
             )
