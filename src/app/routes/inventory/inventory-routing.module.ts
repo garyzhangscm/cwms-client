@@ -48,8 +48,16 @@ import { InventoryMovementPathComponent } from './movement-path/movement-path.co
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 import { InventoryItemBarcodeTypeComponent } from './item-barcode-type/item-barcode-type.component';
+import { HandoffLocationsComponent } from './handoff-locations/handoff-locations.component';
 
 const routes: Routes = [
+  { path: 'handoff-locations', component: HandoffLocationsComponent,
+    canActivate: [aclCanActivate],
+    data: {
+      guard: { role: ['admin', 'system-admin'] } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
   { path: 'inventory', component: InventoryInventoryComponent , 
     canActivate: [aclCanActivate], 
     data: { 
