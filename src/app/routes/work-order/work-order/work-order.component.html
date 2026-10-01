@@ -318,8 +318,6 @@
                       {{ 'inventory.status' | i18n }}</th>
                     <th>
                       {{ 'allocationStrategyType' | i18n }}</th>
-                    <th *ngIf="!displayOnly">
-                        {{ 'action' | i18n }}</th>
                   </thead>
                   <tbody>
 
@@ -435,20 +433,6 @@
                       </td>
                       <td>{{ workOrderLine.inventoryStatus?.description}}</td>
                       <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | i18n}}</td>
-                      <td *ngIf="!displayOnly">
-                          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
-                            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-
-                          <nz-dropdown-menu #menu="nzDropdownMenu">
-                              <ul nz-menu>
-                                <li nz-menu-item>
-                                  <a routerLink="/work-order/line/spare-part-maintenance" routerLinkActive="active"
-                                    [queryParams]="{id : workOrderLine.id!}">{{ 'spare-part-maintenance' | i18n }}</a>
-                                </li>
-                              </ul>
-                          </nz-dropdown-menu>
-                                
-                      </td>
             
             
                     </tr>

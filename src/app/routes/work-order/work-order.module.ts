@@ -64,7 +64,6 @@ import { WorkOrderWorkOrderConfigurationComponent } from './work-order-configura
 import { WorkOrderWorkOrderLineCompleteConfirmComponent } from './work-order-line-complete-confirm/work-order-line-complete-confirm.component';
 import { WorkOrderWorkOrderLineCompleteComponent } from './work-order-line-complete/work-order-line-complete.component';
 import { WorkOrderWorkOrderLineMaintenanceComponent } from './work-order-line-maintenance/work-order-line-maintenance.component';
-import { WorkOrderWorkOrderLineSparePartMaintenanceComponent } from './work-order-line-spare-part-maintenance/work-order-line-spare-part-maintenance.component';
 import { WorkOrderWorkOrderMaintenanceComponent } from './work-order-maintenance/work-order-maintenance.component';
 import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produce-by-product/work-order-produce-by-product.component';
 import { WorkOrderWorkOrderProduceConfirmComponent } from './work-order-produce-confirm/work-order-produce-confirm.component';
@@ -154,7 +153,6 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderMpsViewComponent,
   WorkOrderMpsExportComponent,
   WorkOrderMrpMaintenanceComponent,
-  WorkOrderWorkOrderLineSparePartMaintenanceComponent,
   WorkOrderWorkOrderMaintenanceComponent,
   WorkOrderProductionLineMonitorComponent,
   WorkOrderProductionLineMonitorMaintenanceComponent,
