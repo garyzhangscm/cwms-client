@@ -886,6 +886,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   calculateWorkOrderLineTotalQuantities(workOrders: WorkOrder[]): WorkOrder[] {
     workOrders.forEach(workOrder => {
+      workOrder.workOrderLines = [...workOrder.workOrderLines].sort((a, b) =>
+        (a.number ?? '').localeCompare(b.number ?? '', undefined, { numeric: true })
+      );
       // init all the quantity to 0;
       this.calculateWorkOrderLineTotalQuantity(workOrder);
     });
