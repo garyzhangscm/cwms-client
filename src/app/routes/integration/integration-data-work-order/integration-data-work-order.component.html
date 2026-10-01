@@ -112,14 +112,6 @@
                 <span nz-tooltip nzTooltipTitle="{{ item.errorMessage }}">{{ item.errorMessage }}</span>
               </a>
           </ng-template>
-          <!--   action colummn  --> 
-          <ng-template st-row="actionColumnTitle" type="title" let-c>
-            {{ 'action' | i18n }}
-          </ng-template>
-          <ng-template st-row="actionColumn" let-item let-index="index"> 
-            <button nz-button (click)="resendIntegration(item.id!)">{{ 'resend' | i18n }}</button>
-          </ng-template>
-          
           <!--   specify the RF for this version  -->
           <ng-template #expand let-item let-index="index" >
             
