@@ -55,25 +55,11 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   currentProducingUnitOfMeasure?: ItemUnitOfMeasure;
   produceAtLPNUOM = false;
 
-  // display height for each box, in px.
-  // we will need to calculate it dynamicly since one machine may
-  // have multiple item assigned
-  // 1. if the machine allowed multiple items assigned at the same time
-  // 2. the machine only allow one item at a time but within the shift, there
-  //    was multiple items on the machine
-  displayHeight: number = 150;
-
   productionLineTypeLocalStorageKey = 'production_line_dashboard_production_line_key';
   refreshCountCycleLocalStorageKey = 'production_line_dashboard_refresh_cycle_key';
   doNotRefreshLocalStorageKey = 'production_line_dashboard_donot_fresh_key';
   autoGenerateNewLPNLocalStorageKey = 'production_line_dashboard_auto_generate_new_lpn';
   onlyShowActiveProductionLineLocalStorageKey = 'production_line_dashboard_only_show_production_line';
-
-  gridStyle = {
-    width: '12.5%',
-    textAlign: 'center',
-    padding: '2px'
-  };
 
   refreshCountCycle = 60;
   countDownNumber = this.refreshCountCycle;
@@ -191,7 +177,6 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
           this.productionLines = productionLineRes;
         }
 
-        this.setDisplayHeight(this.productionLines);
         this.loadItemInformationForProductionLines(this.productionLines);
 
         this.isSpinning = false;
@@ -298,26 +283,6 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
       this.refresh();
     } else {
       this.refresh(this.productionLineType);
-    }
-  }
-
-  setDisplayHeight(productionLines: ProductionLine[]) {
-    let maxItemCount = Math.max(
-      ...productionLines.map(productionLines =>
-        productionLines.assignedWorkOrders == null ? 0 : productionLines.assignedWorkOrders.length
-      )
-    );
-    this.displayHeight = 150 + (maxItemCount - 1) * 35;
-    console.log(`set height to ${this.displayHeight}`);
-  }
-
-  getBodyStyle(productionLine: ProductionLine) {
-    if (productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0) {
-      // work order assigned
-      return { 'background-color': 'green', color: 'white', 'font-weight': 'bold', height: `${this.displayHeight}px` };
-    } else {
-      // no work order assigned
-      return { 'background-color': 'grey', 'font-weight': 'bold', height: `${this.displayHeight}px` };
     }
   }
 

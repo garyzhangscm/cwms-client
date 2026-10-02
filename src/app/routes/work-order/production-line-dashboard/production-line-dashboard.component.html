@@ -1,10 +1,16 @@
-<page-header title="{{'production-line-dashboard' |  i18n}}" ></page-header>
+<page-header title="Production Kanban"></page-header>
 
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
  
  
-  <nz-card  [nzExtra]="showConfigurationTemplate"
-       nzTitle="Count down: {{ countDownNumber }}">
+  <nz-card class="kanban-board" [nzExtra]="showConfigurationTemplate"
+       [nzTitle]="refreshTitle">
+    <ng-template #refreshTitle>
+      <div class="kanban-toolbar">
+        <span class="kanban-toolbar__title">Production lines</span>
+        <span class="kanban-refresh">{{ doNotRefreshFlag ? 'Auto-refresh paused' : 'Refresh in ' + countDownNumber + 's' }}</span>
+      </div>
+    </ng-template>
        
     <ng-template #showConfigurationTemplate>
        
@@ -12,7 +18,7 @@
           <span> {{ 'showConfiguration' | i18n }}</span>
         </label>
     </ng-template>
-    <div *ngIf="showConfiguration" style="padding: 10px">
+    <div *ngIf="showConfiguration" class="kanban-configuration">
         {{'type' | i18n}}: <nz-radio-group [(ngModel)]="productionLineType" (ngModelChange)="productionLineTypeChanged()">
           <label nz-radio nzValue="All">All</label>
           <label nz-radio *ngFor="let type of productionLineTypes" [nzValue]="type.name">{{type.name}}</label> 
@@ -33,19 +39,37 @@
     
 
     </div>   
-    <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let productionLine of productionLines"  >
-      <nz-card  [nzBodyStyle]="getBodyStyle(productionLine)" *ngIf="!onlyShowActiveProductionLineFlag || (productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0)">
-          <div style="font-size: 20px;">{{productionLine.name}}</div>
-          <div *ngFor="let assignedWorkOrder of productionLine.assignedWorkOrders"> 
-              <div style="font-size: 15px;">{{assignedWorkOrder.first}}</div>
-              <div style="font-size: 12px;">{{assignedWorkOrder.fourth}} / {{assignedWorkOrder.fifth}}</div>
-              <div  style="font-size: 24px;text-decoration:underline;"><a (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent, 
+    <div class="kanban-grid">
+      <ng-container *ngFor="let productionLine of productionLines">
+        <article class="line-card"
+          [class.line-card--assigned]="productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0"
+          *ngIf="!onlyShowActiveProductionLineFlag || (productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0)">
+          <header class="line-card__header">
+            <h3 class="line-card__name">{{productionLine.name}}</h3>
+            <span class="line-card__status">
+              <span class="line-card__dot" aria-hidden="true"></span>
+              {{ productionLine.assignedWorkOrders?.length ? 'Assigned' : 'Unassigned' }}
+            </span>
+          </header>
+          <div class="line-order" *ngFor="let assignedWorkOrder of productionLine.assignedWorkOrders">
+            <div class="line-order__label">Work order</div>
+            <div class="line-order__number">{{assignedWorkOrder.first}}</div>
+            <button type="button" class="line-order__item"
+              [attr.aria-label]="'Produce inventory for ' + assignedWorkOrder.second + ' on ' + productionLine.name"
+              (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent,
                 productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
-                {{assignedWorkOrder.second}}</a></div>
-            
-          </div>  
-      </nz-card>
-    </div>  
+              {{assignedWorkOrder.second}}
+            </button>
+            <div class="line-order__quantity">
+              <span>Quantity</span>
+              <span class="line-order__values">{{assignedWorkOrder.fourth | number}} <span class="line-order__separator">/</span> {{assignedWorkOrder.fifth | number}}</span>
+            </div>
+          </div>
+          <p class="line-card__empty" *ngIf="!productionLine.assignedWorkOrders?.length">No assigned work order</p>
+        </article>
+      </ng-container>
+    </div>
+    <div class="kanban-empty" *ngIf="!isSpinning && !productionLines.length">No production lines to display.</div>
   </nz-card>
 </nz-spin>
  
