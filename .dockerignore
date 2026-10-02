@@ -1,0 +1,10 @@
+.git
+node_modules
+dist
+.angular
+coverage
+*.log
+.env
+.env.*
+*.tar
+*.tar.gz
