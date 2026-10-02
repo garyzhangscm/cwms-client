@@ -13,13 +13,14 @@ Baseline: `v19.1.64`, commit `639f3cd92e0856959d559c341a9ecf7bd76320b1`.
 Use Node.js 22 (the deployed user-local runtime is 22.23.3).
 
 ```sh
-npm ci --no-audit --no-fund
+npm ci --legacy-peer-deps --no-audit --no-fund
 npm run start:colton
 ```
 
 Optionally set `COLTON_API_TARGET` before starting to change the upstream.
-The production Nginx configuration is unchanged; the development proxy is
-used by `ng serve`, not by a static production build.
+The development proxy is used by `ng serve`, not by a static production build.
+Production container builds use `Dockerfile.colton` and the Nginx template
+documented in [Colton container deployment](colton/README.md).
 
 ## Development server service
 
@@ -43,4 +44,5 @@ Colton's data is live: the application retains its normal write functionality.
 Do not run business mutations or write-oriented automated tests against it.
 Authenticated business flows require a separately agreed verification scope.
 
-Replacing Colton's existing frontend is a later deployment after user acceptance.
+Colton was updated to frontend source `5c4b3b1` on 2026-10-02. Later development
+changes remain on the test website until accepted for a separate release.
