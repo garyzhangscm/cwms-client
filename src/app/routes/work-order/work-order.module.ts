@@ -109,6 +109,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
  
 
 
@@ -224,6 +226,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzCheckboxModule ,
     NzPopoverModule ,
     NzBadgeModule ,  
+    NzSwitchModule,
+    NzTimePickerModule,
   ],
   declarations: [
     ...COMPONENTS,

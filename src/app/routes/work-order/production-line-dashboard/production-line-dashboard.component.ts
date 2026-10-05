@@ -5,7 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { Subscription, interval } from 'rxjs';
+import { Subscription, catchError, forkJoin, from, interval, map, mergeMap, of, timeout } from 'rxjs';
 
 import { UserService } from '../../auth/services/user.service';
 import { PrintingService } from '../../common/services/printing.service';
@@ -40,6 +40,27 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   isKioskMode = false;
   private nativeFullscreenActive = false;
   lastUpdated: Date | null = null;
+  readonly collapsedWorkOrderLimit = 1;
+  private readonly expandedProductionLines = new Set<string>();
+
+  private productionLineKey(line: ProductionLine): string {
+    return `${line.warehouseId ?? ''}:${line.id ?? line.name}`;
+  }
+
+  isProductionLineExpanded(line: ProductionLine): boolean {
+    return this.expandedProductionLines.has(this.productionLineKey(line));
+  }
+
+  toggleProductionLineExpanded(line: ProductionLine): void {
+    const key = this.productionLineKey(line);
+    if (this.expandedProductionLines.has(key)) this.expandedProductionLines.delete(key);
+    else this.expandedProductionLines.add(key);
+  }
+
+  visibleWorkOrders(line: ProductionLine): NonNullable<ProductionLine['assignedWorkOrders']> {
+    const orders = line.assignedWorkOrders ?? [];
+    return this.isProductionLineExpanded(line) ? orders : orders.slice(0, this.collapsedWorkOrderLimit);
+  }
 
   get assignedLineCount(): number {
     return this.productionLines.filter(line => line.assignedWorkOrders?.length).length;
@@ -79,8 +100,15 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
-  productionLineType = 'All';
-  productionLineTypes: ProductionLineType[] = [];
+  selectedProductionLineTypes: string[] = ['All'];
+  private refreshSubscription?: Subscription;
+  private itemInformationSubscription?: Subscription;
+  readonly itemLoadingFailed = new Set<number>();
+
+  get allProductionLineTypesSelected(): boolean {
+    return this.selectedProductionLineTypes.includes('All');
+  }
+  productionLineTypes: (ProductionLineType & { name: string })[] = [];
   productionLines: ProductionLine[] = [];
   workOrders: WorkOrder[] = [];
   doNotRefreshFlag = false;
@@ -160,8 +188,17 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     this.loadAvailableProductionLineTypes();
     this.loadInventoryStatuses();
 
-    if (localStorage.getItem(this.productionLineTypeLocalStorageKey)) {
-      this.productionLineType = localStorage.getItem(this.productionLineTypeLocalStorageKey)!;
+    const savedTypes = localStorage.getItem(this.productionLineTypeLocalStorageKey);
+    if (savedTypes !== null) {
+      // Preserve the previous single-type setting while saving new selections as arrays.
+      try {
+        const parsed: unknown = JSON.parse(savedTypes);
+        if (Array.isArray(parsed) && parsed.every(type => typeof type === 'string')) {
+          this.selectedProductionLineTypes = parsed.includes('All') ? ['All'] : [...new Set<string>(parsed)];
+        }
+      } catch {
+        this.selectedProductionLineTypes = [savedTypes];
+      }
     }
     if (localStorage.getItem(this.refreshCountCycleLocalStorageKey)) {
       this.refreshCountCycle = +localStorage.getItem(this.refreshCountCycleLocalStorageKey)!;
@@ -178,11 +215,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
       this.onlyShowActiveProductionLineFlag = localStorage.getItem(this.onlyShowActiveProductionLineLocalStorageKey) === 'true';
     }
 
-    if (this.productionLineType == 'All') {
-      this.refresh();
-    } else {
-      this.refresh(this.productionLineType);
-    }
+    this.refresh();
 
     this.countDownsubscription = interval(1000).subscribe(x => {
       this.handleCountDownEvent();
@@ -202,14 +235,38 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   }
   loadAvailableProductionLineTypes(): void {
     this.productionLineTypeService.getProductionLineTypes().subscribe({
-      next: productionLineTypeRes => (this.productionLineTypes = productionLineTypeRes)
+      next: productionLineTypeRes => {
+        this.productionLineTypes = productionLineTypeRes.filter(
+          (type): type is ProductionLineType & { name: string } => typeof type.name === 'string' && type.name.length > 0
+        );
+      }
     });
   }
 
-  refresh(productionLineTypeName?: string) {
+  refresh(): void {
+    this.refreshSubscription?.unsubscribe();
+    this.itemInformationSubscription?.unsubscribe();
+    if (this.selectedProductionLineTypes.length === 0) {
+      this.productionLines = [];
+      this.isSpinning = false;
+      this.lastUpdated = new Date();
+      return;
+    }
     this.isSpinning = true;
-    this.productionLineService.getProductionLines(undefined, productionLineTypeName, false, false).subscribe({
-      next: productionLineRes => {
+    // The existing backend accepts one type per request. Merge selected types here.
+    const types: (string | undefined)[] = this.allProductionLineTypesSelected
+      ? [undefined] : this.selectedProductionLineTypes;
+    this.refreshSubscription = forkJoin(types.map(type =>
+      this.productionLineService.getProductionLines(undefined, type, false, false)
+    )).subscribe({
+      next: lineGroups => {
+        const seen = new Set<string>();
+        const productionLineRes = lineGroups.flat().filter(line => {
+          const key = `${line.warehouseId ?? ''}:${line.id ?? line.name}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
         if (this.onlyShowActiveProductionLineFlag) {
           // ok, we will only show the active production line
           this.productionLines = productionLineRes.filter(
@@ -228,53 +285,34 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     });
   }
 
-  // load the item information for the work order that assigned to this production
-  // if the production line has assignment
-  loadItemInformationForProductionLines(productionLines: ProductionLine[]) {
-    if (productionLines == null) {
-      return;
+  // Load independent items concurrently, with one request per item in this refresh.
+  loadItemInformationForProductionLines(productionLines: ProductionLine[]): void {
+    this.itemInformationSubscription?.unsubscribe();
+    this.itemLoadingFailed.clear();
+    const assignmentsByItem = new Map<number, NonNullable<ProductionLine['assignedWorkOrders']>>();
+    for (const line of productionLines ?? []) {
+      for (const order of line.assignedWorkOrders ?? []) {
+        if (order.second || order.sixth == null) continue;
+        const assignments = assignmentsByItem.get(order.sixth) ?? [];
+        assignments.push(order);
+        assignmentsByItem.set(order.sixth, assignments);
+      }
     }
-    // load the item information, 1 at a time
-    this.loadItemInformationForProductionLine(productionLines, 0);
-  }
-  loadItemInformationForProductionLine(productionLines: ProductionLine[], index: number) {
-    if (index >= productionLines.length) {
-      return;
-    }
-
-    if (productionLines[index].assignedWorkOrders != null) {
-      this.loadItemInformationForAssignedWorkOrder(productionLines, index, 0);
-    } else {
-      this.loadItemInformationForProductionLine(productionLines, index + 1);
-    }
-  }
-
-  loadItemInformationForAssignedWorkOrder(productionLines: ProductionLine[], productionLinesIndex: number, index: number) {
-    if (index >= productionLines[productionLinesIndex].assignedWorkOrders!.length) {
-      // we already loop through all assigned work order in this production line, let's continue
-      // with next line
-
-      this.loadItemInformationForProductionLine(productionLines, productionLinesIndex + 1);
-    }
-
-    if (productionLines[productionLinesIndex].assignedWorkOrders![index] == null) {
-      return;
-    }
-
-    if (
-      (productionLines[productionLinesIndex].assignedWorkOrders![index].second == null ||
-        productionLines[productionLinesIndex].assignedWorkOrders![index].second == '') &&
-      productionLines[productionLinesIndex].assignedWorkOrders![index].sixth != null
-    ) {
-      this.itemService.getItem(productionLines[productionLinesIndex].assignedWorkOrders![index].sixth).subscribe({
-        next: itemRes => {
-          productionLines[productionLinesIndex].assignedWorkOrders![index].second = itemRes.name;
-          productionLines[productionLinesIndex].assignedWorkOrders![index].third = itemRes.description;
-          this.loadItemInformationForAssignedWorkOrder(productionLines, productionLinesIndex, index + 1);
-        },
-        error: () => this.loadItemInformationForAssignedWorkOrder(productionLines, productionLinesIndex, index + 1)
-      });
-    }
+    this.itemInformationSubscription = from(assignmentsByItem.entries()).pipe(
+      mergeMap(([itemId, assignments]) => this.itemService.getItem(itemId).pipe(
+        timeout(10000),
+        map(item => {
+          for (const order of assignments) {
+            order.second = item.name;
+            order.third = item.description;
+          }
+        }),
+        catchError(() => {
+          this.itemLoadingFailed.add(itemId);
+          return of(undefined);
+        })
+      ), 6)
+    ).subscribe();
   }
 
   handleCountDownEvent(): void {
@@ -292,11 +330,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     if (this.countDownNumber <= 0) {
       this.resetCountDownNumber();
 
-      if (this.productionLineType == 'All') {
-        this.refresh();
-      } else {
-        this.refresh(this.productionLineType);
-      }
+      this.refresh();
     }
   }
 
@@ -307,6 +341,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   ngOnDestroy() {
     this.exitKioskMode();
     this.countDownsubscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
+    this.itemInformationSubscription?.unsubscribe();
   }
 
   refreshCountCycleChanged() {
@@ -321,13 +357,15 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   autoGenerateNewLPNFlagChanged() {
     localStorage.setItem(this.autoGenerateNewLPNLocalStorageKey, this.autoGenerateNewLPNFlag.toString());
   }
-  productionLineTypeChanged() {
-    localStorage.setItem(this.productionLineTypeLocalStorageKey, this.productionLineType);
-    if (this.productionLineType == 'All') {
-      this.refresh();
+  productionLineTypeSelectionChanged(type: string, checked: boolean): void {
+    if (type === 'All') {
+      this.selectedProductionLineTypes = checked ? ['All'] : [];
     } else {
-      this.refresh(this.productionLineType);
+      const selected = this.selectedProductionLineTypes.filter(name => name !== 'All' && name !== type);
+      this.selectedProductionLineTypes = checked ? [...selected, type] : selected;
     }
+    localStorage.setItem(this.productionLineTypeLocalStorageKey, JSON.stringify(this.selectedProductionLineTypes));
+    this.refresh();
   }
 
   openProducingInventoryModal(

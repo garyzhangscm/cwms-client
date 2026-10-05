@@ -81,14 +81,17 @@ button {
 .kanban-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
-  align-items: stretch;
+  align-items: start;
   gap: 16px;
 }
 
 .line-card {
   --line-accent: var(--mes-muted);
   --line-tint: var(--mes-surface-soft);
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  height: 280px;
   padding: 16px;
   border: 1px solid var(--mes-line);
   border-top: 3px solid var(--line-accent);
@@ -96,6 +99,31 @@ button {
   color: var(--mes-ink);
   background: var(--mes-surface);
   box-shadow: 0 2px 6px rgb(24 34 53 / 4%);
+
+  &--expanded {
+    height: auto;
+    min-height: 280px;
+  }
+
+  &__heading { min-width: 0; }
+  &__count { color: var(--mes-muted); font-size: 12px; }
+  &__orders { flex: 1; min-height: 0; padding-top: 4px; }
+  &__footer { min-height: 38px; padding-top: 8px; }
+  &__expand {
+    width: 100%;
+    min-height: 32px;
+    margin: 0;
+    padding: 6px 10px;
+    border: 1px solid var(--mes-line);
+    border-radius: 8px;
+    color: var(--mes-blue);
+    background: var(--mes-surface-soft);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    &:hover { border-color: var(--mes-blue); }
+    &:focus-visible { outline: 2px solid var(--mes-blue); outline-offset: 2px; }
+  }
 
   &--assigned {
     --line-accent: #19834a;
@@ -150,10 +178,10 @@ button {
 
 .line-order {
   min-width: 0;
-  padding-top: 16px;
+  padding: 10px 0;
 
   & + & {
-    margin-top: 16px;
+    margin-top: 0;
     border-top: 1px solid var(--mes-line);
   }
 
@@ -164,9 +192,9 @@ button {
   }
 
   &__number {
-    margin-top: 3px;
+    margin-top: 2px;
     color: var(--mes-ink);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
@@ -175,7 +203,7 @@ button {
   &__item {
     display: block;
     width: 100%;
-    margin: 10px 0 16px;
+    margin: 0 0 2px;
     padding: 0;
     border: 0;
     border-radius: 4px;
@@ -186,8 +214,9 @@ button {
     font-weight: 650;
     line-height: 1.45;
     text-align: left;
-    white-space: normal;
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     cursor: pointer;
 
     &:hover {
@@ -198,10 +227,10 @@ button {
 
   &__quantity {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 4px 8px;
-    padding: 9px 10px;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 4px;
+    padding: 4px 8px;
     border-radius: 8px;
     color: var(--mes-muted);
     background: var(--mes-surface-soft);
@@ -290,14 +319,17 @@ button {
   ::ng-deep .kanban-board > .ant-card-head { display: none; }
   ::ng-deep .kanban-board > .ant-card-body { padding: 0 32px 32px; }
   .kanban-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 20px; }
-  .line-card { min-height: 280px; padding: 24px; border-radius: 20px; border-top-width: 5px; }
+  .line-card { height: 360px; padding: 24px; border-radius: 20px; border-top-width: 5px; }
+  .line-card--expanded { height: auto; min-height: 360px; }
+  .line-card__count { font-size: 14px; }
+  .line-card__expand { min-height: 40px; font-size: 14px; }
   .line-card__name { font-size: 32px; }
   .line-card__status { padding: 7px 12px; font-size: 13px; }
   .line-order__label { font-size: 13px; }
-  .line-order__number { font-size: 17px; }
-  .line-order__item { min-height: 56px; padding: 10px 12px; font-size: 22px; background: var(--mes-blue-soft); border-radius: 10px; }
-  .line-order__quantity { flex-wrap: wrap; gap: 8px; font-size: 14px; }
-  .line-order__values { font-size: 20px; }
+  .line-order__number { font-size: 14px; }
+  .line-order__item { min-height: 36px; padding: 0; font-size: 22px; }
+  .line-order__quantity { gap: 0; font-size: 12px; }
+  .line-order__values { font-size: 16px; }
   .line-card__empty { font-size: 16px; }
 }
 
@@ -306,4 +338,15 @@ button {
   .kiosk-brand h1 { font-size: 24px; }
   .kiosk-summary { padding: 16px; gap: 16px; }
   :host-context(body.mes-kanban-kiosk) ::ng-deep .kanban-board > .ant-card-body { padding: 0 16px 24px; }
+}
+
+.kanban-type-filter {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+
+  [nz-checkbox] {
+    margin-left: 0;
+  }
 }

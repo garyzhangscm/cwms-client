@@ -7,7 +7,7 @@
   </div>
   <div class="kiosk-actions">
     <span class="kiosk-updated">{{ lastUpdated ? 'Updated ' + (lastUpdated | date:'HH:mm:ss') : 'Loading production lines…' }}</span>
-    <button type="button" class="kiosk-button" [disabled]="isSpinning" (click)="refresh(productionLineType === 'All' ? undefined : productionLineType)">Refresh</button>
+    <button type="button" class="kiosk-button" [disabled]="isSpinning" (click)="refresh()">Refresh</button>
     <button type="button" class="kiosk-button kiosk-button--primary" (click)="exitKioskMode()">Exit full screen</button>
   </div>
 </header>
@@ -38,10 +38,14 @@
         </div>
     </ng-template>
     <div *ngIf="showConfiguration && !isKioskMode" class="kanban-configuration">
-        {{'type' | i18n}}: <nz-radio-group [(ngModel)]="productionLineType" (ngModelChange)="productionLineTypeChanged()">
-          <label nz-radio nzValue="All">All</label>
-          <label nz-radio *ngFor="let type of productionLineTypes" [nzValue]="type.name">{{type.name}}</label> 
-        </nz-radio-group>
+        <div class="kanban-type-filter" role="group" [attr.aria-label]="'type' | i18n">
+          <span>{{'type' | i18n}}:</span>
+          <label nz-checkbox [ngModel]="allProductionLineTypesSelected"
+            (ngModelChange)="productionLineTypeSelectionChanged('All', $event)">All</label>
+          <label nz-checkbox *ngFor="let type of productionLineTypes"
+            [ngModel]="selectedProductionLineTypes.includes(type.name)"
+            (ngModelChange)="productionLineTypeSelectionChanged(type.name, $event)">{{type.name}}</label>
+        </div>
         
         <span style="padding-left: 20px">Auto Generate New LPN?</span>
         <label nz-checkbox [(ngModel)]="autoGenerateNewLPNFlag"  (ngModelChange)="autoGenerateNewLPNFlagChanged()" ></label>
@@ -60,31 +64,44 @@
     </div>   
     <div class="kanban-grid">
       <ng-container *ngFor="let productionLine of productionLines">
-        <article class="line-card"
+        <article class="line-card" [class.line-card--expanded]="isProductionLineExpanded(productionLine)"
           [class.line-card--assigned]="productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0"
           *ngIf="!onlyShowActiveProductionLineFlag || (productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0)">
           <header class="line-card__header">
-            <h3 class="line-card__name">{{productionLine.name}}</h3>
+            <div class="line-card__heading">
+              <h3 class="line-card__name">{{productionLine.name}}</h3>
+              <span class="line-card__count">{{productionLine.assignedWorkOrders?.length || 0}} work orders</span>
+            </div>
             <span class="line-card__status">
               <span class="line-card__dot" aria-hidden="true"></span>
               {{ productionLine.assignedWorkOrders?.length ? 'Assigned' : 'Unassigned' }}
             </span>
           </header>
-          <div class="line-order" *ngFor="let assignedWorkOrder of productionLine.assignedWorkOrders">
-            <div class="line-order__label">Work order</div>
-            <div class="line-order__number">{{assignedWorkOrder.first}}</div>
-            <button type="button" class="line-order__item"
-              [attr.aria-label]="'Produce inventory for ' + assignedWorkOrder.second + ' on ' + productionLine.name"
-              (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent,
-                productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
-              {{assignedWorkOrder.second}}
-            </button>
-            <div class="line-order__quantity">
-              <span>Quantity</span>
-              <span class="line-order__values">{{assignedWorkOrder.fourth | number}} <span class="line-order__separator">/</span> {{assignedWorkOrder.fifth | number}}</span>
+          <div class="line-card__orders">
+            <div class="line-order" *ngFor="let assignedWorkOrder of visibleWorkOrders(productionLine)">
+              <button type="button" class="line-order__item" [disabled]="!assignedWorkOrder.second" [title]="assignedWorkOrder.second"
+                [attr.aria-label]="'Produce inventory for ' + assignedWorkOrder.second + ' on ' + productionLine.name"
+                (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent,
+                  productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
+                {{assignedWorkOrder.second || (itemLoadingFailed.has(assignedWorkOrder.sixth) ? 'Item unavailable' : 'Loading item…')}}
+              </button>
+              <div class="line-order__number"><span class="line-order__label">Work order</span> {{assignedWorkOrder.first}}</div>
+              <div class="line-order__quantity">
+                <span>Quantity</span>
+                <span class="line-order__values">{{assignedWorkOrder.fourth | number}} <span class="line-order__separator">/</span> {{assignedWorkOrder.fifth | number}}</span>
+              </div>
             </div>
+            <p class="line-card__empty" *ngIf="!productionLine.assignedWorkOrders?.length">No assigned work order</p>
           </div>
-          <p class="line-card__empty" *ngIf="!productionLine.assignedWorkOrders?.length">No assigned work order</p>
+          <footer class="line-card__footer">
+            <button type="button" class="line-card__expand"
+              *ngIf="(productionLine.assignedWorkOrders?.length || 0) > collapsedWorkOrderLimit"
+              [attr.aria-expanded]="isProductionLineExpanded(productionLine)"
+              [attr.aria-label]="(isProductionLineExpanded(productionLine) ? 'Collapse work orders on ' : 'Show all work orders on ') + productionLine.name"
+              (click)="toggleProductionLineExpanded(productionLine)">
+              {{isProductionLineExpanded(productionLine) ? 'Show less' : 'Show all ' + productionLine.assignedWorkOrders?.length + ' work orders'}}
+            </button>
+          </footer>
         </article>
       </ng-container>
     </div>
