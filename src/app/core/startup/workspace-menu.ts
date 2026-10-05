@@ -1,10 +1,10 @@
 import type { Menu } from '@delon/theme';
 
 const sections = [
-  { text: 'Overview', keys: ['menu.dashboard', 'menu.main.report', 'menu.main.alert'] },
+  { text: 'Overview', keys: ['menu.dashboard'] },
   { text: 'Production', keys: ['menu.main.work-order', 'menu.main.qc'] },
   { text: 'Warehouse & Logistics', keys: ['menu.main.inbound', 'menu.main.inventory', 'menu.main.outbound', 'menu.main.transport'] },
-  { text: 'Finance', keys: ['menu.main.billing'] },
+  { text: 'Finance', keys: ['menu.main.billing', 'menu.main.report', 'menu.main.alert'] },
   { text: 'Administration', keys: ['menu.main.layout', 'menu.main.common', 'menu.main.integration', 'menu.main.work-task', 'menu.main.auth', 'menu.main.util'] }
 ];
 

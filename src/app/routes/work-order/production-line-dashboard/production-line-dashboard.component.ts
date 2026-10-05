@@ -5,7 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { Subscription, catchError, forkJoin, from, interval, map, mergeMap, of, timeout } from 'rxjs';
+import { Subscription, catchError, forkJoin, firstValueFrom, from, interval, map, mergeMap, of, timeout } from 'rxjs';
 
 import { UserService } from '../../auth/services/user.service';
 import { PrintingService } from '../../common/services/printing.service';
@@ -28,6 +28,8 @@ import { ProductionLineTypeService } from '../services/production-line-type.serv
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
 import { WorkOrderService } from '../services/work-order.service';
+import { ProductionLabelJob, ProductionLabelReceiptService } from '../services/production-label-receipt.service';
+import { ReportHistory } from '../../report/models/report-history';
 
 @Component({
   selector: 'app-work-order-production-line-dashboard',
@@ -104,6 +106,16 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   private refreshSubscription?: Subscription;
   private itemInformationSubscription?: Subscription;
   readonly itemLoadingFailed = new Set<number>();
+  isProducing = false;
+  productionJobMessage = '';
+  productionJobRetry = false;
+  private readonly receiptService = inject(ProductionLabelReceiptService);
+  private pendingLabelJob?: ProductionLabelJob;
+  private readonly printedLpns = new Set<string>();
+  private readonly labelReports = new Map<string, ReportHistory>();
+  private productionJobSubscription?: Subscription;
+  private readonly printAbort = new AbortController();
+  private readonly recoveryKey = 'mes-production-label-job-v1';
 
   get allProductionLineTypesSelected(): boolean {
     return this.selectedProductionLineTypes.includes('All');
@@ -185,6 +197,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   }
 
   ngOnInit(): void {
+    this.restorePendingLabelJob();
     this.loadAvailableProductionLineTypes();
     this.loadInventoryStatuses();
 
@@ -339,6 +352,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   }
 
   ngOnDestroy() {
+    this.printAbort.abort();
+    this.productionJobSubscription?.unsubscribe();
     this.exitKioskMode();
     this.countDownsubscription?.unsubscribe();
     this.refreshSubscription?.unsubscribe();
@@ -376,6 +391,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     itemName: string,
     itemDescription: string
   ): void {
+    if (this.isProducing) return;
     this.isSpinning = true;
     this.itemService.getItems(itemName).subscribe({
       next: itemRes => {
@@ -502,11 +518,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
           this.currentProducingUnitOfMeasure!.quantity!;
         this.produceInventory(workOrderNumber, productionLine, unitQuantity);
 
-        this.produceInventoryModal.updateConfig({
-          nzOkDisabled: false,
-          nzOkLoading: false
-        });
-        return true;
+        // Keep the modal protected until the submit request has completed.
+        return false;
       },
 
       nzWidth: 1000
@@ -607,62 +620,117 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
 
     this.saveWorkOrderProduceResults(workOrderProduceTransaction);
   }
-  saveWorkOrderProduceResults(workOrderProduceTransaction: WorkOrderProduceTransaction): void {
-    this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(workOrderProduceTransaction).subscribe({
-      next: () => {
-        this.messageService.success(this.i18n.fanyi('message.work-order.produced-success'));
+  saveWorkOrderProduceResults(request: WorkOrderProduceTransaction): void {
+    if (this.isProducing) return;
+    this.isProducing = true;
+    this.productionJobRetry = false;
+    this.productionJobMessage = 'Submitting production…';
+    this.productionJobSubscription = this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(request).subscribe({
+      next: saved => {
         this.produceInventoryModal.destroy();
         this.isSpinning = false;
-        // we may need to refresh the production line to reflect the result
-        this.refreshProductionLine(workOrderProduceTransaction.productionLine!);
-
-        console.log(
-          `this.warehouseConfiguration?.newLPNPrintLabelAtProducingFlag: ${this.warehouseConfiguration?.newLPNPrintLabelAtProducingFlag}`
-        );
-        console.log(`this.warehouseConfiguration?.printingStrategy: ${this.warehouseConfiguration?.printingStrategy}`);
-        // check if we will need to print labels
-        if (
-          this.warehouseConfiguration?.newLPNPrintLabelAtProducingFlag &&
-          this.warehouseConfiguration?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA &&
-          workOrderProduceTransaction.workOrderProducedInventories
-        ) {
-          // wait for a while to let the system generate the LPN
-          setTimeout(() => {
-            if (workOrderProduceTransaction.workOrder?.id != null) {
-              // get the work order and print LPN labels
-              workOrderProduceTransaction.workOrderProducedInventories.forEach(producedInventory => {
-                this.printNEWLPNLabelForWorkOrder(
-                  workOrderProduceTransaction.workOrder!.id!,
-                  producedInventory.lpn!,
-                  producedInventory.quantity,
-                  workOrderProduceTransaction.productionLine?.name
-                );
-              });
-            } else if (workOrderProduceTransaction.workOrderNumber != null) {
-              // get the work order and print LPN labels
-              this.workOrderService.getWorkOrders(workOrderProduceTransaction.workOrderNumber).subscribe({
-                next: workOrdersRes => {
-                  workOrdersRes.forEach(workOrder => {
-                    workOrderProduceTransaction.workOrderProducedInventories.forEach(producedInventory => {
-                      this.printNEWLPNLabelForWorkOrder(
-                        workOrder.id!,
-                        producedInventory.lpn!,
-                        producedInventory.quantity,
-                        workOrderProduceTransaction.productionLine?.name
-                      );
-                    });
-                  });
-                }
-              });
-            }
-          }, 2500);
+        const shouldPrint = this.warehouseConfiguration?.newLPNPrintLabelAtProducingFlag &&
+          this.warehouseConfiguration?.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA;
+        if (!shouldPrint) {
+          this.isProducing = false;
+          this.productionJobMessage = 'Production submitted.';
+          this.refreshProductionLine(request.productionLine!);
+          return;
         }
+        if (!saved?.id || !saved.workOrder?.id || !saved.warehouseId || !saved.workOrderProducedInventories?.length ||
+          saved.workOrderProducedInventories.some(inventory => !inventory.lpn || !inventory.quantity)) {
+          this.productionJobMessage = 'Production submitted, but its receipt could not be verified. Check the LPN before submitting again.';
+          return;
+        }
+        this.pendingLabelJob = {
+          transactionId: saved.id, warehouseId: saved.warehouseId, workOrderId: saved.workOrder.id,
+          productionLineName: request.productionLine?.name,
+          labels: saved.workOrderProducedInventories.map(inventory => ({ lpn: inventory.lpn?.trim() ?? '', quantity: inventory.quantity! }))
+        };
+        this.printedLpns.clear();
+        this.labelReports.clear();
+        this.persistPendingLabelJob();
+        this.continueProductionLabelJob();
       },
       error: () => {
-        this.messageService.error("can't produce the inventory from the work order");
         this.isSpinning = false;
+        this.produceInventoryModal.updateConfig({ nzOkDisabled: true, nzOkLoading: false });
+        this.productionJobMessage = 'Submission could not be confirmed. Check the LPN before submitting again.';
+        this.messageService.error(this.productionJobMessage);
       }
     });
+  }
+
+  continueProductionLabelJob(): void {
+    const job = this.pendingLabelJob;
+    if (!job) return;
+    if (job.warehouseId !== this.warehouseService.getCurrentWarehouse().id) {
+      this.productionJobMessage = 'Return to the original warehouse to continue this production transaction.';
+      this.productionJobRetry = true;
+      return;
+    }
+    this.productionJobRetry = false;
+    this.productionJobMessage = 'Checking that this production transaction has created its inventory…';
+    this.productionJobSubscription?.unsubscribe();
+    try {
+      this.productionJobSubscription = this.receiptService.waitForReceipt(job).subscribe({
+        next: () => { void this.printConfirmedProduction(job); },
+        error: () => {
+          this.productionJobRetry = true;
+          this.productionJobMessage = 'Inventory receipt is not yet confirmed. Continue checking the same transaction; do not submit it again.';
+        }
+      });
+    } catch {
+      this.productionJobMessage = 'Production receipt information is incomplete. Check the LPN before submitting again.';
+    }
+  }
+
+  private async printConfirmedProduction(job: ProductionLabelJob): Promise<void> {
+    try {
+      for (const label of job.labels) {
+        if (this.printedLpns.has(label.lpn)) continue;
+        this.productionJobMessage = `Preparing label for ${label.lpn}…`;
+        let report = this.labelReports.get(label.lpn);
+        if (!report) {
+          report = await firstValueFrom(this.workOrderService.generatePrePrintLPNLabel(
+            job.workOrderId, label.lpn, label.quantity, job.productionLineName
+          ).pipe(timeout(30000)));
+          this.labelReports.set(label.lpn, report);
+        }
+        if (this.printAbort.signal.aborted) return;
+        this.productionJobMessage = `Downloading and submitting label for ${label.lpn}…`;
+        if (job.warehouseId !== this.warehouseService.getCurrentWarehouse().id) throw new Error('Warehouse changed.');
+        await this.printingService.printReportHistoryFromLocalAsync(report, 2, this.printAbort.signal);
+        this.printedLpns.add(label.lpn);
+        this.persistPendingLabelJob();
+      }
+      this.pendingLabelJob = undefined;
+      try { sessionStorage.removeItem(this.recoveryKey); } catch { /* Storage may be unavailable. */ }
+      this.isProducing = false;
+      this.productionJobMessage = 'Inventory receipt confirmed; labels submitted to the local printing service.';
+      this.refresh();
+    } catch {
+      if (this.printAbort.signal.aborted) return;
+      this.productionJobRetry = true;
+      this.productionJobMessage = 'Inventory receipt confirmed, but label submission failed. Check the printer, then retry remaining labels without producing again.';
+    }
+  }
+
+  private persistPendingLabelJob(): void {
+    try { sessionStorage.setItem(this.recoveryKey, JSON.stringify({ job: this.pendingLabelJob, printed: [...this.printedLpns] })); }
+    catch { /* The current page can still continue checking. */ }
+  }
+
+  private restorePendingLabelJob(): void {
+    try {
+      const pending = JSON.parse(sessionStorage.getItem(this.recoveryKey) ?? 'null');
+      if (!pending?.job || pending.job.warehouseId !== this.warehouseService.getCurrentWarehouse().id) return;
+      this.pendingLabelJob = pending.job;
+      for (const lpn of pending.printed ?? []) this.printedLpns.add(lpn);
+      this.isProducing = true;
+      this.productionJobRetry = true;
+      this.productionJobMessage = 'An earlier production transaction needs checking. Continue it without submitting production again.';
+    } catch { /* No usable pending job. */ }
   }
 
   printNEWLPNLabelForWorkOrder(workOrderId: number, lpn: string, quantity?: number, productionLineName?: string, printerName?: string) {
