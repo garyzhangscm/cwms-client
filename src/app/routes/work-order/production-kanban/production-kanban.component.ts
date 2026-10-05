@@ -3,7 +3,7 @@ import { I18NService } from '@core';
 import { STChange, STColumn, STComponent, STPage, } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { interval, Subscription } from 'rxjs';
+import { finalize, interval, Subscription, timeout } from 'rxjs';
 
 import { UserService } from '../../auth/services/user.service';
 import { ProductionLineKanbanData } from '../../work-order/models/production-line-kanban-data';
@@ -28,6 +28,11 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
   showProductionLineSet = new Set<string>();
   hideProductionLineSelection = true;
   loadingData = false;
+  loadError = '';
+  private productionLinesLoaded = false;
+  private readonly requestTimeoutMs = 30000;
+  private productionLinesSubscription?: Subscription;
+  private kanbanSubscription?: Subscription;
  
 
   countDownNumber = 300;
@@ -46,7 +51,7 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     
-    this.st.page.front = false;
+
     this.resetCountDownNumber();
 
     
@@ -57,20 +62,38 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
 
   }
   ngOnDestroy() {
-    this.countDownsubscription.unsubscribe();
-
+    this.countDownsubscription?.unsubscribe();
+    this.productionLinesSubscription?.unsubscribe();
+    this.kanbanSubscription?.unsubscribe();
   }
-  loadProductionLines() {
-    this.productionLineService.getProductionLines()
-      .subscribe(productionLinesRes => {
-        this.productionLines = productionLinesRes;
-        // by default, we will show all production lines
-        this.productionLines.forEach(productionLine => {
-          this.showProductionLineSet.add(productionLine.name)
-        });
-        this.loadKanbanData();
 
+  loadProductionLines(): void {
+    this.productionLinesSubscription?.unsubscribe();
+    this.kanbanSubscription?.unsubscribe();
+    this.loadingData = true;
+    this.loadError = '';
+    // Selection needs only line names; work order and inventory details are loaded by the kanban API.
+    this.productionLinesSubscription = this.productionLineService
+      .getProductionLines(undefined, undefined, false, false)
+      .pipe(timeout(this.requestTimeoutMs))
+      .subscribe({
+        next: productionLines => {
+          this.productionLines = productionLines;
+          this.productionLinesLoaded = true;
+          this.showProductionLineSet = new Set(productionLines.map(line => line.name));
+          this.loadKanbanData();
+        },
+        error: () => {
+          this.loadingData = false;
+          this.loadError = 'Unable to load production lines. Please retry.';
+          this.resetCountDownNumber();
+        }
       });
+  }
+
+  retryLoad(): void {
+    if (this.productionLinesLoaded) this.loadKanbanData();
+    else this.loadProductionLines();
   }
   refreshKanbanData() {
 
@@ -87,6 +110,8 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
       this.showProductionLineSet.add(name);
     }
     this.refreshKanbanData();
+    this.st.pi = 1;
+    this.loadKanbanData();
   }
   handleCountDownEvent(): void {
     // don't count down when we are loading data
@@ -104,68 +129,53 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
   resetCountDownNumber() {
     this.countDownNumber = 300;
   }
-  loadKanbanData() {
-    // only show the selected produciton lines
-    this.loadingData = true;
-
-    const selectedProductionLineNames = this.getSelectedProductionLineNamesByPage().map(
-      productionLine => productionLine.name
-    ).join(',');
-    
-    // this.st.page.total = this.showProductionLineSet.size.toString();
+  loadKanbanData(): void {
+    if (!this.productionLinesLoaded) return;
+    // Cancel an earlier page request so a late response cannot overwrite the current page.
+    this.kanbanSubscription?.unsubscribe();
+    this.loadError = '';
+    const selectedProductionLineNames = this.getSelectedProductionLineNamesByPage()
+      .map(line => line.name).join(',');
     this.st.total = this.showProductionLineSet.size;
-    console.log(`selectedProductionLineNames:\n ${selectedProductionLineNames}`);
-    console.log(`this.st.page.total:\n ${this.st.page.total}`);
-    if (selectedProductionLineNames === '') {
+    if (!selectedProductionLineNames) {
       this.productionLineKanbanDataList = [];
+      this.refreshKanbanData();
       this.loadingData = false;
+      this.resetCountDownNumber();
+      return;
     }
-    else {
-
-      this.productionLineKanbanService.getProductionLineKanbanData(undefined, selectedProductionLineNames)
-      .subscribe(productionLineKanbanDataRes => {
-        this.productionLineKanbanDataList = productionLineKanbanDataRes;
-        this.productionLineKanbanDataList.forEach(
-          productionLineKanbanData =>
-            productionLineKanbanData.percent = (
-              productionLineKanbanData.productionLineActualOutput * 100 / productionLineKanbanData.productionLineTargetOutput
-            )
-        )
-        this.refreshKanbanData();
-        this.loadingData = false;
+    this.loadingData = true;
+    this.kanbanSubscription = this.productionLineKanbanService
+      .getProductionLineKanbanData(undefined, selectedProductionLineNames)
+      .pipe(
+        timeout(this.requestTimeoutMs),
+        finalize(() => {
+          this.loadingData = false;
+          this.resetCountDownNumber();
+        })
+      )
+      .subscribe({
+        next: data => {
+          this.productionLineKanbanDataList = data.map(row => ({
+            ...row,
+            percent: row.productionLineTargetOutput > 0
+              ? row.productionLineActualOutput * 100 / row.productionLineTargetOutput : 0
+          }));
+          this.refreshKanbanData();
+        },
+        error: () => {
+          this.loadError = 'Unable to refresh production data. Please retry. Previously loaded data may be out of date.';
+        }
       });
-    }
-
   }
 
-  getSelectedProductionLineNamesByPage(): ProductionLine[]{
-    console.log(`start to load data for page: ${this.st.pi}, ${this.st.ps} record per page`);
-
-    // step 1: get all selected production line
-    const selectedProductionLines : ProductionLine[] = this.productionLines.filter(
-      productionLine => this.showProductionLineSet.has(productionLine.name)
-    );
-    console.log(`selectedProductionLines:\n ${JSON.stringify(selectedProductionLines)}`);
-
-    // step 2: we will get record from ((page# -1) * record/page) to (page# * record/page - 1)  
-    let startIndex =  (this.st.pi - 1) * this.st.ps;
-    
-    // if we are out of range, then just return the last page
-    if (startIndex > selectedProductionLines.length - 1) {
-
-      startIndex = selectedProductionLines.length > this.st.ps ? 
-          selectedProductionLines.length - this.st.ps : 0;
-    }
-
-    let endIndex = this.st.pi * this.st.ps - 1;
-    if (endIndex > selectedProductionLines.length - 1) {
-      endIndex = selectedProductionLines.length - 1;
-    }
-    console.log(`start index: ${startIndex}, end index: ${endIndex}`);
-
-    return selectedProductionLines.slice(startIndex, endIndex + 1);
-
-
+  getSelectedProductionLineNamesByPage(): ProductionLine[] {
+    const lines = this.productionLines.filter(line => this.showProductionLineSet.has(line.name));
+    const pageSize = Math.max(1, this.st.ps);
+    const lastPage = Math.max(1, Math.ceil(lines.length / pageSize));
+    this.st.pi = Math.min(Math.max(1, this.st.pi), lastPage);
+    const start = (this.st.pi - 1) * pageSize;
+    return lines.slice(start, start + pageSize);
   }
   toggleProductionLineDisplay() {
     this.hideProductionLineSelection = !this.hideProductionLineSelection;
@@ -225,8 +235,7 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
   }
 
   kanbanDataTableChanged(e: STChange): void {
-    console.log(e);
-    if (e.type === 'pi') {
+    if (e.type === 'pi' || e.type === 'ps') {
       this.loadKanbanData();
     }
   }

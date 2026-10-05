@@ -2,7 +2,11 @@
 
 
 <div nz-row>
-  Count down: {{ countDownNumber }}
+  {{ loadingData ? 'Loading production data…' : 'Next refresh in ' + countDownNumber + 's' }}
+</div>
+<div *ngIf="loadError" role="alert" style="margin-top: 12px;">
+  <span>{{ loadError }}</span>
+  <button nz-button [disabled]="loadingData" (click)="retryLoad()" style="margin-left: 12px;">Retry</button>
 </div>
 
 <div nz-row style="padding: 15px;">
@@ -85,7 +89,7 @@
       </div>
 
     -->
-      <st #st [data]="displayProductionLineKanbanDataList" [columns]="columns" [loading]="loadingData" (change)="kanbanDataTableChanged($event)">
+      <st #st [data]="displayProductionLineKanbanDataList" [columns]="columns" [page]="page" [total]="showProductionLineSet.size" [loading]="loadingData" (change)="kanbanDataTableChanged($event)">
       </st>
 
     </div>
