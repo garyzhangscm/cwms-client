@@ -1,4 +1,21 @@
-<page-header title="Production Kanban"></page-header>
+<page-header *ngIf="!isKioskMode" title="Production Kanban"></page-header>
+
+<header class="kiosk-header" *ngIf="isKioskMode">
+  <div class="kiosk-brand">
+    <img src="assets/claytech-one.png" alt="Claytech One" />
+    <div><span class="kiosk-eyebrow">Claytech One · Production</span><h1>Production Kanban</h1></div>
+  </div>
+  <div class="kiosk-actions">
+    <span class="kiosk-updated">{{ lastUpdated ? 'Updated ' + (lastUpdated | date:'HH:mm:ss') : 'Loading production lines…' }}</span>
+    <button type="button" class="kiosk-button" [disabled]="isSpinning" (click)="refresh(productionLineType === 'All' ? undefined : productionLineType)">Refresh</button>
+    <button type="button" class="kiosk-button kiosk-button--primary" (click)="exitKioskMode()">Exit full screen</button>
+  </div>
+</header>
+<div class="kiosk-summary" *ngIf="isKioskMode">
+  <span><strong>{{ productionLines.length }}</strong> Production lines</span>
+  <span><i class="summary-dot"></i><strong>{{ assignedLineCount }}</strong> Assigned</span>
+  <span>{{ doNotRefreshFlag ? 'Auto-refresh paused' : 'Next refresh in ' + countDownNumber + 's' }}</span>
+</div>
 
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
  
@@ -13,12 +30,14 @@
     </ng-template>
        
     <ng-template #showConfigurationTemplate>
-       
-        <label nz-checkbox [(ngModel)]="showConfiguration" >
-          <span> {{ 'showConfiguration' | i18n }}</span>
-        </label>
+        <div *ngIf="!isKioskMode" class="kanban-toolbar-actions">
+          <label nz-checkbox [(ngModel)]="showConfiguration">
+            <span>{{ 'showConfiguration' | i18n }}</span>
+          </label>
+          <button type="button" class="kiosk-button kiosk-button--primary" (click)="enterKioskMode()">Full-screen board</button>
+        </div>
     </ng-template>
-    <div *ngIf="showConfiguration" class="kanban-configuration">
+    <div *ngIf="showConfiguration && !isKioskMode" class="kanban-configuration">
         {{'type' | i18n}}: <nz-radio-group [(ngModel)]="productionLineType" (ngModelChange)="productionLineTypeChanged()">
           <label nz-radio nzValue="All">All</label>
           <label nz-radio *ngFor="let type of productionLineTypes" [nzValue]="type.name">{{type.name}}</label> 

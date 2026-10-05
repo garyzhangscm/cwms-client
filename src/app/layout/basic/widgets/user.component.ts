@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { I18NService } from '@core'; 
@@ -24,7 +25,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   template: `
     <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight" [nzDropdownMenu]="userMenu">
       <nz-avatar [nzSrc]="user.avatar" nzSize="small" class="mr-sm" />
-      {{ user.name }}
+      {{ userFullName }}
     </div>
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <div nz-menu class="width-sm">
@@ -115,6 +116,16 @@ export class HeaderUserComponent {
   private readonly warehouseConfigurationService = inject(WarehouseConfigurationService); 
   private readonly router = inject(Router);
   private readonly tokenService = inject(DA_SERVICE_TOKEN);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  constructor() {
+    this.settings.notify.pipe(takeUntilDestroyed()).subscribe(() => this.cdr.markForCheck());
+  }
+
+  get userFullName(): string {
+    return this.user['fullName'] || [this.user['firstname'], this.user['lastname']].filter(Boolean).join(' ') || 'Account';
+  }
+
   get user(): User {
     return this.settings.user;
   }

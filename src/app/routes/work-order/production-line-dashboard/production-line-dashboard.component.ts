@@ -1,4 +1,5 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, ElementRef, HostListener, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -35,6 +36,47 @@ import { WorkOrderService } from '../services/work-order.service';
   standalone: false
 })
 export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDestroy {
+  private readonly document = inject(DOCUMENT);
+  isKioskMode = false;
+  private nativeFullscreenActive = false;
+  lastUpdated: Date | null = null;
+
+  get assignedLineCount(): number {
+    return this.productionLines.filter(line => line.assignedWorkOrders?.length).length;
+  }
+
+  async enterKioskMode(): Promise<void> {
+    this.isKioskMode = true;
+    this.document.body.classList.add('mes-kanban-kiosk');
+    if (this.document.fullscreenEnabled && !this.document.fullscreenElement) {
+      try {
+        await this.document.documentElement.requestFullscreen();
+        this.nativeFullscreenActive = true;
+      } catch {
+        // The full-window layout remains available when browser fullscreen is unavailable.
+      }
+    }
+  }
+
+  exitKioskMode(): void {
+    this.isKioskMode = false;
+    this.document.body.classList.remove('mes-kanban-kiosk');
+    if (this.nativeFullscreenActive && this.document.fullscreenElement) {
+      void this.document.exitFullscreen().catch(() => {});
+    }
+    this.nativeFullscreenActive = false;
+  }
+
+  @HostListener('document:fullscreenchange')
+  onFullscreenChange(): void {
+    if (this.nativeFullscreenActive && !this.document.fullscreenElement) this.exitKioskMode();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.isKioskMode && !this.document.fullscreenElement) this.exitKioskMode();
+  }
+
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   productionLineType = 'All';
@@ -179,6 +221,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
 
         this.loadItemInformationForProductionLines(this.productionLines);
 
+        this.lastUpdated = new Date();
         this.isSpinning = false;
       },
       error: () => (this.isSpinning = false)
@@ -262,7 +305,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   }
 
   ngOnDestroy() {
-    this.countDownsubscription.unsubscribe();
+    this.exitKioskMode();
+    this.countDownsubscription?.unsubscribe();
   }
 
   refreshCountCycleChanged() {
