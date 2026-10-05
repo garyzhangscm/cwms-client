@@ -11,6 +11,10 @@
     <button type="button" class="kiosk-button kiosk-button--primary" (click)="exitKioskMode()">Exit full screen</button>
   </div>
 </header>
+<div *ngIf="productionJobMessage" role="status" aria-live="polite" class="production-job-status">
+  <span>{{productionJobMessage}}</span>
+  <button type="button" class="kiosk-button" *ngIf="productionJobRetry" (click)="continueProductionLabelJob()">Continue checking / retry remaining labels</button>
+</div>
 <div class="kiosk-summary" *ngIf="isKioskMode">
   <span><strong>{{ productionLines.length }}</strong> Production lines</span>
   <span><i class="summary-dot"></i><strong>{{ assignedLineCount }}</strong> Assigned</span>
@@ -79,7 +83,7 @@
           </header>
           <div class="line-card__orders">
             <div class="line-order" *ngFor="let assignedWorkOrder of visibleWorkOrders(productionLine)">
-              <button type="button" class="line-order__item" [disabled]="!assignedWorkOrder.second" [title]="assignedWorkOrder.second"
+              <button type="button" class="line-order__item" [disabled]="!assignedWorkOrder.second || isProducing" [title]="assignedWorkOrder.second"
                 [attr.aria-label]="'Produce inventory for ' + assignedWorkOrder.second + ' on ' + productionLine.name"
                 (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent,
                   productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
