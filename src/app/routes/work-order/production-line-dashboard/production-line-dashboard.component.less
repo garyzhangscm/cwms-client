@@ -48,6 +48,16 @@ button {
   }
 }
 
+.kanban-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .kiosk-button {
+    margin-left: 0;
+  }
+}
+
 .kanban-refresh {
   padding: 4px 10px;
   border-radius: 20px;
@@ -222,4 +232,78 @@ button {
 :host-context(body[data-theme='dark']) .line-card--assigned {
   --line-accent: #75d69e;
   --line-tint: #213f33;
+}
+
+.kiosk-button {
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 18px;
+  border: 1px solid var(--mes-line);
+  border-radius: 12px;
+  color: var(--mes-ink);
+  background: var(--mes-surface);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &--primary { color: #fff; background: #2867dc; border-color: #2867dc; }
+  &:focus-visible { outline: 3px solid var(--mes-blue); outline-offset: 3px; }
+  &:disabled { opacity: .5; cursor: wait; }
+}
+
+.kiosk-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--mes-line);
+  background: var(--mes-surface);
+}
+.kiosk-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  img { width: 56px; height: 56px; border-radius: 14px; }
+  h1 { margin: 4px 0 0; color: var(--mes-ink); font-size: 28px; font-weight: 700; }
+}
+.kiosk-eyebrow, .kiosk-updated { color: var(--mes-muted); font-size: 13px; }
+.kiosk-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.kiosk-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  padding: 20px 32px;
+  color: var(--mes-muted);
+  font-size: 16px;
+  span { display: inline-flex; align-items: center; gap: 8px; }
+  strong { color: var(--mes-ink); font-size: 24px; }
+}
+.summary-dot { width: 10px; height: 10px; border-radius: 50%; background: #19834a; }
+
+:host-context(body.mes-kanban-kiosk) {
+  display: block;
+  min-height: 100vh;
+  .kanban-board { margin: 0; border: 0; border-radius: 0; background: transparent; }
+  ::ng-deep .kanban-board > .ant-card-head { display: none; }
+  ::ng-deep .kanban-board > .ant-card-body { padding: 0 32px 32px; }
+  .kanban-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 20px; }
+  .line-card { min-height: 280px; padding: 24px; border-radius: 20px; border-top-width: 5px; }
+  .line-card__name { font-size: 32px; }
+  .line-card__status { padding: 7px 12px; font-size: 13px; }
+  .line-order__label { font-size: 13px; }
+  .line-order__number { font-size: 17px; }
+  .line-order__item { min-height: 56px; padding: 10px 12px; font-size: 22px; background: var(--mes-blue-soft); border-radius: 10px; }
+  .line-order__quantity { flex-wrap: wrap; gap: 8px; font-size: 14px; }
+  .line-order__values { font-size: 20px; }
+  .line-card__empty { font-size: 16px; }
+}
+
+@media (max-width: 600px) {
+  .kiosk-header { padding: 20px 16px; }
+  .kiosk-brand h1 { font-size: 24px; }
+  .kiosk-summary { padding: 16px; gap: 16px; }
+  :host-context(body.mes-kanban-kiosk) ::ng-deep .kanban-board > .ant-card-body { padding: 0 16px 24px; }
 }

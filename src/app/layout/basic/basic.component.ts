@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { I18nPipe, SettingsService, User } from '@delon/theme';
+import { I18nPipe, SettingsService } from '@delon/theme';
 import { LayoutDefaultModule, LayoutDefaultOptions } from '@delon/theme/layout-default';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -16,6 +15,7 @@ import { HeaderI18nComponent } from './widgets/i18n.component';
 import { Company } from 'src/app/routes/warehouse-layout/models/company';
 import { Warehouse } from 'src/app/routes/warehouse-layout/models/warehouse';
 import { StartupService } from '@core';
+import { APP_NAME } from '../../core/app-brand';
 import { MesThemeService } from '../../core/theme/mes-theme.service';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
 import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
@@ -24,7 +24,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 @Component({
   selector: 'layout-basic',
   template: `
-    <layout-default class="mes-shell" nz-resizable [options]="{logo: logoTpl }" [asideUser]="asideUserTpl" [content]="contentTpl" [customError]="null">
+    <layout-default class="mes-shell" nz-resizable [options]="{logo: logoTpl }" [asideUser]="null" [content]="contentTpl" [customError]="null">
       <!--
         <layout-default-header-item direction="left">
         <a layout-default-header-item-trigger href="//github.com/ng-alain/ng-alain" target="_blank">
@@ -42,10 +42,10 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 -->
       
       <ng-template #logoTpl>
-        <a class="mes-brand" routerLink="/" [attr.aria-label]="currentCompany?.name || 'MES'">
-          <span class="mes-brand__mark">{{ currentCompany?.shortName?.substring(0, 1) || currentCompany?.name?.substring(0, 1) || 'M' }}</span>
+        <a class="mes-brand" routerLink="/" [attr.aria-label]="appName">
+          <img class="mes-brand__mark mes-brand__icon" src="./assets/claytech-one.png" [alt]="appName" />
           @if (!collapsed) {
-            <span class="mes-brand__name">{{ currentCompany?.name || 'MES Workspace' }}</span>
+            <span class="mes-brand__name">{{ appName }}</span>
           }
         </a>
       </ng-template>
@@ -100,21 +100,6 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
       <layout-default-header-item direction="right">
         <header-user />
       </layout-default-header-item>
-      <ng-template #asideUserTpl>
-        <div nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" class="alain-default__aside-user">
-          <nz-avatar class="alain-default__aside-user-avatar" [nzSrc]="user.avatar" />
-          <div class="alain-default__aside-user-info">
-            <strong>{{ user.name }}</strong>
-            <p class="mb0">{{ user.email }}</p>
-          </div>
-        </div>
-        <nz-dropdown-menu #userMenu="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item routerLink="/pro/account/center">{{ 'menu.account.center' | i18n }}</li>
-            <li nz-menu-item routerLink="/pro/account/settings">{{ 'menu.account.settings' | i18n }}</li>
-          </ul>
-        </nz-dropdown-menu>
-      </ng-template>
       <ng-template #contentTpl>
         <router-outlet />
       </ng-template>
@@ -128,7 +113,6 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     NzIconModule,
     NzMenuModule,
     NzDropDownModule,
-    NzAvatarModule,
     HeaderSearchComponent,
     HeaderClearStorageComponent,
     HeaderFullScreenComponent,
@@ -141,6 +125,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   ]
 })
 export class LayoutBasicComponent {
+  readonly appName = APP_NAME;
   private readonly settings = inject(SettingsService);
   readonly mesTheme = inject(MesThemeService);
   collapsed = false;
@@ -155,9 +140,6 @@ export class LayoutBasicComponent {
   currentCompany: Company | undefined;
   warehouses!: Warehouse[];
   
-  get user(): User {
-    return this.settings.user;
-  }
   constructor(
     private startupSrv: StartupService,
     private warehouseService: WarehouseService,

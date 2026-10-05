@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, Menu, MenuService, SettingsService, TitleService } from '@delon/theme';
 import { ACLService } from '@delon/acl';
+import { APP_NAME } from '../app-brand';
+import { organizeWorkspaceMenu } from './workspace-menu';
 import { I18NService } from '../i18n/i18n.service';
 import { Observable, zip, of, catchError, map } from 'rxjs';
 import type { NzSafeAny } from 'ng-zorro-antd/core/types';
@@ -65,7 +67,7 @@ export class StartupService {
 
   private handleAppData(res: NzSafeAny): void {
     // Application information: including site name, description, year
-    this.settingService.setApp(res.app);
+    this.settingService.setApp({ ...res.app, name: APP_NAME });
     // User information: including name, avatar, email address
     this.settingService.setUser(res.user);
     // ACL: Set the permissions to full, https://ng-alain.com/acl/getting-started
@@ -73,7 +75,7 @@ export class StartupService {
     // Menu data, https://ng-alain.com/theme/menu
     this.menuService.add(res.menu ?? []);
     // Can be set page suffix title, https://ng-alain.com/theme/title
-    this.titleService.suffix = res.app?.name;
+    this.titleService.suffix = APP_NAME;
   }
 
   
@@ -120,7 +122,7 @@ export class StartupService {
       token: '123456789'
     };
     // Application information: including site name, description, year
-    this.settingService.setApp(app);
+    this.settingService.setApp({ ...app, name: APP_NAME });
     // User information: including name, avatar, email address
     this.settingService.setUser(user);
     // ACL: Set the permissions to full, https://ng-alain.com/acl/getting-started
@@ -140,7 +142,7 @@ export class StartupService {
       }
     ]);
     // Can be set page suffix title, https://ng-alain.com/theme/title
-    this.titleService.suffix = app.name;
+    this.titleService.suffix = APP_NAME;
 
     return of(void 0);
   }
@@ -200,7 +202,7 @@ export class StartupService {
         // application data
         const res = (appData as NzSafeAny).data;
         // 应用信息：包括站点名、描述、年份
-        this.settingService.setApp(res.app);
+        this.settingService.setApp({ ...res.app, name: APP_NAME });
         // 用户信息：包括姓名、头像、邮箱地址
         this.settingService.setUser(res.user);
         // ACL：设置权限为全量
@@ -219,7 +221,7 @@ export class StartupService {
         updateDefaultDashboardLink(res.menu);
 
         // 初始化菜单 
-        this.menuService.add(res.menu);
+        this.menuService.add(organizeWorkspaceMenu(res.menu));
         // setup the ACL based on the user's accessible menu
         // console.log(`this.tokenService.get(): ${this.tokenService.get()?.token}, expired? ${this.tokenService.get()?.expired}`); 
         if (this.tokenService.get()?.token != null && 
@@ -231,6 +233,10 @@ export class StartupService {
             // setup the admin role
             this.userService.getCurrentUser().then(
               user => {
+                if (user != null) {
+                  const fullName = [user.firstname, user.lastname].map(part => part?.trim()).filter(Boolean).join(' ');
+                  this.settingService.setUser({ ...this.settingService.user, fullName });
+                }
                 if (user != null && user.admin) {
                   this.aclService.attachRole(['admin']);
                 }
@@ -268,7 +274,7 @@ export class StartupService {
                   };
                   const integrationFound = addSettings(res.menu);
                   const inventoryFound = addHandoff(res.menu);
-                  if (integrationFound || inventoryFound) this.menuService.add(res.menu);
+                  if (integrationFound || inventoryFound) this.menuService.add(organizeWorkspaceMenu(res.menu));
                 }
               }
             )
@@ -276,7 +282,7 @@ export class StartupService {
 
         // 设置页面标题的后缀
         this.titleService.default = '';
-        this.titleService.suffix = res.app.name;
+        this.titleService.suffix = APP_NAME;
 
         // console.log(`res.webClientConfiguration: ${JSON.stringify(res.webClientConfiguration)}`);
         this.webClientConfigurationService.setWebClientConfiguration(res.webClientConfiguration);

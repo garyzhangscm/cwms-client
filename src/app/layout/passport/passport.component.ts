@@ -5,6 +5,8 @@ import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ThemeBtnComponent } from '@delon/theme/theme-btn';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
+import { APP_NAME } from '../../core/app-brand';
+
 import { HeaderI18nComponent } from '../basic/widgets/i18n.component';
 
 @Component({
@@ -18,8 +20,8 @@ import { HeaderI18nComponent } from '../basic/widgets/i18n.component';
       <div class="wrap">
         <div class="top">
           <div class="head">
-            <img class="logo" src="./assets/claytech_logo.png" />
-            <span class="title">Claytech Suite</span>
+            <img class="logo" src="./assets/claytech-one.png" [alt]="appName" />
+            <span class="title">{{ appName }}</span>
           </div>
           <div class="desc"></div>
         </div>
@@ -32,9 +34,7 @@ import { HeaderI18nComponent } from '../basic/widgets/i18n.component';
         </global-footer>
     -->
         <global-footer>
-          Copyright
-          <i class="anticon-copyright"></i> 2020
-          <a href="" target="_blank">claytech intl</a>
+          © 2026 Claytech Software LLC
         </global-footer>
       </div>
     </div>
@@ -44,6 +44,7 @@ import { HeaderI18nComponent } from '../basic/widgets/i18n.component';
   imports: [RouterOutlet, HeaderI18nComponent, GlobalFooterModule, NzIconModule]
 })
 export class LayoutPassportComponent implements OnInit {
+  readonly appName = APP_NAME;
   private tokenService = inject(DA_SERVICE_TOKEN);
 
   links = [
