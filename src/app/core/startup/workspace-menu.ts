@@ -49,7 +49,12 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
   // Hide the legacy table board while retaining the overview card board and its route.
   const visibleMenu = (entries: Menu[]): Menu[] => entries
     .filter(entry => entry.link !== '/work-order/production-kanban')
-    .map(entry => entry.children ? { ...entry, children: visibleMenu(entry.children) } : entry);
+    .map(entry => {
+      const labelled = entry.link === '/work-order/produce-transaction'
+        ? { ...entry, text: 'Production Records', i18n: 'work-order.production-records' }
+        : entry;
+      return labelled.children ? { ...labelled, children: visibleMenu(labelled.children) } : labelled;
+    });
   const modules: Menu[] = [];
   const extra: Menu[] = [];
   for (const entry of visibleMenu(menu)) {

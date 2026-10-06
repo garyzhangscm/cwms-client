@@ -19,6 +19,7 @@ import { enUS as dfEn, zhCN as dfZhCn, zhTW as dfZhTw } from 'date-fns/locale';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { en_US as zorroEnUS, NzI18nService, zh_CN as zorroZhCN, zh_TW as zorroZhTW } from 'ng-zorro-antd/i18n';
 import { Observable } from 'rxjs';
+import { WEB_LABEL_OVERRIDES } from './web-label-overrides';
 
 interface LangConfigData {
   abbr: string;
@@ -98,7 +99,7 @@ export class I18NService extends AlainI18nBaseService {
   use(lang: string, data: Record<string, unknown>): void {
     if (this._currentLang === lang) return;
 
-    this._data = this.flatData(data, []);
+    this._data = { ...this.flatData(data, []), ...WEB_LABEL_OVERRIDES[lang] };
 
     const item = LANGS[lang];
     registerLocaleData(item.ng);

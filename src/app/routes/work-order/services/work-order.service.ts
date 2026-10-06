@@ -125,19 +125,21 @@ export class WorkOrderService {
     return this.http.put(url, workOrder).pipe(map(res => res.data));
   }
 
-  removeWorkOrder(workOrder: WorkOrder): Observable<WorkOrder> {
-    const url = `workorder/work-orders/${workOrder.id}`;
-    return this.http.delete(url).pipe(map(res => res.data));
+  removeWorkOrder(workOrder: WorkOrder): Observable<void> {
+    return this.removeWorkOrders([workOrder]);
   }
-  removeWorkOrders(workOrders: WorkOrder[]): Observable<WorkOrder[]> {
+  removeWorkOrders(workOrders: WorkOrder[]): Observable<void> {
     const workOrderIds: number[] = [];
     workOrders.forEach(workOrder => {
       workOrderIds.push(workOrder.id!);
     });
     const params = {
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
       workOrderIds: workOrderIds.join(','),
     };
-    return this.http.delete('workorder/work-orders', params).pipe(map(res => res.data));
+    // Development uses a dedicated protected endpoint, never the legacy production DELETE route.
+    const url = environment.production ? 'workorder/work-orders' : 'workorder-deletion-test/work-orders';
+    return this.http.delete(url, params).pipe(map(() => undefined));
   }
 
   allocateWorkOrder(workOrder: WorkOrder, productionLineAllocationRequests?: ProductionLineAllocationRequest[]): Observable<WorkOrder> {

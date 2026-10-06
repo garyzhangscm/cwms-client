@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { firstValueFrom } from 'rxjs';
 
 import { UserService } from '../../auth/services/user.service';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
@@ -65,8 +66,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     pageSizes: [5, 10, 25, 50, 100],
     front: false
   };
+  hasSearched = false;
+  private searchRequestVersion = 0;
   pageIndex = 1;
   pageSize = 10;
+  deletingWorkOrderIds = new Set<number>();
 
   listOfColumns: Array<ColumnItem<WorkOrder>> = [
     {
@@ -514,7 +518,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
         this.searchForm.controls.number.setValue(params['number']);
-        this.search();
+        this.searchFromFirstPage();
       }
     });
 
@@ -791,7 +795,26 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   resetForm(): void {
     this.searchForm.reset();
     this.resetSearchPage();
-    this.listOfAllWorkOrder = []; 
+    this.clearSearchResults();
+  }
+
+  private hasSearchCriteria(): boolean {
+    const { number, item, status } = this.searchForm.value;
+    return Boolean(number?.trim() || item?.trim() || status);
+  }
+
+  private clearSearchResults(): void {
+    // Ignore responses from searches that were running when the user cleared.
+    this.searchRequestVersion++;
+    this.listOfAllWorkOrder = [];
+    this.hasSearched = false;
+    this.isSpinning = false;
+    this.searching = false;
+    this.searchResult = '';
+    if (this.workOrderTable) {
+      this.workOrderTable.total = 0;
+    }
+    this.collapseAll();
   }
 
   private resetSearchPage(): void {
@@ -802,16 +825,29 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   searchFromFirstPage(): void {
+    if (!this.hasSearchCriteria()) {
+      this.clearSearchResults();
+      this.resetSearchPage();
+      this.messageService.warning(this.i18n.fanyi('work-order.search-condition-required'));
+      return;
+    }
     this.resetSearchPage();
     this.search();
   }
 
   search(id?: number): void {
+    if (!id && !this.hasSearchCriteria()) {
+      this.clearSearchResults();
+      return;
+    }
+    const requestVersion = ++this.searchRequestVersion;
+    this.hasSearched = true;
     this.isSpinning = true;
     this.searchResult = '';
     if (id) {
       this.workOrderService.getWorkOrder(id).subscribe(
         workOrderRes => {
+          if (requestVersion !== this.searchRequestVersion) return;
           this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]); 
           this.refreshDetailInformation([workOrderRes], false);
           this.isSpinning = false;
@@ -821,6 +857,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           });
         },
         () => {
+          if (requestVersion !== this.searchRequestVersion) return;
           this.isSpinning = false;
           this.searchResult = '';
         },
@@ -859,13 +896,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       })
        */
       this.workOrderService
-        .getPageableWorkOrders(this.searchForm.value.number? this.searchForm.value.number: undefined, 
-          this.searchForm.value.item ? this.searchForm.value.item : undefined, 
+        .getPageableWorkOrders(this.searchForm.value.number?.trim() || undefined,
+          this.searchForm.value.item?.trim() || undefined,
           undefined, 
           this.searchForm.value.status ? this.searchForm.value.status : undefined, 
           this.workOrderTable?.pi, this.workOrderTable?.ps)
         .subscribe({
           next: (page) => {
+            if (requestVersion !== this.searchRequestVersion) return;
             
             this.workOrderTable.total = page.totalElements;
             this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(page.content);
@@ -878,7 +916,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
           }, 
           error: () => {
-
+            if (requestVersion !== this.searchRequestVersion) return;
             this.isSpinning = false;
             this.searchResult = '';
           }
@@ -1167,6 +1205,46 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.isWorkOrderReadyForProduce(workOrder) ||
       this.isWorkOrderReadyForComplete(workOrder)
     );
+  }
+  canDeleteWorkOrder(workOrder: WorkOrder): boolean {
+    return workOrder.id != null && workOrder.status === WorkOrderStatus.PENDING
+      && (workOrder.producedQuantity ?? 0) === 0
+      && (workOrder.qcQuantityRequested ?? 0) === 0
+      && (workOrder.qcQuantityCompleted ?? 0) === 0
+      && !workOrder.productionLineAssignments?.length && !workOrder.assignments?.length
+      && !workOrder.productionPlanLine && !workOrder.btoOutboundOrderId && !workOrder.btoCustomerId
+      && !(workOrder.workOrderByProducts ?? []).some(product => (product.producedQuantity ?? 0) !== 0)
+      && !(workOrder.workOrderLines ?? []).some(line =>
+        (line.inprocessQuantity ?? 0) !== 0 || (line.deliveredQuantity ?? 0) !== 0
+        || (line.consumedQuantity ?? 0) !== 0 || (line.scrappedQuantity ?? 0) !== 0
+        || (line.returnedQuantity ?? 0) !== 0 || line.openQuantity !== line.expectedQuantity);
+  }
+
+  deleteWorkOrder(workOrder: WorkOrder, content: TemplateRef<{}>): void {
+    if (!this.canDeleteWorkOrder(workOrder) || this.deletingWorkOrderIds.has(workOrder.id!)) return;
+    this.modalService.confirm({
+      nzTitle: this.i18n.fanyi('work-order.delete-title'),
+      nzContent: content,
+      nzOkText: this.i18n.fanyi('work-order.delete'),
+      nzOkDanger: true,
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnOk: async () => {
+        if (this.deletingWorkOrderIds.has(workOrder.id!)) return false;
+        this.deletingWorkOrderIds.add(workOrder.id!);
+        try {
+          await firstValueFrom(this.workOrderService.removeWorkOrder(workOrder));
+          this.messageService.success(this.i18n.fanyi('work-order.delete-success'));
+          this.searchFromFirstPage();
+          return true;
+        } catch (error: any) {
+          this.messageService.error(error?.statusText || this.i18n.fanyi('work-order.delete-failed'));
+          return false;
+        } finally {
+          this.deletingWorkOrderIds.delete(workOrder.id!);
+        }
+      }
+    });
   }
   isWorkOrderPickable(workOrder: WorkOrder): boolean {
     return workOrder.status === WorkOrderStatus.INPROCESS;

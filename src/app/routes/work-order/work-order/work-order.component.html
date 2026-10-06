@@ -43,13 +43,17 @@
     </div>
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="searchFromFirstPage()" [nzLoading]="searching">
+        <button nz-button [nzType]="'primary'" type="button" (click)="searchFromFirstPage()" [nzLoading]="isSpinning">
           {{ 'search' | i18n }}
         </button>
-        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        <button nz-button type="button" (click)="resetForm()">{{ 'clear' | i18n }}</button>
       </div>
     </div>
   </form>
+
+  <p *ngIf="!hasSearched" class="text-grey mt-md" role="status">
+    {{ 'work-order.search-prompt' | i18n }}
+  </p>
 
   <!-- Table to Display the result  -->
   <div class="search-result-list">
@@ -238,6 +242,10 @@
               <li nz-menu-item *ngIf="isWorkOrderChangable(workOrder)">
                 <a (click)="modifyWorkOrder(workOrder)">{{ 'modify' | i18n }}</a>
               </li>
+              <li nz-menu-item nzDanger *ngIf="canDeleteWorkOrder(workOrder)"
+                [nzDisabled]="deletingWorkOrderIds.has(workOrder.id!)">
+                <a (click)="deleteWorkOrder(workOrder, deleteWorkOrderContent)">{{ 'work-order.delete' | i18n }}</a>
+              </li>
               <li nz-menu-item *ngIf="isWorkOrderChangable(workOrder)">
                 <a (click)="changeWorkOrderLine(workOrder)">{{ 'work-order.modify-line' | i18n }}</a>
               </li>
@@ -277,6 +285,10 @@
               </li>
             </ul>
           </nz-dropdown-menu>
+          <ng-template #deleteWorkOrderContent>
+            <p>{{ 'work-order.delete-confirm' | i18n: { number: workOrder.number } }}</p>
+            <p>{{ 'work-order.delete-rule' | i18n }}</p>
+          </ng-template>
           
         </ng-template>
 
