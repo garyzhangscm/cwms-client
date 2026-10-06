@@ -30,6 +30,12 @@ export class AuthUserComponent implements OnInit {
   resetPasswordConfirmation = '';
   forcePasswordChange = true;
 
+  hasPasswordResetAccess(actor: User): boolean {
+    return actor.admin === true || (actor.roles ?? []).some(role =>
+      role.enabled === true && role.name?.trim().toLowerCase() === 'admin'
+      && role.companyId === actor.companyId);
+  }
+
   canResetPassword(user: User): boolean {
     return this.isLoginUserAdmin && !this.displayOnly && !!user.id
       && user.systemAdmin !== true && (user.companyId ?? -1) >= 0;
@@ -265,7 +271,7 @@ export class AuthUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getUsers(this.userService.getCurrentUsername()).subscribe({
-      next: users => this.isLoginUserAdmin = users.length === 1 && users[0].admin === true,
+      next: users => this.isLoginUserAdmin = users.length === 1 && this.hasPasswordResetAccess(users[0]),
       error: () => this.isLoginUserAdmin = false
     });
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
