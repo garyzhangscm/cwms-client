@@ -1,3 +1,4 @@
+import { environment } from '@env/environment';
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MenuService, _HttpClient , SettingsService } from '@delon/theme';
@@ -66,6 +67,12 @@ export class UserService {
   changeUser(user: User): Observable<User> {
     return this.http.post(`resource/users/${user.id}`, user).pipe(map(res => res.data));
   }
+  resetPassword(userId: number, newPassword: string, changePasswordAtNextLogon: boolean): Observable<void> {
+    const service = environment.production ? 'resource' : 'user-password-reset-test';
+    return this.http.post(`${service}/users/${userId}/password-reset?companyId=${this.companyService.getCurrentCompany()!.id}`,
+      { newPassword, changePasswordAtNextLogon }).pipe(map(() => undefined));
+  }
+
   changePassword(user: User, newPassword: string): Observable<User> {
     return this.http.post(`resource/users/${user.id}/password?newPassword=${newPassword}`, user).pipe(map(res => res.data));
   }

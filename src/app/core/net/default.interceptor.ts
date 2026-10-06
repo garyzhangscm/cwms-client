@@ -120,6 +120,9 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       console.log(`!! will throw error ${err.status}`);
       // The settings page displays its own access and service errors.
       if (url.includes('/integration-settings/') || url.includes('/inventory-handoff/')) return throwError(() => err);
+      // The delete confirmation displays the business rejection itself.
+      if (newReq.method === 'DELETE' && err.status === 55000
+        && /\/workorder(?:-deletion-test)?\/work-orders(?:\?|$)/.test(url)) return throwError(() => err);
       if (err.status === 401) {
           console.log('reloging required')
           toLogin(injector);

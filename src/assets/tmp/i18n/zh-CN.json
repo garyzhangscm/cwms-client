@@ -152,5 +152,11 @@
   "validation.title.required": "请输入标题",
   "validation.date.required": "请选择起止日期",
   "validation.goal.required": "请输入目标描述",
-  "validation.standard.required": "请输入衡量标准"
+  "validation.standard.required": "请输入衡量标准",
+  "work-order.delete": "删除工单",
+  "work-order.delete-title": "删除工单",
+  "work-order.delete-confirm": "确定永久删除工单 {{number}}？此操作无法撤销。",
+  "work-order.delete-rule": "仅允许删除未生产、未分配且没有业务关联的 PENDING 工单。",
+  "work-order.delete-success": "工单已删除。",
+  "work-order.delete-failed": "工单删除失败，请刷新后重试。"
 }
