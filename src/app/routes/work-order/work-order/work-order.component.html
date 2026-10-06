@@ -43,7 +43,7 @@
     </div>
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        <button nz-button [nzType]="'primary'" (click)="searchFromFirstPage()" [nzLoading]="searching">
           {{ 'search' | i18n }}
         </button>
         <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
