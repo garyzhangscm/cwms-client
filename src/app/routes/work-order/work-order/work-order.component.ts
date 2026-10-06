@@ -790,7 +790,20 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   resetForm(): void {
     this.searchForm.reset();
+    this.resetSearchPage();
     this.listOfAllWorkOrder = []; 
+  }
+
+  private resetSearchPage(): void {
+    this.pageIndex = 1;
+    if (this.workOrderTable) {
+      this.workOrderTable.pi = 1;
+    }
+  }
+
+  searchFromFirstPage(): void {
+    this.resetSearchPage();
+    this.search();
   }
 
   search(id?: number): void {
