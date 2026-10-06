@@ -19,11 +19,15 @@ function load(path, name, members, bindings) {
  assert.equal(captured.url,'user-password-reset-test/users/10/password-reset?companyId=1');
  assert.equal(captured.body.newPassword,'test&only+password?');
  assert.ok(!captured.url.includes('test&only'));assert.equal(captured.body.changePasswordAtNextLogon,true);
- const Component=load('src/app/routes/auth/user/user.component.ts','AuthUserComponent',['canResetPassword','openResetPasswordModal','clearResetPassword'],{firstValueFrom});
+ const Component=load('src/app/routes/auth/user/user.component.ts','AuthUserComponent',['hasPasswordResetAccess','canResetPassword','openResetPasswordModal','clearResetPassword'],{firstValueFrom});
  const c=new Component();let modal;let submissions=0;let successes=0;
  c.i18n={fanyi:key=>key};c.messageService={warning:()=>{},success:()=>successes++};
  c.modalService={create:config=>{modal=config;}};
  const target={id:10,companyId:1,username:'target'};
+ assert.equal(c.hasPasswordResetAccess({admin:false,companyId:1,roles:[{name:'Admin',enabled:true,companyId:1}]}),true);
+ for(const role of [{name:'Admin',enabled:false,companyId:1},{name:'Admin',enabled:true,companyId:2},{name:'WarehouseManager',enabled:true,companyId:1}])
+  assert.equal(c.hasPasswordResetAccess({admin:false,companyId:1,roles:[role]}),false);
+ assert.equal(c.hasPasswordResetAccess({admin:false,companyId:1}),false);
  c.isLoginUserAdmin=false;c.openResetPasswordModal(target,{});assert.equal(modal,undefined);
  c.isLoginUserAdmin=true;assert.equal(c.canResetPassword({...target,systemAdmin:true}),false);
  c.displayOnly=true;assert.equal(c.canResetPassword(target),false);c.displayOnly=false;
