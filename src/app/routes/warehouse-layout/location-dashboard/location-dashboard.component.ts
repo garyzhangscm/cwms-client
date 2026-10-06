@@ -14,11 +14,21 @@ export class WarehouseLayoutLocationDashboardComponent implements OnInit {
   locationUtilizationLayout: any = {};
 
   isSpinning = false;
+  hasLoaded = false;
+  loadError: 'access' | 'failed' | null = null;
 
   constructor(private http: _HttpClient, private locationGroupService: LocationGroupService) { }
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
+    this.loadUtilization();
+  }
+
+  loadUtilization(): void {
+    if (this.isSpinning) return;
     this.isSpinning = true;
+    this.hasLoaded = false;
+    this.loadError = null;
+    this.locationUtilizationData = [];
     this.locationGroupService.getStorageLocationGroupUtilization().subscribe({
       next: (locationGroupUtil) => {
         if (locationGroupUtil == null || locationGroupUtil.length == 0) {
@@ -63,9 +73,13 @@ export class WarehouseLayoutLocationDashboardComponent implements OnInit {
           this.locationUtilizationLayout = {barmode: 'stack'};
         }
 
+        this.hasLoaded = true;
         this.isSpinning = false;
       }, 
-      error: () => this.isSpinning = false
+      error: (error) => {
+        this.loadError = error.status === 401 || error.status === 403 ? 'access' : 'failed';
+        this.isSpinning = false;
+      }
     })
     
 

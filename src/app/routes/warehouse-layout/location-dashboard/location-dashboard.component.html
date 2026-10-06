@@ -6,17 +6,24 @@
 
                 <!--
                   https://plotly.com/javascript/pie-charts/
-                --> 
+                -->
                 <!--
         <plotly-plot [data]="locationUtilizationData" [layout]="locationUtilizationLayout"></plotly-plot>
 
-                --> 
+                -->
     </nz-card>
-    
-    <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'No location group is volume tracked' | i18n}}" 
-    *ngIf="locationUtilizationData.length == 0"> 
+
+    <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'No location group is volume tracked' | i18n}}"
+    *ngIf="hasLoaded && !loadError && locationUtilizationData.length == 0">
     <div nz-result-extra>
-        There's no location group that is setup as volume tracked. In order to see the utilization, please make sure the locations are volume tracked. 
+        There's no location group that is setup as volume tracked. In order to see the utilization, please make sure the locations are volume tracked.
     </div>
+    </nz-result>
+    <nz-result *ngIf="loadError && !isSpinning" nzStatus="error"
+      [nzTitle]="'location-kanban.load-failed' | i18n"
+      [nzSubTitle]="(loadError === 'access' ? 'location-kanban.access-failed' : 'location-kanban.retry-hint') | i18n">
+      <div nz-result-extra>
+        <button nz-button nzType="primary" type="button" (click)="loadUtilization()">{{'location-kanban.retry' | i18n}}</button>
+      </div>
     </nz-result>
 </nz-spin>
