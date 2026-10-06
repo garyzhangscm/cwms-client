@@ -1,4 +1,4 @@
 export interface CWMSLocalStorage {
     data: any;
-    expiredDate: Date;
+    expiredDate: Date | number | null;
 }

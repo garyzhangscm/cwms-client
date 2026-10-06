@@ -1,6 +1,11 @@
 /** New Web labels must remain available while the resource server dictionary is older. */
 export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
   'en-US': {
+    'location-dashboard': 'Location Kanban',
+    'location-kanban.load-failed': 'Unable to load location utilization',
+    'location-kanban.access-failed': 'Your sign-in or company context could not be verified. Please sign in again.',
+    'location-kanban.retry-hint': 'Please try again. If the problem continues, contact your administrator.',
+    'location-kanban.retry': 'Retry',
     'user.login-account': 'Login account',
     'user.reset-password-hint': '8–128 characters',
     'user.require-password-change': 'Require password change at next sign-in',
@@ -26,6 +31,11 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': 'The work order could not be deleted. Please refresh and try again.'
   },
   'zh-CN': {
+    'location-dashboard': '库位看板',
+    'location-kanban.load-failed': '库位利用率加载失败',
+    'location-kanban.access-failed': '无法验证登录或公司信息，请重新登录。',
+    'location-kanban.retry-hint': '请重试，如仍无法加载，请联系管理员。',
+    'location-kanban.retry': '重试',
     'user.login-account': '登录账号',
     'user.reset-password-hint': '8–128 个字符',
     'user.require-password-change': '下次登录时必须修改密码',
@@ -51,6 +61,11 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': '工单删除失败，请刷新后重试。'
   },
   'zh-TW': {
+    'location-dashboard': '庫位看板',
+    'location-kanban.load-failed': '庫位利用率載入失敗',
+    'location-kanban.access-failed': '無法驗證登入或公司資訊，請重新登入。',
+    'location-kanban.retry-hint': '請重試，如仍無法載入，請聯絡管理員。',
+    'location-kanban.retry': '重試',
     'user.login-account': '登入帳號',
     'user.reset-password-hint': '8–128 個字元',
     'user.require-password-change': '下次登入時必須修改密碼',

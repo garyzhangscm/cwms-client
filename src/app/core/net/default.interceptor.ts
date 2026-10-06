@@ -123,6 +123,9 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       // The delete confirmation displays the business rejection itself.
       if (newReq.method === 'DELETE' && (err.status === 55000 || err.status === 55003)
         && /\/workorder(?:-deletion-test)?\/work-orders(?:\?|$)/.test(url)) return throwError(() => err);
+      // Location Kanban renders its own load/access error and retry action.
+      if (err.status !== 401 && newReq.method === 'GET'
+        && /\/layout\/locationgroups\/utilization\/storage(?:\?|$)/.test(url)) return throwError(() => err);
       if (err.status === 401) {
           console.log('reloging required')
           toLogin(injector);
