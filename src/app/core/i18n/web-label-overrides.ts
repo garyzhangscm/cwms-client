@@ -1,6 +1,12 @@
 /** New Web labels must remain available while the resource server dictionary is older. */
 export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
   'en-US': {
+    'manufacturing-issue.backend-pending': 'Preview only: the backend does not yet support these settings. They cannot be changed here.',
+    'manufacturing-issue.title': 'Manufacturing material issue',
+    'manufacturing-issue.scope': 'Applies to Manual Pick for a work order with open allocations on the selected production line. Without an open allocation, existing manual issue rules apply.',
+    'manufacturing-issue.require-source': 'Require allocated Source Location',
+    'manufacturing-issue.require-lpn': 'Require allocated LPN (when an LPN is specified)',
+    'manufacturing-issue.reservations': 'Material and available quantity checks remain active. These settings do not release existing Picks or reservations; fully allocated demand may still prevent Manual Pick.',
     'location-dashboard': 'Location Kanban',
     'location-kanban.load-failed': 'Unable to load location utilization',
     'location-kanban.access-failed': 'Your sign-in or company context could not be verified. Please sign in again.',
@@ -31,6 +37,12 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': 'The work order could not be deleted. Please refresh and try again.'
   },
   'zh-CN': {
+    'manufacturing-issue.backend-pending': '当前仅供预览：后端尚未支持这两个设置，暂时不能修改。',
+    'manufacturing-issue.title': '制造领料',
+    'manufacturing-issue.scope': '适用于所选生产线已有未完成分配的工单 Manual Pick。没有原分配时，沿用现有手动领料规则。',
+    'manufacturing-issue.require-source': '强制匹配原分配的 Source Location（来源库位）',
+    'manufacturing-issue.require-lpn': '强制匹配原分配的 LPN（分配指定 LPN 时）',
+    'manufacturing-issue.reservations': '始终校验物料和可用数量。这些设置不会释放已有 Pick 或库存占用；需求已全部分配时，仍可能无法手动领料。',
     'location-dashboard': '库位看板',
     'location-kanban.load-failed': '库位利用率加载失败',
     'location-kanban.access-failed': '无法验证登录或公司信息，请重新登录。',
@@ -61,6 +73,12 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': '工单删除失败，请刷新后重试。'
   },
   'zh-TW': {
+    'manufacturing-issue.backend-pending': '目前僅供預覽：後端尚未支援這兩個設定，暫時不能修改。',
+    'manufacturing-issue.title': '製造領料',
+    'manufacturing-issue.scope': '適用於所選生產線已有未完成分配的工單 Manual Pick。沒有原分配時，沿用現有手動領料規則。',
+    'manufacturing-issue.require-source': '強制匹配原分配的 Source Location（來源庫位）',
+    'manufacturing-issue.require-lpn': '強制匹配原分配的 LPN（分配指定 LPN 時）',
+    'manufacturing-issue.reservations': '始終校驗物料和可用數量。這些設定不會釋放已有 Pick 或庫存占用；需求已全部分配時，仍可能無法手動領料。',
     'location-dashboard': '庫位看板',
     'location-kanban.load-failed': '庫位利用率載入失敗',
     'location-kanban.access-failed': '無法驗證登入或公司資訊，請重新登入。',

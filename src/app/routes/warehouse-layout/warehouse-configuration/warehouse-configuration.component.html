@@ -165,6 +165,21 @@
               </div>
     
             </div> 
+            <nz-card nzTitle="{{'manufacturing-issue.title' | i18n }}" class="manufacturing-issue-settings">
+              <p>{{'manufacturing-issue.scope' | i18n }}</p>
+              <p *ngIf="!manufacturingIssueSupported" class="manufacturing-issue-hint">
+                {{'manufacturing-issue.backend-pending' | i18n }}
+              </p>
+              <label nz-checkbox [nzDisabled]="displayOnly || !manufacturingIssueSupported"
+                [(ngModel)]="currentWarehouseConfiguration.manufacturingIssueRequireSourceLocation">
+                {{'manufacturing-issue.require-source' | i18n }}
+              </label>
+              <label nz-checkbox [nzDisabled]="displayOnly || !manufacturingIssueSupported"
+                [(ngModel)]="currentWarehouseConfiguration.manufacturingIssueRequireAllocatedLpn">
+                {{'manufacturing-issue.require-lpn' | i18n }}
+              </label>
+              <p class="manufacturing-issue-hint">{{'manufacturing-issue.reservations' | i18n }}</p>
+            </nz-card>
             <nz-card nzTitle="{{'weekDays' | i18n }}">
     
               <div nz-row>
