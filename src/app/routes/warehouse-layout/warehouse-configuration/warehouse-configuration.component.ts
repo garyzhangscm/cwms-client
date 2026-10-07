@@ -39,6 +39,7 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
   addHolidayForm!: UntypedFormGroup;
 
   displayOnly = false;
+  manufacturingIssueSupported = false;
   constructor(
     
     private warehouseService: WarehouseService,
@@ -57,6 +58,8 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         warehouse: this.warehouseService.getCurrentWarehouse(),
         threePartyLogisticsFlag: false,
         listPickEnabledFlag: false,
+        manufacturingIssueRequireSourceLocation: true,
+        manufacturingIssueRequireAllocatedLpn: true,
         newLPNPrintLabelAtReceivingFlag: false,
         newLPNPrintLabelAtProducingFlag: false,
         newLPNPrintLabelAtAdjustmentFlag: false,
@@ -94,7 +97,7 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
     this.warehouseService.getAvailableZoneIds().subscribe({
       next: (zoneIds) => this.avaiableZoneIds = zoneIds
     });
-    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe(
+    this.warehouseConfigurationService.getWarehouseConfiguration(true).subscribe(
       {
         next: (configRes) => {
           // we should only get one configuration since
@@ -103,7 +106,13 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
             // if we already have the configuration setup for the current warehouse
             // load it. otherwise, load the default one
             
-            this.currentWarehouseConfiguration = configRes;
+            this.manufacturingIssueSupported = Object.prototype.hasOwnProperty.call(configRes, 'manufacturingIssueRequireSourceLocation') &&
+              Object.prototype.hasOwnProperty.call(configRes, 'manufacturingIssueRequireAllocatedLpn');
+            this.currentWarehouseConfiguration = {
+              ...configRes,
+              manufacturingIssueRequireSourceLocation: configRes.manufacturingIssueRequireSourceLocation ?? true,
+              manufacturingIssueRequireAllocatedLpn: configRes.manufacturingIssueRequireAllocatedLpn ?? true
+            };
           }
 
           this.isSpinning = false;
