@@ -68,7 +68,7 @@ export class ReceiptService {
       params = params.append('checkInEndTime', this.dateTimeService.getISODateTimeString(checkInEndTime));  
     }
     if (checkInSpecificDate) {
-      params = params.append('checkInDate', this.dateTimeService.getISODateString(checkInSpecificDate));  
+      params = params.append('checkInDate', this.dateTimeService.getLocalDateString(checkInSpecificDate));
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));
@@ -113,7 +113,7 @@ export class ReceiptService {
       params = params.append('checkInEndTime', this.dateTimeService.getISODateTimeString(checkInEndTime));  
     }
     if (checkInSpecificDate) {
-      params = params.append('checkInDate', this.dateTimeService.getISODateString(checkInSpecificDate));  
+      params = params.append('checkInDate', this.dateTimeService.getLocalDateString(checkInSpecificDate));
     }
     if (pageIndex != null) {
       // st table is 1 indexed

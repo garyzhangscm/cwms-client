@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common'; 
-import { Component,  inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component,  inject, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 // import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 // import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
@@ -12,7 +12,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
+import { lastValueFrom, Observable, timeout } from 'rxjs';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
@@ -42,6 +42,7 @@ import { ItemFamilyService } from '../services/item-family.service';
 import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WebPageTableColumnConfigurationService } from '../../util/services/web-page-table-column-configuration.service';
 
 @Component({
@@ -50,20 +51,20 @@ import { WebPageTableColumnConfigurationService } from '../../util/services/web-
     styleUrls: ['./inventory.component.less'],
     standalone: false
 })
-export class InventoryInventoryComponent implements OnInit { 
+export class InventoryInventoryComponent implements OnInit, OnDestroy {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly warehouseService = inject(WarehouseService);
   pageName = "inventory";
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
 
   
-  inventoryTablePI = 10;
-  inventoryTablePS = 1;
+  inventoryTablePI = 1;
+  inventoryTablePS = 10;
 
   @ViewChild('inventoryTable', { static: false })
   inventoryTable!: STComponent;
   invetoryTablePagination = {
-    showSize: true,
-    pageSizes: [5, 10, 25, 50, 100],
+    show: false,
     front: false,
   };
   inventoryConfiguration?: InventoryConfiguration;
@@ -87,6 +88,9 @@ export class InventoryInventoryComponent implements OnInit {
   inventoryMovementForm!: UntypedFormGroup;
 
   searching = false;
+  detailsLoading = false;
+  private inventorySearchVersion = 0;
+  private inventoryDetailVersion = 0;
   searchResult = '';
 
   // Table data for display
@@ -116,6 +120,13 @@ export class InventoryInventoryComponent implements OnInit {
   inventoryDisplayOption?: InventoryDisplayOption;
   
   loadingDetailsRequest = 0;
+  isSubmittingRemoval = false;
+  isMonitoringRemoval = false;
+  removalNeedsReview = false;
+  pendingRemovalIds = new Set<number>();
+  private removalMonitorVersion = 0;
+  private removalWarehouseId?: number;
+  private readonly removalPollLimit = 20;
   threePartyLogisticsFlag = false;
 
 
@@ -238,7 +249,7 @@ export class InventoryInventoryComponent implements OnInit {
         
         if (webPageTableColumnConfigurationRes && webPageTableColumnConfigurationRes.length > 0){
 
-          this.tableConfigurations["inventoryTable"] = webPageTableColumnConfigurationRes;
+          this.tableConfigurations["inventoryTable"] = this.ensureInventoryItemColumn(webPageTableColumnConfigurationRes);
           this.refreshInventoryTableColumns();
 
         }
@@ -253,6 +264,29 @@ export class InventoryInventoryComponent implements OnInit {
         this.refreshInventoryTableColumns();
       }
     })
+  }
+
+  private ensureInventoryItemColumn(columns: WebPageTableColumnConfiguration[]): WebPageTableColumnConfiguration[] {
+    // Older defaults omitted Item entirely. Preserve an explicitly configured Item column.
+    if (columns.some(column => column.columnName === 'item')) return columns;
+    const lpn = columns.find(column => column.columnName === 'lpn');
+    const sequence = lpn ? lpn.columnSequence + 1 : 1;
+    return [
+      ...columns.map(column => ({
+        ...column,
+        columnSequence: column.columnSequence >= sequence ? column.columnSequence + 1 : column.columnSequence,
+      })),
+      {
+        companyId: this.companyService.getCurrentCompany()!.id,
+        webPageName: this.pageName,
+        tableName: 'inventoryTable',
+        columnName: 'item',
+        columnDisplayText: this.i18n.fanyi('item'),
+        columnWidth: 200,
+        columnSequence: sequence,
+        displayFlag: true,
+      },
+    ];
   }
 
   refreshInventoryTableColumns() {
@@ -331,7 +365,7 @@ export class InventoryInventoryComponent implements OnInit {
         }
       },   
       "lpn" : {  key: "lpn", 
-        title: this.i18n.fanyi("lpn"), index: 'lpn' , width: 150, 
+        title: this.i18n.fanyi("lpn"), index: 'lpn', render: 'lpnColumn', width: 150,
         sort: {
           compare: (a, b) => a.lpn.localeCompare(b.lpn)
         }, 
@@ -344,12 +378,12 @@ export class InventoryInventoryComponent implements OnInit {
       "item" : {  key: "item", 
         title: this.i18n.fanyi("item"), render: 'itemColumn', width: 150,  
         sort: {
-          compare: (a, b) => a.item.name.localeCompare(b.item.name)
+          compare: (a, b) => (a.item?.name ?? '').localeCompare(b.item?.name ?? '')
         },
         filter: {
           menus:  [ 
           ] ,
-          fn: (filter, record) => record.item.name === filter.value,
+          fn: (filter, record) => record.item?.name === filter.value,
           multiple: true
         }
       },   
@@ -531,7 +565,7 @@ export class InventoryInventoryComponent implements OnInit {
   
   getDefaultInventoryTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
     
-    return [
+    return this.ensureInventoryItemColumn([
       {
         companyId: this.companyService.getCurrentCompany()!.id, 
         webPageName: this.pageName,
@@ -742,7 +776,7 @@ export class InventoryInventoryComponent implements OnInit {
         columnSequence: 21, 
         displayFlag: true
       }, 
-    ];
+    ]);
   } 
 
   inventoryTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]){
@@ -819,31 +853,53 @@ export class InventoryInventoryComponent implements OnInit {
    
 
   resetForm(): void {
+    this.inventorySearchVersion++;
+    this.inventoryDetailVersion++;
+    this.isSpinning = false;
+    this.searching = false;
+    this.detailsLoading = false;
+    this.searchResult = '';
     this.searchForm.reset();
     this.inventories = [];
     this.listOfDisplayInventories = [];
 
 
   }
+  searchFromFirstPage(): void {
+    if (this.inventoryTable) this.inventoryTable.pi = 1;
+    this.inventoryTablePI = 1;
+    this.search();
+  }
+
   search(id?: number): void {
+    const version = ++this.inventorySearchVersion;
+    this.inventoryDetailVersion++;
+    this.detailsLoading = false;
+    this.inventoryTablePI = this.inventoryTable?.pi ?? 1;
+    this.inventoryTablePS = this.inventoryTable?.ps ?? 10;
+    this.searching = true;
     this.isSpinning = true;
     this.searchResult = '';
     
     // this.setOfCheckedId.clear();
     if (id) {
       this.inventoryService.getInventoryById(id).subscribe(
-        inventoryRes => { 
+        inventoryRes => {
+          if (version !== this.inventorySearchVersion) return;
           this.processInventoryQueryResult([inventoryRes]);
           
           // this.resetInventoryTableColumnsFilter();
           this.isSpinning = false;
+            this.searching = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: 1,
           });
         },
         () => {
+          if (version !== this.inventorySearchVersion) return;
           this.isSpinning = false;
+            this.searching = false;
           this.searchResult = '';
         },
       );
@@ -873,20 +929,24 @@ export class InventoryInventoryComponent implements OnInit {
         )
         .subscribe({
           next: (page) => {
+            if (version !== this.inventorySearchVersion) return;
             this.inventoryTable.total = page.totalElements;
             
 
             this.processInventoryQueryResult(page.content);
             // this.resetInventoryTableColumnsFilter();
             this.isSpinning = false;
+            this.searching = false;
             this.searchResult = this.i18n.fanyi('search_result_analysis', {
               currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
               rowCount: page.totalElements,
             });
           },
           error: () => {
+            if (version !== this.inventorySearchVersion) return;
 
             this.isSpinning = false;
+            this.searching = false;
             this.searchResult = '';
           }
         });
@@ -1122,38 +1182,66 @@ export class InventoryInventoryComponent implements OnInit {
   
   // we will load the information 
   // asyncronized
-  async loadDetails(inventories: Inventory[]) {
- 
-    let index = 0;
-    this.loadingDetailsRequest = 0;
-
-    
-    while (index < inventories.length) {
-
-      // we will need to make sure we are at max loading detail information
-      // for 10 inventory at a time(each order may have 5 different request). 
-      // we will get error if we flush requests for
-      // too many inventory into the server at a time 
-      
-      
-      while(this.loadingDetailsRequest > 50) {
-        // sleep 50ms        
-        await this.delay(50);
-      } 
-      
-      await this.loadDetail(inventories[index]);
-      index++;
-    } 
-    while(this.loadingDetailsRequest > 0) {
-      // sleep 50ms        
-      await this.delay(100);
-    }  
- 
-    
-    this.inventoryTable.reload();
-    // this.inventoryTable.reset();  
+  async loadDetails(inventories: Inventory[]): Promise<void> {
+    const version = ++this.inventoryDetailVersion;
+    this.detailsLoading = true;
+    const jobs = new Map<string, {
+      load: () => Promise<unknown>;
+      assign: Array<(value: unknown) => void>;
+    }>();
+    const queue = <T>(kind: string, id: number | undefined, load: () => Observable<T>, assign: (value: T) => void): void => {
+      if (id == null) return;
+      const key = `${kind}:${id}`;
+      const callback = (value: unknown): void => assign(value as T);
+      const existing = jobs.get(key);
+      if (existing) existing.assign.push(callback);
+      else jobs.set(key, { load: () => lastValueFrom(load().pipe(timeout(10000))), assign: [callback] });
+    };
+    for (const inventory of inventories) {
+      // Quantities and Item are available immediately, before detail HTTP requests.
+      this.calculateDisplayQuantity(inventory);
+      if (!inventory.location) queue('location', inventory.locationId,
+        () => this.localCacheService.getLocation(inventory.locationId!), value => inventory.location = value);
+      if (!inventory.receipt) queue('receipt', inventory.receiptId,
+        () => this.localCacheService.getReceipt(inventory.receiptId!), value => inventory.receipt = value);
+      if (!inventory.client) queue('client', inventory.clientId,
+        () => this.localCacheService.getClient(inventory.clientId!), value => inventory.client = value);
+      if (!inventory.pick) queue('pick', inventory.pickId,
+        () => this.localCacheService.getPick(inventory.pickId!), value => inventory.pick = value);
+      if (!inventory.allocatedByPick) queue('pick', inventory.allocatedByPickId,
+        () => this.localCacheService.getPick(inventory.allocatedByPickId!), value => inventory.allocatedByPick = value);
+      for (const movement of inventory.inventoryMovements ?? []) {
+        if (!movement.location) queue('location', movement.locationId,
+          () => this.localCacheService.getLocation(movement.locationId!), value => movement.location = value);
+      }
+      const pack = inventory.itemPackageType;
+      for (const uom of [pack?.stockItemUnitOfMeasure, pack?.displayItemUnitOfMeasure, ...(pack?.itemUnitOfMeasures ?? [])]) {
+        if (uom && !uom.unitOfMeasure) queue('uom', uom.unitOfMeasureId,
+          () => this.localCacheService.getUnitOfMeasure(uom.unitOfMeasureId!), value => uom.unitOfMeasure = value);
+      }
+    }
+    const pending = [...jobs.values()];
+    let cursor = 0;
+    let failed = false;
+    const worker = async (): Promise<void> => {
+      while (version === this.inventoryDetailVersion && cursor < pending.length) {
+        const job = pending[cursor++];
+        try {
+          const value = await job.load();
+          if (version === this.inventoryDetailVersion) job.assign.forEach(assign => assign(value));
+        } catch {
+          failed = true;
+        }
+      }
+    };
+    // One request per unique detail key, with at most six simultaneous requests.
+    await Promise.all(Array.from({ length: Math.min(6, pending.length) }, () => worker()));
+    if (version !== this.inventoryDetailVersion) return;
+    this.detailsLoading = false;
+    this.inventoryTable?.reload();
+    if (failed) this.messageService.warning(this.i18n.fanyi('inventory.details-partial'));
   }
-  
+
   delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
   }
@@ -1711,36 +1799,102 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   
-  removeSelectedInventory(asyncronized : boolean = false): void {
-    // make sure we have at least one checkbox checked
-    
-    this.isSpinning = true;
-    const selectedInventory = this.getSelectedInventory();
-    if (selectedInventory.length > 0) {
-      const inventoryIds = selectedInventory.map(inventory => inventory.id!).join(",");
-        this.inventoryService.removeInventories(inventoryIds, asyncronized).subscribe(
-          {
-            next: (message) => {
-              this.messageService.success(this.i18n.fanyi(message));
-              this.isSpinning = false;
-              this.search();
-            }, 
-            error: () => {
-                    
-              this.isSpinning = false;
-              this.messageService.error(this.i18n.fanyi('message.action.fail'));
-            }
-          }
-
-        )
+  async removeSelectedInventory(asyncronized: boolean = false): Promise<void> {
+    if (this.isSubmittingRemoval || this.isMonitoringRemoval) return;
+    const warehouseId = this.warehouseService.getCurrentWarehouse().id;
+    if (this.removalWarehouseId !== warehouseId) {
+      this.pendingRemovalIds.clear();
+      this.removalNeedsReview = false;
+      this.removalWarehouseId = warehouseId;
     }
-    else {
-      
-      this.isSpinning = false;
+    const ids = [...new Set(this.getSelectedInventory()
+      .map(inventory => inventory.id)
+      .filter((id): id is number => id != null && !this.pendingRemovalIds.has(id)))];
+    if (!ids.length) return;
+    const version = this.removalMonitorVersion;
+    this.isSubmittingRemoval = true;
+    try {
+      const message = await lastValueFrom(this.inventoryService.removeInventories(ids.join(','), asyncronized));
+      if (version !== this.removalMonitorVersion || this.warehouseService.getCurrentWarehouse().id !== warehouseId) return;
+      this.messageService.success(this.i18n.fanyi(message));
+      ids.forEach(id => this.pendingRemovalIds.add(id));
+      this.removalNeedsReview = false;
+      this.isSubmittingRemoval = false;
+      await this.monitorInventoryRemoval(version);
+    } catch {
+      if (version === this.removalMonitorVersion) this.messageService.error(this.i18n.fanyi('message.action.fail'));
+    } finally {
+      this.isSubmittingRemoval = false;
     }
-    
   }
-  
+
+  private async monitorInventoryRemoval(version: number): Promise<void> {
+    const warehouseId = this.warehouseService.getCurrentWarehouse().id;
+    this.isMonitoringRemoval = true;
+    try {
+      for (let attempt = 0; attempt < this.removalPollLimit && this.pendingRemovalIds.size; attempt++) {
+        if (version !== this.removalMonitorVersion) return;
+        if (this.warehouseService.getCurrentWarehouse().id !== warehouseId) {
+          this.pendingRemovalIds.clear();
+          this.removalNeedsReview = false;
+          return;
+        }
+        const ids = [...this.pendingRemovalIds];
+        for (let offset = 0; offset < ids.length; offset += 100) {
+          const chunk = ids.slice(offset, offset + 100);
+          const rows = await lastValueFrom(this.inventoryService.getRemovalInventorySnapshots(chunk).pipe(timeout(5000)));
+          if (version !== this.removalMonitorVersion) return;
+          if (this.warehouseService.getCurrentWarehouse().id !== warehouseId) {
+            this.pendingRemovalIds.clear();
+            this.removalNeedsReview = false;
+            return;
+          }
+          // Missing rows are not proof of deletion: access restrictions may omit them.
+          const completed = new Set(rows.filter(row => row.virtual === true && chunk.includes(row.id!)).map(row => row.id!));
+          if (completed.size) {
+            completed.forEach(id => this.pendingRemovalIds.delete(id));
+            this.applyCompletedInventoryRemovals(completed);
+          }
+        }
+        if (this.pendingRemovalIds.size && attempt + 1 < this.removalPollLimit) await this.delay(500);
+      }
+      if (this.pendingRemovalIds.size) this.removalNeedsReview = true;
+    } catch {
+      // Submission already succeeded. A status lookup failure must not resubmit it.
+      if (version === this.removalMonitorVersion) this.removalNeedsReview = true;
+    } finally {
+      this.isMonitoringRemoval = false;
+    }
+  }
+
+  async checkInventoryRemovalStatus(): Promise<void> {
+    if (!this.pendingRemovalIds.size || this.isSubmittingRemoval || this.isMonitoringRemoval) return;
+    if (this.removalWarehouseId !== this.warehouseService.getCurrentWarehouse().id) {
+      this.pendingRemovalIds.clear();
+      this.removalNeedsReview = false;
+      return;
+    }
+    this.removalNeedsReview = false;
+    await this.monitorInventoryRemoval(this.removalMonitorVersion);
+  }
+
+  private applyCompletedInventoryRemovals(ids: Set<number>): void {
+    const remaining = this.inventories.filter(inventory => !ids.has(inventory.id!));
+    const removedCount = this.inventories.length - remaining.length;
+    if (!removedCount) return;
+    this.inventories = remaining;
+    this.setupDisplay(remaining);
+    if (this.inventoryTable) this.inventoryTable.total = Math.max(0, this.inventoryTable.total - removedCount);
+    this.searchResult = '';
+    // Existing rows retain their loaded metadata; no full Search / loadDetails cycle.
+  }
+
+  ngOnDestroy(): void {
+    this.inventorySearchVersion++;
+    this.inventoryDetailVersion++;
+    this.removalMonitorVersion++;
+  }
+
   getSelectedInventory(): Inventory[] {
     let selectedInventory: Inventory[] = [];
     
@@ -1994,9 +2148,16 @@ export class InventoryInventoryComponent implements OnInit {
     return row;
   }
 
-  inventoryTableRecordPerPageChanged(recordPerPage: any) {
-    console.log(`recordPerPage is changed to ${recordPerPage}`);
+  inventoryPageChanged(pageIndex: number): void {
+    if (pageIndex === this.inventoryTable.pi) return;
+    this.inventoryTable.pi = pageIndex;
+    this.search();
+  }
 
+  inventoryTableRecordPerPageChanged(recordPerPage: number): void {
+    if (!this.inventoryTableRecordPerPages.includes(recordPerPage) || recordPerPage === this.inventoryTable.ps) return;
+    this.inventoryTable.ps = recordPerPage;
+    this.searchFromFirstPage();
   }
 
   inventoryDisplayOptionChanged() {

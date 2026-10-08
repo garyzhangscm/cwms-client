@@ -1,10 +1,11 @@
 import { DatePipe, formatDate } from '@angular/common';
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { firstValueFrom, Observable, Subscription, timeout } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -45,7 +46,7 @@ import { Item } from '../../inventory/models/item';
     styleUrls: ['./receipt.component.less'],
     standalone: false
 })
-export class InboundReceiptComponent implements OnInit {
+export class InboundReceiptComponent implements OnInit, OnDestroy {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "receipt";
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
@@ -67,7 +68,7 @@ export class InboundReceiptComponent implements OnInit {
     },  
     "supplier" : { title: this.i18n.fanyi("supplier"), render: 'supplierColumn', width: 150,  
       sort: {
-        compare: (a, b) => this.utilService.compareNullableObjField(a.supplier, b.supplier, 'name'),
+        compare: (a, b) => this.utilService.compareNullableString(this.supplierDisplayName(a.supplier), this.supplierDisplayName(b.supplier)),
       },
     },   
     "status" : { title: this.i18n.fanyi("status"), render: 'statusColumn', width: 150,  
@@ -101,8 +102,16 @@ export class InboundReceiptComponent implements OnInit {
 
  
 
-  receiptTablePI = 10;
-  receiptTablePS = -1;
+  receiptTablePI = 1;
+  receiptTablePS = 10;
+  receiptTotal = 0;
+  receiptPagination = { front: false, showSize: true, pageSizes: [5, 10, 25, 50, 100] };
+  loadingReceiptLineIds = new Set<number>();
+  private receiptLineLoads = new Map<string, Promise<void>>();
+  exportingReceipts = false;
+  private searchVersion = 0;
+  private searchSubscription?: Subscription;
+  detailLoadFailures = new Set<string>();
 
   @ViewChild('receiptTable', { static: false })
   receiptTable!: STComponent;
@@ -121,7 +130,7 @@ export class InboundReceiptComponent implements OnInit {
     number: this.fb.control('', { nonNullable: true, validators: []}),
     statusList: this.fb.control([], { nonNullable: true, validators: []}),
     supplier: this.fb.control('', { nonNullable: true, validators: []}),
-    checkInDateTimeRanger: this.fb.control<Date | null>(null),
+    checkInDateTimeRanger: this.fb.control<Date[] | null>(null),
     checkInDate: this.fb.control<Date | null>(null),
   }); 
   
@@ -149,7 +158,6 @@ export class InboundReceiptComponent implements OnInit {
   receiptLineItemPackageTypes = new Map<number, ItemPackageType | undefined>();
 
   threePartyLogisticsFlag = false;
-  loadingOrderDetailsRequest = 0;
   
   availableClients: Client[] = []; 
 
@@ -297,7 +305,7 @@ export class InboundReceiptComponent implements OnInit {
 
     this.receiptTableColumns = [...this.receiptTableColumns,  
       {
-        title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
+        title: this.i18n.fanyi("action"), fixed: 'right', width: 140, className: 'text-right',
         render: 'actionColumn',
         iif: () => !this.displayOnly
       }, 
@@ -406,7 +414,10 @@ export class InboundReceiptComponent implements OnInit {
     });
 
     
-    this.supplierService.loadSuppliers().subscribe(suppliers => (this.validSuppliers = suppliers));
+    this.supplierService.loadSuppliers().pipe(timeout(15000)).subscribe({
+      next: suppliers => { this.validSuppliers = suppliers; },
+      error: () => this.messageService.warning(this.i18n.fanyi('receipt.supplier-list-failed'))
+    });
 
     
     this.localCacheService.getWarehouseConfiguration().subscribe({
@@ -444,61 +455,69 @@ export class InboundReceiptComponent implements OnInit {
     this.refreshReceiptTableColumns();
 }
 
-  resetForm(): void {
-    this.searchForm!.reset();
-    this.listOfAllReceipts = []; 
+  ngOnDestroy(): void {
+    this.searchVersion++;
+    this.searchSubscription?.unsubscribe();
+  }
 
+  resetForm(): void {
+    this.searchVersion++;
+    this.searchSubscription?.unsubscribe();
+    this.searchForm.reset();
+    this.listOfAllReceipts = [];
+    this.receiptTotal = 0;
+    this.searchResult = '';
+    this.searching = this.isSpinning = false;
+    this.detailLoadFailures.clear();
+    this.loadingReceiptLineIds.clear();
+  }
+
+  searchFromFirstPage(): void {
+    this.receiptTablePI = 1;
+    if (this.receiptTable) this.receiptTable.pi = 1;
+    this.search();
   }
 
   search(): void {
-    this.searching = true;
-    this.isSpinning = true;
+    const version = ++this.searchVersion;
+    const warehouseId = this.warehouseService.getCurrentWarehouse().id;
+    const current = () => version === this.searchVersion && warehouseId === this.warehouseService.getCurrentWarehouse().id;
+    this.searchSubscription?.unsubscribe();
+    this.receiptTablePI = this.receiptTable?.pi ?? 1;
+    this.receiptTablePS = this.receiptTable?.ps ?? 10;
+    this.searching = this.isSpinning = true;
     this.searchResult = '';
-
-    
-    let checkInStartTime : Date | undefined = this.searchForm.value.checkInDateTimeRanger ? 
-        this.searchForm.value.checkInDateTimeRanger : undefined; 
-    let checkInEndTime : Date | undefined= this.searchForm.value.checkInDateTimeRanger ? 
-        this.searchForm.value.checkInDateTimeRanger : undefined; 
-    let checkInSpecificDate : Date | undefined= this.searchForm.value.checkInDate ?
-    this.searchForm.value.checkInDate : undefined;
-
-    this.receiptService.getPageableReceipts(
-      this.searchForm!.value.number ? this.searchForm!.value.number : undefined, 
-      true,       
-      this.searchForm!.value.statusList ? this.searchForm!.value.statusList.join(",") : undefined,       
-      this.searchForm!.value.supplier ? this.searchForm!.value.supplier : undefined,
-      checkInStartTime, 
-      checkInEndTime, 
-      checkInSpecificDate, 
-         undefined,
-         undefined,
-      this.searchForm!.value.client ? this.searchForm!.value.client : undefined,
-      this.receiptTable?.pi,
-      this.receiptTable?.ps).subscribe({
-        next: (page) => {
-
-          this.searching = false;
-          this.isSpinning = false;
-          this.searchResult = this.i18n.fanyi('search_result_analysis', {
-            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-            rowCount: page.totalElements,
-          });
-          
-          this.refreshDetailInformations(page.content);
-          // sum up the line's billable activity and save it to the receipt level
-          // for easy display
-          this.setupReceiptBillableActivities(page.content);
-          
-          this.listOfAllReceipts = this.calculateQuantities(page.content); 
-        }, 
-        error: () => {
-
-          this.searching = false;
-          this.isSpinning = false;
-          this.searchResult = '';
-        }
-      })  
+    this.detailLoadFailures.clear();
+    this.loadingReceiptLineIds.clear();
+    const values = this.searchForm.getRawValue();
+    const range = values.checkInDateTimeRanger;
+    this.searchSubscription = this.receiptService.getPageableReceipts(
+      values.number || undefined, false, values.statusList.join(',') || undefined,
+      values.supplier || undefined, range?.[0], range?.[1], values.checkInDate || undefined,
+      undefined, undefined, values.client || undefined, this.receiptTablePI, this.receiptTablePS
+    ).pipe(timeout(30000)).subscribe({
+      next: async page => {
+        if (!current()) return;
+        const receipts = page.content ?? [];
+        const failures = await this.refreshDetailInformations(receipts, current, false);
+        if (!current()) return;
+        this.detailLoadFailures = failures;
+        this.setupReceiptBillableActivities(receipts);
+        this.receiptTotal = page.totalElements;
+        this.listOfAllReceipts = this.calculateQuantities(receipts);
+        this.searching = this.isSpinning = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'), rowCount: page.totalElements
+        });
+        if (failures.size) this.messageService.warning(this.i18n.fanyi('receipt.details-failed'));
+      },
+      error: () => {
+        if (!current()) return;
+        this.searching = this.isSpinning = false;
+        this.listOfAllReceipts = [];
+        this.receiptTotal = 0;
+      }
+    });
   }
   setupReceiptBillableActivities(receipts: Receipt[]) {
     receipts.forEach(
@@ -509,7 +528,7 @@ export class InboundReceiptComponent implements OnInit {
           receiptLine => {
             receipt.receiptLineBillableActivities = [
               ...receipt.receiptLineBillableActivities, 
-              ...receiptLine.receiptLineBillableActivities!
+              ...(receiptLine.receiptLineBillableActivities ?? [])
             ]
           }
         )
@@ -520,12 +539,13 @@ export class InboundReceiptComponent implements OnInit {
     
     if (event.type === 'expand' && event.expand.expand === true) {
       // console.log(`expanded: ${event.expand.id}`)
+      void this.loadReceiptLineDetails(event.expand);
       this.loadReceivedInventory(event.expand);
     }
     else if (event.type === 'pi' || event.type === 'ps') {
       // see if the PI or PS is changed. If so
       // we will need to redo the search since we use 
-      // client size pagination
+      // server-side pagination
       const pipsChanged : boolean = 
           (this.receiptTablePI != this.receiptTable.pi) ||
           (this.receiptTablePS != this.receiptTable.ps);
@@ -539,51 +559,78 @@ export class InboundReceiptComponent implements OnInit {
     }
   }
 
-  delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+  // Resolve unique references before ST makes its display-row copies.
+  async refreshDetailInformations(receipts: Receipt[], current: () => boolean = () => true, includeItems = true): Promise<Set<string>> {
+    const failures = new Set<string>();
+    const jobs = new Map<string, { load: () => Observable<any>; apply: ((value: any) => void)[] }>();
+    const add = (key: string, load: () => Observable<any>, apply: (value: any) => void) => {
+      const job = jobs.get(key);
+      if (job) job.apply.push(apply);
+      else jobs.set(key, { load, apply: [apply] });
+    };
+    for (const receipt of receipts) {
+      receipt.receiptLines ??= [];
+      if (receipt.clientId && !receipt.client) add(`client:${receipt.clientId}`, () => this.localCacheService.getClient(receipt.clientId!), v => receipt.client = v);
+      if (receipt.supplierId && !receipt.supplier) {
+        const supplier = this.validSuppliers.find(s => s.id === receipt.supplierId);
+        if (supplier) receipt.supplier = supplier;
+        else add(`supplier:${receipt.supplierId}`, () => this.localCacheService.getSupplier(receipt.supplierId!), v => receipt.supplier = v);
+      }
+      if (includeItems) for (const line of receipt.receiptLines) {
+        if (line.itemId && !line.item) add(`item:${line.itemId}`, () => this.localCacheService.getItem(line.itemId!), v => line.item = v);
+      }
+    }
+    const queue = [...jobs.entries()];
+    let next = 0;
+    await Promise.all(Array.from({ length: Math.min(4, queue.length) }, async () => {
+      while (current() && next < queue.length) {
+        const [key, job] = queue[next++];
+        try {
+          const value = await firstValueFrom(job.load().pipe(timeout(10000)));
+          if (!value) throw new Error('Missing reference');
+          if (current()) job.apply.forEach(apply => apply(value));
+        } catch { if (current()) failures.add(key); }
+      }
+    }));
+    if (current() && includeItems) for (const receipt of receipts) for (const line of receipt.receiptLines) {
+      this.loadItemPackageType(line);
+      this.calculateReceiptLineDisplayQuantity(line);
+    }
+    return failures;
   }
 
-  // we will load the client / supplier / item information 
-  // asyncronized
-  async refreshDetailInformations(receipts: Receipt[]) { 
-     
-    let index = 0;
-    this.loadingOrderDetailsRequest = 0;
-    while (index < receipts.length) {
-
-      // we will need to make sure we are at max loading detail information
-      // for 10 receipt at a time(each receipt may have 3 different request). 
-      // we will get error if we flush requests for
-      // too many receipts into the server at a time 
-      
-      
-      while(this.loadingOrderDetailsRequest > 50) {
-        // sleep 50ms        
-        await this.delay(50);
-      } 
-      
-      this.refreshDetailInformation(receipts[index]);
-      index++;
-    } 
-
-    receipts = [...receipts];
-    
-    // refresh the table while everything is loaded
-    // console.log(`mnaually refresh the table`);   
-    // this.st.reload();  
-    this.receiptTable.reload();
+  supplierDisplayName(supplier?: Supplier): string {
+    return supplier?.description?.trim() || supplier?.name || '';
   }
-  refreshDetailInformation(receipt: Receipt) { 
-  
-      this.loadClient(receipt); 
-     
-      this.loadSupplier(receipt); 
 
-      this.loadItems(receipt);
-
-       
+  async loadReceiptLineDetails(rendered: Receipt): Promise<void> {
+    const version = this.searchVersion;
+    const warehouseId = this.warehouseService.getCurrentWarehouse().id;
+    const receipt = this.listOfAllReceipts.find(row => row.id === rendered.id);
+    if (!receipt || receipt.id == null) return;
+    const key = `${version}:${receipt.id}`;
+    if (this.receiptLineLoads.has(key)) return this.receiptLineLoads.get(key);
+    const current = () => version === this.searchVersion && warehouseId === this.warehouseService.getCurrentWarehouse().id;
+    this.loadingReceiptLineIds.add(receipt.id);
+    const loading = (async () => {
+      try {
+        const failures = await this.refreshDetailInformations([receipt], current);
+        if (!current()) return;
+        for (const line of receipt.receiptLines) if (line.itemId) this.detailLoadFailures.delete(`item:${line.itemId}`);
+        failures.forEach(key => this.detailLoadFailures.add(key));
+        const values = { receiptLines: [...receipt.receiptLines] };
+        Object.assign(rendered, values);
+        this.receiptTable?.setRow(rendered, values);
+        if (failures.size) this.messageService.warning(this.i18n.fanyi('receipt.details-failed'));
+      } finally {
+        this.receiptLineLoads.delete(key);
+        if (current()) this.loadingReceiptLineIds.delete(receipt.id!);
+      }
+    })();
+    this.receiptLineLoads.set(key, loading);
+    return loading;
   }
-  
+
   calculateDisplayQuanties(receipt: Receipt) : void { 
     receipt.receiptLines.forEach(
       receiptLine => {
@@ -667,73 +714,11 @@ export class InboundReceiptComponent implements OnInit {
   }
   
   
-  loadClient(receipt: Receipt) {
-     
-    if (receipt.clientId && receipt.client == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getClient(receipt.clientId).subscribe(
-        {
-          next: (clientRes) => {
-            receipt.client = clientRes;
-            
-            this.loadingOrderDetailsRequest--;
-          }
-        }
-      );
-      
-    }
-  }
-  
-  loadSupplier(receipt: Receipt) { 
-    if (receipt.supplierId && receipt.supplier == null) {
-      this.loadingOrderDetailsRequest++;
-      
-      this.localCacheService.getSupplier(receipt.supplierId).subscribe(
-        {
-          next: (supplierRes) => {
-            receipt.supplier = supplierRes;
-            this.loadingOrderDetailsRequest--;
-          }
-        }
-      );
-    }
-  }
-
-  
-  loadItems(receipt: Receipt) {
-     receipt.receiptLines.forEach(
-       receiptLine => this.loadItem(receiptLine)
-     );
-  }
-
-  loadItem(receiptLine: ReceiptLine) { 
-    if (receiptLine.itemId && receiptLine.item == null) { 
-      this.loadingOrderDetailsRequest++;
-       
-      this.localCacheService.getItem(receiptLine.itemId).subscribe(
-        {
-          next: (itemRes) => { 
-            receiptLine.item = itemRes; 
-
-            this.loadItemPackageType(receiptLine);
-            this.calculateReceiptLineDisplayQuantity(receiptLine);
-            this.loadingOrderDetailsRequest--;
-          }
-        }
-      );
-    }
-    else if (receiptLine.item != null) {
-      // console.log(`item is not null:\n${JSON.stringify(receiptLine.item)}`)
-      this.loadItemPackageType(receiptLine);
-      this.calculateReceiptLineDisplayQuantity(receiptLine);
-    }
-  }
-
   // setup the item package type
   loadItemPackageType(receiptLine: ReceiptLine) {
 
     if (receiptLine.itemPackageTypeId != null && receiptLine.itemPackageType == null) {
-        receiptLine.itemPackageType = receiptLine.item?.itemPackageTypes.find(
+        receiptLine.itemPackageType = receiptLine.item?.itemPackageTypes?.find(
           itempackageType => itempackageType.id == receiptLine.itemPackageTypeId
         );
     }
@@ -1472,8 +1457,20 @@ export class InboundReceiptComponent implements OnInit {
     iif: () => !this.displayOnly },       
   ]; 
 
- exportReceipts() {  
-       
+ async exportReceipts() {
+   if (this.exportingReceipts || this.searching) return;
+   this.exportingReceipts = true;
+   const version = this.searchVersion;
+   const warehouseId = this.warehouseService.getCurrentWarehouse().id;
+   const current = () => version === this.searchVersion && warehouseId === this.warehouseService.getCurrentWarehouse().id;
+   try {
+     const failures = await this.refreshDetailInformations(this.listOfAllReceipts, current);
+     if (!current()) return;
+     if (failures.size) {
+       this.messageService.warning(this.i18n.fanyi('receipt.details-failed'));
+       return;
+     }
+
    var columnNames = this.getReceiptExportExcelColumns();
    var contents = this.getReceiptExportExcelRows(this.listOfAllReceipts);
 
@@ -1490,6 +1487,7 @@ export class InboundReceiptComponent implements OnInit {
 
    /* save to file */
    XLSX.writeFile(workbook,`receipt.xlsx`);
+   } finally { this.exportingReceipts = false; }
  }
  
  getReceiptExportExcelColumns() : string[]   {
@@ -1569,7 +1567,7 @@ export class InboundReceiptComponent implements OnInit {
     // receipt information
     receiptInfo = [...receiptInfo, receipt.number]; 
     receiptInfo = [...receiptInfo, receipt.client == null ? "" : receipt.client.name]; 
-    receiptInfo = [...receiptInfo, receipt.supplier == null ? "" : receipt.supplier.name];  
+    receiptInfo = [...receiptInfo, this.supplierDisplayName(receipt.supplier)];
     receiptInfo = [...receiptInfo, this.i18n.fanyi('RECEIPT-STATUS-' + receipt.receiptStatus)];   
     receiptInfo = [...receiptInfo, receipt.checkInTime == null ? "" : 
         this.dateTimeService.convertTimeToWarehouseTimeZone(receipt.checkInTime).format('YYYY-MM-DD HH:mm:ss')];  

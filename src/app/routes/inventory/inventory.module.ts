@@ -70,6 +70,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -162,6 +163,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzBreadCrumbModule ,
     NzTableModule ,
     NzSelectModule,
+    NzPaginationModule,
     NzSpinModule ,
     NzCardModule ,
     CommonModule , 

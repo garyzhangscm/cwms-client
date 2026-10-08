@@ -6,6 +6,10 @@ import { WorkOrder } from "./work-order";
 export interface ProductionLineAssignment {
 
     id?: number;
+    deassigned?: boolean;
+    deassignedTime?: string;
+    itemName?: string;
+    itemDescription?: string;
 
     productionLine: ProductionLine;
     productionLineName?: string;

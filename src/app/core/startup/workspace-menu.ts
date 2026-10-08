@@ -17,14 +17,19 @@ const labels: Record<string, string> = {
 const productionSections = [
   { text: 'Planning', routes: ['bill-of-material', 'production-plan', 'mps', 'mps-view', 'mps-export', 'mrp'] },
   { text: 'Work Orders & Execution', routes: ['work-order', 'work-order-flow', 'produce-transaction', 'pre-print-lpn-label'] },
-  { text: 'Lines & Equipment', routes: ['production-line', 'production-line-type', 'mould'] },
+  { text: 'Lines & Equipment', routes: ['production-line-assignments', 'production-line', 'production-line-type', 'mould'] },
   { text: 'Monitoring & Performance', routes: ['production-line-dashboard', 'production-line-status', 'production-line-monitor', 'production-line-monitor/transaction', 'light-mes-status-dashboard', 'silo', 'finish-good-productivity-report', 'production-mold-count-history'] },
   { text: 'Labor', routes: ['labor', 'labor-activity'] },
   { text: 'Configuration', routes: ['work-order-configuration', 'qc-rule-configuration', 'silo-configuration', 'light-mes-configuration'] }
 ];
 
 function organizeProduction(entry: Menu): Menu {
-  const items = entry.children ?? [];
+  const source = entry.children ?? [];
+  const settings = source.find(item => item.link === '/work-order/production-line');
+  const items = settings && !source.some(item => item.link === '/work-order/production-line-assignments')
+    ? [...source, { ...settings, text: 'Work Order Assignments', i18n: 'line-assignments.title',
+        link: '/work-order/production-line-assignments', children: undefined }]
+    : source;
   // Avoid nesting the same categories again when a processed menu is supplied.
   if (!items.length || items.every(item => item.children && !item.link)) return entry;
   const used = new Set<Menu>();
@@ -44,13 +49,15 @@ function organizeProduction(entry: Menu): Menu {
   return { ...entry, children };
 }
 
-/** Reorganize the supplied menu without adding routes or changing module permissions. */
+/** Reorganize the supplied menu while preserving the supplied module permissions. */
 export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
   // Hide the legacy table board while retaining the overview card board and its route.
   const visibleMenu = (entries: Menu[]): Menu[] => entries
     .filter(entry => entry.link !== '/work-order/production-kanban')
     .map(entry => {
-      const labelled = entry.link === '/work-order/produce-transaction'
+      const labelled = entry.link === '/work-order/production-line'
+        ? { ...entry, text: 'Production Line Settings', i18n: 'line-assignments.settings' }
+        : entry.link === '/work-order/produce-transaction'
         ? { ...entry, text: 'Production Records', i18n: 'work-order.production-records' }
         : entry;
       return labelled.children ? { ...labelled, children: visibleMenu(labelled.children) } : labelled;
