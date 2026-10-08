@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
@@ -18,6 +19,7 @@ import { IntegrationItemDataService } from '../services/integration-item-data.se
     standalone: false
 })
 export class IntegrationIntegrationDataItemComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   listOfColumns: Array<ColumnItem<IntegrationItemData>> = [    
@@ -232,6 +234,11 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.initSearchForm();
+    const id = this.route.snapshot.queryParamMap.get('id');
+    if (id && /^[1-9][0-9]*$/.test(id)) {
+      this.searchForm.patchValue({id: Number(id)});
+      this.search();
+    }
   }
 
   initSearchForm(): void {

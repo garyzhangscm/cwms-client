@@ -1,3 +1,5 @@
+import { ItemImportExceptionsComponent } from './item-import-exceptions/item-import-exceptions.component';
+import { WorkOrderImportExceptionsComponent } from './work-order-import-exceptions/work-order-import-exceptions.component';
 import { NgModule, Type } from '@angular/core'; 
 
 import { IntegrationIntegrationDataClientComponent } from './integration-data-client/integration-data-client.component';
@@ -60,7 +62,7 @@ const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataWorkOrderComponent,
   IntegrationTiktokSellerShopIntegrationConfigurationComponent,
   IntegrationShopifyIntegrationConfigurationComponent,
-  IntegrationSettingsComponent];
+  IntegrationSettingsComponent, WorkOrderImportExceptionsComponent, ItemImportExceptionsComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

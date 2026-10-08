@@ -1,0 +1,51 @@
+<div class="import-exceptions">
+  <h2>Item Import Exceptions</h2>
+  <p>Review Oracle file imports, resolve missing master data, then recheck or retry the selected Item or batch.</p>
+  <div class="filters">
+    <input nz-input [(ngModel)]="batch" placeholder="Batch filename" (keyup.enter)="load()" />
+    <input nz-input [(ngModel)]="number" placeholder="Item number" (keyup.enter)="load()" />
+    <nz-select [(ngModel)]="state" nzPlaceHolder="All exceptions"><nz-option nzValue="" nzLabel="All exceptions"></nz-option><nz-option *ngFor="let value of states" [nzValue]="value" [nzLabel]="label(value)"></nz-option></nz-select>
+    <button nz-button nzType="primary" (click)="load()" [nzLoading]="loading">Search / Refresh</button>
+  </div>
+  <p class="error" *ngIf="error">{{error}}</p>
+  <p *ngIf="!canRetry && !loading && !error">Read-only access. An administrator or Item Import Operator can recheck and retry.</p>
+  <p *ngIf="truncated">Showing the first 1,000 results. Narrow the batch or Item filter.</p>
+  <nz-table #table [nzData]="rows" [nzLoading]="loading" [nzPageSize]="15" [nzScroll]="{ x: '1100px' }">
+    <thead><tr><th>Batch / Item</th><th>Status</th><th>Reason</th><th>Last check</th><th nzWidth="290px">Actions</th></tr></thead>
+    <tbody><tr *ngFor="let row of table.data">
+      <td><strong>{{row.itemName || 'Batch'}}</strong><small>{{row.file}}</small></td>
+      <td><span [class.error]="['BLOCKED','BUSINESS_ERROR','UNCERTAIN','REJECTED'].includes(row.state)">{{label(row.state)}}</span><small *ngIf="row.integrationId"><a routerLink="/integration/integration-data-item" [queryParams]="{id: row.integrationId}">Integration #{{row.integrationId}}</a></small></td>
+      <td>{{row.validationError || row.mesError || row.missingItems?.join(', ') || '—'}}</td>
+      <td>{{row.checkedAt * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+      <td><div class="actions"><button nz-button nzSize="small" (click)="showDetail(row)">Details</button><button nz-button nzSize="small" (click)="act(row, 'check')" [disabled]="!canRetry || submitting || busy(row)">Recheck</button><button nz-button nzSize="small" nzType="primary" (click)="act(row, 'retry')" [disabled]="!canRetry || !retryable(row) || submitting || busy(row)">Retry item</button></div></td>
+    </tr></tbody>
+  </nz-table>
+  <p class="error" *ngIf="jobError">{{jobError}}</p>
+  <nz-card nzTitle="Recent operator actions" *ngIf="jobs.length">
+    <div class="job" *ngFor="let job of jobs.slice(0, 8)"><strong>{{job.state}}</strong> · {{job.action}} · {{job.itemName || 'Batch'}} · {{job.actor}}<small>{{job.file}} · {{job.updatedAt * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}</small><span class="error" *ngIf="job.error">{{job.error}}</span><small>{{job.waitingReason || jobSummary(job)}}</small></div>
+  </nz-card>
+  <nz-modal [(nzVisible)]="detailVisible" [nzWidth]="1000" nzTitle="Import details" [nzFooter]="null" (nzOnCancel)="detailVisible = false">
+    <ng-container *nzModalContent><nz-spin [nzSpinning]="detailLoading"><ng-container *ngIf="detail && selected">
+      <h3>{{selected.itemName || 'Batch'}} <small>{{selected.file}}</small></h3>
+      <p class="error" *ngIf="detail.report.reason">{{detail.report.reason}}</p>
+      <p>Correct the Item type mapping in Integration Settings or resolve the reported MES error, then recheck before retrying. Source data corrections must be published by Oracle as a new batch.</p>
+      <div class="actions"><button nz-button (click)="act(selected, 'check', true)" [disabled]="!canRetry || submitting || busy(selected)">Recheck batch</button><button nz-button nzType="primary" (click)="act(selected, 'retry', true)" [disabled]="!canRetry || submitting || busy(selected)">Retry eligible items in batch</button></div>
+      <p>Source file: {{detail.report.sourceCleanup || 'Pending review'}}</p>
+      <h4>Original CSV rows</h4>
+      <nz-table #original [nzData]="detail.originalRows" [nzPageSize]="10" nzSize="small" [nzScroll]="{x: '900px'}">
+        <thead><tr><th>Item</th><th>Description</th><th>Item type</th><th>Pieces per carton</th><th>Pieces per pallet</th></tr></thead>
+        <tbody><tr *ngFor="let row of original.data"><td>{{row['item_number']}}</td><td>{{row['item_description']}}</td><td>{{row['item_type']}}</td><td>{{row['pieces_per_carton']}}</td><td>{{row['pieces_per_pallet']}}</td></tr></tbody>
+      </nz-table>
+      <h4>Converted Item data and applied defaults</h4>
+      <div *ngFor="let item of detail.converted" class="job"><strong>{{item.itemName || 'CSV row ' + item.sourceRow}}</strong> · {{item.payload.description}} · Item family: {{item.payload.itemFamily?.name || '—'}}
+        <small class="error" *ngIf="item.conversionError">{{item.conversionError}}</small>
+        <ng-container *ngFor="let package of item.payload.itemPackageTypes"><small *ngFor="let unit of package.itemUnitOfMeasures">{{unit.unitOfMeasureName}}: {{unit.quantity}}</small></ng-container>
+        <small *ngFor="let value of item.defaultsApplied">CSV row {{item.sourceRow}} · {{value.field}}: {{value.reason}} → {{value.value}}</small>
+      </div>
+      <h4>Current processing results</h4>
+      <div class="job" *ngFor="let result of detail.report.records"><strong>{{result.itemName}}</strong> · {{label(result.state)}}<small class="error">{{result.validationError || result.mesError || result.missingItems?.join(', ')}}</small></div>
+      <h4>Operator history</h4>
+      <div class="job" *ngFor="let job of detail.history"><strong>{{job.state}}</strong> · {{job.action}} · {{job.actor}} · {{job.updatedAt * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}<small>{{job.waitingReason || jobSummary(job)}}</small><span class="error" *ngIf="job.error">{{job.error}}</span></div>
+    </ng-container></nz-spin></ng-container>
+  </nz-modal>
+</div>
