@@ -71,6 +71,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   pageIndex = 1;
   pageSize = 10;
   deletingWorkOrderIds = new Set<number>();
+  cancellingPickIds = new Set<number>();
 
   listOfColumns: Array<ColumnItem<WorkOrder>> = [
     {
@@ -320,7 +321,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         multiple: true
       }
     },   
-    "status" : { title: this.i18n.fanyi("status"), index: 'status' , width: 150, 
+    "status" : { title: this.i18n.fanyi("status"), index: 'status' , width: 150, render: 'statusColumn',
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
       }, 
@@ -849,7 +850,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         workOrderRes => {
           if (requestVersion !== this.searchRequestVersion) return;
           this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]); 
-          this.refreshDetailInformation([workOrderRes], false);
+          this.refreshDetailInformation([workOrderRes], true);
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
@@ -970,7 +971,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       let itemIdSet = new Set<number>(); 
       workOrders.forEach(
         workOrder => {
-          itemIdSet.add(workOrder.itemId!);
+          if (workOrder.itemId != null && !workOrder.item) itemIdSet.add(workOrder.itemId);
           /**
            * postpone the loading of items for the line and by product
            * when the user expand for the work order's detail
@@ -1858,16 +1859,56 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
 
-  cancelPick(workOrder: WorkOrder, pick: PickWork, 
-    errorLocation: boolean, generateCycleCount: boolean): void {
-    this.isSpinning = true;
-    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
+  async cancelPick(workOrder: WorkOrder, pick: PickWork,
+    errorLocation: boolean, generateCycleCount: boolean): Promise<void> {
+    if (pick.id == null || this.cancellingPickIds.has(pick.id)) return;
+    const requestVersion = this.searchRequestVersion;
+    this.cancellingPickIds.add(pick.id);
+    try {
+      await firstValueFrom(this.pickService.cancelPick(pick, errorLocation, generateCycleCount));
       this.messageService.success(this.i18n.fanyi('message.action.success'));
-      this.search(workOrder.id);
-      this.isSpinning = false;
-    },
-      () =>
-        this.isSpinning = true);
+      if (requestVersion !== this.searchRequestVersion) return;
+
+      // Refresh only the affected data. Keep the current page and expanded tab.
+      const results = await Promise.allSettled([
+        firstValueFrom(this.workOrderService.getWorkOrder(workOrder.id!)),
+        firstValueFrom(this.pickService.getPicksByWorkOrder(workOrder)),
+        firstValueFrom(this.shortAllocationService.getShortAllocationsByWorkOrder(workOrder)),
+      ]);
+      if (requestVersion !== this.searchRequestVersion) return;
+      // ST deep-copies its rows, so match the original record by ID, not reference.
+      const currentOrder = this.listOfAllWorkOrder.find(order => order.id === workOrder.id);
+      if (!currentOrder) return;
+      const [orderResult, picksResult, shortResult] = results;
+      if (orderResult.status === 'fulfilled') {
+        const refreshed = orderResult.value;
+        if (!refreshed.item && refreshed.itemId === workOrder.itemId) refreshed.item = workOrder.item;
+        // Detail responses omit transient Item / Inventory Status fields.
+        refreshed.workOrderLines?.forEach(line => {
+          const previous = workOrder.workOrderLines.find(existing => existing.id === line.id);
+          if (!line.item && previous?.itemId === line.itemId) line.item = previous?.item;
+          if (!line.inventoryStatus && previous?.inventoryStatusId === line.inventoryStatusId) {
+            line.inventoryStatus = previous?.inventoryStatus;
+          }
+        });
+        Object.assign(currentOrder, refreshed);
+        this.calculateWorkOrderLineTotalQuantities([currentOrder]);
+        Object.assign(workOrder, currentOrder);
+        this.refreshDetailInformation([currentOrder, workOrder], true);
+        // Update the rendered row without replacing all data and rebuilding its tabs.
+        this.workOrderTable?.setRow(workOrder, currentOrder);
+      }
+      if (picksResult.status === 'fulfilled') this.mapOfPicks[workOrder.id!] = picksResult.value;
+      if (shortResult.status === 'fulfilled') {
+        this.mapOfShortAllocations[workOrder.id!] = shortResult.value.filter(
+          allocation => allocation.status !== ShortAllocationStatus.CANCELLED,
+        );
+      }
+    } catch {
+      // The HTTP interceptor reports the error. Do not leave the page spinning.
+    } finally {
+      this.cancellingPickIds.delete(pick.id);
+    }
   }
 
   isTabVisible(tabName: string): boolean {

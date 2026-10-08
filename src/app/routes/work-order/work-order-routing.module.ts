@@ -1,3 +1,4 @@
+import { ProductionLineAssignmentsComponent } from './production-line-assignments/production-line-assignments.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { aclCanActivate,  ACLGuardType } from '@delon/acl';
@@ -71,6 +72,13 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   }, 
+  { path: 'production-line-assignments', component: ProductionLineAssignmentsComponent,
+    canActivate: [aclCanActivate],
+    data: {
+      guard: { role: [ '/work-order/production-line', 'admin', 'system-admin' ] } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
   { path: 'production-line', component: WorkOrderProductionLineComponent , 
     canActivate: [aclCanActivate], 
     data: { 

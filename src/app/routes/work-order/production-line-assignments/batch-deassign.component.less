@@ -1,0 +1,21 @@
+.batch-entry { margin: 16px 0; padding: 18px; border: 1px solid var(--mes-border, #e2e8f0); border-radius: 12px; }
+.batch-entry-heading { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px;
+  strong { font-size: 18px; } small { display: block; color: var(--mes-muted, #64748b); margin-top: 6px; }
+}
+.batch-state { align-self: flex-start; border-radius: 16px; padding: 4px 10px; background: #f1f5f9; white-space: nowrap;
+  &[data-state=success] { background: #e9f8ee; color: #168549; } &[data-state=blocked], &[data-state=unknown] { background: #fff4df; color: #986300; }
+}
+.batch-scroll { overflow-x: auto; margin-bottom: 14px; }
+.batch-materials { width: 100%; min-width: 700px; th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--mes-border, #e2e8f0); }
+  th { background: var(--mes-surface, #f8fafc); } nz-input-number { width: 120px; }
+}
+.batch-empty, .batch-note { color: var(--mes-muted, #64748b); }
+.batch-note { margin: 16px 0 0; font-size: 12px; }
+.batch-picks { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0 16px; }
+.batch-final-confirm { display: flex; align-items: flex-start; margin-top: 20px; }
+.batch-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  >div { display: flex; gap: 8px; flex-wrap: wrap; }
+}
+
+.confirm-empty { margin: 16px 0 0; }
+.single-link { display: block; margin: 10px 0; }
