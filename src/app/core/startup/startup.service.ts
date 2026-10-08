@@ -228,6 +228,22 @@ export class StartupService {
             this.companyService.getCurrentCompany() != null) {
 
             // we will only need to setup the ACL if the user is already login
+            const addImportExceptions = (menus: Menu[]): void => {
+              for (const menu of menus) {
+                if (menu.i18n === 'menu.main.integration') {
+                  menu.children = menu.children ?? [];
+                  if (!menu.children.some(child => child.link === '/integration/item-import-exceptions')) {
+                    menu.children.push({text: 'Item Import Exceptions', link: '/integration/item-import-exceptions'});
+                  }
+                  if (!menu.children.some(child => child.link === '/integration/work-order-import-exceptions')) {
+                    menu.children.push({text: 'Work Order Import Exceptions', link: '/integration/work-order-import-exceptions'});
+                  }
+                }
+                if (menu.children) addImportExceptions(menu.children);
+              }
+            };
+            addImportExceptions(res.menu);
+            this.menuService.add(organizeWorkspaceMenu(res.menu));
             this.setupMenuBasedACL(res.menu);
 
             // setup the admin role
