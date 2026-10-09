@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { firstValueFrom } from 'rxjs';
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -21,6 +22,74 @@ import { UserService } from '../services/user.service';
 export class AuthUserComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   displayOnly = false;
+  isLoginUserAdmin = false;
+  resettingPassword = false;
+  resetPasswordDialogOpen = false;
+  resetPasswordUser?: User;
+  resetPasswordValue = '';
+  resetPasswordConfirmation = '';
+  forcePasswordChange = true;
+
+  hasPasswordResetAccess(actor: User): boolean {
+    return actor.admin === true || (actor.roles ?? []).some(role =>
+      role.enabled === true && role.name?.trim().toLowerCase() === 'admin'
+      && role.companyId === actor.companyId);
+  }
+
+  canResetPassword(user: User): boolean {
+    return this.isLoginUserAdmin && !this.displayOnly && !!user.id
+      && user.systemAdmin !== true && (user.companyId ?? -1) >= 0;
+  }
+
+  openResetPasswordModal(user: User, content: TemplateRef<{}>): void {
+    if (!this.canResetPassword(user) || this.resettingPassword || this.resetPasswordDialogOpen) return;
+    // Keep the displayed identity and submitted ID tied to the same selected row.
+    const target = { ...user };
+    this.resetPasswordUser = target;
+    this.resetPasswordDialogOpen = true;
+    this.resetPasswordValue = '';
+    this.resetPasswordConfirmation = '';
+    this.forcePasswordChange = true;
+    this.modalService.create({
+      nzTitle: this.i18n.fanyi('user.reset-password'),
+      nzWidth: 520,
+      nzContent: content,
+      nzOkText: this.i18n.fanyi('user.reset-password'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => this.clearResetPassword(),
+      nzOnOk: async () => {
+        if (this.resettingPassword) return false;
+        if (!this.resetPasswordValue.trim() || this.resetPasswordValue.length < 8
+            || this.resetPasswordValue.length > 128 || this.resetPasswordValue.startsWith('{')) {
+          this.messageService.warning(this.i18n.fanyi('user.reset-password-invalid'));
+          return false;
+        }
+        if (this.resetPasswordValue !== this.resetPasswordConfirmation) {
+          this.messageService.warning(this.i18n.fanyi('user.reset-password-mismatch'));
+          return false;
+        }
+        this.resettingPassword = true;
+        try {
+          await firstValueFrom(this.userService.resetPassword(target.id!, this.resetPasswordValue, this.forcePasswordChange));
+          this.messageService.success(this.i18n.fanyi('user.reset-password-success'));
+          this.clearResetPassword();
+          return true;
+        } catch {
+          return false;
+        } finally {
+          this.resettingPassword = false;
+        }
+      }
+    });
+  }
+
+  private clearResetPassword(): void {
+    this.resetPasswordValue = '';
+    this.resetPasswordConfirmation = '';
+    this.resetPasswordUser = undefined;
+    this.resetPasswordDialogOpen = false;
+  }
    
   private readonly fb = inject(FormBuilder);
   
@@ -201,6 +270,10 @@ export class AuthUserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userService.getUsers(this.userService.getCurrentUsername()).subscribe({
+      next: users => this.isLoginUserAdmin = users.length === 1 && this.hasPasswordResetAccess(users[0]),
+      error: () => this.isLoginUserAdmin = false
+    });
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
 
     this.activatedRoute.queryParams.subscribe(params => {

@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
@@ -18,6 +19,7 @@ import { IntegrationWorkOrderDataService } from '../services/integration-work-or
 })
 export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly route = inject(ActivatedRoute);
   searchForm!: UntypedFormGroup;
 
   searching = false;
@@ -170,6 +172,13 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
   
   ngOnInit(): void {
     this.initSearchForm();
+    const query = this.route.snapshot.queryParamMap;
+    const number = query.get('number');
+    const id = query.get('id');
+    if (number || id) {
+      this.searchForm.patchValue({number, id});
+      this.search();
+    }
   }
 
   initSearchForm(): void {

@@ -266,6 +266,18 @@ export class InventoryService {
 
     return this.http.delete(url, params, { body: inventoryIds }).pipe(map(res => res.data));
   }
+  getRemovalInventorySnapshots(inventoryIds: number[]): Observable<Inventory[]> {
+    const ids = [...new Set(inventoryIds.filter(id => Number.isSafeInteger(id) && id > 0))];
+    // Never let an empty filter turn into a warehouse-wide query.
+    if (!ids.length || ids.length > 100) throw new Error('Removal status requires 1–100 inventory IDs');
+    const params = new HttpParams()
+      .append('warehouseId', this.warehouseService.getCurrentWarehouse().id)
+      .append('inventoryIds', ids.join(','))
+      .append('includeVirturalInventory', true)
+      .append('includeDetails', false);
+    return this.http.get('inventory/inventories', params).pipe(map(res => res.data));
+  }
+
   adjustDownInventory(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
     let url = `inventory/inventory-adj/${inventory.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (documentNumber) {

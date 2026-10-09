@@ -82,7 +82,11 @@
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="'error.form.field.login.warehouse.required' | i18n">
-          <nz-select nz-input formControlName="warehouseId">
+          <label class="login-warehouse-label" for="login-warehouse">{{ 'warehouse' | i18n }}</label>
+          <nz-select class="login-warehouse-select" nzId="login-warehouse" formControlName="warehouseId"
+            nzPlacement="topLeft" nzDropdownClassName="login-warehouse-dropdown"
+            [nzDropdownMatchSelectWidth]="true" [nzOptionHeightPx]="40" [nzOptionOverflowSize]="5"
+            [nzPlaceHolder]="'warehouse' | i18n">
             <nz-option *ngFor="let warehouse of warehouses" [nzLabel]="warehouse.name" [nzValue]="warehouse.id">
             </nz-option>
           </nz-select>

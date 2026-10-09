@@ -149,5 +149,11 @@
   "validation.title.required": "Please enter a title",
   "validation.date.required": "Please select the start and end date",
   "validation.goal.required": "Please enter a description of the goal",
-  "validation.standard.required": "Please enter a metric"
+  "validation.standard.required": "Please enter a metric",
+  "work-order.delete": "Delete work order",
+  "work-order.delete-title": "Delete work order",
+  "work-order.delete-confirm": "Permanently delete work order {{number}}? This cannot be undone.",
+  "work-order.delete-rule": "Only PENDING work orders without production, assignments or related business records can be deleted.",
+  "work-order.delete-success": "Work order deleted.",
+  "work-order.delete-failed": "The work order could not be deleted. Please refresh and try again."
 }

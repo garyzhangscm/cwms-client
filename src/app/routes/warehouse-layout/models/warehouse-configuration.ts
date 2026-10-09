@@ -9,6 +9,8 @@ export interface WarehouseConfiguration {
     
     threePartyLogisticsFlag: boolean;
     listPickEnabledFlag: boolean;
+    manufacturingIssueRequireSourceLocation?: boolean;
+    manufacturingIssueRequireAllocatedLpn?: boolean;
 
     printingStrategy?: PrintingStrategy;
 

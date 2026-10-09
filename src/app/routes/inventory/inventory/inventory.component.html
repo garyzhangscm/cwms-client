@@ -157,7 +157,7 @@
 
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        <button nz-button [nzType]="'primary'" (click)="searchFromFirstPage()" [nzLoading]="searching">
           {{ 'search' | i18n }}
         </button>
         <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
@@ -191,6 +191,26 @@
           </nz-option>
       </nz-select>  
     </div>
+    @if(pendingRemovalIds.size > 0) {
+      <div style="padding: 12px 25px;" role="status" aria-live="polite">
+        @if(isMonitoringRemoval) {
+          <span nz-icon nzType="loading" style="margin-right: 8px;"></span>
+          {{ 'inventory.removal-processing' | i18n: { count: pendingRemovalIds.size } }}
+        }
+        @else if(removalNeedsReview) {
+          {{ 'inventory.removal-review' | i18n: { count: pendingRemovalIds.size } }}
+          <button nz-button nzSize="small" style="margin-left: 8px;" (click)="checkInventoryRemovalStatus()">
+            {{ 'inventory.removal-review-label' | i18n }}
+          </button>
+        }
+      </div>
+    }
+    @if(detailsLoading) {
+      <div style="padding: 8px 25px; color: #64748b;" role="status">
+        <span nz-icon nzType="loading" style="margin-right: 8px;"></span>
+        {{ 'inventory.details-loading' | i18n }}
+      </div>
+    }
     <!--[data]="listOfDisplayInventories" -->
     <st #inventoryTable 
     [data]="listOfDisplayInventories"  
@@ -200,6 +220,17 @@
       (change)="inventoryTableChanged($event)"
       [widthMode]="{ type: 'strict' }" resizable>
     
+      <ng-template st-row="lpnColumn" let-inventory>
+        {{ inventory.lpn }}
+        @if(pendingRemovalIds.has(inventory.id)) {
+          <div>
+            <span style="display: inline-block; margin-top: 4px; padding: 1px 8px; border-radius: 4px; background: #eef4ff; font-size: 12px;"
+              [style.color]="isMonitoringRemoval ? '#2563eb' : '#b7791f'">
+              {{ (isMonitoringRemoval ? 'inventory.removal-processing-label' : 'inventory.removal-review-label') | i18n }}
+            </span>
+          </div>
+        }
+      </ng-template>
       <ng-template st-row="itemColumn" let-inventory>  
         
         @if(inventory.item != null) {
@@ -505,7 +536,23 @@
         
       </ng-template>
     </st>
-    
+    @if(inventoryTable.total > 0) {
+      <div class="inventory-pagination">
+        <nz-pagination [nzPageIndex]="inventoryTable.pi" [nzPageSize]="inventoryTable.ps"
+          [nzTotal]="inventoryTable.total" [nzShowTotal]="inventoryPaginationTotal"
+          [nzResponsive]="true" [nzDisabled]="searching"
+          (nzPageIndexChange)="inventoryPageChanged($event)"></nz-pagination>
+        <select class="inventory-page-size" [ngModel]="inventoryTable.ps" [disabled]="searching"
+          (ngModelChange)="inventoryTableRecordPerPageChanged($event)" aria-label="Items per page">
+          @for(size of inventoryTableRecordPerPages; track size) {
+            <option [ngValue]="size">{{ size }} / page</option>
+          }
+        </select>
+      </div>
+    }
+    <ng-template #inventoryPaginationTotal let-total let-range="range">
+      {{ range[0] }} - {{ range[1] }} / {{ total }}
+    </ng-template>
   </div>
  
 
@@ -526,13 +573,14 @@
         @if(!userPermissionMap.has('remove-inventory-in-batch') || userPermissionMap.get('remove-inventory-in-batch')) {
         
           <button nz-button nz-dropdown [nzDropdownMenu]="remoteInventoryButton"   
+          [nzLoading]="isSubmittingRemoval" [disabled]="isSubmittingRemoval || isMonitoringRemoval"
           (click)="removeSelectedInventory(false)" >
             {{ 'delete' | i18n }}<i nz-icon nzType="down"></i></button>
           <nz-dropdown-menu #remoteInventoryButton="nzDropdownMenu">
             <ul nz-menu>
 
               <li nz-menu-item>
-                <a (click)="removeSelectedInventory(true)">
+                <a [attr.aria-disabled]="isSubmittingRemoval || isMonitoringRemoval" (click)="removeSelectedInventory(true)">
                   {{ 'send-delete-request' | i18n }}</a>
               </li> 
 

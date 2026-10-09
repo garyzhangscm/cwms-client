@@ -1,0 +1,77 @@
+<nz-modal [nzVisible]="true" [nzWidth]="1100" [nzTitle]="'batch-deassign.title' | i18n" [nzFooter]="footer"
+  [nzClosable]="!workflow.processing && !workflow.preparing && !checking" [nzMaskClosable]="false"
+  [nzKeyboard]="!workflow.processing && !workflow.preparing && !checking" (nzOnCancel)="close()">
+  <ng-container *nzModalContent>
+    <nz-alert nzType="info" [nzMessage]="'batch-deassign.scope' | i18n" nzShowIcon />
+    @if (!workflow.preparing && !workflow.submitted) {
+      <button class="confirm-empty" nz-button [disabled]="workflow.processing" (click)="confirmEmptyEntries()">{{ 'batch-deassign.confirm-empty-all' | i18n }}</button>
+    }
+    <nz-spin [nzSpinning]="workflow.preparing">
+      @for (entry of workflow.entries; track entry.row.id) {
+        <section class="batch-entry">
+          <div class="batch-entry-heading">
+            <div><strong>{{ entry.row.line }}</strong> <span> · {{ entry.row.number }}</span>
+              <small>{{ entry.materials.length }} {{ 'batch-deassign.materials' | i18n }} · {{ entry.snapshot?.picks?.length ?? 0 }} {{ 'batch-deassign.picks' | i18n }}</small></div>
+            <span class="batch-state" [attr.data-state]="entry.state">{{ ('batch-deassign.state-' + entry.state) | i18n }}</span>
+          </div>
+          @if (entry.reason) { <nz-alert [nzType]="entry.state === 'success' ? 'success' : 'warning'" [nzMessage]="entry.reason | i18n" nzShowIcon /> }
+          @if (entry.state !== 'success' && !workflow.processing && !workflow.preparing) {
+            <a class="single-link" routerLink="/work-order/work-order/deassign-production-line" [queryParams]="{ workOrderId: entry.row.workOrderId }" (click)="close()">{{ 'batch-deassign.single-page' | i18n }}</a>
+          }
+          @if (entry.snapshot && entry.state !== 'success') {
+            <button nz-button nzType="link" (click)="entry.expanded = !entry.expanded">{{ (entry.expanded ? 'batch-deassign.hide' : 'batch-deassign.details') | i18n }}</button>
+            @if (entry.expanded) {
+              @if (!entry.materials.length) { <p class="batch-empty">{{ 'batch-deassign.no-material' | i18n }}</p> }
+              @else {
+                <div class="batch-scroll"><table class="batch-materials"><thead><tr>
+                  <th>LPN</th><th>{{ 'line-assignments.item' | i18n }}</th><th>{{ 'batch-deassign.location' | i18n }}</th>
+                  <th>{{ 'batch-deassign.original' | i18n }}</th><th>{{ 'batch-deassign.remaining' | i18n }}</th><th>{{ 'batch-deassign.consume' | i18n }}</th>
+                </tr></thead><tbody>
+                  @for (material of entry.materials; track material.inventory.id) {
+                    <tr><td>{{ material.inventory.lpn || material.inventory.id }}</td><td>{{ material.inventory.item?.name || material.inventory.item?.id }}</td>
+                      <td>{{ material.inventory.location?.name || material.inventory.locationName || material.inventory.locationId || '—' }}</td>
+                      <td>{{ material.original }} {{ material.inventory.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name }}</td>
+                      <td><nz-input-number [(ngModel)]="material.remaining" [nzMin]="0" [nzMax]="material.original" [nzStep]="1"
+                        [nzDisabled]="workflow.processing || workflow.submitted || entry.state !== 'pending'" (ngModelChange)="entry.confirmed = false; globalConfirmed = false" /></td>
+                      <td>{{ material.original - (material.remaining ?? material.original) }}</td></tr>
+                  }
+                </tbody></table></div>
+              }
+              @if (entry.snapshot.picks.length) {
+                <div class="batch-picks"><strong>{{ 'batch-deassign.cancel-picks' | i18n }}</strong>
+                  @for (pick of entry.snapshot.picks; track pick.id) { <span>{{ pick.number }} ({{ pick.quantity - pick.pickedQuantity }})</span> }
+                </div>
+              }
+            }
+            @if (entry.state === 'pending' && !workflow.submitted) {
+              <label nz-checkbox [(ngModel)]="entry.confirmed" [nzDisabled]="workflow.processing || workflow.preparing">
+                {{ (entry.materials.length ? 'batch-deassign.confirm-material' : 'batch-deassign.confirm-empty') | i18n }}</label>
+            }
+          }
+        </section>
+      }
+    </nz-spin>
+    @if (checkMessage) { <nz-alert nzType="warning" [nzMessage]="checkMessage | i18n" /> }
+    @if (!workflow.submitted) {
+      <label class="batch-final-confirm" nz-checkbox [(ngModel)]="globalConfirmed" [nzDisabled]="workflow.preparing || workflow.processing">
+        {{ 'batch-deassign.final-confirm' | i18n }}</label>
+    }
+    <p class="batch-note">{{ 'batch-deassign.single-note' | i18n }}</p>
+  </ng-container>
+</nz-modal>
+<ng-template #footer>
+  <div class="batch-footer">
+    <span>{{ successes }} / {{ workflow.entries.length }} {{ 'batch-deassign.success-count' | i18n }}</span>
+    <div>
+      @if (!workflow.processing && !workflow.preparing) {
+        @if (hasUnknown) { <button nz-button [disabled]="checking" (click)="checkResults()">{{ 'batch-deassign.check' | i18n }}</button> }
+        @if (needsRecheck) { <button nz-button [disabled]="checking" (click)="prepare(pendingRows)">{{ 'batch-deassign.reprepare' | i18n }}</button> }
+      }
+      <button nz-button [disabled]="workflow.processing || workflow.preparing || checking" (click)="close()">{{ 'batch-deassign.close' | i18n }}</button>
+      @if (!workflow.submitted) {
+        <button nz-button nzType="primary" nzDanger [nzLoading]="workflow.processing" [disabled]="!workflow.ready || !globalConfirmed || checking" (click)="submit()">
+          {{ 'batch-deassign.submit' | i18n }}</button>
+      }
+    </div>
+  </div>
+</ng-template>

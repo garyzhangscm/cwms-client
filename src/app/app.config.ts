@@ -33,6 +33,7 @@ const defaultLang: AlainProvideLang = {
 };
 
 const alainConfig: AlainConfig = {
+  pageHeader: { home: 'Home', homeI18n: '' },
   auth: {
     token_send_key: 'Authorization',
     token_send_template: 'Bearer ${token}',

@@ -1,0 +1,37 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const ts = require('typescript');
+const { of, throwError, Subject } = require('rxjs');
+function load(path, name) {
+  const source = ts.createSourceFile(path, fs.readFileSync(path, 'utf8'), ts.ScriptTarget.Latest, true);
+  const cls = source.statements.find(n => ts.isClassDeclaration(n) && n.name.text === name);
+  const members = cls.members.filter(n => !ts.isConstructorDeclaration(n)).map(n => n.getText(source));
+  return new Function('of', 'map', ts.transpile(`class Tested {${members.join('\n')}}`, {target: ts.ScriptTarget.ES2022}) + '; return Tested;')(of, x => x);
+}
+const stored = new Map();
+global.localStorage = {getItem: k => stored.get(k) ?? null, setItem: (k,v) => stored.set(k,v)};
+const Storage = load('src/app/routes/util/services/LocalStorageService.ts', 'LocalStorageService');
+const storage = new Storage();
+const Company = load('src/app/routes/warehouse-layout/services/company.service.ts', 'CompanyService');
+const company = new Company(); company.localStorageService = storage;
+stored.set('current_company', JSON.stringify({data: JSON.stringify({id:1,code:'ECO'}),expiredDate:Date.now()-3600000}));
+assert.equal(company.getCurrentCompany().id, 1, 'Old expired selection must remain available for request company header');
+stored.set('other-cache', JSON.stringify({data:'expired',expiredDate:Date.now()-1}));
+assert.equal(storage.getItem('other-cache'), null, 'Other caches must still expire');
+company.setCurrentCompany({id:2});
+assert.equal(JSON.parse(stored.get('current_company')).expiredDate, null);
+assert.equal(company.getCurrentCompany().id, 2);
+const Dashboard = load('src/app/routes/warehouse-layout/location-dashboard/location-dashboard.component.ts', 'WarehouseLayoutLocationDashboardComponent');
+const c = new Dashboard(); let calls=0; const pending=new Subject();
+c.locationGroupService={getStorageLocationGroupUtilization:()=>{calls++;return pending;}};
+c.ngOnInit(); c.loadUtilization(); assert.equal(calls,1); assert.equal(c.hasLoaded,false);
+pending.error({status:403}); assert.equal(c.loadError,'access'); assert.equal(c.hasLoaded,false); assert.equal(c.isSpinning,false);
+c.locationGroupService={getStorageLocationGroupUtilization:()=>of([])};
+c.loadUtilization(); assert.equal(c.hasLoaded,true); assert.equal(c.loadError,null); assert.deepEqual(c.locationUtilizationData,[]);
+c.locationGroupService={getStorageLocationGroupUtilization:()=>throwError(()=>({status:500}))};
+c.loadUtilization(); assert.equal(c.loadError,'failed'); assert.equal(c.hasLoaded,false);
+c.locationGroupService={getStorageLocationGroupUtilization:()=>of([{locationGroupName:'A',emptyLocation:2,partialLocation:3,fullLocation:4}])};
+c.loadUtilization(); assert.equal(c.loadError,null); assert.equal(c.hasLoaded,true); assert.deepEqual(c.locationUtilizationData[0].y,[2]);
+const template=fs.readFileSync('src/app/routes/warehouse-layout/location-dashboard/location-dashboard.component.html','utf8');
+assert.ok(template.includes('hasLoaded && !loadError && locationUtilizationData.length == 0'));
+console.log('PASS: expired company context recovery, other cache expiry, loading/403/500/empty/success and retry states. APIs mocked.');

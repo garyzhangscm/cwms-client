@@ -194,12 +194,10 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
       .saveWorkOrderCompleteTransaction(this.workOrderCompleteTransaction)
       .subscribe(res => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
-        setTimeout(() => {
-          this.isSpinning = false;
-          this.router.navigateByUrl(
-            `/work-order/work-order?number=${this.workOrderCompleteTransaction.workOrder!.number}`,
-          );
-        }, 500);
+        this.isSpinning = false;
+        this.router.navigateByUrl(
+          `/work-order/work-order?number=${this.workOrderCompleteTransaction.workOrder!.number}`,
+        );
       });
   }
 }

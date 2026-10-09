@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-06",
+  "environment": "Colton formal",
+  "frontend_source_commit": "9f62471",
+  "backend_source_commit": "bdea28f0",
+  "changes": [
+    "Preserve company context beyond the old six-hour cache expiry",
+    "Distinguish Location Kanban failure and empty states",
+    "Allow enabled same-company Admin roles to reset user passwords"
+  ],
+  "images": {
+    "webclient": "brianwang1912/mes-web@sha256:4cbe72cd66cfd6aa1cf1ffab1c3d064c4f2cbab43d3fbf99a341ba69e7832657",
+    "resourceservice": "brianwang1912/cwms-ressvr@sha256:853358beb63f06117f2691512a0d0b23b2cca5899e9080ca1131841d2674896a"
+  },
+  "resource_jar_sha256": "0ddc3840b254a3a9b21e2fec3f30140fb73b4e8139571eb325f02bceca3efcca",
+  "tests": {
+    "backend": 8,
+    "frontend_mock_checks": 4,
+    "packaged_role_authorization": "passed",
+    "production_build": "passed"
+  },
+  "server_backup": "/root/k8s/backups/colton-admin-role-20261006/",
+  "persistent_yaml": [
+    "/root/k8s/4-frontend-app.yaml",
+    "/root/k8s/5-backend-app.yaml"
+  ],
+  "real_passwords_reset_by_agent": false,
+  "fay_changed": false,
+  "status": "deployed and healthy",
+  "persistent_yaml_verified": true,
+  "served_web_verified": true,
+  "read_only_api_checks": "passed"
+}
