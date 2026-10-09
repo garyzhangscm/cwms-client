@@ -80,21 +80,21 @@ export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
     if (this.currentInventoryStatus.reasonRequiredWhenReceiving) {
       this.reasonWhenReceiving = "Required";
     }
-    else if (this.currentInventoryStatus.reasonRequiredWhenReceiving) {
+    else if (this.currentInventoryStatus.reasonOptionalWhenReceiving) {
       this.reasonWhenReceiving = "Optional";
     }
 
     if (this.currentInventoryStatus.reasonRequiredWhenProducing) {
       this.reasonWhenProducing = "Required";
     }
-    else if (this.currentInventoryStatus.reasonRequiredWhenProducing) {
+    else if (this.currentInventoryStatus.reasonOptionalWhenProducing) {
       this.reasonWhenProducing = "Optional";
     }
 
     if (this.currentInventoryStatus.reasonRequiredWhenAdjusting) {
       this.reasonWhenAdjusting = "Required";
     }
-    else if (this.currentInventoryStatus.reasonRequiredWhenAdjusting) {
+    else if (this.currentInventoryStatus.reasonOptionalWhenAdjusting) {
       this.reasonWhenAdjusting = "Optional";
     }
   }
