@@ -1,6 +1,9 @@
 /** New Web labels must remain available while the resource server dictionary is older. */
 export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
   'en-US': {
+    'menu.main.qc.defective-labels': 'Print Defective Labels',
+    'REPORT-TYPE-DEFECTIVE_LPN_LABEL': 'Defective LPN Label',
+    'report.download-failed': 'Template download failed. Please retry or check that the template exists.',
     "receipt.supplier-list-failed": "Supplier options could not be loaded. Refresh the page to retry.",
     "receipt.details-failed": "Some related details could not be loaded. Search again to retry.",
     "receipt.reference-failed": "Related details could not be loaded. Search again to retry.",
@@ -116,6 +119,9 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': 'The work order could not be deleted. Please refresh and try again.'
   },
   'zh-CN': {
+    'menu.main.qc.defective-labels': '打印废品标签',
+    'REPORT-TYPE-DEFECTIVE_LPN_LABEL': '废品 LPN 标签',
+    'report.download-failed': '模板下载失败，请重试或检查模板文件是否存在。',
     "receipt.supplier-list-failed": "供应商选项加载失败，请刷新页面重试。",
     "receipt.details-failed": "部分关联资料加载失败，请重新查询重试。",
     "receipt.reference-failed": "关联资料加载失败，请重新查询重试。",
@@ -231,6 +237,9 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': '工单删除失败，请刷新后重试。'
   },
   'zh-TW': {
+    'menu.main.qc.defective-labels': '列印廢品標籤',
+    'REPORT-TYPE-DEFECTIVE_LPN_LABEL': '廢品 LPN 標籤',
+    'report.download-failed': '範本下載失敗，請重試或檢查範本檔案是否存在。',
     "receipt.supplier-list-failed": "供應商選項載入失敗，請重新整理頁面重試。",
     "receipt.details-failed": "部分關聯資料載入失敗，請重新查詢重試。",
     "receipt.reference-failed": "關聯資料載入失敗，請重新查詢重試。",

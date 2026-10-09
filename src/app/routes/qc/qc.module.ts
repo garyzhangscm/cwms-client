@@ -1,3 +1,4 @@
+import { QcDefectiveLabelsComponent } from './defective-labels/defective-labels.component';
 import { NgModule, Type } from '@angular/core'; 
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
@@ -49,6 +50,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 const COMPONENTS: Array<Type<void>> = [
+  QcDefectiveLabelsComponent,
   QcQcRuleComponent,
   QcQcConfigurationComponent,
   QcQcInspectionComponent,

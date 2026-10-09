@@ -158,5 +158,7 @@
   "work-order.delete-confirm": "确定永久删除工单 {{number}}？此操作无法撤销。",
   "work-order.delete-rule": "仅允许删除未生产、未分配且没有业务关联的 PENDING 工单。",
   "work-order.delete-success": "工单已删除。",
-  "work-order.delete-failed": "工单删除失败，请刷新后重试。"
+  "work-order.delete-failed": "工单删除失败，请刷新后重试。",
+  "menu.main.qc.defective-labels": "打印废品标签",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "废品 LPN 标签"
 }

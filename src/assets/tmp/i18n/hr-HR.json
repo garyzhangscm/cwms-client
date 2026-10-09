@@ -147,5 +147,7 @@
   "validation.title.required": "Unesite naslov",
   "validation.date.required": "Molimo odaberite datum početka i završetka",
   "validation.goal.required": "Unesite opis cilja",
-  "validation.standard.required": "Unesite mjerni podatak"
+  "validation.standard.required": "Unesite mjerni podatak",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }

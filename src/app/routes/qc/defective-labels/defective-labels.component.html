@@ -1,0 +1,35 @@
+<div class="label-page">
+  <header><span>QUALITY CONTROL</span><h1>Print Defective Labels</h1>
+    <p>Preprint LPN labels for QC collection. Write the date, item number and quantity on each label.</p></header>
+  <p *ngIf="notice" role="status">{{ notice }}</p>
+  <div class="error" *ngIf="error" role="alert">{{ error }}</div>
+  <section class="panel">
+    <h2>New label batch</h2>
+    <p>Each label receives a DE-prefixed LPN (for example DE0000000001) from the dedicated defective-label-number sequence. No inventory or production is created.</p>
+    <label>Number of labels (1–100)</label>
+    <div class="actions"><nz-input-number [(ngModel)]="count" [nzMin]="1" [nzMax]="100" [nzStep]="1" [nzDisabled]="busy || lpns.length > 0"></nz-input-number>
+    <button nz-button nzType="primary" [nzLoading]="busy" (click)="generate()">{{ lpns.length ? 'Retry saved batch' : 'Generate labels' }}</button></div>
+    <p *ngIf="lpns.length">Pending batch: {{ lpns.length }} LPNs · {{ lpns[0] }} – {{ lpns[lpns.length - 1] }}</p>
+  </section>
+  <section class="panel" *ngIf="selected">
+    <h2>Ready to print · {{ batchName(selected) }}</h2>
+    <p>4 × 6 in · 203 dpi · One copy per LPN. Reprinting uses the same numbers.</p>
+    <p *ngIf="labelCount">{{ labelCount }} labels · Print from
+      <nz-input-number [(ngModel)]="fromLabel" [nzMin]="1" [nzMax]="labelCount" [nzDisabled]="busy"></nz-input-number>
+      to <nz-input-number [(ngModel)]="toLabel" [nzMin]="fromLabel" [nzMax]="labelCount" [nzDisabled]="busy"></nz-input-number>
+    </p>
+    <p>Confirm which labels need reprinting. Sending a print request does not confirm paper output.</p>
+    <cwms-common-print-button [allowPreview]="false" [printButtonDisabled]="busy || !validRange" (print)="print($event)"></cwms-common-print-button>
+  </section>
+  <section class="panel"><div class="history-heading"><h2>Label history</h2><button nz-button [disabled]="busy" [nzLoading]="historyLoading" (click)="refreshHistory()">Refresh</button></div>
+    <p>Latest 10 batches. Load more to view older batches; stored history is retained.</p>
+    <div class="actions"><input nz-input [(ngModel)]="batchSearch" placeholder="Exact print batch number" (keyup.enter)="refreshHistory()" />
+    <button nz-button [disabled]="historyLoading || busy" (click)="refreshHistory()">Search batch</button></div>
+    <nz-table #historyTable [nzData]="histories" [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="historyLoading">
+      <thead><tr><th>Batch</th><th>Labels</th><th>Created</th><th>User</th><th></th></tr></thead>
+      <tbody><tr *ngFor="let row of historyTable.data"><td>{{ batchName(row) }}</td><td>{{ batchCount(row) }}</td><td>{{ row.printedDate | date:'medium' }}</td><td>{{ row.printedUsername }}</td>
+        <td><button nz-button [disabled]="busy" (click)="select(row)">Select for reprint</button></td></tr></tbody>
+    </nz-table>
+    <button *ngIf="hasMore" nz-button [nzLoading]="historyLoading" [disabled]="busy" (click)="refreshHistory(true)">Load 10 more</button>
+  </section>
+</div>
