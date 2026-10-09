@@ -1,10 +1,11 @@
+import { HttpClient } from '@angular/common/http';
+import { finalize } from 'rxjs/operators';
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute,  } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { UserService } from '../../auth/services/user.service';
@@ -172,67 +173,54 @@ export class ReportReportComponent implements OnInit {
       );
   }
 
+  private readonly downloadHttp = inject(HttpClient);
+  readonly downloading = new Set<string>();
+
+  templateFileName(report: Report): string {
+    const extension = this.isLabel(report.type!) ? '.prn' : '.jrxml';
+    return report.fileName.toLowerCase().endsWith(extension) ? report.fileName : report.fileName + extension;
+  }
+
   setupReportUrl(reports: Report[]): void {
     reports.forEach(report => {
-      let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?`;
-      if(this.isLabel(report.type!)) {
-
-        if (report.fileName.endsWith(".prn")) {
-
-          fileUrl = `${fileUrl}fileName=${report.fileName}`;
-        }
-        else {
-          
-          fileUrl = `${fileUrl}fileName=${report.fileName}.prn`;
-        }
-      }
-      else {
-
-        if (report.fileName.endsWith(".jrxml")) {
-
-          fileUrl = `${fileUrl}fileName=${report.fileName}`;
-        }
-        else {
-          
-          fileUrl = `${fileUrl}fileName=${report.fileName}.jrxml`;
-        }
-      } 
-
-      if (report.companyId) {
-        fileUrl = `${fileUrl}&companyId=${report.companyId}`;
-      }
-      if (report.warehouseId) {
-        fileUrl = `${fileUrl}&warehouseId=${report.warehouseId}`;
-      }
-      report.fileUrl = fileUrl;
+      report.mapOfPropertyFiles = {};
       if (!this.isLabel(report.type!)) {
-        this.setupReportI18NFileNames(report);
+        const baseName = report.fileName.replace(/\.jrxml$/i, '');
+        for (const locale of ['en_US', 'zh_CN']) {
+          const fileName = `${baseName}_${locale}.properties`;
+          report.mapOfPropertyFiles[fileName] = fileName;
+        }
       }
     });
   }
-  
-  setupReportI18NFileNames(report: Report) {
-    report.mapOfPropertyFiles = {};
-    const reportI18NFileNames = [
-      `${report.fileName  }_en_US.properties`,
-      `${report.fileName  }_zh_CN.properties`,
-    ];
- 
-    reportI18NFileNames.forEach(
-      fileName => {
-        let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?fileName=${fileName}`;
-  
-        if (report.companyId) {
-          fileUrl = `${fileUrl}&companyId=${report.companyId}`;
-        }
-        if (report.warehouseId) {
-          fileUrl = `${fileUrl}&warehouseId=${report.warehouseId}`;
-        }
-        report.mapOfPropertyFiles![fileName] = fileUrl;
-      }
-    )
-    
 
+  downloadTemplate(report: Report, fileName = this.templateFileName(report)): void {
+    const key = `${report.id}:${fileName}`;
+    if (this.downloading.has(key)) return;
+    const params: Record<string, string> = { fileName };
+    if (report.companyId != null) params['companyId'] = String(report.companyId);
+    if (report.warehouseId != null) params['warehouseId'] = String(report.warehouseId);
+    this.downloading.add(key);
+    // HttpClient preserves the existing authentication and API-base interceptors.
+    this.downloadHttp.get('resource/reports/templates', { params, responseType: 'blob' })
+      .pipe(finalize(() => this.downloading.delete(key)))
+      .subscribe({
+        next: blob => {
+          if (!blob.size || /json|text\/html/i.test(blob.type)) {
+            this.message.error(this.i18n.fanyi('report.download-failed'));
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+        },
+        error: () => this.message.error(this.i18n.fanyi('report.download-failed'))
+      });
   }
 
   currentPageDataChange($event: Report[]): void {

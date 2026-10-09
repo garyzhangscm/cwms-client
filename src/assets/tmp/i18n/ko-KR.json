@@ -149,5 +149,7 @@
   "validation.title.required": "제목을 입력하세요.",
   "validation.date.required": "시작일과 종료일을 선택하세요.",
   "validation.goal.required": "목표에 대한 설명을 입력하십시오.",
-  "validation.standard.required": "측정 항목을 입력하십시오."
+  "validation.standard.required": "측정 항목을 입력하십시오.",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }

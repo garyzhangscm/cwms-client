@@ -155,5 +155,7 @@
   "work-order.delete-confirm": "Permanently delete work order {{number}}? This cannot be undone.",
   "work-order.delete-rule": "Only PENDING work orders without production, assignments or related business records can be deleted.",
   "work-order.delete-success": "Work order deleted.",
-  "work-order.delete-failed": "The work order could not be deleted. Please refresh and try again."
+  "work-order.delete-failed": "The work order could not be deleted. Please refresh and try again.",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }

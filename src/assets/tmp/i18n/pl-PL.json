@@ -149,5 +149,7 @@
   "validation.title.required": "Proszę podać tytuł",
   "validation.date.required": "Proszę podać datę początkową i końcową",
   "validation.goal.required": "Proszę podać opis dla tego celu",
-  "validation.standard.required": "Proszę wskazać metrykę"
+  "validation.standard.required": "Proszę wskazać metrykę",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }

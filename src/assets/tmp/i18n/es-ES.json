@@ -149,5 +149,7 @@
   "validation.title.required": "Por favor, introduzca un título",
   "validation.date.required": "Seleccione la fecha de inicio y de finalización",
   "validation.goal.required": "Por favor, introduzca una descripción del objetivo",
-  "validation.standard.required": "Por favor, introduzca una métrica"
+  "validation.standard.required": "Por favor, introduzca una métrica",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }

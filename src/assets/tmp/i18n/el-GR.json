@@ -147,5 +147,7 @@
   "validation.title.required": "Παρακαλώ εισάγετε έναν τίτλο",
   "validation.date.required": "Παρακαλώ επιλέξτε την ημερομηνία έναρξης και λήξης",
   "validation.goal.required": "Παρακαλώ εισάγετε την περιγραφή του στόχου",
-  "validation.standard.required": "Παρακαλώ εισάγετε μια μέτρηση"
+  "validation.standard.required": "Παρακαλώ εισάγετε μια μέτρηση",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }

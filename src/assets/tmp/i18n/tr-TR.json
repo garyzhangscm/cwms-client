@@ -149,5 +149,7 @@
   "validation.title.required": "Lütfen bir başlık giriniz",
   "validation.date.required": "Lütfen başlangıç ve bitiş tarihini seçiniz",
   "validation.goal.required": "Lütfen hedef için bir açıklama giriniz",
-  "validation.standard.required": "Lütfen bir metrik giriniz"
+  "validation.standard.required": "Lütfen bir metrik giriniz",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }

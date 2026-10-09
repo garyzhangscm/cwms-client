@@ -149,5 +149,7 @@
   "validation.title.required": "Veuillez saisir un titre",
   "validation.date.required": "Veuillez sélectionner la date de début et de fin",
   "validation.goal.required": "Veuillez saisir une description de l'objectif",
-  "validation.standard.required": "Veuillez saisir une statistique"
+  "validation.standard.required": "Veuillez saisir une statistique",
+  "menu.main.qc.defective-labels": "Print Defective Labels",
+  "REPORT-TYPE-DEFECTIVE_LPN_LABEL": "Defective LPN Label"
 }
