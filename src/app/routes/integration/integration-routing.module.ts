@@ -1,3 +1,5 @@
+import { ItemImportExceptionsComponent } from './item-import-exceptions/item-import-exceptions.component';
+import { WorkOrderImportExceptionsComponent } from './work-order-import-exceptions/work-order-import-exceptions.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {  aclCanActivate, ACLGuardType } from '@delon/acl';
@@ -23,6 +25,8 @@ import { IntegrationShopifyIntegrationConfigurationComponent } from './shopify-i
 import { IntegrationSettingsComponent } from './integration-settings/integration-settings.component';
 
 const routes: Routes = [
+  {path: 'item-import-exceptions', component: ItemImportExceptionsComponent},
+  {path: 'work-order-import-exceptions', component: WorkOrderImportExceptionsComponent},
   { path: 'settings', component: IntegrationSettingsComponent,
     canActivate: [aclCanActivate],
     data: {

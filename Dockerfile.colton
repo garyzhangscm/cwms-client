@@ -1,0 +1,18 @@
+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
+WORKDIR /app
+ENV HUSKY=0
+COPY package.json package-lock.json ./
+RUN npm ci --legacy-peer-deps
+COPY . .
+RUN node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production
+
+FROM nginx:stable-alpine AS runtime
+ENV COLTON_API_TARGET=http://apigateway:5555
+ENV MES_ITEM_SETTINGS_TARGET=http://10.0.10.101:18790
+ENV MES_INVENTORY_HANDOFF_TARGET=http://10.0.10.159:18791
+ENV ADMINER_TARGET=http://adminer:8080
+COPY deploy/colton/default.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=build /app/dist/ng-alain-v19-without-ssr/browser/ /usr/share/nginx/html/
+EXPOSE 80
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
+  CMD wget -q -O /dev/null http://127.0.0.1/healthz || exit 1

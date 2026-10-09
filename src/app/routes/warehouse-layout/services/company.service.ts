@@ -60,10 +60,12 @@ export class CompanyService {
     // We will save the current company in local storage so that
     // different tab / web broswer session can share the same warehouse id
     // sessionStorage.setItem('current_warehouse', JSON.stringify(warehouse));
-    this.localStorageService.setItem('current_company', JSON.stringify(company));
+    // Company selection is context, not a login credential. Token expiry still controls access.
+    this.localStorageService.setItem('current_company', JSON.stringify(company), null);
   }
   getCurrentCompany(): Company | null{
-    return JSON.parse(this.localStorageService.getItem('current_company')!);
+    // Recover selections saved by older Web versions with a six-hour expiry.
+    return JSON.parse(this.localStorageService.getItem('current_company', true)!);
   }
   
   enableCompany(id: number): Observable<Company> {

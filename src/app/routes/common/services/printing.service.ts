@@ -1,11 +1,11 @@
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom, Observable, timeout } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Printer } from '../../report/models/printer';
@@ -28,6 +28,7 @@ import { PrintableBarcode } from '../models/printable-barcode';
 export class PrintingService {
   // printer related
   private lodop: Lodop | null = null;
+  private readonly binaryHttp = inject(HttpClient);
   private tokenService = inject(DA_SERVICE_TOKEN);
 
   constructor(
@@ -287,6 +288,38 @@ export class PrintingService {
       }
     }
   }
+  /** Download asynchronously; submitting a job does not confirm physical printing. */
+  async printReportHistoryFromLocalAsync(report: ReportHistory, copies = 2, signal?: AbortSignal): Promise<void> {
+    if (!this.lodop) throw new Error('Local printing service is unavailable.');
+    const warehouse = this.warehouseService.getCurrentWarehouse();
+    const company = this.companyService.getCurrentCompany();
+    const url = `resource/report-histories/preview/${warehouse.companyId}/${warehouse.id}/${report.type}/${encodeURIComponent(report.fileName)}`;
+    const params = new HttpParams().set('token', this.tokenService.get()?.token ?? '').set('companyId', company!.id);
+    const buffer = await firstValueFrom(this.binaryHttp.get(url, { params, responseType: 'arraybuffer' }).pipe(timeout(30000)));
+    if (signal?.aborted) throw new Error('Printing cancelled.');
+    const bytes = new Uint8Array(buffer);
+    if (!bytes.length || String.fromCharCode(...bytes.subarray(0, 5)) !== '%PDF-') {
+      throw new Error('The label server did not return a valid PDF.');
+    }
+    let binary = '';
+    for (let start = 0; start < bytes.length; start += 8192) {
+      binary += String.fromCharCode(...bytes.subarray(start, start + 8192));
+    }
+    const printerName = this.getCurrentStationDefaultLabelPrinter();
+    const printers = this.getAllLocalPrinters();
+    const printerIndex = printerName ? printers.indexOf(printerName) : -1;
+    if (printerName && printerIndex < 0) throw new Error('The configured label printer is unavailable.');
+    const lodop = this.lodop;
+    lodop.SET_LICENSES('', 'BE2FE2DFCE6366AF345F088D1D910455F10', '', '');
+    lodop.PRINT_INIT(report.fileName);
+    lodop.SET_PRINTER_INDEX(printerIndex);
+    lodop.ADD_PRINT_PDF(0, 0, '100%', '100%', btoa(binary));
+    lodop.SET_PRINT_COPIES(copies);
+    lodop.SET_PRINT_MODE('PRINT_NOCOLLATE', 'true');
+    if (signal?.aborted) throw new Error('Printing cancelled.');
+    if (!lodop.PRINT()) throw new Error('The local printing service rejected the label.');
+  }
+
   printFromLocal(
     name: string,
     fileName: string,

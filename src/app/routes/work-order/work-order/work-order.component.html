@@ -34,7 +34,7 @@
               <nz-option
                   *ngFor="let status of workOrderStatusesKeys"
                   [nzValue]="status"
-                  [nzLabel]="status"
+                  [nzLabel]="'WORK-ORDER-STATUS-' + status | i18n"
               ></nz-option>
               </nz-select>
           </nz-form-control>
@@ -43,13 +43,17 @@
     </div>
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        <button nz-button [nzType]="'primary'" type="button" (click)="searchFromFirstPage()" [nzLoading]="isSpinning">
           {{ 'search' | i18n }}
         </button>
-        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        <button nz-button type="button" (click)="resetForm()">{{ 'clear' | i18n }}</button>
       </div>
     </div>
   </form>
+
+  <p *ngIf="!hasSearched" class="text-grey mt-md" role="status">
+    {{ 'work-order.search-prompt' | i18n }}
+  </p>
 
   <!-- Table to Display the result  -->
   <div class="search-result-list">
@@ -68,6 +72,10 @@
         (change)="workOrderTableChanged($event)" [scroll]="{ x: '2405px' }">
 
         
+        <ng-template st-row="statusColumn" let-workOrder>
+          {{ 'WORK-ORDER-STATUS-' + workOrder.status | i18n }}
+        </ng-template>
+
         <ng-template st-row="itemColumn" let-workOrder > 
           <nz-skeleton-element 
               *ngIf="workOrder.item === undefined || workOrder.item === null"
@@ -238,6 +246,10 @@
               <li nz-menu-item *ngIf="isWorkOrderChangable(workOrder)">
                 <a (click)="modifyWorkOrder(workOrder)">{{ 'modify' | i18n }}</a>
               </li>
+              <li nz-menu-item nzDanger *ngIf="canDeleteWorkOrder(workOrder)"
+                [nzDisabled]="deletingWorkOrderIds.has(workOrder.id!)">
+                <a (click)="deleteWorkOrder(workOrder, deleteWorkOrderContent)">{{ 'work-order.delete' | i18n }}</a>
+              </li>
               <li nz-menu-item *ngIf="isWorkOrderChangable(workOrder)">
                 <a (click)="changeWorkOrderLine(workOrder)">{{ 'work-order.modify-line' | i18n }}</a>
               </li>
@@ -277,6 +289,10 @@
               </li>
             </ul>
           </nz-dropdown-menu>
+          <ng-template #deleteWorkOrderContent>
+            <p>{{ 'work-order.delete-confirm' | i18n: { number: workOrder.number } }}</p>
+            <p>{{ 'work-order.delete-rule' | i18n }}</p>
+          </ng-template>
           
         </ng-template>
 
@@ -752,8 +768,9 @@
                       <td *ngIf="!displayOnly">
                         
                           <button nz-button nz-dropdown [nzDropdownMenu]="cancelPickOption" nzDanger
+                          [nzLoading]="cancellingPickIds.has(pick.id!)"
                           (click)="cancelPick(workOrder, pick, false, false)"
-                          [disabled]="pick.quantity === pick.pickedQuantity">
+                          [disabled]="pick.quantity === pick.pickedQuantity || cancellingPickIds.has(pick.id!)">
                           {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
                           <nz-dropdown-menu #cancelPickOption="nzDropdownMenu">
                             <ul nz-menu>         

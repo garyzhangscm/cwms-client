@@ -63,7 +63,7 @@
             <nz-select nzShowSearch nzAllowClear formControlName="supplier" id="supplier" name="supplier">
               
               @for (supplier of validSuppliers; track supplier) {
-                <nz-option  [nzLabel]="supplier.description" [nzValue]="supplier.name">
+                <nz-option  [nzLabel]="supplierDisplayName(supplier)" [nzValue]="supplier.name">
                 </nz-option>
                 
               }  
@@ -104,7 +104,7 @@
 
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+      <button nz-button [nzType]="'primary'" (click)="searchFromFirstPage()" [nzLoading]="searching">
         {{ 'search' | i18n }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
@@ -117,7 +117,7 @@
   
   <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;text-align: left"> 
   
-    <button nz-button nz-dropdown [nzDropdownMenu]="exportOptions">{{ 'export' | i18n }}<i nz-icon nzType="down"></i></button>
+    <button nz-button nz-dropdown [nzDropdownMenu]="exportOptions" [nzLoading]="exportingReceipts" [disabled]="searching">{{ 'export' | i18n }}<i nz-icon nzType="down"></i></button>
     <nz-dropdown-menu #exportOptions="nzDropdownMenu">
       <ul nz-menu>
         <li nz-menu-item >
@@ -141,7 +141,7 @@
 
   
   <st #receiptTable 
-      [data]="listOfAllReceipts"  
+      [data]="listOfAllReceipts" [page]="receiptPagination" [total]="receiptTotal" [pi]="receiptTablePI" [ps]="receiptTablePS"
       [columns]="receiptTableColumns" [footer]="tableFoot" [scroll]="{ x: '2650px' }" 
         [expand]="receiptExpand"  expandAccordion 
         (change)="receiptTableChanged($event)"
@@ -163,7 +163,7 @@
       
       <ng-template st-row="clientColumn" let-receipt > 
         
-        @if(receipt.clientId && receipt.client == null) {
+        @if(receipt.clientId && receipt.client == null && !detailLoadFailures.has('client:' + receipt.clientId)) {
 
           <nz-skeleton-element  
             nzType="input"
@@ -173,12 +173,15 @@
             ></nz-skeleton-element> 
         }
         {{ receipt.client?.name }}
+        @if(detailLoadFailures.has('client:' + receipt.clientId)) {
+          <span nz-tooltip [nzTooltipTitle]="'receipt.reference-failed' | i18n">{{ 'receipt.reference-unavailable' | i18n }} (ID: {{ receipt.clientId }})</span>
+        }
 
       </ng-template>
       
       <ng-template st-row="supplierColumn" let-receipt > 
         
-        @if(receipt.supplierId && receipt.supplier == null) {
+        @if(receipt.supplierId && receipt.supplier == null && !detailLoadFailures.has('supplier:' + receipt.supplierId)) {
 
           <nz-skeleton-element  
             nzType="input"
@@ -187,7 +190,10 @@
             style="width:75px"
             ></nz-skeleton-element> 
         }
-        <span nz-tooltip nzTooltipTitle="{{ receipt.supplier?.description }}">{{ receipt.supplier?.name }}</span> 
+        <span nz-tooltip nzTooltipTitle="{{ receipt.supplier?.name }}">{{ supplierDisplayName(receipt.supplier) }}</span>
+        @if(detailLoadFailures.has('supplier:' + receipt.supplierId)) {
+          <span nz-tooltip [nzTooltipTitle]="'receipt.reference-failed' | i18n">{{ 'receipt.reference-unavailable' | i18n }} (ID: {{ receipt.supplierId }})</span>
+        }
 
       </ng-template>
       
@@ -196,8 +202,7 @@
       </ng-template>
 
       <ng-template st-row="actionColumn" let-receipt > 
-        <nz-list>
-          <nz-list-item> 
+        <div class="receipt-actions">
             <button
                 nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" >
               {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
@@ -230,8 +235,7 @@
                   
                 </ul>
               </nz-dropdown-menu>
-          </nz-list-item> 
-        </nz-list>
+        </div>
       </ng-template>
       
       <ng-template #receiptExpand let-receipt>
@@ -239,7 +243,7 @@
         <nz-tabset [nzType]="'card'">
           <nz-tab nzTitle="{{'receipt.line' | i18n}}">
               
-            <st #st [data]="receipt.receiptLines"  [columns]="receiptLineTableColumns"  
+            <st #st [loading]="loadingReceiptLineIds.has(receipt.id)" [data]="receipt.receiptLines"  [columns]="receiptLineTableColumns"
               [expand]="expand"  expandAccordion 
               [scroll]="{ x: '1315px' }">
               
@@ -369,25 +373,29 @@
               <ng-template st-row="itemNameColumn" let-receiptLine let-index="index"> 
 
                 <nz-skeleton-element 
-                    *ngIf="receiptLine.itemId && receiptLine.item == null"
+                    *ngIf="receiptLine.itemId && receiptLine.item == null && !detailLoadFailures.has('item:' + receiptLine.itemId)"
                     nzType="input"
                     [nzActive]="true"
                     [nzSize]="'small'"
                     style="width:75px"
                   ></nz-skeleton-element> 
-                 {{ receiptLine.item?.name }} 
+                 {{ receiptLine.item?.name }}
+                 @if(detailLoadFailures.has('item:' + receiptLine.itemId)) {
+                   <span nz-tooltip [nzTooltipTitle]="'receipt.reference-failed' | i18n">{{ 'receipt.reference-unavailable' | i18n }} (ID: {{ receiptLine.itemId }})</span>
+                 }
 
               </ng-template>
               <ng-template st-row="itemDescriptionColumn" let-receiptLine let-index="index">
                 
                 <nz-skeleton-element 
-                    *ngIf="receiptLine.itemId && receiptLine.item == null"
+                    *ngIf="receiptLine.itemId && receiptLine.item == null && !detailLoadFailures.has('item:' + receiptLine.itemId)"
                     nzType="input"
                     [nzActive]="true"
                     [nzSize]="'small'"
                     style="width:75px"
                   ></nz-skeleton-element> 
-                 {{ receiptLine.item?.description }} 
+                 {{ receiptLine.item?.description }}
+                 @if(detailLoadFailures.has('item:' + receiptLine.itemId)) { <span>{{ 'receipt.reference-unavailable' | i18n }}</span> }
 
               </ng-template>
               <ng-template st-row="actionColumn" let-receiptLine let-index="index">

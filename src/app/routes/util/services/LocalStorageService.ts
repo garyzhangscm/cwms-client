@@ -8,16 +8,16 @@ export class LocalStorageService {
   constructor() {}
 
   // Set a value in local storage
-  setItem(key: string, data: any, expiredHours: number = 6): void {
+  setItem(key: string, data: any, expiredHours: number | null = 6): void {
     const storedData = {
       data,
-      expiredDate: new Date().getTime() + 1000 * 3600 * expiredHours,
+      expiredDate: expiredHours === null ? null : new Date().getTime() + 1000 * 3600 * expiredHours,
     };
     localStorage.setItem(key, JSON.stringify(storedData));
   }
 
   // Get a value from local storage
-  getItem(key: string): any {
+  getItem(key: string, ignoreExpiry: boolean = false): any {
     const data = localStorage.getItem(key);
     if (data != null) {
       const localStorage: CWMSLocalStorage = JSON.parse(data);
@@ -26,7 +26,7 @@ export class LocalStorageService {
       // console.log(`current time: ${new Date()}`)
       // console.log(`expired? ${new Date(gzLocalStorage.expiredDate) <= new Date()}`)
 
-      if (new Date(localStorage.expiredDate) > new Date()) {
+      if (ignoreExpiry || localStorage.expiredDate === null || new Date(localStorage.expiredDate) > new Date()) {
         // current value is not expired yet
         return localStorage.data;
       }

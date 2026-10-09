@@ -1,29 +1,26 @@
-# Colton frontend development
+# Frontend development
 
-Baseline: `v19.1.64`, commit `639f3cd92e0856959d559c341a9ecf7bd76320b1`.
-
-- Development host: `10.0.202.70`, user `bwang`.
-- Server checkout: `/home/bwang/mes-web/cwms-client`.
-- Development URL: `http://10.0.202.70:4200`.
-- API upstream: `http://10.0.10.159:31252` (Colton production).
-- REST and GraphQL use the same-origin `/api/` proxy. No direct database connection.
+Baseline: `v19.1.64`. Use Node.js 22 for development and builds.
+Environment-specific addresses, accounts and release records are managed privately.
 
 ## Run
 
-Use Node.js 22 (the deployed user-local runtime is 22.23.3).
-
 ```sh
-npm ci --no-audit --no-fund
+npm ci --legacy-peer-deps --no-audit --no-fund
 npm run start:colton
 ```
 
-Optionally set `COLTON_API_TARGET` before starting to change the upstream.
-The production Nginx configuration is unchanged; the development proxy is
-used by `ng serve`, not by a static production build.
+The development server uses port 4200. Set `COLTON_API_TARGET`,
+`MES_ITEM_SETTINGS_TARGET` and `MES_INVENTORY_HANDOFF_TARGET` to the appropriate
+API endpoints before starting.
+
+The proxy in `proxy.conf.js` is used by `ng serve`, not by a static production build.
+Production builds use `Dockerfile.colton` and the Nginx template documented in
+[Container deployment](colton/README.md).
 
 ## Development server service
 
-Install `mes-web-dev.service` in `~/.config/systemd/user/`, then run:
+Install the development service file in `~/.config/systemd/user/`, then run:
 
 ```sh
 systemctl --user daemon-reload
@@ -32,15 +29,11 @@ systemctl --user status mes-web-dev
 journalctl --user -u mes-web-dev -n 80 --no-pager
 ```
 
-With `Linger=no`, the user service is not guaranteed to stay running after
-all login sessions end or start automatically at boot. An administrator can
-enable persistence using `sudo loginctl enable-linger bwang`.
+An administrator can configure user-service persistence according to the host's
+internal operating policy.
 
-## Verification scope
+## Verification
 
-Use page loading and read-only API requests for development smoke checks.
-Colton's data is live: the application retains its normal write functionality.
-Do not run business mutations or write-oriented automated tests against it.
-Authenticated business flows require a separately agreed verification scope.
-
-Replacing Colton's existing frontend is a later deployment after user acceptance.
+Confirm the selected backend and dataset before testing. Use page loads and
+read-only requests for smoke checks; business actions can modify backend data.
+Accept changes in the test environment before releasing a separate image.

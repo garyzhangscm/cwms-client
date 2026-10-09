@@ -35,3 +35,53 @@ button {
   text-align: center;
   padding-top: 10px;
 }
+
+.password-reset-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.password-reset-identity {
+  padding: 16px 18px;
+  border: 1px solid #dbe5f1;
+  border-radius: 12px;
+  background: #f5f8fc;
+}
+
+.password-reset-name {
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.password-reset-account {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 13px;
+
+  strong {
+    color: #334155;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+}
+
+.password-reset-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label { color: #334155; font-weight: 500; }
+  input { width: 100%; border-radius: 8px; }
+  small { color: #64748b; font-size: 12px; }
+}
+
+.password-reset-option {
+  padding-top: 16px;
+  border-top: 1px solid #e8edf3;
+}
