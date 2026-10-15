@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-15",
+  "timezone": "America/Los_Angeles",
+  "repositories": [
+    {
+      "component": "web",
+      "repository": "https://github.com/garyzhangscm/cwms-client",
+      "branch": "V19.2",
+      "sourceCommit": "97ffc250990c46e9689001fbb0fe26d13469dcb8"
+    },
+    {
+      "component": "backend",
+      "repository": "https://github.com/garyzhangscm/cwms",
+      "branch": "v1.64",
+      "sourceCommit": "0bd0ae5a86be64bb860fc8a464ecda45aa777013"
+    },
+    {
+      "component": "mobile",
+      "repository": "https://github.com/garyzhangscm/cwms-mobile",
+      "branch": "codex/ipad-layout",
+      "sourceCommit": "f7e4d992c37299369b239d41b991145b2ee27f52"
+    }
+  ],
+  "images": [
+    {
+      "image": "brianwang1912/cwms-inventoryserver:v1.62-colton-mobile-qc-20261015",
+      "digest": "sha256:ce0355eff77cb70974579005382c49435074eed912c1811a07eb37a580de7998",
+      "remoteVerified": true
+    },
+    {
+      "image": "brianwang1912/cwms-inventoryserver:v1.60-fay-mobile-qc-20261015",
+      "digest": "sha256:7339dd3dba63bd1627a6fb4f857398a90fbf0541c854c0c4f0e42a1ad1c0e30c",
+      "remoteVerified": true
+    },
+    {
+      "image": "brianwang1912/cwms-inventoryserver:v1.62-colton-qc-notes-20261015",
+      "digest": "sha256:b4f547d7a9bc5b6dd64c4a2bfd7ff9726e17647033d824a6f1c0352bb15955ee",
+      "remoteVerified": true
+    },
+    {
+      "image": "brianwang1912/mes-web:v19.2-colton-qc-notes-20261015",
+      "digest": "sha256:a14a26bbd8b07a241691cd0764ab6783664ee9bc39400d6f903d7c537bba618c",
+      "remoteVerified": true
+    },
+    {
+      "image": "brianwang1912/mes-web:v19.2-all-changes-20261015",
+      "digest": "sha256:5e1bc7a1c98237a80d93e9b23657ed30cc7d1a7408e2eefe312cd9f2724a5b8f",
+      "remoteVerified": true
+    },
+    {
+      "image": "brianwang1912/mes-web:v19.2-all-changes-20261015-final",
+      "digest": "sha256:33f0009bb4f0a0bfc3e58bbcb7adbdc78707ee5653d23e12d963537574c0c29b",
+      "remoteVerified": true
+    }
+  ],
+  "notes": [
+    "Backup upload only; existing production deployments retained.",
+    "Mobile test packages were selected; OTA and App Store publication remain unpublished.",
+    "Final integrated Web image source revision: 97ffc250990c46e9689001fbb0fe26d13469dcb8."
+  ]
+}
