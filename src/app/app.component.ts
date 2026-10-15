@@ -29,6 +29,12 @@ export class AppComponent implements OnInit {
         configLoad = true;
       }
       if (configLoad && ev instanceof NavigationError) {
+        const message = String(ev.error?.message ?? ev.error ?? '');
+        if (/Loading chunk|ChunkLoadError|Failed to fetch dynamically imported module|Importing a module script failed|not a valid JavaScript MIME type/i.test(message)) {
+          window.dispatchEvent(new Event('mes:asset-failed'));
+          configLoad = false;
+          return;
+        }
         this.modalSrv.confirm({
           nzTitle: `提醒`,
           nzContent: environment.production ? `应用可能已发布新版本，请点击刷新才能生效。` : `无法加载路由：${ev.url}`,
@@ -39,6 +45,8 @@ export class AppComponent implements OnInit {
         });
       }
       if (ev instanceof NavigationEnd) {
+        configLoad = false;
+        window.dispatchEvent(new Event('mes:startup-ready'));
         this.donePreloader();
         this.titleSrv.setTitle();
         this.modalSrv.closeAll();

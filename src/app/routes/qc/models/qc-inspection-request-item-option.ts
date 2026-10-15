@@ -15,4 +15,6 @@ export interface QCInspectionRequestItemOption {
 
     doubleValue?: number;
 
+    exceptionNotes?: string;
+
 }

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { NgModule, Type } from '@angular/core'; 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -76,6 +77,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
     imports: [ 
+        CommonModule,
         CommonRoutingModule,
         NzDescriptionsModule,
         DirectivesModule,

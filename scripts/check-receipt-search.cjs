@@ -7,10 +7,11 @@ const source = ts.createSourceFile(path, fs.readFileSync(path, 'utf8'), ts.Scrip
 const cls = source.statements.find(n => ts.isClassDeclaration(n) && n.name.text === 'InboundReceiptComponent');
 const names = ['search', 'resetForm', 'searchFromFirstPage', 'refreshDetailInformations', 'ngOnDestroy', 'loadReceiptLineDetails', 'supplierDisplayName'];
 const methods = cls.members.filter(n => n.name && names.includes(n.name.getText(source))).map(n => n.getText(source));
-const Tested = new Function('firstValueFrom', 'timeout', 'formatDate', ts.transpile(`class Tested { ${methods.join('\n')} }`, { target: ts.ScriptTarget.ES2022 }) + ';return Tested;')(firstValueFrom, ms => timeout(Math.min(ms, 30)), () => 'now');
+const Tested = new Function('firstValueFrom', 'timeout', 'formatDate', 'ReceiptStatus', ts.transpile(`class Tested { ${methods.join('\n')} }`, { target: ts.ScriptTarget.ES2022 }) + ';return Tested;')(firstValueFrom, ms => timeout(Math.min(ms, 30)), () => 'now', { CLOSED: 'CLOSED' });
 const tick = () => new Promise(r => setImmediate(r));
 function setup() {
  const c = new Tested(); c.searchVersion = 0; c.receiptTablePI = 1; c.receiptTablePS = 10;
+ c.receiptStatusListKeys = ['OPEN', 'CHECK_IN', 'RECEIVING', 'CLOSED'];
  c.loadingReceiptLineIds = new Set(); c.receiptLineLoads = new Map();
  c.detailLoadFailures = new Set(); c.validSuppliers = [];
  c.warehouseService = { getCurrentWarehouse: () => ({ id: 1 }) };
@@ -50,8 +51,15 @@ function setup() {
  c.searchForm.getRawValue = () => ({ number: 'R1', statusList: ['CLOSED'], supplier: 'S1', client: '4', checkInDateTimeRanger: [start, end], checkInDate: date });
  let args; c.receiptService = { getPageableReceipts: (...values) => { args = values; return of({ content: [], totalElements: 42 }); } };
  c.receiptTable.pi = 5; c.searchFromFirstPage(); await tick();
+ assert.equal(args[2], 'CLOSED');
  assert.equal(args[4], start); assert.equal(args[5], end); assert.equal(args[6], date);
  assert.equal(args[9], '4'); assert.equal(args[10], 1); assert.equal(c.receiptTotal, 42);
+ // Empty Status applies the non-closed default, including after Clear.
+ c = setup(); c.receiptService = { getPageableReceipts: (...values) => { args = values; return of({ content: [], totalElements: 0 }); } };
+ c.search(); await tick(); assert.equal(args[2], 'OPEN,CHECK_IN,RECEIVING');
+ c.resetForm(); c.search(); await tick(); assert.equal(args[2], 'OPEN,CHECK_IN,RECEIVING');
+ c.searchForm.getRawValue = () => ({ statusList: ['OPEN', 'CLOSED'] });
+ c.search(); await tick(); assert.equal(args[2], 'OPEN,CLOSED');
  // List search must not wait for line Items; expanding hydrates the copied ST row.
  c = setup(); const itemPending = new Subject(); let itemCalls = 0;
  c.localCacheService.getItem = () => { itemCalls++; return itemPending; };

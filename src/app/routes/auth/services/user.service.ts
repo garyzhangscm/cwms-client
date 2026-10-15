@@ -142,7 +142,7 @@ export class UserService {
 
   async isCurrentUserAdmin(): Promise<boolean> {
     let user : User | undefined = await this.getCurrentUser();
-    return user != null &&  user.admin == true
+    return user != null && (user.admin === true || user.systemAdmin === true);
   }
 
   async getCurrentUser(): Promise<User | undefined>{ 

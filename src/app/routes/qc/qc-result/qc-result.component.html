@@ -1,6 +1,7 @@
+<div *ngIf="isSandbox" class="qc-warning">{{ 'qc-review.sandbox' | i18n }}</div>
 <page-header [title]="'menu.main.qc.qc-result' | i18n"> </page-header>
 
-<nz-spin [nzSpinning]="isSpinning">
+
 <!-- Form to query the result  -->
 
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
@@ -43,110 +44,92 @@
 
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()">
+      <button nz-button [nzType]="'primary'" type="button" (click)="search()" [nzLoading]="isSpinning">
         {{ 'search' | i18n }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      <button nz-button type="button" (click)="resetForm()">{{ 'clear' | i18n }}</button>
     </div>
   </div>
 </form>
 
 <div class="search-result-list">
-  
-      <!--
-    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
-      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
-    </div>
-  -->
-    
-    <st #st [data]="listOfQCInspectionRequest"  [columns]="columns"  [expand]="expand"   expandAccordion>
-        
-      <!--   qc rule details  -->
-      <ng-template #expand let-item let-index="index" >
-        
-        <nz-tabset  >
-          <!-- QC rule details-->
-          <nz-tab *ngFor="let qcInspectionRequestItem of item.qcInspectionRequestItems" [nzTitle]="qcInspectionRequestItem.qcRule.name">
-            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcInspectionRequestItem.qcInspectionRequestItemOptions" nzSize="middle"
-              [nzShowPagination]="true" #qcInspectionRequestItemOptionTable>
-              <thead>
-                <th>
-                  {{ 'qcRule.checkPoint' | i18n }}
-                </th> 
-                <th>
-                  {{ 'enabled' | i18n }}
-                </th> 
-                <th>
-
-                  {{ 'qcRule.qcRuleItemType' | i18n }}
-                </th>
-                <th>
-                  {{ 'qcRule.qcRuleItemComparator' | i18n }}
-                </th>
-                <th>
-                  {{ 'qcRule.expectedValue' | i18n }}
-                </th> 
-                <th>
-                  {{ 'qc.actualValue' | i18n }}
-                </th> 
-  
-                <th>
-                  {{ 'qc-result' | i18n }}
-                </th> 
-                
-              </thead>
-              <tbody>
-                <tr *ngFor="let qcInspectionRequestItemOption of qcInspectionRequestItemOptionTable.data">
-                  <td>{{ qcInspectionRequestItemOption.qcRuleItem.checkPoint }}</td> 
-                  <td>{{ qcInspectionRequestItemOption.qcRuleItem.enabled }}</td> 
-
-
-                  <td>{{ 'QC-RULE-ITEM-TYPE-' + qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType | i18n }}</td>
-                  <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator  | i18n}}</td>
-                  <td>{{ qcInspectionRequestItemOption.qcRuleItem.expectedValue }}</td> 
-                  <td>
-                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.NUMBER">
-                      {{qcInspectionRequestItemOption.doubleValue}}
-                    </span>
-                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.STRING">
-                      {{qcInspectionRequestItemOption.stringValue}}
-                    </span>
-                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.YESNO">
-                      {{qcInspectionRequestItemOption.booleanValue}}
-                    </span>
-                  </td> 
-                  <td>{{ qcInspectionRequestItemOption.qcInspectionResult }}</td>
-                </tr>
-              </tbody>
-            </nz-table>
+  <div class="qc-section-heading">
+    <div><h2>{{ 'qc-view.records' | i18n }}</h2><p>{{ 'qc-view.description' | i18n }}</p></div>
+    <span class="qc-record-count">{{ listOfQCInspectionRequest.length }} {{ 'qc-view.records' | i18n }}</span>
+  </div>
+  @if (searchFailed) { <div class="qc-warning" role="alert">{{ 'qc-view.search-failed' | i18n }}</div> }
+  <st [data]="listOfQCInspectionRequest" [columns]="columns" [expand]="expand" expandAccordion [loading]="isSpinning" [scroll]="{x: '1120px'}">
+    <ng-template st-row="material" let-record>
+      <strong>{{ record.view.itemNumber }}</strong><div class="qc-secondary">{{ record.view.description }}</div>
+    </ng-template>
+    <ng-template st-row="context" let-record>
+      <div>{{ record.view.typeLabel }}</div><div class="qc-secondary">LPN: {{ record.view.lpns }}</div>
+      @if (record.workOrder?.number) { <div class="qc-secondary">{{ 'work-order' | i18n }}: {{ record.workOrder.number }}</div> }
+      @if (record.workOrderQCSample?.number) { <div class="qc-secondary">{{ 'work-order.qc-sample.number' | i18n }}: {{ record.workOrderQCSample.number }}</div> }
+      @if (record.receipt?.number) { <div class="qc-secondary">{{ 'qc-view.receipt' | i18n }}: {{ record.receipt.number }}</div> }
+    </ng-template>
+    <ng-template st-row="decision" let-record>
+      <span class="qc-status" [attr.data-tone]="record.view.tone">{{ record.view.resultLabel }}</span>
+      @if (record.view.review) { <div class="qc-review-label">{{ record.view.review }} {{ 'qc-view.review' | i18n }}</div> }
+    </ng-template>
+    <ng-template st-row="time" let-record>
+      {{ record.qcTime ? (record.qcTime | date:'mediumDate') : '—' }}
+      @if (record.qcTime) { <div class="qc-secondary">{{ record.qcTime | date:'shortTime' }}</div> }
+    </ng-template>
+    <ng-template #expand let-record>
+      <div class="qc-record-detail">
+        <div class="qc-detail-heading">
+          <div><span class="qc-eyebrow">{{ 'qc-view.inspection-details' | i18n }}</span><h3>{{ record.number }}</h3></div>
+          <span class="qc-status" [attr.data-tone]="record.view.tone">{{ record.view.resultLabel }}</span>
+        </div>
+        <div class="qc-metrics">
+          <div><strong>{{ record.view.total }}</strong><span>{{ 'qc-view.checks' | i18n }}</span></div>
+          <div><strong>{{ record.view.pass }}</strong><span>{{ 'qc-view.recorded-pass' | i18n }}</span></div>
+          <div><strong>{{ record.view.fail }}</strong><span>{{ 'qc-view.recorded-fail' | i18n }}</span></div>
+          <div [class.qc-review-label]="record.view.review > 0"><strong>{{ record.view.review }}</strong><span>{{ 'qc-view.review' | i18n }}</span></div>
+        </div>
+        @if (record.view.review) { <div class="qc-warning">{{ 'qc-view.missing-warning' | i18n }}</div> }
+        <nz-tabset>
+          <nz-tab nzTitle="{{ 'qc-view.check-results' | i18n }}">
+            @for (group of record.view.groups; track $index) {
+              <section class="qc-rule-section">
+                <div class="qc-rule-heading"><h4>{{ group.name }}</h4><span class="qc-status" [attr.data-tone]="group.tone">{{ group.resultLabel }}</span></div>
+                <ng-container *ngTemplateOutlet="checksTable; context: { $implicit: group.checks }"></ng-container>
+                @if (group.excluded.length) {
+                  <details class="qc-excluded"><summary>{{ 'qc-view.excluded' | i18n }} ({{ group.excluded.length }})</summary>
+                    <ng-container *ngTemplateOutlet="checksTable; context: { $implicit: group.excluded }"></ng-container>
+                  </details>
+                }
+              </section>
+            } @empty { <p class="qc-secondary">{{ 'qc-view.no-checks' | i18n }}</p> }
+            <p class="qc-rule-note">{{ 'qc-view.rule-note' | i18n }}</p>
           </nz-tab>
-          <!-- QC inventory-->
-          <nz-tab nzTitle="{{'inventory' | i18n}}">
-            
-            <st  [data]="item.allInventories"  [columns]="inventoryColumns" >
-            </st>
+          <nz-tab nzTitle="{{ 'inventory' | i18n }} ({{ record.allInventories.length }})">
+            <st [data]="record.allInventories" [columns]="inventoryColumns" [scroll]="{x: '800px'}"></st>
           </nz-tab>
-          
         </nz-tabset>
-      </ng-template>
-      <!--   qc inspection time colummn  --> 
-
-      <ng-template st-row="qcTimeColumnTitle" type="title" let-c>
-        {{ 'qc-inspection-time' | i18n }}
-      </ng-template>
-      <ng-template st-row="qcTimeColumn" let-item let-index="index"> 
-        
-         <span *ngIf="item.qcTime">
-
-            {{ item.qcTime  | date:'short'}} 
-         </span>
-      </ng-template>
-    </st>
-    @if(searchResult != '') {
-  
-      <div nz-row nzType="flex" nzJustify="start">
-        {{searchResult}}
       </div>
-    }
+    </ng-template>
+  </st>
+  @if (searchResult) { <div class="qc-search-result">{{ searchResult }}</div> }
 </div>
-</nz-spin>
+
+<ng-template #checksTable let-checks>
+  @if (checks.length) {
+    <div class="qc-checks-scroll"><table class="qc-checks-table">
+      <thead><tr><th>{{ 'qcRule.checkPoint' | i18n }}</th><th>{{ 'qc-view.standard' | i18n }}</th><th>{{ 'qc-view.actual' | i18n }}</th><th>{{ 'qc-view.recorded-result' | i18n }}</th></tr></thead>
+      <tbody>
+        @for (check of checks; track $index) {
+          <tr [class.qc-check-review]="check.needsReview">
+            <td><span>{{ check.checkpoint }}</span>@if (check.exceptionNotes) { <div class="qc-secondary" style="white-space: pre-wrap">{{ 'qc-review.notes' | i18n }}: {{ check.exceptionNotes }}</div> }@if (check.currentlyDisabled) { <div class="qc-secondary">{{ 'qc-view.currently-disabled' | i18n }}</div> }</td>
+            <td>{{ check.standard }}</td>
+            <td [class.qc-secondary]="!check.hasActual">{{ check.actual }}</td>
+            <td><span class="qc-status" [attr.data-tone]="check.tone">{{ check.resultLabel }}</span>
+              @if (check.needsReview) { <div class="qc-review-label">{{ 'qc-view.review' | i18n }}</div> }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table></div>
+  } @else { <p class="qc-secondary">{{ 'qc-view.no-active-checks' | i18n }}</p> }
+</ng-template>

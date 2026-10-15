@@ -14,6 +14,26 @@ const labels: Record<string, string> = {
   'menu.main.util': 'Tools'
 };
 
+// One outline icon family, with a distinct symbol for each business module.
+const moduleIcons: Record<string, string> = {
+  'menu.dashboard': 'dashboard',
+  'menu.main.work-order': 'control',
+  'menu.main.qc': 'safety-certificate',
+  'menu.main.inbound': 'import',
+  'menu.main.inventory': 'gold',
+  'menu.main.outbound': 'export',
+  'menu.main.transport': 'car',
+  'menu.main.billing': 'account-book',
+  'menu.main.report': 'bar-chart',
+  'menu.main.alert': 'bell',
+  'menu.main.layout': 'layout',
+  'menu.main.common': 'database',
+  'menu.main.integration': 'api',
+  'menu.main.work-task': 'profile',
+  'menu.main.auth': 'team',
+  'menu.main.util': 'tool'
+};
+
 const productionSections = [
   { text: 'Planning', routes: ['bill-of-material', 'production-plan', 'mps', 'mps-view', 'mps-export', 'mrp'] },
   { text: 'Work Orders & Execution', routes: ['work-order', 'work-order-flow', 'produce-transaction', 'pre-print-lpn-label'] },
@@ -55,6 +75,8 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
   const visibleMenu = (entries: Menu[]): Menu[] => entries
     .filter(entry => entry.link !== '/work-order/production-kanban')
     .map(entry => {
+      const icon = moduleIcons[entry.i18n ?? ''];
+      if (icon) entry = { ...entry, icon: { type: 'icon', value: icon, theme: 'outline' } };
       const labelled = entry.link === '/work-order/production-line'
         ? { ...entry, text: 'Production Line Settings', i18n: 'line-assignments.settings' }
         : entry.link === '/work-order/produce-transaction'
