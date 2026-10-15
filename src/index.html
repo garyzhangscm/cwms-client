@@ -2,6 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- Runs before the application modules, including when their download fails. -->
+  <script id="mes-startup-recovery">
+(function () {
+  'use strict';
+  var ready = false;
+  var recovering = false;
+  var key = 'mes:asset-recovery-at';
+  var retryParameter = '_mes_reload';
+  var lastAttempt = 0;
+  var storageAvailable = false;
+  try {
+    lastAttempt = Number(sessionStorage.getItem(key)) || 0;
+    sessionStorage.setItem(key + ':probe', '1');
+    sessionStorage.removeItem(key + ':probe');
+    storageAvailable = true;
+  } catch (_) { /* Manual retry remains available when storage is blocked. */ }
+
+  function reloadPage() {
+    var url = new URL(location.href);
+    url.searchParams.set(retryParameter, String(Date.now()));
+    location.replace(url.href);
+  }
+
+  function showFailure() {
+    if (!document.body) {
+      document.addEventListener('DOMContentLoaded', showFailure, { once: true });
+      return;
+    }
+    if (document.getElementById('mes-load-recovery')) return;
+    var panel = document.createElement('div');
+    panel.id = 'mes-load-recovery';
+    panel.setAttribute('role', 'alert');
+    panel.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10000;width:min(480px,90vw);box-sizing:border-box;padding:20px;border:1px solid #cbd5e2;border-radius:10px;background:#fff;color:#182235;box-shadow:0 8px 32px #18223526;font:14px/1.6 system-ui,sans-serif';
+    var text = document.createElement('div');
+    text.textContent = ready
+      ? 'Part of this page could not load. Save any unsaved work before reloading.'
+      : 'The page could not finish loading. Check your connection, then reload to get the latest version.';
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'Reload page';
+    button.style.cssText = 'margin-top:12px;padding:8px 16px;border:0;border-radius:6px;background:#2867dc;color:#fff;font:inherit;cursor:pointer';
+    button.addEventListener('click', reloadPage);
+    panel.appendChild(text);
+    panel.appendChild(button);
+    document.body.appendChild(panel);
+  }
+
+  function assetFailed() {
+    // Startup only: never automatically reload an active form or business operation.
+    if (!ready && !recovering && storageAvailable && Date.now() - lastAttempt > 300000) {
+      recovering = true;
+      try {
+        sessionStorage.setItem(key, String(Date.now()));
+        reloadPage();
+        return;
+      } catch (_) { recovering = false; }
+    }
+    if (!recovering) showFailure();
+  }
+
+  window.addEventListener('error', function (event) {
+    var target = event.target;
+    if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
+      var source = target.src || (target.rel === 'stylesheet' ? target.href : '');
+      try {
+        var url = new URL(source, location.href);
+        if (source && url.origin === location.origin && /\.(?:m?js|css)$/.test(url.pathname)) assetFailed();
+      } catch (_) { /* Ignore unrelated resources. */ }
+    } else if (/Loading chunk|ChunkLoadError|Failed to fetch dynamically imported module|Importing a module script failed|not a valid JavaScript MIME type/i.test(event.message || '')) {
+      assetFailed();
+    }
+  }, true);
+  window.addEventListener('unhandledrejection', function (event) {
+    var reason = event.reason;
+    if (/Loading chunk|ChunkLoadError|Failed to fetch dynamically imported module|Importing a module script failed|not a valid JavaScript MIME type/i.test(String(reason && (reason.message || reason) || ''))) assetFailed();
+  });
+  window.addEventListener('mes:asset-failed', assetFailed);
+  window.addEventListener('mes:startup-failed', showFailure);
+  var watchdog = window.setTimeout(function () { if (!ready) showFailure(); }, 45000);
+  window.addEventListener('mes:startup-ready', function () {
+    if (ready) return;
+    ready = true;
+    window.clearTimeout(watchdog);
+    var panel = document.getElementById('mes-load-recovery');
+    if (panel) panel.remove();
+    var url = new URL(location.href);
+    if (url.searchParams.has(retryParameter)) {
+      url.searchParams.delete(retryParameter);
+      history.replaceState(history.state, '', url.href);
+    }
+  });
+}());
+  </script>
   <title>Claytech One</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">

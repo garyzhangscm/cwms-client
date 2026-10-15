@@ -1,3 +1,5 @@
+import { failingChecks, validFailureNotes, recomputeRequest } from '../failure-review/qc-failure-review';
+import { presentCheck } from '../qc-result/qc-result.presentation';
 import { Component, inject, OnInit, } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core'; 
@@ -25,6 +27,13 @@ import { QcInspectionRequestService } from '../services/qc-inspection-request.se
 export class QcInspectInventoryComponent implements OnInit {
    
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  reviewEnabled = true;
+  get isSandbox(): boolean { return this.activatedRoute.snapshot.data['qcSandbox'] === true; }
+  failureConfirmationVisible = false;
+  get reviewRequests(): QcInspectionRequest[] { return this.qcInspectionRequests; }
+  get failures(): QCInspectionRequestItemOption[] { return failingChecks(this.reviewRequests); }
+  presentFailure(option: QCInspectionRequestItemOption) { return presentCheck(option, key => this.i18n.fanyi(key)); }
+
   stepIndex = 0;
   pageTitle: string = ""; 
   isSpinning = false; 
@@ -50,6 +59,7 @@ export class QcInspectInventoryComponent implements OnInit {
   }
   
   ngOnInit(): void {
+
 
 
     this.itemSamplingMap = new Map();
@@ -140,11 +150,30 @@ refreshInventoryQCResultMap() {
     this.stepIndex -= 1;
   }
   nextStep(): void {
+    if (this.reviewEnabled && !validFailureNotes(this.failures)) {
+      this.messageService.warning(this.i18n.fanyi('qc-review.notes-required'));
+      return;
+    }
     this.stepIndex += 1;
 
   }
 
-  confirm(): void {
+  confirm(failureAcknowledged = false): void {
+    if (this.isSpinning) return;
+    if (this.reviewEnabled) {
+      this.reviewRequests.forEach(recomputeRequest);
+      if (!validFailureNotes(this.failures)) {
+        this.stepIndex = 0;
+        this.messageService.warning(this.i18n.fanyi('qc-review.notes-required'));
+        return;
+      }
+      if (this.failures.length && !failureAcknowledged) {
+        this.failureConfirmationVisible = true;
+        return;
+      }
+      this.failureConfirmationVisible = false;
+    }
+
     this.isSpinning = true;
     // let get the overall request for each request
     this.qcInspectionRequests.forEach(
@@ -187,7 +216,8 @@ refreshInventoryQCResultMap() {
         
       }
     )
-    this.qcInspectionRequestService.saveQCInspectionRequest(this.qcInspectionRequests).subscribe({
+    if (this.reviewEnabled) this.reviewRequests.forEach(recomputeRequest);
+    this.qcInspectionRequestService.saveQCInspectionRequest(this.qcInspectionRequests, this.reviewEnabled, failureAcknowledged, this.isSandbox).subscribe({
       next: () => {
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
@@ -334,6 +364,15 @@ refreshInventoryQCResultMap() {
  
       // update the item option's result first, 
       this.resetQCInspectionRequestItemOptionResult(qcInspectionRequestItemOption);
+      if (this.reviewEnabled) {
+        if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === QCRuleItemType.YESNO &&
+            !['YES', 'NO'].includes(qcInspectionRequestItemOption.value || '')) qcInspectionRequestItemOption.booleanValue = undefined;
+        if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === QCRuleItemType.STRING &&
+            !qcInspectionRequestItemOption.stringValue?.trim() &&
+            !this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id))
+          qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
+      }
+
 
       //console.log(`after reset the option ${qcInspectionRequestItemOption.qcRuleItem.checkPoint}`);
 
@@ -360,6 +399,7 @@ refreshInventoryQCResultMap() {
       else {        
           qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PASS
       }
+    if (this.reviewEnabled) this.reviewRequests.forEach(recomputeRequest);
     this.refreshInventoryQCResultMap();
   }
    

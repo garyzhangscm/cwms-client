@@ -1,36 +1,48 @@
-// CSS for form
-.ant-advanced-search-form {
-  padding: 10px;
-  background: #fbfbfb;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
+.ant-advanced-search-form { padding: 16px; border: 1px solid var(--mes-line); border-radius: 10px; background: var(--mes-surface); }
+[nz-form-label] { overflow: visible; }
+.search-area { display: flex; justify-content: flex-end; gap: 8px; }
+.search-result-list { margin-top: 20px; border: 1px solid var(--mes-line); border-radius: 12px; background: var(--mes-surface); overflow: hidden; }
+.qc-section-heading, .qc-detail-heading, .qc-rule-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.qc-section-heading { padding: 20px 24px; border-bottom: 1px solid var(--mes-line); }
+h2, h3, h4 { margin: 0; color: var(--mes-ink); }
+h2 { font-size: 17px; } h3 { font-size: 20px; margin-top: 4px; } h4 { font-size: 15px; }
+.qc-section-heading p { margin: 4px 0 0; color: var(--mes-muted); font-size: 12px; }
+.qc-record-count, .qc-eyebrow, .qc-secondary, .qc-rule-note { color: var(--mes-muted); font-size: 12px; }
+.qc-secondary { margin-top: 3px; overflow-wrap: anywhere; }
+.qc-status { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; white-space: nowrap; color: var(--mes-muted); background: var(--mes-hover); }
+.qc-status[data-tone='pass'] { color: #167044; background: #e8f5ee; }
+.qc-status[data-tone='fail'] { color: #b42332; background: #fff0f1; }
+.qc-status[data-tone='pending'] { color: #8c6016; background: #fff5db; }
+.qc-record-detail { padding: 24px; background: var(--mes-surface-soft); text-align: left; }
+.qc-metrics { display: grid; grid-template-columns: repeat(4, 1fr); margin: 20px 0; border: 1px solid var(--mes-line); border-radius: 8px; background: var(--mes-surface); }
+.qc-metrics > div { display: flex; flex-direction: column; padding: 14px 18px; border-right: 1px solid var(--mes-line); }
+.qc-metrics > div:last-child { border-right: 0; }
+.qc-metrics strong { font-size: 22px; font-variant-numeric: tabular-nums; }
+.qc-metrics span { font-size: 12px; color: var(--mes-muted); }
+.qc-warning { margin: 12px 0; padding: 12px 16px; border-left: 3px solid #bd8523; background: var(--mes-surface); color: var(--mes-ink); font-size: 13px; }
+.qc-review-label { color: #996316; font-size: 12px; margin-top: 5px; }
+.qc-rule-section { margin: 12px 0 20px; border: 1px solid var(--mes-line); border-radius: 8px; background: var(--mes-surface); overflow: hidden; }
+.qc-rule-heading { padding: 14px 16px; border-bottom: 1px solid var(--mes-line); }
+.qc-checks-scroll { overflow-x: auto; }
+.qc-checks-table { width: 100%; min-width: 650px; border-collapse: collapse; table-layout: fixed; }
+.qc-checks-table th, .qc-checks-table td { padding: 13px 16px; border-bottom: 1px solid var(--mes-line); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.qc-checks-table th { font-size: 12px; font-weight: 600; color: var(--mes-muted); background: var(--mes-surface-soft); }
+.qc-checks-table th:first-child { width: 40%; }
+.qc-checks-table tr:last-child td { border-bottom: 0; }
+.qc-check-review td:first-child { box-shadow: inset 3px 0 #bd8523; }
+.qc-excluded summary { padding: 12px 16px; color: var(--mes-muted); cursor: pointer; border-top: 1px solid var(--mes-line); }
+.qc-rule-section > p { padding: 12px 16px; }
+.qc-rule-note { margin-top: 16px; line-height: 1.6; }
+.qc-search-result { padding: 12px 24px; font-size: 12px; color: var(--mes-muted); }
+@media (max-width: 760px) {
+  .qc-record-detail { padding: 12px; }
+  .qc-metrics { grid-template-columns: repeat(2, 1fr); }
+  .qc-metrics > div { border-bottom: 1px solid var(--mes-line); }
+  .qc-section-heading { align-items: flex-start; padding: 16px; }
 }
-
-[nz-form-label] {
-  overflow: visible;
-}
-
-button {
-  margin-left: 8px;
-}
-
-.collapse {
-  margin-left: 8px;
-  font-size: 12px;
-}
-
-.search-area {
-  text-align: right;
-}
-
-// CSS for table to display the result
-
-.search-result-list {
-  min-height: 200px;
-  margin-top: 16px;
-  padding-top: 10px;
-  text-align: center;
-  background-color: #fafafa;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
+:host-context(body[data-theme='dark']) {
+  .qc-status[data-tone='pass'] { color: #9be0b6; background: #183e31; }
+  .qc-status[data-tone='fail'] { color: #ffb2bb; background: #4b2530; }
+  .qc-status[data-tone='pending'] { color: #f2ce8d; background: #443721; }
+  .qc-review-label { color: #f2ce8d; }
 }

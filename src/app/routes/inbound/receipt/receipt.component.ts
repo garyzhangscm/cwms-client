@@ -490,9 +490,11 @@ export class InboundReceiptComponent implements OnInit, OnDestroy {
     this.detailLoadFailures.clear();
     this.loadingReceiptLineIds.clear();
     const values = this.searchForm.getRawValue();
+    const statuses = values.statusList.length ? values.statusList
+      : this.receiptStatusListKeys.filter(status => status !== ReceiptStatus.CLOSED);
     const range = values.checkInDateTimeRanger;
     this.searchSubscription = this.receiptService.getPageableReceipts(
-      values.number || undefined, false, values.statusList.join(',') || undefined,
+      values.number || undefined, false, statuses.join(','),
       values.supplier || undefined, range?.[0], range?.[1], values.checkInDate || undefined,
       undefined, undefined, values.client || undefined, this.receiptTablePI, this.receiptTablePS
     ).pipe(timeout(30000)).subscribe({

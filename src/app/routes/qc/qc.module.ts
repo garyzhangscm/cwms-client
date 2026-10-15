@@ -48,7 +48,10 @@ import { CommonModule } from '@angular/common';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
+import { QcFailureNoteComponent } from './failure-review/qc-failure-note.component';
+
 const COMPONENTS: Array<Type<void>> = [
+  QcFailureNoteComponent,
   QcQcRuleComponent,
   QcQcConfigurationComponent,
   QcQcInspectionComponent,

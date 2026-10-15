@@ -1,168 +1,98 @@
 import { formatDate } from '@angular/common';
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
-
-import { UserService } from '../../auth/services/user.service';
-import { QcInspectionRequest } from '../models/qc-inspection-request'; 
-import { QCRuleItemType } from '../models/qc-rule-item-type';
+import { STColumn } from '@delon/abc/st';
+import { ALAIN_I18N_TOKEN } from '@delon/theme';
+import { Subscription, timeout } from 'rxjs';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
+import { presentQcRecord, QcResultRecord } from './qc-result.presentation';
 
 @Component({
-    selector: 'app-qc-qc-result',
-    templateUrl: './qc-result.component.html',
-    styleUrls: ['./qc-result.component.less'],
-    standalone: false
+  selector: 'app-qc-qc-result',
+  templateUrl: './qc-result.component.html',
+  styleUrls: ['./qc-result.component.less'],
+  standalone: false
 })
-export class QcQcResultComponent implements OnInit {
+export class QcQcResultComponent implements OnInit, OnDestroy {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
-
-  displayOnly = false;
-  constructor( 
-    private fb: UntypedFormBuilder, 
-    private userService: UserService,
-    private qcInspectionRequestService: QcInspectionRequestService, 
-    private activatedRoute: ActivatedRoute,
-    ) { 
-
-      userService.isCurrentPageDisplayOnly("/qc/result").then(
-        displayOnlyFlag => this.displayOnly = displayOnlyFlag
-      );       
-  }
-
-  listOfQCInspectionRequest: QcInspectionRequest[] = [];
-
+  private readonly fb = inject(UntypedFormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly service = inject(QcInspectionRequestService);
+  private readonly warehouse = inject(WarehouseService);
+  private readonly destroyRef = inject(DestroyRef);
+  private subscription?: Subscription;
+  private searchVersion = 0;
+  get isSandbox(): boolean { return this.route.snapshot.data['qcSandbox'] === true; }
+  listOfQCInspectionRequest: QcResultRecord[] = [];
   searchResult = '';
+  searchFailed = false;
   isSpinning = false;
-  searchForm!: UntypedFormGroup; 
-  qcRuleItemTypes = QCRuleItemType;
+  searchForm = this.fb.group({ lpn: [null], workOrderQCSampleNumber: [null], number: [null] });
 
-  ngOnInit(): void { 
-
-    this.searchForm = this.fb.group({
-      lpn: [null], 
-      workOrderQCSampleNumber: [null],
-      number: [null],
-    }); 
-
-    this.activatedRoute.queryParams.subscribe(params => {
-        if (params['lpn']) {
-          this.searchForm.value.lpn.setValue(params['lpn']);
-          this.search();
-        }
+  ngOnInit(): void {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      if (this.route.snapshot.data['qcSandbox'] === true && params['number']) {
+        this.searchForm.patchValue({ number: params['number'] });
+        this.search();
+      } else if (params['lpn']) {
+        this.searchForm.patchValue({ lpn: params['lpn'] });
+        this.search();
+      }
     });
-
   }
- 
-
+  ngOnDestroy(): void { ++this.searchVersion; this.subscription?.unsubscribe(); }
   resetForm(): void {
+    ++this.searchVersion;
+    this.subscription?.unsubscribe();
     this.searchForm.reset();
     this.listOfQCInspectionRequest = [];
-
-
-  }
-  
-  search(): void {
-    this.isSpinning = true;
     this.searchResult = '';
-    console.log(`search by number ${this.searchForm.value.number}`);
-    this.qcInspectionRequestService.getQCInspectionResult(
-      this.searchForm.value.lpn,      
-      this.searchForm.value.workOrderQCSampleNumber,      
-      this.searchForm.value.number).subscribe(
-      {
-        next: (qcInspectionRequestRes) => {
-          this.listOfQCInspectionRequest = qcInspectionRequestRes;
-          this.setupDisplayInventory();
-
+    this.searchFailed = this.isSpinning = false;
+  }
+  search(): void {
+    const version = ++this.searchVersion;
+    const warehouseId = this.warehouse.getCurrentWarehouse().id;
+    const current = () => version === this.searchVersion && warehouseId === this.warehouse.getCurrentWarehouse().id;
+    this.subscription?.unsubscribe();
+    this.isSpinning = true;
+    this.searchFailed = false;
+    this.searchResult = '';
+    const values = this.searchForm.getRawValue();
+    this.subscription = this.service.getQCInspectionResult(values.lpn, values.workOrderQCSampleNumber, values.number, this.route.snapshot.data['qcSandbox'] === true)
+      .pipe(timeout(30000)).subscribe({
+        next: records => {
+          if (!current()) { if (version === this.searchVersion) this.isSpinning = false; return; }
+          this.listOfQCInspectionRequest = (records ?? []).map(record => presentQcRecord(record, key => this.i18n.fanyi(key)));
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
-              currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-              rowCount: qcInspectionRequestRes.length,
-              });
-        }, 
-        error: () => this.isSpinning = false
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'), rowCount: records?.length ?? 0
+          });
+        },
+        error: () => {
+          if (version !== this.searchVersion) return;
+          this.listOfQCInspectionRequest = [];
+          this.isSpinning = false;
+          this.searchFailed = true;
+        }
       });
-
-      
   }
-
-  // combine inventory list and single inventory onto one display so we can 
-  // show them in a signle table
-  // 1. Single inventory: used for inbound QC
-  // 2. inventory list: used for qc by item
-  setupDisplayInventory() {
-    this.listOfQCInspectionRequest.forEach(
-      qcInspectionRequest => {
-        if (qcInspectionRequest.inventory) {
-
-          qcInspectionRequest.allInventories = [...qcInspectionRequest.inventories, qcInspectionRequest.inventory]
-        }
-        else {
-          qcInspectionRequest.allInventories = qcInspectionRequest.inventories;
-        }
-      }
-    )
-  }
-
-  @ViewChild('st', { static: true })
-  st!: STComponent;
   columns: STColumn[] = [
-
-    { title: this.i18n.fanyi("number"), index: 'number', iif: () => this.isChoose('number') },
-    { title: this.i18n.fanyi("lpn"), index: 'inventory.lpn', iif: () => this.isChoose('lpn') },
-    { title: this.i18n.fanyi("work-order.qc-sample.number"), index: 'workOrderQCSample.number', iif: () => this.isChoose('workOrderQCSample') },
-    { title: this.i18n.fanyi("work-order"), index: 'workOrder.number', iif: () => this.isChoose('workOrder') },
-    { title: this.i18n.fanyi("item.name"), index: 'inventory.item.name', iif: () => this.isChoose('itemName') },
-    { title: this.i18n.fanyi("item.description"), index: 'inventory.item.description', iif: () => this.isChoose('itemDescription') },
-    { title: this.i18n.fanyi("qc-result"), index: 'qcInspectionResult', iif: () => this.isChoose('qcResult') },
-    // { title: this.i18n.fanyi("qc-time"), index: 'qcTime', iif: () => this.isChoose('qcTime') },
-     
-    {
-      title: this.i18n.fanyi("qc-inspection-time"),
-      renderTitle: 'qcTimeColumnTitle' ,
-      render: 'qcTimeColumn',
-      iif: () => this.isChoose('qcTime')
-    }, 
-    { title: this.i18n.fanyi("username"), index: 'qcUsername', iif: () => this.isChoose('username') },
-
+    { title: this.i18n.fanyi('qc-view.record'), index: 'number', width: 170 },
+    { title: this.i18n.fanyi('item'), render: 'material', width: 240 },
+    { title: this.i18n.fanyi('qc-view.context'), render: 'context', width: 240 },
+    { title: this.i18n.fanyi('qc-result'), render: 'decision', width: 170 },
+    { title: this.i18n.fanyi('qc-inspection-time'), render: 'time', width: 170 },
+    { title: this.i18n.fanyi('username'), index: 'qcUsername', default: '—', width: 130 }
   ];
-  customColumns = [
-
-    { label: this.i18n.fanyi("number"), value: 'number', checked: true },
-    { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
-    { label: this.i18n.fanyi("work-order.qc-sample.number"), value: 'workOrderQCSample', checked: true },
-    { label: this.i18n.fanyi("work-order"), value: 'workOrder', checked: true },
-    { label: this.i18n.fanyi("item.name"), value: 'itemName', checked: true },
-    { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true },
-    { label: this.i18n.fanyi("qcResult"), value: 'qcResult', checked: true },
-    { label: this.i18n.fanyi("qc-inspection-time"), value: 'qcTime', checked: true },
-    { label: this.i18n.fanyi("username"), value: 'username', checked: true },
-
-  ];
-
-  isChoose(key: string): boolean {
-      return !!this.customColumns.find(w => w.value === key && w.checked);
-  }
-
-  columnChoosingChanged(): void{ 
-    if (this.st !== undefined && this.st.columns !== undefined) {
-        this.st!.resetColumns({ emitReload: true });
-
-    }
-  }
-  
-  
   inventoryColumns: STColumn[] = [
-
-    { title: this.i18n.fanyi("lpn"), index: 'lpn',   },
-    { title: this.i18n.fanyi("item"), index: 'item.name',  }, 
-    { title: this.i18n.fanyi("item.description"), index: 'item.description',  }, 
-    { title: this.i18n.fanyi("quantity"), index: 'quantity',  }, 
-    { title: this.i18n.fanyi("status"), index: 'inventoryStatus.name',  }, 
-
+    { title: this.i18n.fanyi('lpn'), index: 'lpn', default: '—' },
+    { title: this.i18n.fanyi('item'), index: 'item.name', default: '—' },
+    { title: this.i18n.fanyi('item.description'), index: 'item.description', default: '—' },
+    { title: this.i18n.fanyi('quantity'), index: 'quantity' },
+    { title: this.i18n.fanyi('status'), index: 'inventoryStatus.name', default: '—' }
   ];
 }
