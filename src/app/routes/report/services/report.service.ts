@@ -58,7 +58,8 @@ export class ReportService {
 
   isLabel(reportType: ReportType) : boolean {
     const labelReportTypes = [
-      ReportType.LPN_LABEL, 
+      ReportType.LPN_LABEL,
+      ReportType.DEFECTIVE_LPN_LABEL,
       ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL, 
       ReportType.RECEIVING_LPN_LABEL, 
       ReportType.PARCEL_LABEL,

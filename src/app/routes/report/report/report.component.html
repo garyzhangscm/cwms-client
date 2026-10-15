@@ -89,14 +89,14 @@
           
           <nz-list>
             <nz-list-item>
-              <a [href]="data.fileUrl" target="_blank" rel="noopener noreferrer">
+              <a role="button" tabindex="0" (click)="downloadTemplate(data)" (keydown.enter)="downloadTemplate(data)">
     
                 {{ data.fileName }}
               </a>
             </nz-list-item>
             <nz-list-item *ngFor="let propertyFile of data.mapOfPropertyFiles | keyvalue"> 
 
-              <a [href]="propertyFile.value" target="_blank" rel="noopener noreferrer">
+              <a role="button" tabindex="0" (click)="downloadTemplate(data, propertyFile.key)" (keydown.enter)="downloadTemplate(data, propertyFile.key)">
     
                 {{ propertyFile.key }}
               </a>

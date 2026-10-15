@@ -1,3 +1,4 @@
+import { QcDefectiveLabelsComponent } from './defective-labels/defective-labels.component';
 import { NgModule, Type } from '@angular/core'; 
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
@@ -52,6 +53,7 @@ import { QcFailureNoteComponent } from './failure-review/qc-failure-note.compone
 
 const COMPONENTS: Array<Type<void>> = [
   QcFailureNoteComponent,
+  QcDefectiveLabelsComponent,
   QcQcRuleComponent,
   QcQcConfigurationComponent,
   QcQcInspectionComponent,
