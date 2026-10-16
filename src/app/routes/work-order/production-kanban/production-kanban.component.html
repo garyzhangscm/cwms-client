@@ -2,16 +2,16 @@
 
 
 <div nz-row>
-  {{ loadingData ? 'Loading production data…' : 'Next refresh in ' + countDownNumber + 's' }}
+  {{ loadingData ? ('web.dynamic.eb965872493d' | i18n) : ('web.dynamic.d7ebf81b9ded' | i18n) + countDownNumber + 's' }}
 </div>
 <div *ngIf="loadError" role="alert" style="margin-top: 12px;">
   <span>{{ loadError }}</span>
-  <button nz-button [disabled]="loadingData" (click)="retryLoad()" style="margin-left: 12px;">Retry</button>
+  <button nz-button [disabled]="loadingData" (click)="retryLoad()" style="margin-left: 12px;">{{ 'web.literal.942087cc2d41' | i18n }}</button>
 </div>
 
 <div nz-row style="padding: 15px;">
-  <a (click)="toggleProductionLineDisplay()" *ngIf="!hideProductionLineSelection">hide << </a>
-      <a (click)="toggleProductionLineDisplay()" *ngIf="hideProductionLineSelection">show >> </a>
+  <a (click)="toggleProductionLineDisplay()" *ngIf="!hideProductionLineSelection">{{ 'web.literal.1f5bb9791a31' | i18n }} << </a>
+      <a (click)="toggleProductionLineDisplay()" *ngIf="hideProductionLineSelection">{{ 'web.bound.a2bf4d90d8a9' | i18n }}</a>
 </div>
 
 <div nz-row>

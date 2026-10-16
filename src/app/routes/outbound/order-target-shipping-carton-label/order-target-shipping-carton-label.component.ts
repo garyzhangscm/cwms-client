@@ -318,7 +318,7 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
     let selectedTargetShippnigCartonLabel: TargetShippnigCartonLabel[] = 
         this.getSelectedTargetShippingCartonLabel();
     if (selectedTargetShippnigCartonLabel == null || selectedTargetShippnigCartonLabel.length == 0) {
-      this.messageService.error("please select labels to print"); 
+      this.messageService.error(this.i18n.fanyi('web.message.bf62778ea87a'));
       return;
     }
     let SSCC18s = selectedTargetShippnigCartonLabel.map(
@@ -363,7 +363,7 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
   removeSelectedLabels() {
     const labels = this.getSelectedLabels();
     if (labels == null || labels.length == 0) {
-      this.messageService.error("No labels are selected");
+      this.messageService.error(this.i18n.fanyi('web.message.42809b9f2617'));
       return;
     }
     const labelIds =labels.map(label => label.id?.toString()).join(",");

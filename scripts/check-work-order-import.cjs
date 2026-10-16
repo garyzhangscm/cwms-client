@@ -3,11 +3,13 @@ const {Subject,of,throwError,takeUntil}=require('rxjs');
 const path='src/app/routes/integration/work-order-import-exceptions/work-order-import-exceptions.component.ts';
 const src=ts.createSourceFile(path,fs.readFileSync(path,'utf8'),ts.ScriptTarget.Latest,true);
 const cls=src.statements.find(n=>ts.isClassDeclaration(n)&&n.name.text==='WorkOrderImportExceptionsComponent');
+const fallbackContext={exports:{}}; require('node:vm').runInNewContext(ts.transpile(fs.readFileSync('src/app/core/i18n/static-label-fallbacks.ts','utf8'),{module:ts.ModuleKind.CommonJS}),fallbackContext);
+const translate=key=>fallbackContext.exports.STATIC_LABEL_FALLBACKS[key]||key;
 const methods=cls.members.filter(n=>ts.isMethodDeclaration(n)).map(n=>n.getText(src));
 class HttpHeaders{constructor(values){this.values=values;}}class HttpParams{constructor(){this.values={};}set(k,v){this.values[k]=v;return this;}}
 const js=ts.transpile(`class Tested {${methods.join('\n')}}`,{target:ts.ScriptTarget.ES2022});
 const Tested=new Function('HttpHeaders','HttpParams','takeUntil',js+'; return Tested;')(HttpHeaders,HttpParams,takeUntil);
-function make(){const x=new Tested();Object.assign(x,{destroyed:new Subject(),jobs:[],canRetry:true,submitting:false,loading:false,rows:[],batch:'batch-01',number:'WO-1',state:'BLOCKED',users:{getCurrentUsername:()=> 'alice'},messages:{info(){},error(){}},modal:{confirm(v){x.confirmation=v;}},http:{post(url,body){x.post={url,body};return of({data:{id:'job-1',state:'QUEUED',...body}});}}});return x;}
+function make(){const x=new Tested();Object.assign(x,{webI18n:{fanyi:translate},destroyed:new Subject(),jobs:[],canRetry:true,submitting:false,loading:false,rows:[],batch:'batch-01',number:'WO-1',state:'BLOCKED',users:{getCurrentUsername:()=> 'alice'},messages:{info(){},error(){}},modal:{confirm(v){x.confirmation=v;}},http:{post(url,body){x.post={url,body};return of({data:{id:'job-1',state:'QUEUED',...body}});}}});return x;}
 const row={file:'int_workorder_demo.csv',workOrderNumber:'WO-1',state:'BLOCKED'};
 let x=make();x.canRetry=false;x.act(row,'retry');assert.equal(x.post,undefined);
 x=make();x.act(row,'retry');assert.equal(x.post,undefined);x.confirmation.nzOnOk();assert.deepEqual(x.post.body,{file:row.file,workOrderNumber:'WO-1',action:'retry'});

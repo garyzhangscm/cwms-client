@@ -54,7 +54,7 @@
                   </nz-form-label>
                   <nz-form-control [nzSpan]="17">
                     <nz-input-number  [nzMin]="0"  
-                     [(ngModel)]="currentOutboundConfiguration.maxPalletSize"></nz-input-number> (in <sup>3</sup>)
+                     [(ngModel)]="currentOutboundConfiguration.maxPalletSize"></nz-input-number> {{ 'web.literal.e01f0f2a59b4' | i18n }} <sup>3</sup>)
   
                   </nz-form-control>
               </nz-form-item>
@@ -68,7 +68,7 @@
                   </nz-form-label>
                   <nz-form-control [nzSpan]="17">
                     <nz-input-number  [nzMin]="0"  
-                     [(ngModel)]="currentOutboundConfiguration.maxPalletHeight"></nz-input-number>  (in)
+                     [(ngModel)]="currentOutboundConfiguration.maxPalletHeight"></nz-input-number>  {{ 'web.literal.ba58dff1b7c4' | i18n }}
   
                   </nz-form-control>
               </nz-form-item>

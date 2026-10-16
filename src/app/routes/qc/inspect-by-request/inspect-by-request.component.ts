@@ -399,12 +399,12 @@ toggleCollapse(): void {
           next: (inventoryRes) => {
             if (inventoryRes.length === 0) {
               
-              this.messageService.error("message.lpn.not-exists");
+              this.messageService.error(this.i18n.fanyi('message.lpn.not-exists'));
               this.isSpinning = false;
             }
             // make sure the inventory has the right item 
             else if (inventoryRes.some(inventory => inventory.item?.id != this.qcInspectionRequest?.item?.id )) {
-              this.messageService.error("message.item.not-match");
+              this.messageService.error(this.i18n.fanyi('message.item.not-match'));
               this.isSpinning = false;
             }
             else {
@@ -416,7 +416,7 @@ toggleCollapse(): void {
   
                 this.qcInspectionRequest!.inventories = [...this.qcInspectionRequest!.inventories, ...inventoryRes];
               }
-              this.messageService.error("message.lpn.added");
+              this.messageService.error(this.i18n.fanyi('message.lpn.added'));
               this.inputLpn = '';
               this.isSpinning = false;
 

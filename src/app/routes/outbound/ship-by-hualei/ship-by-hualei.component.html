@@ -19,7 +19,7 @@
 </ng-template>
 
 <div *ngIf="!hualeiConfigurationSetup">
-  <nz-result  nzStatus="info"  nzTitle="Hualei is not setup yet">
+  <nz-result  nzStatus="info"  [nzTitle]="'web.literal.f7de01a4d8de' | i18n">
     <div nz-result-extra>
       <button nz-button nzType="primary" (click)="configureHualei()">{{'configure' | i18n}}</button>
     </div>
@@ -186,7 +186,7 @@
                       {{ 'length' | i18n }}
                     </nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback >  
-                        <nz-input-number name="length" id="length" formControlName="length"></nz-input-number> in
+                        <nz-input-number name="length" id="length" formControlName="length"></nz-input-number> {{ 'web.literal.582967534d0f' | i18n }}
                     </nz-form-control>
                   </nz-form-item>
                 </div>
@@ -197,7 +197,7 @@
                         {{ 'width' | i18n }}
                       </nz-form-label>
                       <nz-form-control [nzSpan]="12" nzHasFeedback > 
-                          <nz-input-number name="width" id="width" formControlName="width"></nz-input-number> in
+                          <nz-input-number name="width" id="width" formControlName="width"></nz-input-number> {{ 'web.literal.582967534d0f' | i18n }}
                       </nz-form-control>
                     </nz-form-item>
                   </div>
@@ -207,7 +207,7 @@
                         {{ 'height' | i18n }}
                       </nz-form-label>
                       <nz-form-control [nzSpan]="12" nzHasFeedback > 
-                          <nz-input-number name="height" id="height" formControlName="height"></nz-input-number> in
+                          <nz-input-number name="height" id="height" formControlName="height"></nz-input-number> {{ 'web.literal.582967534d0f' | i18n }}
                       </nz-form-control>
                     </nz-form-item>
                   </div>
@@ -217,7 +217,7 @@
                         {{ 'weight' | i18n }}
                       </nz-form-label>
                       <nz-form-control [nzSpan]="12" nzHasFeedback > 
-                          <nz-input-number name="weight" id="weight" formControlName="weight"></nz-input-number> lb
+                          <nz-input-number name="weight" id="weight" formControlName="weight"></nz-input-number> {{ 'web.literal.fd26db45a8b5' | i18n }}
                       </nz-form-control>
                     </nz-form-item>
                   </div>

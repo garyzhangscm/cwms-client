@@ -1670,7 +1670,7 @@ export class InventoryInventoryComponent implements OnInit, OnDestroy {
       next: (locationsRes) => { 
         if (locationsRes.length == 0 ||
           locationsRes[0].locationGroup?.locationGroupType?.fourWallInventory == false) {
-          this.messageService.error(`can't find location with name ${destinationLocationName}`);
+          this.messageService.error(this.i18n.fanyi('web.message.8dbaece7bf0c', { p0: destinationLocationName }));
           this.isSpinning = false;
           
           this.inventoryMoveModal.updateConfig({ 
@@ -1927,9 +1927,7 @@ export class InventoryInventoryComponent implements OnInit, OnDestroy {
       inventory.itemPackageType!.displayItemUnitOfMeasure = itemUnitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the inventory's quantity ${ 
-          inventory.quantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.cf63d8f8f76f', { p0: inventory.quantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
  

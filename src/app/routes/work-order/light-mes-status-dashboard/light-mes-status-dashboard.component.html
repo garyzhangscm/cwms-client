@@ -9,7 +9,7 @@
 
     <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'light MES Configuration is not setup' | i18n}}"> 
       <div nz-result-extra>
-        please go to <a routerLink="/work-order/light-mes-configuration" routerLinkActive="active">Light MES Configuration</a> page to setup the configuration
+        {{ 'web.literal.8439e1c12996' | i18n }} <a routerLink="/work-order/light-mes-configuration" routerLinkActive="active">{{ 'web.literal.d6dae7c2b626' | i18n }}</a> {{ 'web.literal.1e849c360f25' | i18n }}
       </div>
     </nz-result>
   </div>
@@ -20,13 +20,13 @@
        
     <ng-template #showConfigurationTemplate>
       
-        <span style="padding-right: 10px">Hours Spend on this shift: 
+        <span style="padding-right: 10px">{{ 'web.literal.f355235b11b8' | i18n }}
           <strong>{{hoursSpentInThisShift | number: '1.0-2'}}</strong>
         </span>
-        <span style="padding-right: 10px">current time: 
+        <span style="padding-right: 10px">{{ 'web.literal.d959eb704f39' | i18n }}
             <strong>{{currentTime}}</strong></span>
 
-            <span style="padding-right: 10px">(current shift: 
+            <span style="padding-right: 10px">{{ 'web.literal.d4dcf48d90cd' | i18n }}
               <strong>[{{currentShiftStartTime }} - {{currentShiftEndTime  }}]</strong>)</span>
         <label nz-checkbox [(ngModel)]="showConfiguration" >
           <span> {{ 'showConfiguration' | i18n }}</span>
@@ -34,11 +34,11 @@
     </ng-template>
     <div *ngIf="showConfiguration" style="padding: 10px">
         {{'type' | i18n}}: <nz-radio-group [(ngModel)]="productionLineType" (ngModelChange)="productionLineTypeChanged()">
-          <label nz-radio nzValue="All">All</label>
+          <label nz-radio nzValue="All">{{ 'web.literal.a52ace420f21' | i18n }}</label>
           <label nz-radio *ngFor="let type of productionLineTypes" [nzValue]="type.name">{{type.name}}</label> 
         </nz-radio-group>
         
-        <span style="padding-left: 20px">Refresh Cycle(in seconds): </span>
+        <span style="padding-left: 20px">{{ 'web.literal.e4e2d171db63' | i18n }} </span>
         <nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" (ngModelChange)="refreshCountCycleChanged()" >
         </nz-input-number> 
 
@@ -65,7 +65,7 @@
             </div>
             </div>
           <div *ngIf="machine.machineStatistics == null || machine.machineStatistics.length == 0">
-            <div style="font-size: 15px;">N/A</div>
+            <div style="font-size: 15px;">{{ 'web.literal.e2f79e5b6033' | i18n }}</div>
             <div>0 / 0 (0%)</div>
           
           </div>
@@ -74,8 +74,8 @@
           <p>mold count: {{machine.lastHourPulseCount}} / {{machine.shiftPulseCount}}</p>
           <p>cycle time: {{machine.lastHourCycleTime}} / {{machine.shiftCycleTime}}</p>
           -->
-          <div>mold count:  {{machine.pulseCount}}</div>
-          <div>cycle time: {{machine.lastTimeWindowCycleTime}}</div>
+          <div>{{ 'web.bound.b551a330ff91' | i18n: { p0: (machine.pulseCount) } }}</div>
+          <div>{{ 'web.bound.652cee20fa2b' | i18n: { p0: (machine.lastTimeWindowCycleTime) } }}</div>
           <ng-template #titleTemplate>
             <strong [ngStyle]="getBodyStyle(machine)">{{machine.machineNo}}</strong>
           </ng-template>

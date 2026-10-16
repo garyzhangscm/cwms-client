@@ -43,7 +43,7 @@
                 (blur)="clientNameChange($event)" [disabled]="!newClient"/>
               <ng-template #clientNameErrorTpl let-control>  
                   <ng-container *ngIf="clientNameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                  <ng-container *ngIf="clientNameValidateStatus === 'nameExists'">Name already exists</ng-container>
+                  <ng-container *ngIf="clientNameValidateStatus === 'nameExists'">{{ 'web.literal.fa7e0b44902e' | i18n }}</ng-container>
                           
               </ng-template>
             </nz-form-control> 

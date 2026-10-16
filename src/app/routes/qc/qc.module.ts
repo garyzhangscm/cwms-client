@@ -1,3 +1,4 @@
+import { QcQuestionPipe } from './qc-question.pipe';
 import { QcDefectiveLabelsComponent } from './defective-labels/defective-labels.component';
 import { NgModule, Type } from '@angular/core'; 
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
@@ -67,7 +68,8 @@ const COMPONENTS: Array<Type<void>> = [
   QcQcInspectionDocumentMaintenanceComponent];
 
 @NgModule({
-  imports: [ 
+  imports: [
+    QcQuestionPipe,
     QcRoutingModule,
     NzDescriptionsModule,
     UtilModule, 

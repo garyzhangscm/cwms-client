@@ -1,3 +1,5 @@
+import { inject as injectWebI18n } from '@angular/core';
+import { I18NService as WebI18nService } from '@core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -28,6 +30,7 @@ interface MappingRow {
   standalone: false
 })
 export class IntegrationSettingsComponent implements OnInit {
+  private readonly webI18n = injectWebI18n(WebI18nService);
   rows: MappingRow[] = [];
   families: string[] = [];
   revision = '';
@@ -77,21 +80,21 @@ export class IntegrationSettingsComponent implements OnInit {
     for (const row of this.rows) {
       const code = row.code.trim();
       if (!/^[A-Za-z0-9_-]{1,20}$/.test(code)) {
-        this.messages.error('Enter an Item Type code of 1–20 letters, numbers, _ or -');
+        this.messages.error(this.webI18n.fanyi('web.message.1f0ae0c62cf3'));
         return;
       }
       if (Object.prototype.hasOwnProperty.call(mapping, code)) {
-        this.messages.error(`Item Type ${code} is entered more than once`);
+        this.messages.error(this.webI18n.fanyi('web.message.34da08e54af5', { p0: code }));
         return;
       }
       if (!this.families.includes(row.family)) {
-        this.messages.error(`Select an existing MES Item Family for ${code}`);
+        this.messages.error(this.webI18n.fanyi('web.message.d4274d514034', { p0: code }));
         return;
       }
       mapping[code] = row.family;
     }
     if (this.rows.length === 0) {
-      this.messages.error('Add at least one Item Type mapping');
+      this.messages.error(this.webI18n.fanyi('web.message.256f9d03031b'));
       return;
     }
     this.saving = true;
@@ -101,7 +104,7 @@ export class IntegrationSettingsComponent implements OnInit {
         this.rows = Object.entries(response.data.mapping).map(([code, family]) => ({code, family}));
         this.families = response.data.families;
         this.revision = response.data.revision;
-        this.messages.success('Integration settings saved');
+        this.messages.success(this.webI18n.fanyi('web.message.331a9eff416b'));
         this.saving = false;
       },
       error: (error: HttpErrorResponse) => {

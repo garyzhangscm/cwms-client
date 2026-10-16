@@ -288,15 +288,15 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       },
       nzOnOk: () => { 
         if (this.addProductForm.value.productId == null) {
-          this.messageService.error("please fill in the product id");
+          this.messageService.error(this.i18n.fanyi('web.message.b612fa90e5c0'));
           return false; 
         }
         if (this.addProductForm.value.name == null) {
-          this.messageService.error("please fill in the name");
+          this.messageService.error(this.i18n.fanyi('web.message.231e5caf9b8f'));
           return false; 
         }
         if (this.addProductForm.value.description == null) {
-          this.messageService.error("please fill in the description");
+          this.messageService.error(this.i18n.fanyi('web.message.1e7bcfb7166b'));
           return false; 
         }
         // get the carrier and service level for the hualei product
@@ -378,11 +378,11 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       },
       nzOnOk: () => {
         if (this.addShippingLabelFormatForm.value.productId == null) {
-          this.messageService.error("please fill in the product id");
+          this.messageService.error(this.i18n.fanyi('web.message.b612fa90e5c0'));
           return false; 
         }
         if (this.addShippingLabelFormatForm.value.shippingLabelFormat == null) {
-          this.messageService.error("please fill in the shipping label format");
+          this.messageService.error(this.i18n.fanyi('web.message.4a33037f964b'));
           return false; 
         } 
         this.addShippingLabelFormat( 

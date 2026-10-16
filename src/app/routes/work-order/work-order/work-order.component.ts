@@ -2065,7 +2065,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       },
       nzOnOk: () => {
         if (this.currentWorkOrderMaterialConsumeTiming === undefined || this.currentWorkOrderMaterialConsumeTiming === null) {
-          this.messageService.error("please set the material consume timing");
+          this.messageService.error(this.i18n.fanyi('web.message.bf137926c2ab'));
           return false;
         }
         return this.changeWorkOrderConsumeMethod(
@@ -2134,7 +2134,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         if (consumeByBomNumber === '') {
 
           this.isSpinning = false;
-          this.messageService.error("consume by bom is not setup")
+          this.messageService.error(this.i18n.fanyi('web.message.f07aaddcc6e6'))
           return false;
         }
         let consumeByBOM: BillOfMaterial | undefined = 
@@ -2142,7 +2142,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             .find(matchedBOM => matchedBOM.number === consumeByBomNumber);
         if (consumeByBOM === undefined) {        
           this.isSpinning = false;
-          this.messageService.error(`can't find BOM with number ${consumeByBomNumber}`);
+          this.messageService.error(this.i18n.fanyi('web.message.43c8b852b52a', { p0: consumeByBomNumber }));
           return false;
         } 
         // will set the work order's consume by BOM

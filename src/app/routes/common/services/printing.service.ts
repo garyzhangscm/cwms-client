@@ -1,3 +1,5 @@
+import { inject as injectWebI18n } from '@angular/core';
+import { I18NService as WebI18nService } from '@core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
@@ -26,6 +28,7 @@ import { PrintableBarcode } from '../models/printable-barcode';
   providedIn: 'root'
 })
 export class PrintingService {
+  private readonly webI18n = injectWebI18n(WebI18nService);
   // printer related
   private lodop: Lodop | null = null;
   private readonly binaryHttp = inject(HttpClient);
@@ -100,14 +103,14 @@ export class PrintingService {
 
         // by default, we will print from the server
         if (warehouseConfigRes?.printingStrategy == null || warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) {
-          this.messageService.error('print from server by URL is not supported');
+          this.messageService.error(this.webI18n.fanyi('web.message.b6eae7b4ab4f'));
         } else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
           // save the request to the save so the local installed printing service will
           // print it later on
           console.log(`will save request to the server`);
           this.savePrintingRequestByUrl(url, reportType, printerName, physicalCopyCount);
         } else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {
-          this.messageService.error('print from local by URL is not supported');
+          this.messageService.error(this.webI18n.fanyi('web.message.9bdff286fa05'));
         }
       }
     });
@@ -144,7 +147,7 @@ export class PrintingService {
           }
         } else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {
           console.log(`print from local data is not supported at this moment`);
-          this.messageService.error(`print from local data is not supported at this moment`);
+          this.messageService.error(this.webI18n.fanyi('web.message.f40fdbe43e1f'));
           // this.printFromLocal(
           //   name, fileName, type, printerIndex,
           //  physicalCopyCount, pageOrientation, collated);

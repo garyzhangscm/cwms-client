@@ -200,7 +200,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     tplAddAppointmentModalContent: TemplateRef<{}>,
   ): void {
     if (this.currentAppointment != null) {
-      this.messageService.error("please refresh the page and remove current appointment from the trailer first");
+      this.messageService.error(this.i18n.fanyi('web.message.abced4e02f81'));
       return;
     }
     // init the current appoint
@@ -226,11 +226,11 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
         },
         nzOnOk: () => {
           if (this.currentAppointment?.number == null) {
-            this.messageService.error("number is required");
+            this.messageService.error(this.i18n.fanyi('web.message.d9a15c3ddbc5'));
             return false;
           }
           else if (this.currentAppointment?.type == null) {
-            this.messageService.error("type is required");
+            this.messageService.error(this.i18n.fanyi('web.message.e239deec4b38'));
             return false;
           }
           return true;

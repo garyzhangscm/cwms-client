@@ -5,22 +5,22 @@
     <div nz-row [nzGutter]="[16, 16]">
       <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
-            <nz-statistic [nzValue]="(openOrders | number)!" [nzTitle]="'Open Orders'"></nz-statistic>
+            <nz-statistic [nzValue]="(openOrders | number)!" [nzTitle]="'web.dynamic.1aff3ea5fd6b' | i18n"></nz-statistic>
         </nz-card>
       </div>
       <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
-            <nz-statistic [nzValue]="(newOrdersToday | number)!" [nzTitle]="'New Orders Today'"></nz-statistic>
+            <nz-statistic [nzValue]="(newOrdersToday | number)!" [nzTitle]="'web.dynamic.946d2f15d53a' | i18n"></nz-statistic>
         </nz-card>
       </div>
       <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
-            <nz-statistic [nzValue]="(completedOrdersToday | number)!" [nzTitle]="'Completed Orders Today'"></nz-statistic>
+            <nz-statistic [nzValue]="(completedOrdersToday | number)!" [nzTitle]="'web.dynamic.76926b80b558' | i18n"></nz-statistic>
         </nz-card>
       </div>
       <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
         <nz-card>
-            <nz-statistic [nzValue]="(openReceipt | number)!" [nzTitle]="'Open Receipt'"></nz-statistic>
+            <nz-statistic [nzValue]="(openReceipt | number)!" [nzTitle]="'web.dynamic.e654eeff8f80' | i18n"></nz-statistic>
         </nz-card>
       </div>
     </div> 
@@ -30,15 +30,15 @@
   <div nz-col [nzXs]="24" [nzLg]="12">
     <nz-spin [nzSpinning]="loadingPickCount">
 
-      <nz-card nzTitle="Picks">
+      <nz-card [nzTitle]="'web.literal.02422a2107f7' | i18n">
         <div  *ngIf="totalPicks > 0">
-          <span>Open Picks ({{ openPicks * 100 / totalPicks | number : '1.0-1' }}%)</span>
+          <span>{{ 'web.open-picks' | i18n }} ({{ openPicks * 100 / totalPicks | number : '1.0-1' }}%)</span>
           <div class="mes-dashboard__progress"><span [style.width.%]="openPicks * 100 / totalPicks"></span></div>
-          <span>Completed Picks ({{ completedPicks * 100 / totalPicks | number : '1.0-1' }}%)</span>
+          <span>{{ 'web.completed-picks' | i18n }} ({{ completedPicks * 100 / totalPicks | number : '1.0-1' }}%)</span>
           <div class="mes-dashboard__progress mes-dashboard__progress--complete"><span [style.width.%]="completedPicks * 100 / totalPicks"></span></div>
         </div>
         <div class="mes-dashboard__empty" *ngIf="totalPicks == 0">
-          Pick metrics are not available in this view.
+          {{ 'web.literal.7bfb0f5fa8fc' | i18n }}
         </div>
     </nz-card>
     </nz-spin>
@@ -47,9 +47,9 @@
     
     <nz-spin [nzSpinning]="loadingPickByLocationGroupCount">
 
-      <nz-card  nzTitle="Picks By Location Group">
+      <nz-card  [nzTitle]="'web.literal.b21971e7a38b' | i18n">
         @if (picksByLocationGroup.size === 0) {
-          <div class="mes-dashboard__empty">Location group metrics are not available in this view.</div>
+          <div class="mes-dashboard__empty">{{ 'web.literal.b15e7b0c69b8' | i18n }}</div>
         }
         @for (pick of picksByLocationGroup; track pick) {
         

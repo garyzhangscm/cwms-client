@@ -35,9 +35,9 @@
       }
       @else {
 
-        <nz-result nzStatus="warning" nzTitle="No operation type found"  >
+        <nz-result nzStatus="warning" [nzTitle]="'web.literal.e77ac43e8526' | i18n"  >
           <div nz-result-extra>
-            <button nz-button nzType="primary" (click)="goToOperationTypePage()">Maintain Operation Type</button>
+            <button nz-button nzType="primary" (click)="goToOperationTypePage()">{{ 'web.literal.29a4a4d41ddf' | i18n }}</button>
           </div>
         </nz-result>
       }

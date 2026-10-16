@@ -70,7 +70,7 @@
                 <nz-card>
                     <nz-descriptions nzTitle="{{ 'client' | i18n}}" nzBordered>
                         <nz-descriptions-item nzTitle="{{ 'client' | i18n}}">
-                        {{snapshotByClient.client == null ? 'N/A' : snapshotByClient.client?.name}}</nz-descriptions-item>
+                        {{snapshotByClient.client == null ? ('web.dynamic.e2f79e5b6033' | i18n) : snapshotByClient.client?.name}}</nz-descriptions-item>
                         <nz-descriptions-item nzTitle="{{ 'averageAgeInDays' | i18n}}">
                         {{snapshotByClient.averageAgeInDays }}  </nz-descriptions-item>
                         <nz-descriptions-item nzTitle="{{ 'averageAgeInWeeks' | i18n}}">

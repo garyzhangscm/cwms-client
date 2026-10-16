@@ -15,21 +15,21 @@
     
         <nz-card *ngIf="shopifyIntegrationConfigurationList.length == 0">
             <div *ngIf="shopifyOAuthUrlByCompany != ''">
-                Shopify Integration is not setup yet, please click 
+                {{ 'web.literal.5e5e678290b2' | i18n }}
                 <a [href]="shopifyOAuthUrlByCompany" target="_blank" rel="noopener noreferrer">
-                    this link</a> 
-                    to allow CWMS to access your Shop
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.c3bd7e3836ab' | i18n }}
             </div>
         </nz-card>
         <nz-card *ngIf="shopifyIntegrationConfigurationList.length > 0"> 
-            <span>Shopify Integration is setup </span>
+            <span>{{ 'web.literal.7a6fd7ea6ec3' | i18n }} </span>
         </nz-card>
     </div>
     <div *ngIf="threePartyLogisticsFlag">
         <nz-card>
             <p>
 
-                <span>Choose a Client to Start: </span>
+                <span>{{ 'web.literal.d2f0c47b1805' | i18n }} </span>
             
                 <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
                     
@@ -42,14 +42,14 @@
             </p>
             
             <nz-result *ngIf="selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) == null"
-                nzStatus="error" nzTitle="Shopify Authorization Configuration is not setup yet, please contact the system admin to setup in Shopify">
+                nzStatus="error" [nzTitle]="'web.literal.32495a3c1720' | i18n">
                  
             </nz-result> 
             <div *ngIf="shopifyIntegrationConfigurationList.length == 0 && selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) != null">
-                Shopify Integration is not setup yet, please click 
+                {{ 'web.literal.5e5e678290b2' | i18n }}
                 <a [href]="shopifyOAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
-                    this link</a> 
-                    to allow CWMS to access your Shop for this client
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.289bc2c8c227' | i18n }}
             </div>
             
             @for (shopifyIntegrationConfiguration of shopifyIntegrationConfigurationList; track shopifyIntegrationConfiguration) {
@@ -67,10 +67,10 @@
             }  
 
             <div *ngIf="shopifyIntegrationConfigurationList.length > 0 && selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) != null">
-                Click 
+                {{ 'web.literal.95ba4ed9329f' | i18n }}
                 <a [href]="shopifyOAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
-                    this link</a> 
-                    to add more Shop for this client
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.ff51e1a890a3' | i18n }}
             </div>
         </nz-card> 
     </div>

@@ -1,3 +1,5 @@
+import { inject as injectWebI18n } from '@angular/core';
+import { I18NService as WebI18nService } from '@core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -29,6 +31,7 @@ interface ApiResponse<T> {
   standalone: false
 })
 export class HandoffLocationsComponent implements OnInit {
+  private readonly webI18n = injectWebI18n(WebI18nService);
   locations: LocationOption[] = [];
   revision = '';
   loading = false;
@@ -71,7 +74,7 @@ export class HandoffLocationsComponent implements OnInit {
   search(): void {
     const query = this.query.trim();
     if (!/^[A-Za-z0-9_. -]{2,40}$/.test(query)) {
-      this.messages.error('Enter 2–40 characters of a location name');
+      this.messages.error(this.webI18n.fanyi('web.message.325846fa78a6'));
       return;
     }
     this.searching = true;
@@ -97,7 +100,7 @@ export class HandoffLocationsComponent implements OnInit {
     const location = this.options.find(option => option.id === this.selectedId);
     if (!location || this.isSelected(location.id)) return;
     if (this.locations.length >= 20) {
-      this.messages.error('Select at most 20 locations');
+      this.messages.error(this.webI18n.fanyi('web.message.78355e1f116a'));
       return;
     }
     this.locations = [...this.locations, location];
@@ -116,7 +119,7 @@ export class HandoffLocationsComponent implements OnInit {
       next: response => {
         this.locations = response.data.locations;
         this.revision = response.data.revision;
-        this.messages.success('Handoff locations saved');
+        this.messages.success(this.webI18n.fanyi('web.message.71784adb802a'));
         this.saving = false;
       },
       error: (error: HttpErrorResponse) => {

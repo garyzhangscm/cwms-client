@@ -1,48 +1,47 @@
 <div class="import-exceptions">
-  <h2>Work Order Import Exceptions</h2>
-  <p>Review Oracle file imports, resolve missing master data, then recheck or retry the selected Work Order or batch.</p>
+  <h2>{{ 'web.literal.67ca3db6339f' | i18n }}</h2>
+  <p>{{ 'web.literal.5556932f0331' | i18n }}</p>
   <div class="filters">
-    <input nz-input [(ngModel)]="batch" placeholder="Batch filename" (keyup.enter)="load()" />
-    <input nz-input [(ngModel)]="number" placeholder="Work Order number" (keyup.enter)="load()" />
-    <nz-select [(ngModel)]="state" nzPlaceHolder="All exceptions"><nz-option nzValue="" nzLabel="All exceptions"></nz-option><nz-option *ngFor="let value of states" [nzValue]="value" [nzLabel]="label(value)"></nz-option></nz-select>
-    <button nz-button nzType="primary" (click)="load()" [nzLoading]="loading">Search / Refresh</button>
+    <input nz-input [(ngModel)]="batch" [placeholder]="'web.literal.8b78b055b626' | i18n" (keyup.enter)="load()" />
+    <input nz-input [(ngModel)]="number" [placeholder]="'web.literal.6f90c109e718' | i18n" (keyup.enter)="load()" />
+    <nz-select [(ngModel)]="state" [nzPlaceHolder]="'web.literal.e774fd906613' | i18n"><nz-option nzValue="" nzLabel="All exceptions"></nz-option><nz-option *ngFor="let value of states" [nzValue]="value" [nzLabel]="label(value)"></nz-option></nz-select>
+    <button nz-button nzType="primary" (click)="load()" [nzLoading]="loading">{{ 'web.literal.f7db913813e8' | i18n }}</button>
   </div>
-  <p class="error" *ngIf="error">{{error}}</p>
-  <p *ngIf="!canRetry && !loading && !error">Read-only access. An administrator or Work Order Import Operator can recheck and retry.</p>
-  <p *ngIf="truncated">Showing the first 1,000 results. Narrow the batch or Work Order filter.</p>
+  <p class="error" *ngIf="error">{{ error | i18n }}</p>
+  <p *ngIf="!canRetry && !loading && !error">{{ 'web.literal.33abe6c8fac6' | i18n }}</p>
+  <p *ngIf="truncated">{{ 'web.literal.8f13924f6b6e' | i18n }}</p>
   <nz-table #table [nzData]="rows" [nzLoading]="loading" [nzPageSize]="15" [nzScroll]="{ x: '1100px' }">
-    <thead><tr><th>Batch / Work Order</th><th>Status</th><th>Reason / Missing items</th><th>Last check</th><th nzWidth="290px">Actions</th></tr></thead>
+    <thead><tr><th>{{ 'web.literal.c1fa048676e9' | i18n }}</th><th>{{ 'web.literal.920e413c7d41' | i18n }}</th><th>{{ 'web.literal.ebb08095dc89' | i18n }}</th><th>{{ 'web.literal.c982b23dfadd' | i18n }}</th><th nzWidth="290px">{{ 'web.literal.ff8059dc6752' | i18n }}</th></tr></thead>
     <tbody><tr *ngFor="let row of table.data">
-      <td><strong>{{row.workOrderNumber || 'Batch'}}</strong><small>{{row.file}}</small></td>
-      <td><span [class.error]="['BLOCKED','BUSINESS_ERROR','UNCERTAIN','REJECTED'].includes(row.state)">{{label(row.state)}}</span><small *ngIf="row.integrationId"><a routerLink="/integration/integration-data-work-order" [queryParams]="{number: row.workOrderNumber, id: row.integrationId}">Integration #{{row.integrationId}}</a></small></td>
+      <td><strong>{{row.workOrderNumber || ('web.dynamic.320b5d80f8cf' | i18n)}}</strong><small>{{row.file}}</small></td>
+      <td><span [class.error]="['BLOCKED','BUSINESS_ERROR','UNCERTAIN','REJECTED'].includes(row.state)">{{ label(row.state) | i18n }}</span><small *ngIf="row.integrationId"><a routerLink="/integration/integration-data-work-order" [queryParams]="{number: row.workOrderNumber, id: row.integrationId}">{{ 'web.bound.97164708a16c' | i18n: { p0: (row.integrationId) } }}</a></small></td>
       <td>{{row.validationError || row.mesError || row.missingItems?.join(', ') || '—'}}</td>
       <td>{{row.checkedAt * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-      <td><div class="actions"><button nz-button nzSize="small" (click)="showDetail(row)">Details</button><button nz-button nzSize="small" (click)="act(row, 'check')" [disabled]="!canRetry || submitting || busy(row)">Recheck</button><button nz-button nzSize="small" nzType="primary" (click)="act(row, 'retry')" [disabled]="!canRetry || !retryable(row) || submitting || busy(row)">Retry order</button></div></td>
+      <td><div class="actions"><button nz-button nzSize="small" (click)="showDetail(row)">{{ 'web.literal.45989de49fb7' | i18n }}</button><button nz-button nzSize="small" (click)="act(row, 'check')" [disabled]="!canRetry || submitting || busy(row)">{{ 'web.literal.1f47d8366934' | i18n }}</button><button nz-button nzSize="small" nzType="primary" (click)="act(row, 'retry')" [disabled]="!canRetry || !retryable(row) || submitting || busy(row)">{{ 'web.literal.b9dff2f29ee7' | i18n }}</button></div></td>
     </tr></tbody>
   </nz-table>
-  <p class="error" *ngIf="jobError">{{jobError}}</p>
-  <nz-card nzTitle="Recent operator actions" *ngIf="jobs.length">
-    <div class="job" *ngFor="let job of jobs.slice(0, 8)"><strong>{{job.state}}</strong> · {{job.action}} · {{job.workOrderNumber || 'Batch'}} · {{job.actor}}<small>{{job.file}} · {{job.updatedAt * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}</small><span class="error" *ngIf="job.error">{{job.error}}</span><small>{{job.waitingReason || jobSummary(job)}}</small></div>
+  <p class="error" *ngIf="jobError">{{ jobError | i18n }}</p>
+  <nz-card [nzTitle]="'web.literal.ec6c1ae296bc' | i18n" *ngIf="jobs.length">
+    <div class="job" *ngFor="let job of jobs.slice(0, 8)"><strong>{{job.state}}</strong> · {{job.action}} · {{job.workOrderNumber || ('web.dynamic.320b5d80f8cf' | i18n)}} · {{job.actor}}<small>{{job.file}} · {{job.updatedAt * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}</small><span class="error" *ngIf="job.error">{{job.error}}</span><small>{{job.waitingReason || jobSummary(job)}}</small></div>
   </nz-card>
-  <nz-modal [(nzVisible)]="detailVisible" [nzWidth]="1000" nzTitle="Import details" [nzFooter]="null" (nzOnCancel)="detailVisible = false">
+  <nz-modal [(nzVisible)]="detailVisible" [nzWidth]="1000" [nzTitle]="'web.literal.aabbbf2d6b84' | i18n" [nzFooter]="null" (nzOnCancel)="detailVisible = false">
     <ng-container *nzModalContent><nz-spin [nzSpinning]="detailLoading"><ng-container *ngIf="detail && selected">
-      <h3>{{selected.workOrderNumber || 'Batch'}} <small>{{selected.file}}</small></h3>
+      <h3>{{selected.workOrderNumber || ('web.dynamic.320b5d80f8cf' | i18n)}} <small>{{selected.file}}</small></h3>
       <p class="error" *ngIf="detail.report.reason">{{detail.report.reason}}</p>
-      <p>Correct source data in Oracle or synchronize missing MES master data. Recheck before retrying. Quantities are rounded up during import.</p>
-      <div class="actions"><button nz-button (click)="act(selected, 'check', true)" [disabled]="!canRetry || submitting || busy(selected)">Recheck batch</button><button nz-button nzType="primary" (click)="act(selected, 'retry', true)" [disabled]="!canRetry || submitting || busy(selected)">Retry eligible orders in batch</button></div>
-      <p>Source file: {{detail.report.sourceCleanup || 'Pending review'}}</p>
-      <h4>Original CSV rows</h4>
+      <p>{{ 'web.literal.df8387ba294f' | i18n }}</p>
+      <div class="actions"><button nz-button (click)="act(selected, 'check', true)" [disabled]="!canRetry || submitting || busy(selected)">{{ 'web.literal.257fa93c78f2' | i18n }}</button><button nz-button nzType="primary" (click)="act(selected, 'retry', true)" [disabled]="!canRetry || submitting || busy(selected)">{{ 'web.literal.782540ef8f35' | i18n }}</button></div>
+      <p>{{ 'web.bound.ccb96f702104' | i18n: { p0: (detail.report.sourceCleanup || ('web.dynamic.f1c45f3f1314' | i18n)) } }}</p>
+      <h4>{{ 'web.literal.dc19a69d3153' | i18n }}</h4>
       <nz-table #original [nzData]="detail.originalRows" [nzPageSize]="10" nzSize="small" [nzScroll]="{x: '900px'}">
-        <thead><tr><th>Work Order</th><th>Finished item</th><th>Planned quantity</th><th>Component line</th><th>Component item</th><th>Component quantity</th><th>PO</th></tr></thead>
+        <thead><tr><th>{{ 'web.literal.fc8043b4bcaf' | i18n }}</th><th>{{ 'web.literal.06829b475be4' | i18n }}</th><th>{{ 'web.literal.fca4c0667adc' | i18n }}</th><th>{{ 'web.literal.4db3a1467f2d' | i18n }}</th><th>{{ 'web.literal.d41ff1afdca4' | i18n }}</th><th>{{ 'web.literal.4baa09fbd6c8' | i18n }}</th><th>{{ 'web.literal.72d549da2ec6' | i18n }}</th></tr></thead>
         <tbody><tr *ngFor="let row of original.data"><td>{{row['WORK_ORDER_NUMBER']}}</td><td>{{row['FINISHED_ITEM_NUMBER']}}</td><td>{{row['PLANNED_QUANTITY']}}</td><td>{{row['COMPONENT_LINE_NUMBER']}}</td><td>{{row['COMPONENT_ITEM_NUMBER']}}</td><td>{{row['COMPONENT_QUANTITY']}}</td><td>{{row['PO_NUMBER']}}</td></tr></tbody>
       </nz-table>
-      <h4>Imported quantities and rounding adjustments</h4>
-      <div *ngFor="let order of detail.converted" class="job"><strong>{{order.workOrderNumber}}</strong> · {{order.payload.itemName}} · Planned quantity: {{order.payload.expectedQuantity}}
-        <small *ngFor="let change of order.quantityAdjustments">CSV row {{change.sourceRow}} · {{change.field === 'PLANNED_QUANTITY' ? 'Planned quantity' : 'Component quantity'}}: {{change.originalQuantity}} → {{change.roundedQuantity}} (+{{change.difference}})</small>
+      <h4>{{ 'web.literal.dfcdbc508270' | i18n }}</h4>
+      <div *ngFor="let order of detail.converted" class="job"><strong>{{order.workOrderNumber}}</strong> {{ 'web.bound.f6e7cfce12f9' | i18n: { p0: (order.payload.itemName), p1: (order.payload.expectedQuantity) } }}<small *ngFor="let change of order.quantityAdjustments">{{ 'web.bound.69b1a5560ad2' | i18n: { p0: (change.sourceRow), p1: (change.field === 'PLANNED_QUANTITY' ? ('web.dynamic.fca4c0667adc' | i18n) : ('web.dynamic.4baa09fbd6c8' | i18n)), p2: (change.originalQuantity), p3: (change.roundedQuantity), p4: (change.difference) } }}</small>
       </div>
-      <h4>Current processing results</h4>
-      <div class="job" *ngFor="let result of detail.report.records"><strong>{{result.workOrderNumber}}</strong> · {{label(result.state)}}<small class="error">{{result.validationError || result.mesError || result.missingItems?.join(', ')}}</small></div>
-      <h4>Operator history</h4>
+      <h4>{{ 'web.literal.920d043dba97' | i18n }}</h4>
+      <div class="job" *ngFor="let result of detail.report.records"><strong>{{result.workOrderNumber}}</strong> · {{ label(result.state) | i18n }}<small class="error">{{result.validationError || result.mesError || result.missingItems?.join(', ')}}</small></div>
+      <h4>{{ 'web.literal.a70103a5bb08' | i18n }}</h4>
       <div class="job" *ngFor="let job of detail.history"><strong>{{job.state}}</strong> · {{job.action}} · {{job.actor}} · {{job.updatedAt * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}<small>{{job.waitingReason || jobSummary(job)}}</small><span class="error" *ngIf="job.error">{{job.error}}</span></div>
     </ng-container></nz-spin></ng-container>
   </nz-modal>

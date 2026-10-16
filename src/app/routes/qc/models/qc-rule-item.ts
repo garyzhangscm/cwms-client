@@ -6,6 +6,7 @@ export interface QCRuleItem {
     id?: number;
 
     checkPoint: string;
+    checkPointEs?: string | null;
 
     enabled: boolean;
 

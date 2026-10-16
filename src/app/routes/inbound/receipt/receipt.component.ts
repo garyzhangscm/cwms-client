@@ -905,9 +905,7 @@ export class InboundReceiptComponent implements OnInit, OnDestroy {
       receiptLine.displayUnitOfMeasureForExpectedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
-        receiptLine.expectedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.c6444feeef23', { p0: receiptLine.expectedQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
   
@@ -922,9 +920,7 @@ export class InboundReceiptComponent implements OnInit, OnDestroy {
       receiptLine.displayUnitOfMeasureForArrivedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the line's arrived quantity ${ 
-        receiptLine.arrivedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.50976cf1a172', { p0: receiptLine.arrivedQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
  
@@ -939,9 +935,7 @@ export class InboundReceiptComponent implements OnInit, OnDestroy {
       receiptLine.displayUnitOfMeasureForReceivedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the line's received quantity ${ 
-        receiptLine.displayReceivedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.08768ac2662f', { p0: receiptLine.displayReceivedQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
 
@@ -1175,9 +1169,7 @@ export class InboundReceiptComponent implements OnInit, OnDestroy {
       inventory.itemPackageType!.displayItemUnitOfMeasure = itemUnitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the inventory's quantity ${ 
-          inventory.quantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.cf63d8f8f76f', { p0: inventory.quantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
   

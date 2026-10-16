@@ -44,7 +44,7 @@
                     (blur)="qcRuleNameChange()" [disabled]="!newQCRule"/>
                   <ng-template #qcRuleErrorTpl let-control>  
                       <ng-container *ngIf="qcRuleValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                      <ng-container *ngIf="qcRuleValidateStatus === 'nameExists'">QC Rule name already exists</ng-container>
+                      <ng-container *ngIf="qcRuleValidateStatus === 'nameExists'">{{ 'web.literal.41cd15f073cb' | i18n }}</ng-container>
                               
                   </ng-template>
                 </nz-form-control>
@@ -72,6 +72,7 @@
     <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
  
 
+        <p>{{ 'web.literal.a427bfffe10a' | i18n }}</p>
         <!-- Table to show inventory  -->
 
         <div class="search-result-list" *ngIf="currentQCRule" > 
@@ -80,8 +81,8 @@
                 <thead>
                     <tr> 
                         <th>
-                          {{ 'qcRule.checkPoint' | i18n }}
-                        </th>
+                          {{ 'web.bound.13898880e1c0' | i18n: { p0: ('qcRule.checkPoint' | i18n) } }}</th>
+                        <th style="min-width: 280px">{{ 'web.literal.b779ff72ccd3' | i18n }}</th>
                         <th>
                           {{ 'qcRule.qcRuleItemType' | i18n }}
                         </th>
@@ -107,6 +108,12 @@
                             </span>
                         </td>
 
+                        <td>
+                            <textarea nz-input [(ngModel)]="data.checkPointEs"
+                                maxlength="1000" rows="2"
+                                [attr.aria-label]="'web.literal.405bbdc87f48' | i18n"
+                                [placeholder]="'web.literal.5147b17057bc' | i18n"></textarea>
+                        </td>
                         <td>
                             <nz-select style="width: 150px" *ngIf="data.id === undefined"
                                 [(ngModel)]="data.qcRuleItemType"  >
@@ -142,8 +149,8 @@
                                 <div class="row" *ngIf="data.qcRuleItemType  === qcRuleItemTypes.YESNO">
                                     
                                     <nz-select style="width: 150px"   [(ngModel)]="data.expectedValue"  >
-                                        <nz-option nzValue="true" nzLabel="{{ 'Yes' | i18n}}"></nz-option> 
-                                        <nz-option nzValue="false" nzLabel="{{ 'No' | i18n}}"></nz-option> 
+                                        <nz-option nzValue="true" nzLabel="{{ 'web.dynamic.85a39ab345d6' | i18n}}"></nz-option>
+                                        <nz-option nzValue="false" nzLabel="{{ 'web.dynamic.1ea442a134b2' | i18n}}"></nz-option>
                                     </nz-select> 
                                 </div>
                                 <div class="row" *ngIf="data.qcRuleItemType  === qcRuleItemTypes.NUMBER">
@@ -220,8 +227,8 @@
                 <thead>
                     <tr> 
                         <th>
-                          {{ 'qcRule.checkPoint' | i18n }}
-                        </th>
+                          {{ 'web.bound.13898880e1c0' | i18n: { p0: ('qcRule.checkPoint' | i18n) } }}</th>
+                        <th style="min-width: 280px">{{ 'web.literal.b779ff72ccd3' | i18n }}</th>
                         <th>
                           {{ 'qcRule.qcRuleItemType' | i18n }}
                         </th>
@@ -239,6 +246,7 @@
                 <tbody>
                     <tr *ngFor="let qcRuleItem of displayQCRuleItemTable.data; let i = index">  
                         <td>{{ qcRuleItem.checkPoint }}</td>
+                        <td>{{ qcRuleItem.checkPointEs || ('web.dynamic.7bd7b4bb5b0f' | i18n) }}</td>
                         <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
                         <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
                         <td>{{ qcRuleItem.expectedValue | i18n}}</td>

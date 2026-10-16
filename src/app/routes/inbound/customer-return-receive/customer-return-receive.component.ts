@@ -104,7 +104,7 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
       let csrLine: CustomerReturnOrderLine | undefined = this.getMatchedCSROrderLine(this.currentCustomerReturnOrder!, this.receivingItem!);
 
       if (csrLine == null) {
-        this.messageService.error(`can't find customer return order line with item ${this.receivingItem?.name}`);
+        this.messageService.error(this.i18n.fanyi('web.message.329aea026c8d', { p0: this.receivingItem?.name }));
         return;
       }
       this.locationService.getLocations(undefined, undefined, locationName ? locationName : undefined)

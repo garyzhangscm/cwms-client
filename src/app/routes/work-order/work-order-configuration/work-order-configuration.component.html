@@ -56,7 +56,7 @@
         </nz-form-item>
     </div>
 </div>
-<nz-card nzTitle="shift schedule">
+<nz-card [nzTitle]="'web.literal.a5c6f035ef48' | i18n">
     <ul nz-list   nzBordered nzSize="large"> 
         <li nz-list-item *ngFor="let item of currentWorkOrderConfiguration!.productionShiftSchedules, let i = index" nzNoFlex>
           <ul nz-list-item-actions>
@@ -71,7 +71,7 @@
           </span> 
               
           <span style="padding-left: 20px;">
-            to
+            {{ 'web.literal.663ea1bfffe5' | i18n }}
           </span>
           <span style="padding-left: 20px;">
 

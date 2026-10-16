@@ -7,7 +7,7 @@
 
         <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'shift time is not setup' | i18n}}"> 
           <div nz-result-extra>
-            please go to <a routerLink="/work-order/work-order-configuration" routerLinkActive="active">Work Order Configuration</a> page to setup the shift time
+            {{ 'web.literal.8439e1c12996' | i18n }} <a routerLink="/work-order/work-order-configuration" routerLinkActive="active">{{ 'web.literal.d7105328cae7' | i18n }}</a> {{ 'web.literal.7be14ce914e9' | i18n }}
           </div>
         </nz-result>
       </div>
@@ -17,14 +17,14 @@
       <nz-card  [nzExtra]="showConfigurationTemplate" nzTitle="Count down: {{ countDownNumber }}"> 
         <div *ngIf="showConfiguration">
           
-          <span style="padding-left: 20px">Count per page: </span><nz-input-number   [nzMin]="1" [nzMax]="99" [nzStep]="1"   [(ngModel)]="countPerPage" 
+          <span style="padding-left: 20px">{{ 'web.literal.1be0096ac2a7' | i18n }} </span><nz-input-number   [nzMin]="1" [nzMax]="99" [nzStep]="1"   [(ngModel)]="countPerPage"
           (ngModelChange)="configurationChanged()">
           </nz-input-number> 
-          <span style="padding-left: 20px">Column Count: </span><nz-input-number   [nzMin]="1" [nzMax]="5" [nzStep]="1"   [(ngModel)]="columnCount" 
+          <span style="padding-left: 20px">{{ 'web.literal.d1168a9af34d' | i18n }} </span><nz-input-number   [nzMin]="1" [nzMax]="5" [nzStep]="1"   [(ngModel)]="columnCount"
           (ngModelChange)="configurationChanged()">
           </nz-input-number> 
           
-          <span style="padding-left: 20px">Refresh Cycle(in seconds): </span><nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" >
+          <span style="padding-left: 20px">{{ 'web.literal.e4e2d171db63' | i18n }} </span><nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" >
           </nz-input-number> 
 
         </div>
@@ -95,7 +95,7 @@
                 *ngIf="mapOfGraphs[productionLineStatus.productionLine.id!].data == null || mapOfItems[productionLineStatus.productionLine.id!] == ''"
                 > 
                   <div nz-result-extra>
-                     There's no item on this production line at this moment
+                     {{ 'web.literal.b423785123bd' | i18n }}
                   </div>
                 </nz-result>
 

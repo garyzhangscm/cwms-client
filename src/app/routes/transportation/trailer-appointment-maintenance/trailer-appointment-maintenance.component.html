@@ -50,7 +50,7 @@
 
         </div>
         <div *ngIf="currentAppointment == null">
-            There's no current appointment, <a (click)="showAddAppointmentModal(tplAddAppointmentModalTitle, tplAddAppointmentModalContent)">add</a> one
+            {{ 'web.literal.f60965e1e2d1' | i18n }} <a (click)="showAddAppointmentModal(tplAddAppointmentModalTitle, tplAddAppointmentModalContent)">{{ 'web.literal.7e9e5ac30f22' | i18n }}</a> {{ 'web.literal.7692c3ad3540' | i18n }}
 
         </div>
     </nz-card>   

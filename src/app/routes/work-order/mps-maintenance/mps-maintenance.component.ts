@@ -496,7 +496,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     // cutoff date needs to be after today
     if (isBefore(result, new Date())) {
 
-      this.messageService.error("cutoff-date-needs-to-be-future");
+      this.messageService.error(this.i18n.fanyi('cutoff-date-needs-to-be-future'));
       
 
     }

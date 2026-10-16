@@ -40,7 +40,7 @@
                     (blur)="versionNumberChange($event)" [disabled]="!newRFAppVersion"/>
                   <ng-template #versionNumberErrorTpl let-control>  
                       <ng-container *ngIf="versionNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                      <ng-container *ngIf="versionNumberErrorCode === 'numberExists'">Version number already exists</ng-container>
+                      <ng-container *ngIf="versionNumberErrorCode === 'numberExists'">{{ 'web.literal.3d777a324d0e' | i18n }}</ng-container>
                               
                   </ng-template>
                 </nz-form-control>

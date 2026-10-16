@@ -66,7 +66,7 @@ export class QcQcResultComponent implements OnInit, OnDestroy {
       .pipe(timeout(30000)).subscribe({
         next: records => {
           if (!current()) { if (version === this.searchVersion) this.isSpinning = false; return; }
-          this.listOfQCInspectionRequest = (records ?? []).map(record => presentQcRecord(record, key => this.i18n.fanyi(key)));
+          this.listOfQCInspectionRequest = (records ?? []).map(record => presentQcRecord(record, key => this.i18n.fanyi(key), this.i18n.currentLang));
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'), rowCount: records?.length ?? 0

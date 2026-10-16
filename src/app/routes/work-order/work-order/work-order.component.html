@@ -684,7 +684,7 @@
 
                 <thead>
                   <th>
-                    id</th>
+                    {{ 'web.literal.a56145270ce6' | i18n }}</th>
                   <th>
                     {{ 'work-order-instruction.sequence' | i18n }}</th>
                   <th>
@@ -1692,7 +1692,7 @@
             [nzLabel]="billOfMaterial.number!"
             [nzValue]="billOfMaterial.number"></nz-option>
         </nz-select>
-        <span *ngIf="currentWorkOrderMatchedBOM.length === 0" >N/A</span>
+        <span *ngIf="currentWorkOrderMatchedBOM.length === 0" >{{ 'web.literal.e2f79e5b6033' | i18n }}</span>
       </div>
   </div>
 

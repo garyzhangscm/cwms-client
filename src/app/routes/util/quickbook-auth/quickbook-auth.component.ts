@@ -1,3 +1,5 @@
+import { inject as injectWebI18n } from '@angular/core';
+import { I18NService as WebI18nService } from '@core';
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme';
@@ -14,6 +16,7 @@ import { QuickbookService } from '../services/quickbook.service';
     standalone: false
 })
 export class UtilQuickbookAuthComponent implements OnInit {
+  private readonly webI18n = injectWebI18n(WebI18nService);
 
   isSpinning = false;
   
@@ -84,7 +87,7 @@ export class UtilQuickbookAuthComponent implements OnInit {
       {
         next: (tokenRes) => {
           this.isSpinning = false;
-          this.messageService.success("auth success");
+          this.messageService.success(this.webI18n.fanyi('web.message.16e191e5ab75'));
           this.currentQBOToken = tokenRes;
           this.displayCurrentToken();
           
@@ -93,7 +96,7 @@ export class UtilQuickbookAuthComponent implements OnInit {
         error: () => {
           
           this.isSpinning = false;
-          this.messageService.success("auth fail");
+          this.messageService.success(this.webI18n.fanyi('web.message.ee51210a3541'));
           this.currentQBOToken = {};
           this.displayCurrentToken();
         }
@@ -108,14 +111,14 @@ export class UtilQuickbookAuthComponent implements OnInit {
       {
         next: (tokenRes) => {
           this.isSpinning = false;
-          this.messageService.success("auth success");
+          this.messageService.success(this.webI18n.fanyi('web.message.16e191e5ab75'));
           this.currentQBOToken = tokenRes;
           this.displayCurrentToken();
         }, 
         error: () => {
           
           this.isSpinning = false;
-          this.messageService.success("auth fail");
+          this.messageService.success(this.webI18n.fanyi('web.message.ee51210a3541'));
           this.currentQBOToken = {};
           this.displayCurrentToken();
         }
@@ -131,14 +134,14 @@ export class UtilQuickbookAuthComponent implements OnInit {
       {
         next: (affectEntityNumber) => {
           this.isSpinning = false;
-          this.messageService.success("sync success");
+          this.messageService.success(this.webI18n.fanyi('web.message.13becbf80de9'));
 
           console.log(`sync ${affectEntityNumber} ${this.currentSyncEntity}`);
         }, 
         error: () => {
           
           this.isSpinning = false;
-          this.messageService.success("sync fail"); 
+          this.messageService.success(this.webI18n.fanyi('web.message.01e16d8e2e3d'));
         }
       }
     )
@@ -152,12 +155,12 @@ export class UtilQuickbookAuthComponent implements OnInit {
       {
         next: () => {
           this.isSpinning = false;
-          this.messageService.success("webhook test data sent success"); 
+          this.messageService.success(this.webI18n.fanyi('web.message.6ada3e7f6990'));
         }, 
         error: () => {
           
           this.isSpinning = false;
-          this.messageService.success("webhook test data sent fail"); 
+          this.messageService.success(this.webI18n.fanyi('web.message.1d40e2f745d8'));
         }
       }
     )

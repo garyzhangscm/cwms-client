@@ -57,7 +57,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (!params['id']) {
-        this.messageService.error("Error: Work Order Line is not passed in");
+        this.messageService.error(this.i18n.fanyi('web.message.929a6582cf3f'));
         
         this.isSpinning = true;
         setTimeout(() => {
@@ -72,7 +72,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
           this.currentWorkOrderLine = workOrderLine;
           this.isSpinning = false;
           if (!this.currentWorkOrderLine) {
-            this.messageService.error(`Error: can't find Work Order Line by id ${params['id']}`);
+            this.messageService.error(this.i18n.fanyi('web.message.9d2caa9347f0', { p0: params['id'] }));
             
             this.isSpinning = true;
             setTimeout(() => {

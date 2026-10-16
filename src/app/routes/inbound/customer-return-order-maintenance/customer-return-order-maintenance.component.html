@@ -44,7 +44,7 @@
                     (blur)="orderNumberChange($event)"/>
                   <ng-template #orderNumberErrorTpl let-control>  
                       <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                      <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">Number already exists</ng-container>
+                      <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">{{ 'web.literal.94396ea39335' | i18n }}</ng-container>
                               
                   </ng-template>
                 </nz-form-control>

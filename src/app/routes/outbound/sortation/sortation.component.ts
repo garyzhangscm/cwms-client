@@ -271,7 +271,7 @@ export class OutboundSortationComponent implements OnInit {
         next: (itemsRes) => {
           this.isSpinning = false;
           if (itemsRes.length == 0) {
-            this.messageService.error(`can't find item by barcode ${barcode}`);
+            this.messageService.error(this.i18n.fanyi('web.message.3298d9eb939b', { p0: barcode }));
             this.selectBarcodeInput();
 
           }
@@ -287,7 +287,7 @@ export class OutboundSortationComponent implements OnInit {
               next: (pickedInventoryRes) => {
                 if (pickedInventoryRes.length == 0) {
 
-                  this.messageService.error(`no inventory with item ${barcode} is picked into the sort location yet`);
+                  this.messageService.error(this.i18n.fanyi('web.message.7e268a7c3994', { p0: barcode }));
                   this.selectBarcodeInput();
                 }
                 else {
@@ -423,7 +423,7 @@ export class OutboundSortationComponent implements OnInit {
   cancelChoosingInventoryAttribute() {
     this.chooseInventoryAttributeModalVisible = false;
     
-    this.messageService.error(`cancel current operation as there's no inventory attribute is chosen`);
+    this.messageService.error(this.i18n.fanyi('web.message.a9edbc92ba98'));
     this.selectBarcodeInput();
 
   }

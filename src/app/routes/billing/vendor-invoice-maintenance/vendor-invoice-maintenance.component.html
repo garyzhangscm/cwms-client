@@ -54,7 +54,7 @@
                 (blur)="invoiceNumberChange($event)" />
               <ng-template #invoiceNumberErrorTpl let-control>  
                   <ng-container *ngIf="invoiceNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                  <ng-container *ngIf="invoiceNumberValidateStatus === 'numberExists'">Invoice number already exists</ng-container>
+                  <ng-container *ngIf="invoiceNumberValidateStatus === 'numberExists'">{{ 'web.literal.c972e53a948c' | i18n }}</ng-container>
                 
               </ng-template>
             </nz-form-control>

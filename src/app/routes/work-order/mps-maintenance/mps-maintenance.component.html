@@ -40,7 +40,7 @@
                         (blur)="mpsNumberChange($event)" [disabled]="!newMPS"/>
                         <ng-template #mpsNumberErrorTpl let-control>  
                             <ng-container *ngIf="mpsNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                            <ng-container *ngIf="mpsNumberValidateStatus === 'numberExists'">MPS Number already exists</ng-container>
+                            <ng-container *ngIf="mpsNumberValidateStatus === 'numberExists'">{{ 'web.literal.3748e1598ecf' | i18n }}</ng-container>
                                   
                         </ng-template>
             
@@ -370,7 +370,7 @@
                 </div>
             </nz-card>
 
-            <nz-result nzStatus="warning" nzTitle="no production found" *ngIf="!isProductionLineSpinning && availableProductionLines.length == 0"> 
+            <nz-result nzStatus="warning" [nzTitle]="'web.literal.67765e78bc13' | i18n" *ngIf="!isProductionLineSpinning && availableProductionLines.length == 0">
             </nz-result>
 
             <nz-card nzTitle="{{'production-line' | i18n}}" *ngIf="availableProductionLines.length > 0"> 

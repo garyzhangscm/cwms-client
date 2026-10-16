@@ -90,6 +90,7 @@ export class QcQcRuleMaintenanceComponent implements OnInit {
     return {
       id: undefined,   
       checkPoint: "",
+      checkPointEs: "",
       enabled: true,
   
       qcRuleItemType: QCRuleItemType.YESNO,

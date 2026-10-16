@@ -110,13 +110,13 @@ export class BillingBillableActivityComponent implements OnInit {
         this.searchForm.value.dateRanger[1] : undefined;  
 
     if (startTime == null || endTime == null) {
-      this.messageService.error("please choose the time range to continue");
+      this.messageService.error(this.i18n.fanyi('web.message.90f85038a147'));
       this.isSpinning = false;
       this.searchResult = '';
       return;
     }
     if (this.searchForm.value.client == null) {
-      this.messageService.error("please choose the client to continue");
+      this.messageService.error(this.i18n.fanyi('web.message.b4dffc1fa4cd'));
       this.isSpinning = false;
       this.searchResult = '';
       return;

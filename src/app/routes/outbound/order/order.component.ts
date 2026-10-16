@@ -1773,9 +1773,7 @@ export class OutboundOrderComponent implements OnInit {
       orderLine.displayUnitOfMeasureForExpectedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
-        orderLine.expectedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.c6444feeef23', { p0: orderLine.expectedQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
   
@@ -1790,9 +1788,7 @@ export class OutboundOrderComponent implements OnInit {
       orderLine.displayUnitOfMeasureForOpenQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
-        orderLine.openQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.c6444feeef23', { p0: orderLine.openQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
 
@@ -1808,9 +1804,7 @@ export class OutboundOrderComponent implements OnInit {
       pick.displayUnitOfMeasureForQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the pick work's quantity ${ 
-        pick.quantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.30843ba96e65', { p0: pick.quantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
   
@@ -1825,9 +1819,7 @@ export class OutboundOrderComponent implements OnInit {
       pick.displayUnitOfMeasureForPickedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the pick work's picked quantity ${ 
-        pick.pickedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.9310ddae711d', { p0: pick.pickedQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
 

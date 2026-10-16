@@ -248,27 +248,27 @@ export class OutboundShipByHualeiComponent implements OnInit {
   }
   parcelFormValid() {
     if (this.parcelForm.value.productId == null) {
-      this.messageService.error("product id is required")
+      this.messageService.error(this.i18n.fanyi('web.message.b3334b77199d'))
       return false;
     }
     if (this.parcelForm.value.item == null) {
-      this.messageService.error("item is required")
+      this.messageService.error(this.i18n.fanyi('web.message.3bdd93941b20'))
       return false;
     }
     if (this.parcelForm.value.length == null) {
-      this.messageService.error("package length is required")
+      this.messageService.error(this.i18n.fanyi('web.message.10017af11419'))
       return false;
     }
     if (this.parcelForm.value.width == null) {
-      this.messageService.error("package width is required")
+      this.messageService.error(this.i18n.fanyi('web.message.cecb7a554073'))
       return false;
     }
     if (this.parcelForm.value.height == null) {
-      this.messageService.error("package height is required")
+      this.messageService.error(this.i18n.fanyi('web.message.6939c73f12de'))
       return false;
     }
     if (this.parcelForm.value.weight == null) {
-      this.messageService.error("package weight is required")
+      this.messageService.error(this.i18n.fanyi('web.message.06e8edb1d3ca'))
       return false;
     }
 

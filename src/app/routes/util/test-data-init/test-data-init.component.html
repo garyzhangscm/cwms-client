@@ -8,11 +8,9 @@
   </nz-card>
   <ng-template #extraTemplate>
     <button nz-button (click)="loadData(0)" [disabled]="loadButtonDisabled" [nzLoading]="loadButtonLoading"
-      nzType="primary">Load
-      Data</button>
+      nzType="primary">{{ 'web.literal.cfa1aeb3342e' | i18n }}</button>
     <nz-divider nzType="vertical"></nz-divider>
     <button nz-button (click)="clearData()" [disabled]="clearButtonDisabled" [nzLoading]="clearButtonLoading"
-      nzDanger>Clear
-      Data</button>
+      nzDanger>{{ 'web.literal.2f47fc43e792' | i18n }}</button>
   </ng-template>
 </ng-container>

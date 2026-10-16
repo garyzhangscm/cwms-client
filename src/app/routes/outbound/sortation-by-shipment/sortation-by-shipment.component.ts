@@ -189,7 +189,7 @@ export class OutboundSortationByShipmentComponent implements OnInit {
   searchByOrder() {
     let orderNumber =  this.searchForm.value.orderNumber;
     if (orderNumber = "") {
-      this.messageService.error("please input the order number");
+      this.messageService.error(this.i18n.fanyi('web.message.b034ff690cb7'));
       return;
     }
     this.isSpinning = true;

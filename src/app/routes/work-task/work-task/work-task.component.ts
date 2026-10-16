@@ -256,14 +256,14 @@ export class WorkTaskWorkTaskComponent implements OnInit {
   }
   assignUser() {
     if (this.currentAssigningWorkTasks == null) {      
-      this.messageService.error("Fail to load the work task to be assigned, please try again");
+      this.messageService.error(this.i18n.fanyi('web.message.c274dfe4bcc1'));
       this.queryUserInProcess = false;
       this.queryUserModal.destroy();
       return;
     }
     this.queryUserInProcess = true;
     if (this.selectedUserId == undefined) {
-      this.messageService.error("please select a user to continue");
+      this.messageService.error(this.i18n.fanyi('web.message.a3985eee7d87'));
       this.queryUserInProcess = false;
       return;
     }
@@ -380,14 +380,14 @@ export class WorkTaskWorkTaskComponent implements OnInit {
   }
   assignRole() {
     if (this.currentAssigningWorkTasks == null) {      
-      this.messageService.error("Fail to load the work task to be assigned, please try again");
+      this.messageService.error(this.i18n.fanyi('web.message.c274dfe4bcc1'));
       this.queryRoleInProcess = false;
       this.queryRoleModal.destroy();
       return;
     }
     this.queryRoleInProcess = true;
     if (this.selectedRoleId == undefined) {
-      this.messageService.error("please select a role to continue");
+      this.messageService.error(this.i18n.fanyi('web.message.6ef83ec47a7f'));
       this.queryRoleInProcess = false;
       return;
     }

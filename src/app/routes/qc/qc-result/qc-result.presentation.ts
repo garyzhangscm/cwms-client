@@ -1,3 +1,4 @@
+import { localizedQcQuestion } from '../models/qc-question-text';
 import type { QcInspectionRequest } from '../models/qc-inspection-request';
 import type { QCInspectionRequestItemOption } from '../models/qc-inspection-request-item-option';
 
@@ -17,7 +18,7 @@ function booleanText(value: unknown, t: Translate): string {
   if (value === false || value === 'false') return t('qc-view.no');
   return String(value);
 }
-export function presentCheck(option: QCInspectionRequestItemOption, t: Translate) {
+export function presentCheck(option: QCInspectionRequestItemOption, t: Translate, language = 'en') {
   const rule = option.qcRuleItem;
   const kind = rule?.qcRuleItemType;
   const actual = kind === 'NUMBER' ? option.doubleValue : kind === 'YESNO' ? option.booleanValue : kind === 'STRING' ? option.stringValue : undefined;
@@ -29,7 +30,7 @@ export function presentCheck(option: QCInspectionRequestItemOption, t: Translate
   const skipped = excluded.has(option.qcInspectionResult);
   return {
     exceptionNotes: option.exceptionNotes?.trim() || '',
-    checkpoint: rule?.checkPoint || t('qc-view.unnamed-check'),
+    checkpoint: localizedQcQuestion(rule, language) || t('qc-view.unnamed-check'),
     standard,
     actual: hasActual ? (kind === 'YESNO' ? booleanText(actual, t) : String(actual)) : t('qc-view.not-recorded'),
     result: option.qcInspectionResult,
@@ -42,14 +43,14 @@ export function presentCheck(option: QCInspectionRequestItemOption, t: Translate
     currentlyDisabled: rule?.enabled === false
   };
 }
-export function presentQcRecord(record: QcInspectionRequest, t: Translate) {
+export function presentQcRecord(record: QcInspectionRequest, t: Translate, language = 'en') {
   const inventories = [...(record.inventories ?? []), ...(record.inventory ? [record.inventory] : [])]
     .filter((inventory, index, all) => inventory && all.findIndex(other => inventory.id != null ? other?.id === inventory.id : other === inventory) === index);
   const workOrder = record.workOrder ?? record.workOrderQCSample?.workOrder;
   const inspectionType = record.type || (record.workOrderQCSample ? 'BY_WORK_ORDER_SAMPLING' : '');
   const item = record.item ?? record.inventory?.item ?? inventories.find(i => i.item)?.item ?? workOrder?.item;
   const groups = (record.qcInspectionRequestItems ?? []).map(group => {
-    const checks = (group.qcInspectionRequestItemOptions ?? []).map(option => presentCheck(option, t));
+    const checks = (group.qcInspectionRequestItemOptions ?? []).map(option => presentCheck(option, t, language));
     return { name: group.qcRule?.name || t('qc-view.unnamed-rule'), resultLabel: resultLabel(group.qcInspectionResult, t), tone: resultTone(group.qcInspectionResult),
       checks: checks.filter(check => !check.skipped), excluded: checks.filter(check => check.skipped) };
   });

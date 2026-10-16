@@ -73,7 +73,7 @@
       <!--
       <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
       -->
-      <button nz-button (click)="st.export(items, { filename: 'items.xlsx', sheetname: 'items' })">Export</button>
+      <button nz-button (click)="st.export(items, { filename: 'items.xlsx', sheetname: 'items' })">{{ 'web.literal.3664895579f0' | i18n }}</button>
     </div>
   
     
@@ -146,8 +146,8 @@
       <ng-template #expand let-item let-index="index" let-column="column">
          
         <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'"> 
-          <nz-tab *ngIf="item.itemPackageTypes == null || item.itemPackageTypes.length == 0" nzTitle="No Package Type">
-             No package type is defined yet, please maintain the item package type
+          <nz-tab *ngIf="item.itemPackageTypes == null || item.itemPackageTypes.length == 0" [nzTitle]="'web.literal.859fc8cb5ded' | i18n">
+             {{ 'web.literal.bd603e6b4922' | i18n }}
           </nz-tab>
           <nz-tab *ngFor="let itemPackageType of item.itemPackageTypes" [nzTitle]="itemPackageType.name!">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeTable
@@ -328,7 +328,7 @@
         <p class="ant-upload-drag-icon">
           <span nz-icon nzType="inbox"></span>
         </p>
-        <p class="ant-upload-text">Click or drag file to this area to upload</p>
+        <p class="ant-upload-text">{{ 'web.literal.c3f9c09ab6f7' | i18n }}</p>
       </nz-upload>
     </div>
   </div> 

@@ -118,16 +118,16 @@
                     <nz-list-item-action  *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.YESNO">
                         <nz-radio-group  [(ngModel)]="qcInspectionRequestItemOption.value"
                             (ngModelChange)="qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption)">
-                            <label nz-radio nzValue="NOT_APPLY">{{'N/A' | i18n}}</label>
-                            <label nz-radio nzValue="YES">{{'Yes' | i18n}}</label>
-                            <label nz-radio nzValue="NO">{{'No' | i18n}}</label>
+                            <label nz-radio nzValue="NOT_APPLY">{{'web.dynamic.e2f79e5b6033' | i18n}}</label>
+                            <label nz-radio nzValue="YES">{{'web.dynamic.85a39ab345d6' | i18n}}</label>
+                            <label nz-radio nzValue="NO">{{'web.dynamic.1ea442a134b2' | i18n}}</label>
                         </nz-radio-group>
                     </nz-list-item-action>
 
                     <!--  item of number type -->
                     <nz-list-item-action  *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.NUMBER">
                       <label nz-checkbox [ngModel]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
-                      (ngModelChange)="notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption, $event)">{{'N/A' | i18n}}</label>
+                      (ngModelChange)="notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption, $event)">{{'web.dynamic.e2f79e5b6033' | i18n}}</label>
                       <nz-input-number [nzDisabled]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
                       [(ngModel)]="qcInspectionRequestItemOption.doubleValue"
                         (ngModelChange)="qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption)"
@@ -137,7 +137,7 @@
                     <!--  item of string type -->
                     <nz-list-item-action  *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.STRING">
                       <label nz-checkbox [ngModel]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
-                      (ngModelChange)="notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption, $event)">{{'N/A' | i18n}}</label>
+                      (ngModelChange)="notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption, $event)">{{'web.dynamic.e2f79e5b6033' | i18n}}</label>
                       <input nz-input  [disabled]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
                         [(ngModel)]="qcInspectionRequestItemOption.stringValue"
                         (ngModelChange)="qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption)"
@@ -145,7 +145,7 @@
                       />
                     </nz-list-item-action>
                   </ul>
-                  {{ qcInspectionRequestItemOption.qcRuleItem.checkPoint  }}
+                  {{ qcInspectionRequestItemOption.qcRuleItem | qcQuestion }}
                   <app-qc-failure-note *ngIf="reviewEnabled && stepIndex === 0" [option]="qcInspectionRequestItemOption"></app-qc-failure-note>
                 </li>
               </ul>
@@ -201,7 +201,7 @@
                                 <i nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"   [nzTwotoneColor]="'#eb2f96'"></i></span>
                     </nz-list-item-action>
                   </ul>
-                  {{ qcInspectionRequestItemOption.qcRuleItem.checkPoint  }}
+                  {{ qcInspectionRequestItemOption.qcRuleItem | qcQuestion }}
                   <p *ngIf="reviewEnabled && qcInspectionRequestItemOption.exceptionNotes" class="qc-failure-notes">{{ 'qc-review.notes' | i18n }}: {{ qcInspectionRequestItemOption.exceptionNotes }}</p>
                 </li>
               </ul>
@@ -240,7 +240,7 @@
   <ng-container *nzModalContent>
     <p>{{ 'qc-review.confirm-help' | i18n }} ({{ failures.length }})</p>
     <section *ngFor="let option of failures" class="qc-failure-summary">
-      <strong>{{ option.qcRuleItem.checkPoint }}</strong>
+      <strong>{{ option.qcRuleItem | qcQuestion }}</strong>
       <p>{{ 'qc-view.standard' | i18n }}: {{ presentFailure(option).standard }} · {{ 'qc-view.actual' | i18n }}: {{ presentFailure(option).actual }}</p>
       <p class="qc-failure-notes">{{ option.exceptionNotes }}</p>
     </section>
