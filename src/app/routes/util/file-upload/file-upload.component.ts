@@ -6,7 +6,7 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
+import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
 import { UserService } from '../../auth/services/user.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -16,6 +16,8 @@ import { FileUploadResult } from '../models/file-upload-result';
 import { FileUploadType } from '../models/file-upload-type';
 import { FileUploadColumnMappingService } from '../services/file-upload-column-mapping.service';
 import { FileUploadOperationService } from '../services/file-upload-operation.service';
+import { Observable, from } from 'rxjs';
+import { prepareOrderImportCsv } from '../utils/order-import-csv';
 
 @Component({
     selector: 'app-util-file-upload',
@@ -83,6 +85,11 @@ export class UtilFileUploadComponent implements OnInit {
   selectedFileUploadType?: FileUploadType;
   selectedFileUploadUrl = '';
   fileUploadDisabled = false;
+  checkingOrderImport = false;
+  orderImportValidationError = '';
+  private columnMappingsReady = false;
+  private columnMappingVersion = 0;
+  private readonly preparedOrderFiles = new WeakMap<object, Blob>();
   isSpinning = false;
   showResultModal = false;
 
@@ -199,17 +206,63 @@ export class UtilFileUploadComponent implements OnInit {
           
   }
 
-  loadColumnMapping(): void { 
+  beforeUpload = (file: NzUploadFile): boolean | Observable<boolean> => {
+    if (this.selectedFileUploadType?.name !== 'orders') return true;
+    return from(this.prepareOrderFile(file));
+  };
+
+  transformUploadFile = (file: NzUploadFile): Blob | NzUploadFile =>
+    this.preparedOrderFiles.get(file) ?? file;
+
+  private async prepareOrderFile(file: NzUploadFile): Promise<boolean> {
+    this.orderImportValidationError = '';
+    this.checkingOrderImport = true;
+    try {
+      if (!this.columnMappingsReady) throw new Error('mappingNotReady');
+      if (!file.name.toLowerCase().endsWith('.csv')) throw new Error('csvRequired');
+      const mappingVersion = this.columnMappingVersion;
+      const source = file.originFileObj ?? (file as unknown as File);
+      const buffer = await source.arrayBuffer();
+      const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(buffer);
+      // Do not use mappings from another type if the selection changed while reading.
+      if (this.selectedFileUploadType?.name !== 'orders' || !this.columnMappingsReady || mappingVersion !== this.columnMappingVersion) return false;
+      const prepared = prepareOrderImportCsv(text, this.fileUploadTypeColumnMappings);
+      if (prepared.issues.length) {
+        this.orderImportValidationError = this.i18n.fanyi('outbound.order.import.invalidRows', {
+          rows: prepared.issues.slice(0, 20).map(issue => issue.line).join(', '),
+          count: prepared.issues.length
+        });
+        return false;
+      }
+      this.preparedOrderFiles.set(file, new File([prepared.content], file.name, { type: 'text/csv;charset=utf-8' }));
+      if (prepared.trimmedRows) this.msg.info(this.i18n.fanyi('outbound.order.import.trimmed', { count: prepared.trimmedRows }));
+      return true;
+    } catch (error) {
+      const code = error instanceof Error ? error.message : '';
+      const known = ['mappingNotReady', 'csvRequired', 'missingColumn', 'ambiguousColumn', 'invalidCsv'];
+      this.orderImportValidationError = this.i18n.fanyi(`outbound.order.import.${known.includes(code) ? code : 'readFailed'}`);
+      return false;
+    } finally {
+      this.checkingOrderImport = false;
+    }
+  }
+
+  loadColumnMapping(): void {
+    const version = ++this.columnMappingVersion;
+    this.columnMappingsReady = false;
+    this.orderImportValidationError = '';
     this.fileUploadTypeColumnMappings.clear();
     if (this.loadFileForm.value.fileTypeSelector) {
       this.fileUploadColumnMappingService.getFileUploadColumnMapping(this.loadFileForm.value.fileTypeSelector).subscribe(
       {
         next: (fileUploadColumnMappingRes) => {
+          if (version !== this.columnMappingVersion) return;
           fileUploadColumnMappingRes.forEach(
             fileUploadColumnMapping => {
               this.fileUploadTypeColumnMappings.set(fileUploadColumnMapping.columnName, fileUploadColumnMapping.mapToColumnName)
             }
           );
+          this.columnMappingsReady = true;
         } 
       }); 
     } 

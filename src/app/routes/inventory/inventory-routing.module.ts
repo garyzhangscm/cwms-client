@@ -1,3 +1,4 @@
+import { PreprintedLpnsComponent } from './preprinted-lpns/preprinted-lpns.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {  aclCanActivate, ACLGuardType } from '@delon/acl';
@@ -51,6 +52,8 @@ import { InventoryItemBarcodeTypeComponent } from './item-barcode-type/item-barc
 import { HandoffLocationsComponent } from './handoff-locations/handoff-locations.component';
 
 const routes: Routes = [
+  { path: 'preprinted-lpns', component: PreprintedLpnsComponent, canActivate: [aclCanActivate],
+    data: { guard: { role: ['/inventory/preprinted-lpns', 'admin', 'system-admin'] } as ACLGuardType, guard_url: '/exception/403' } },
   { path: 'handoff-locations', component: HandoffLocationsComponent,
     canActivate: [aclCanActivate],
     data: {

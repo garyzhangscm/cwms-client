@@ -29,6 +29,10 @@
 <nz-spin *ngIf="optionAllowed" [nzSpinning]="isSpinning" [nzSize]="'large'">
   <ng-container>
     <nz-card>
+      <div *ngIf="orderImportValidationError" role="alert" style="color: #d4380d; margin-bottom: 16px; white-space: normal;">
+        {{ orderImportValidationError }}
+      </div>
+      <p *ngIf="selectedFileUploadType?.name === 'orders'">{{ 'outbound.order.import.hint' | i18n }}</p>
       <form nz-form [formGroup]="loadFileForm">
         <div nz-row [nzGutter]="24">
           <div nz-col [nzSpan]="12">
@@ -43,7 +47,7 @@
                   name="Type"
                   formControlName="fileTypeSelector"
                   (ngModelChange)="selectedFileTypeChanged($event)"
-                  [nzDisabled]="!fromMenu"
+                  [nzDisabled]="!fromMenu || checkingOrderImport"
                 >
                   <nz-option
                     *ngFor="let fileType of allowedFileTypes"
@@ -57,8 +61,8 @@
           </div>
           <div nz-col [nzSpan]="12">
             <nz-form-item>
-              <nz-upload [nzAction]="selectedFileUploadUrl" (nzChange)="handleChange($event)">
-                <button nz-button [disabled]="fileUploadDisabled" *ngIf="!displayOnly">
+              <nz-upload [nzBeforeUpload]="beforeUpload" [nzTransformFile]="transformUploadFile" [nzDisabled]="fileUploadDisabled || checkingOrderImport" [nzAction]="selectedFileUploadUrl" (nzChange)="handleChange($event)">
+                <button nz-button [disabled]="fileUploadDisabled || checkingOrderImport" *ngIf="!displayOnly">
                   <i nz-icon nzType="upload"></i>
                   {{ 'file-upload' | i18n }}
                 </button>

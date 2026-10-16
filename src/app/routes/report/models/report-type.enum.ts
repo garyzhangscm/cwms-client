@@ -1,4 +1,5 @@
 export enum ReportType {
+    PREPRINTED_LPN_LABEL = 'PREPRINTED_LPN_LABEL',
 
 
     ORDER_PICK_SHEET = 'ORDER_PICK_SHEET',

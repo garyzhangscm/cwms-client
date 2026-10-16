@@ -38,16 +38,23 @@
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl" 
                 nzValidateStatus="{{ orderNumberValidateStatus == 'success' ? 'success' : 
-                    (orderNumberValidateStatus == 'warning' ? 'warning' : 'error') }}" 
+                    (orderNumberValidateStatus == 'validating' ? 'validating' :
+                    (orderNumberValidateStatus == 'warning' ? 'warning' : 'error')) }}"
                 >
         
 
                   <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentOrder!.number" required 
-                    (blur)="orderNumberChange($event)" [disabled]="!newOrder"/>
+                    (ngModelChange)="onOrderNumberInput($event)" (blur)="orderNumberChange($event)" [disabled]="!newOrder"/>
                   <ng-template #orderNumberErrorTpl let-control>  
                       @if (orderNumberValidateStatus === 'required') {
 
                         <ng-container >{{ 'error.form.field.required' | i18n }}</ng-container>
+                      }
+                      @if (orderNumberValidateStatus === 'whitespace') {
+                        <ng-container>{{ 'outbound.order.number.noSpaces' | i18n }}</ng-container>
+                      }
+                      @if (orderNumberValidateStatus === 'checkFailed') {
+                        <ng-container>{{ 'outbound.order.number.checkFailed' | i18n }}</ng-container>
                       }
                       @if (orderNumberValidateStatus === 'numberExists') {
 

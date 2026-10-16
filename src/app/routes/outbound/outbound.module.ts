@@ -1,3 +1,4 @@
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NgModule, Type } from '@angular/core'; 
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzCascaderModule } from 'ng-zorro-antd/cascader';
@@ -187,6 +188,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         NzDatePickerModule ,
         NzUploadModule ,
         NzAlertModule ,
+        NzPopoverModule,
         CommonModule,
         NgxGpAutocompleteModule,
         NzRadioModule,

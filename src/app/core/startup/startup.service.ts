@@ -282,6 +282,9 @@ export class StartupService {
                         if (!menu.children.some(child => child.link === '/inventory/handoff-locations')) {
                           menu.children.push({text: 'External Handoff Locations', i18n: 'workspace.external-handoff', link: '/inventory/handoff-locations'});
                         }
+                        if (!menu.children.some(child => child.link === '/inventory/preprinted-lpns')) {
+                          menu.children.push({text: 'Print LPN Labels', i18n: 'inventory.preprinted.title', link: '/inventory/preprinted-lpns'});
+                        }
                         foundInventory = true;
                       }
                       if (menu.children && addHandoff(menu.children)) foundInventory = true;
