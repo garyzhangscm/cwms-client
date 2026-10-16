@@ -118,6 +118,9 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       const errortext = CODEMESSAGE[err.status] || err.statusText; 
       // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
       console.log(`!! will throw error ${err.status}`);
+      // A missing capability endpoint is expected while the backend upgrade is pending.
+      if (err.status === 404 && newReq.method === 'GET'
+        && /\/outbound\/allocation-tasks\/capabilities(?:\?|$)/.test(url)) return throwError(() => err);
       // The settings page displays its own access and service errors.
       if (url.includes('/integration-settings/') || url.includes('/inventory-handoff/')) return throwError(() => err);
       // The delete confirmation displays the business rejection itself.

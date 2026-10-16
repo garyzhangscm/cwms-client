@@ -34,3 +34,243 @@ button {
   border: 1px solid #d9d9d9;
   border-radius: 6px;
 }
+
+.order-results {
+  padding-top: 0;
+  overflow: hidden;
+  text-align: left;
+  border-color: var(--mes-line);
+  border-radius: 14px;
+  background: var(--mes-surface);
+}
+
+.order-results-toolbar {
+  display: flex;
+  align-items: center;
+  min-height: 54px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--mes-line);
+
+  button { margin-left: 0; }
+}
+
+.order-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  white-space: nowrap;
+
+  button {
+    height: 32px;
+    margin-left: 0;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+}
+
+.order-print-options {
+  width: 300px;
+  max-width: calc(100vw - 64px);
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    color: var(--mes-ink);
+
+    + .order-print-options__row { border-top: 1px solid var(--mes-line); }
+  }
+}
+
+:host ::ng-deep .order-list-table {
+  .ant-table-thead > tr > th {
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 18px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 20px;
+    vertical-align: middle;
+  }
+}
+
+.order-address {
+  display: block;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.order-primary-value {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: var(--mes-blue);
+  background: var(--mes-blue-soft);
+  font-size: 11px;
+  font-weight: 600;
+
+  &--complete { color: var(--mes-muted); background: var(--mes-surface-soft); }
+}
+
+.order-cancellation-flag {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  border-radius: 50%;
+  color: #9a6700;
+  background: #fff1c2;
+  font-weight: 700;
+  cursor: help;
+}
+
+.order-detail-summary {
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--mes-line);
+  border-radius: 10px;
+  color: var(--mes-ink);
+  background: var(--mes-surface);
+
+  h3 { margin: 0 0 16px; font-size: 15px; }
+  h4 { margin: 0 0 10px; color: var(--mes-muted); font-size: 12px; }
+  dl { margin: 0; }
+  dl > div { margin-bottom: 10px; }
+  dt { color: var(--mes-muted); font-size: 12px; }
+  dd { margin: 2px 0 0; overflow-wrap: anywhere; }
+}
+
+.order-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+:host ::ng-deep .order-list-table .order-quantity-cell { text-align: right; }
+
+.order-address--summary {
+  display: block;
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.order-details-toggle {
+  margin-bottom: 12px;
+  text-align: right;
+
+  button { margin-left: 0; }
+}
+
+.order-customer-name,
+.order-po-number {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 18px;
+}
+
+// All order-detail tabs share the same table edge, without nested expand-icon indentation.
+:host ::ng-deep .order-detail-tabs .ant-table {
+  margin: 0 !important;
+}
+
+:host ::ng-deep .order-line-table {
+  table { width: 100% !important; table-layout: fixed !important; }
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 10px 8px;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 18px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .order-line-quantity-cell { text-align: right; }
+  button { margin-left: 0; padding: 0 7px; font-size: 12px; }
+  .ant-skeleton-element .ant-skeleton-input { width: 100%; min-width: 0; }
+  nz-skeleton-element { max-width: 100%; }
+}
+.order-line-item-name { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.order-line-item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+  margin-top: 3px;
+  color: var(--mes-muted);
+  font-size: 11px;
+  button { height: 22px; padding: 0 !important; font-size: 11px; }
+}
+.order-line-quantity-value { display: block; font-weight: 600; font-variant-numeric: tabular-nums; }
+.order-line-info {
+  width: 300px;
+  max-width: calc(100vw - 56px);
+  margin: 0;
+  > div { display: flex; justify-content: space-between; gap: 20px; padding: 6px 0; }
+  dt { color: var(--mes-muted); }
+  dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+}
+
+:host ::ng-deep .order-compact-table {
+  table { width: 100% !important; table-layout: fixed !important; }
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    min-width: 0;
+    padding: 10px 8px;
+    font-size: 12px;
+    line-height: 18px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .order-compact-number { text-align: right; font-variant-numeric: tabular-nums; }
+  button { margin-left: 0; padding: 0 7px; font-size: 12px; }
+  .ant-empty { max-width: 100%; }
+}
+.order-compact-meta { display: block; margin-top: 3px; color: var(--mes-muted); font-size: 11px; }
+.order-compact-location {
+  overflow-wrap: anywhere;
+  + .order-compact-location { margin-top: 3px; }
+  > span { color: var(--mes-muted); font-size: 11px; }
+}
+.order-pick-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  > * { max-width: 100%; }
+  button { margin-left: 0; }
+}
+
+.allocation-feedback {
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center;
+  margin-bottom: 16px; padding: 14px 18px; border: 1px solid var(--mes-border, #dce4ef);
+  border-radius: 12px; background: var(--mes-surface, #fff); color: var(--mes-ink, #243047);
+  span { overflow-wrap: anywhere; }
+  &--error { border-left: 4px solid #d58b27; }
+}
+.allocation-row-state { display: block; margin-top: 5px; font-size: 11px; line-height: 1.4; }

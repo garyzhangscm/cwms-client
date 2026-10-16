@@ -2,8 +2,8 @@ import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
-import { map, timeout } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap, timeout } from 'rxjs/operators';
 import { Inventory } from '../../inventory/models/inventory';
  
 import { ReportHistory } from '../../report/models/report-history';
@@ -34,15 +34,18 @@ export class OrderService {
     startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory, 
     customerName?: string, customerId?: number, 
     startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date,
-    trailerAppointmentId?: number, clientId?: number, poNumber?: string): Observable<Order[]> {
+    trailerAppointmentId?: number, clientId?: number, poNumber?: string,
+    ignoreNumberEdgeWhitespace = false): Observable<Order[]> {
        
     let params = new HttpParams();
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
 
     let url = `outbound/orders`;
     
-    if (number) { 
-      params = params.append('number',number.trim()); 
+    const searchNumber = ignoreNumberEdgeWhitespace
+      ? this.normalizeOrderSearchNumber(number ?? '') : number?.trim();
+    if (searchNumber) {
+      params = params.append('number', searchNumber);
     }
     if (poNumber) { 
       params = params.append('poNumber',poNumber.trim()); 
@@ -90,7 +93,23 @@ export class OrderService {
       params = params.append('specificCreatedDate', this.dateTimeService.getLocalDateString(specificCreatedDate));    
     }
 
-    return this.http.get(url, params).pipe(map(res => res.data));
+    const exactQuery = this.http.get(url, params).pipe(map(res => res.data as Order[]));
+    if (!ignoreNumberEdgeWhitespace || !searchNumber || searchNumber.includes('*')) {
+      return exactQuery;
+    }
+    return exactQuery.pipe(switchMap(orders => {
+      if (orders.length) return of(orders);
+      // Legacy numbers can contain NBSP or invisible characters at either edge.
+      // Keep all other filters and narrow candidates back to the complete number.
+      return this.http.get(url, params.delete('number')).pipe(
+        map(res => (res.data as Order[]).filter(order =>
+          this.normalizeOrderSearchNumber(order.number).toUpperCase() === searchNumber.toUpperCase()))
+      );
+    }));
+  }
+
+  private normalizeOrderSearchNumber(number: string): string {
+    return number.replace(/^[\s\u200B\u2060]+|[\s\u200B\u2060]+$/g, '');
   }
 
   getOrder(id: number): Observable<Order> {

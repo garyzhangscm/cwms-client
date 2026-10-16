@@ -4,7 +4,7 @@ const spanish=JSON.parse(fs.readFileSync('src/assets/tmp/i18n/es-ES.json','utf8'
 const overrides=compiled('src/app/core/i18n/web-label-overrides.ts').WEB_LABEL_OVERRIDES;
 const fallbacks=compiled('src/app/core/i18n/static-label-fallbacks.ts').STATIC_LABEL_FALLBACKS;
 for(const [key,value]of Object.entries(fallbacks)){assert.equal(typeof spanish[key],'string',key);assert.deepEqual((spanish[key].match(/{{.*?}}/g)||[]).sort(),(value.match(/{{.*?}}/g)||[]).sort(),key);}
-for(const key of Object.keys(overrides['en-US']))assert.equal(typeof spanish[key],'string',key);
+for(const key of Object.keys(overrides['en-US']))assert.equal(typeof (overrides['es-ES']?.[key] ?? spanish[key]),'string',key);
 for(const [key,value]of Object.entries(JSON.parse(fs.readFileSync('src/assets/tmp/i18n/en-US.json','utf8'))))assert.equal(typeof spanish[key],'string',key);
 class HttpBackend{}class HttpClient{constructor(backend){assert.equal(backend,staticBackend);}get(url,options){requests.push({url,options});return of(spanish);}}class DelonHttp{}class Settings{}class Platform{}class Nz{}class Delon{}const ignore=Symbol('ignore');
 class Context{set(k,v){this[k]=v;return this;}get(k){return this[k];}}

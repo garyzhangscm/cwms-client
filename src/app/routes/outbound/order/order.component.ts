@@ -1,5 +1,5 @@
 import { DatePipe, formatDate } from '@angular/common';
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder,  UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -52,6 +52,7 @@ import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { OrderDocumentService } from '../services/order-document.service';
 import { OrderLineService } from '../services/order-line.service';
 import { OrderService } from '../services/order.service';
+import { AllocationMonitorService, AllocationProgress } from '../services/allocation-monitor.service';
 import { ParcelPackageService } from '../services/parcel-package.service';
 import { AllocationStrategyType } from '../models/allocation-strategy-type.enum';
 import { PickService } from '../services/pick.service';
@@ -60,6 +61,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 
 
 import * as XLSX from 'xlsx';
+import { Observable, Subscription, TimeoutError, finalize, take, tap, throwIfEmpty, timeout } from 'rxjs';
 import { DateTimeService } from '../../util/services/date-time.service';
 
 
@@ -69,9 +71,14 @@ import { DateTimeService } from '../../util/services/date-time.service';
     styleUrls: ['./order.component.less'],
     standalone: false
 })
-export class OutboundOrderComponent implements OnInit {
+export class OutboundOrderComponent implements OnInit, OnDestroy {
  
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly allocationMonitor = inject(AllocationMonitorService);
+  private allocationSubscriptions = new Map<number, Subscription>();
+  private allocationLatestSubscription?: Subscription;
+  allocationProgress = new Map<number, AllocationProgress>();
+  lastAllocationProgress?: AllocationProgress;
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
@@ -143,7 +150,7 @@ export class OutboundOrderComponent implements OnInit {
   
   searchForm = this.fb.nonNullable.group({
     number: this.fb.control('', { nonNullable: true, validators: []}), 
-    orderStatus: this.fb.control<OrderStatus | undefined>(undefined, { nonNullable: true, validators: []}), 
+    orderStatus: this.fb.control<OrderStatus | undefined>(OrderStatus.OPEN, { nonNullable: true, validators: []}),
     customer: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: []}), 
     completeTimeRanger: this.fb.control(undefined, { nonNullable: true, validators: []}), 
     completeDate: this.fb.control(undefined, { nonNullable: true, validators: []}), 
@@ -215,6 +222,13 @@ export class OutboundOrderComponent implements OnInit {
   unpickForm!: UntypedFormGroup;
 
   searching = false;
+  searchError = '';
+  detailWarning = '';
+  orderDetailsOrder?: Order;
+  removingOrderIds = new Set<number>();
+  private searchSubscription?: Subscription;
+  private detailSubscriptions = new Subscription();
+  private detailLoadVersion = 0;
   searchResult = '';
 
   tabSelectedIndex = 0;
@@ -271,6 +285,8 @@ export class OutboundOrderComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
         this.searchForm.controls.number.setValue(params['number']);
+        // Links to a specific order must also find completed and cancelled orders.
+        this.searchForm.controls.orderStatus.setValue(undefined);
         this.search();
       }
     });
@@ -297,7 +313,7 @@ export class OutboundOrderComponent implements OnInit {
        
     });
 
-    this.localCacheService.getWarehouseConfiguration().subscribe({
+    this.localCacheService.getWarehouseConfiguration().pipe(timeout(15000)).subscribe({
       next: (warehouseConfigRes) => {
 
         if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
@@ -314,7 +330,42 @@ export class OutboundOrderComponent implements OnInit {
   }
 
  
+  ngOnDestroy(): void {
+    this.searchSubscription?.unsubscribe();
+    this.allocationLatestSubscription?.unsubscribe();
+    this.allocationSubscriptions.forEach(subscription => subscription.unsubscribe());
+    this.allocationSubscriptions.clear();
+    this.cancelDetailLoading();
+  }
+
+  private cancelDetailLoading(): void {
+    this.orderDetailsOrder = undefined;
+    this.detailLoadVersion++;
+    this.detailSubscriptions.unsubscribe();
+    this.detailSubscriptions = new Subscription();
+    this.loadingOrderDetailsRequest = 0;
+  }
+
+  private trackOrderDetail<T>(request: Observable<T>, apply: (value: T) => void): void {
+    this.loadingOrderDetailsRequest++;
+    this.detailSubscriptions.add(request.pipe(
+      take(1),
+      timeout(15000),
+      tap(apply),
+      finalize(() => this.loadingOrderDetailsRequest--)
+    ).subscribe({
+      error: () => {
+        this.detailWarning = 'Some order details could not be loaded. Search again to retry.';
+      }
+    }));
+  }
+
   resetForm(): void {
+    this.searchSubscription?.unsubscribe();
+    this.cancelDetailLoading();
+    this.searchError = '';
+    this.detailWarning = '';
+    this.searchResult = '';
     this.searchForm.reset();
     this.listOfAllOrders = [];
     this.listOfDisplayOrders = [];
@@ -322,7 +373,11 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   search(tabSelectedIndex?: number): void {
-    this.isSpinning = true;
+    this.searchSubscription?.unsubscribe();
+    this.cancelDetailLoading();
+    this.searchError = '';
+    this.detailWarning = '';
+    this.searching = true;
     this.searchResult = '';
     
     let startCompleteTime : Date | undefined = this.searchForm.value.completeTimeRanger ? 
@@ -339,7 +394,7 @@ export class OutboundOrderComponent implements OnInit {
 
     console.log(`query by created date: ${startCreatedTime} - ${endCreatedTime} specificCreatedDate: ${specificCreatedDate}`);
 
-    this.orderService.getOrders(
+    this.searchSubscription = this.orderService.getOrders(
       this.searchForm.value.number, 
       false, 
       this.searchForm.value.orderStatus, 
@@ -351,24 +406,29 @@ export class OutboundOrderComponent implements OnInit {
       startCreatedTime, endCreatedTime, specificCreatedDate, 
       undefined, 
       this.searchForm.value.client, 
-      this.searchForm.value.poNumber).subscribe({
+      this.searchForm.value.poNumber, true).pipe(
+        timeout(60000),
+        finalize(() => this.searching = false)
+      ).subscribe({
 
         next: (orderRes) => {
-          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: orderRes.length,
           });
           
-          this.listOfAllOrders = this.calculateQuantities(orderRes);  
-          this.refreshDetailInformations(orderRes);
-          if (tabSelectedIndex) {
+          this.listOfAllOrders = this.calculateQuantities(orderRes);
+          void this.refreshDetailInformations(orderRes);
+          this.restoreAllocationResults(orderRes);
+          if (tabSelectedIndex != null) {
             this.tabSelectedIndex = tabSelectedIndex;
           }
         }, 
-        error: () => {
-          this.isSpinning = false;
+        error: error => {
           this.searchResult = '';
+          this.searchError = error instanceof TimeoutError
+            ? 'Order search timed out after 60 seconds. Try an order number, status or date filter, then search again.'
+            : 'Unable to load orders. Please search again. Previously displayed results may be out of date.';
         },
       });
   }
@@ -379,8 +439,8 @@ export class OutboundOrderComponent implements OnInit {
   async refreshDetailInformations(orders: Order[]) {  
     // const currentPageOrders = this.getCurrentPageOrders(); 
     let index = 0;
-    this.loadingOrderDetailsRequest = 0;
-    while (index < orders.length) {
+    const version = this.detailLoadVersion;
+    while (index < orders.length && version === this.detailLoadVersion) {
 
       // we will need to make sure we are at max loading detail information
       // for 10 orders at a time(each order may have 5 different request). 
@@ -389,21 +449,22 @@ export class OutboundOrderComponent implements OnInit {
       // console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
       
       
-      while(this.loadingOrderDetailsRequest > 50) {
+      while(this.loadingOrderDetailsRequest > 50 && version === this.detailLoadVersion) {
         // sleep 50ms        
         await this.delay(50);
       } 
       
+      if (version !== this.detailLoadVersion) return;
       this.refreshDetailInformation(orders[index]);
       index++;
     } 
-    while(this.loadingOrderDetailsRequest > 0) {
+    while(this.loadingOrderDetailsRequest > 0 && version === this.detailLoadVersion) {
       // sleep 50ms        
       await this.delay(100);
     }  
     // refresh the table while everything is loaded
     // console.log(`mnaually refresh the table`);   
-    this.st.reload();  
+    if (version === this.detailLoadVersion) this.st.reload(undefined, { toTop: false });
   }
  
   getCurrentPageOrders() : Order[]{ 
@@ -451,93 +512,63 @@ export class OutboundOrderComponent implements OnInit {
   loadClient(order: Order) {
      
     if (order.clientId && order.client == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getClient(order.clientId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getClient(order.clientId), (res) => {
             order.client = res;
-            this.loadingOrderDetailsRequest--;
-          }, 
-          error: () => this.loadingOrderDetailsRequest--
-        }
-      );      
+
+          });
     } 
   }
   
   loadCarrier(order: Order) {
      
     if (order.carrierId && order.carrier == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getCarrier(order.carrierId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getCarrier(order.carrierId), (res) => {
             order.carrier = res; 
             // load the carrier service level as well
             if (order.carrierServiceLevelId) {
-              order.carrierServiceLevel = res.carrierServiceLevels.find(service => service.id === order.carrierServiceLevelId)
+              order.carrierServiceLevel = res.carrierServiceLevels?.find(service => service.id === order.carrierServiceLevelId)
             }
           
-            this.loadingOrderDetailsRequest--;
-          }, 
-          error: () => this.loadingOrderDetailsRequest--
-        }
-      );      
+
+          });
     }  
   }
   loadSupplier(order: Order) {
      
     if (order.supplierId && order.supplier == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getSupplier(order.supplierId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getSupplier(order.supplierId), (res) => {
             order.supplier = res; 
           
-            this.loadingOrderDetailsRequest--;
-          }, 
-          error: () => this.loadingOrderDetailsRequest--
-        }
-      );      
+
+          });
     }  
   }
 
   loadBillableActivityInformation(order: Order) {
-     order.orderBillableActivities.forEach(
+     (order.orderBillableActivities ?? []).forEach(
         orderBillableActivity => {
 
           if (orderBillableActivity.billableActivityTypeId && orderBillableActivity.billableActivityType == null) {
-            this.loadingOrderDetailsRequest++;
-            this.localCacheService.getBillableActivityType(orderBillableActivity.billableActivityTypeId).subscribe(
-              {
-                next: (res) => {
+            this.trackOrderDetail(this.localCacheService.getBillableActivityType(orderBillableActivity.billableActivityTypeId), (res) => {
                   orderBillableActivity.billableActivityType = res; 
                 
-                  this.loadingOrderDetailsRequest--;
-                }, 
-                error: () => this.loadingOrderDetailsRequest--
-              }
-            );      
+
+                });
           }  
         }
      );
 
      
-     order.orderLines.forEach( 
+     (order.orderLines ?? []).forEach(
         orderLine => {
-           orderLine.orderLineBillableActivities.forEach(
+           (orderLine.orderLineBillableActivities ?? []).forEach(
               orderLineBillableActivity => {
                 if (orderLineBillableActivity.billableActivityTypeId && orderLineBillableActivity.billableActivityType == null) {
-                  this.loadingOrderDetailsRequest++;
-                  this.localCacheService.getBillableActivityType(orderLineBillableActivity.billableActivityTypeId).subscribe(
-                    {
-                      next: (res) => {
+                  this.trackOrderDetail(this.localCacheService.getBillableActivityType(orderLineBillableActivity.billableActivityTypeId), (res) => {
                         orderLineBillableActivity.billableActivityType = res; 
                       
-                        this.loadingOrderDetailsRequest--;
-                      }, 
-                      error: () => this.loadingOrderDetailsRequest--
-                    }
-                  );      
+
+                      });
                 }  
               }
            )
@@ -549,95 +580,61 @@ export class OutboundOrderComponent implements OnInit {
   loadCustomer(order: Order) {
      
     if (order.billToCustomerId && order.billToCustomer == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getCustomer(order.billToCustomerId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getCustomer(order.billToCustomerId), (res) => {
             order.billToCustomer = res; 
           
-            this.loadingOrderDetailsRequest--;
-          }, 
-          error: () => this.loadingOrderDetailsRequest--
-        }
-      );      
+
+          });
     } 
     
     if (order.shipToCustomerId && order.shipToCustomer == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getCustomer(order.shipToCustomerId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getCustomer(order.shipToCustomerId), (res) => {
             order.shipToCustomer = res; 
              
-            this.loadingOrderDetailsRequest--;
-          }, 
-          error: () => this.loadingOrderDetailsRequest--
-        }
-      );      
+
+          });
     } 
   }
   
   loadStageLocation(order: Order) {
      
     if (order.stageLocationGroupId && order.stageLocationGroup == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getLocationGroup(order.stageLocationGroupId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getLocationGroup(order.stageLocationGroupId), (res) => {
             order.stageLocationGroup = res;
-            this.loadingOrderDetailsRequest--;
-          }, 
-          error: () => this.loadingOrderDetailsRequest--
-        }
-      );      
+
+          });
     } 
     if (order.stageLocationId && order.stageLocation == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getLocation(order.stageLocationId).subscribe(
-        {
-          next: (res) =>{ 
+      this.trackOrderDetail(this.localCacheService.getLocation(order.stageLocationId), (res) =>{
             order.stageLocation = res;
           
-            this.loadingOrderDetailsRequest--;
-          }, 
-          error: () => this.loadingOrderDetailsRequest--
-        }
-      );      
+
+          });
     } 
   }
   
   loadOrderLinesInfo(order: Order) {
-    order.orderLines.forEach(
+    (order.orderLines ?? []).forEach(
       orderLine => this.loadOrderLineInfo(orderLine)
     )
   }
   
   loadOrderLineInfo(orderLine: OrderLine) { 
     if (orderLine.inventoryStatusId && orderLine.inventoryStatus == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getInventoryStatus(orderLine.inventoryStatusId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getInventoryStatus(orderLine.inventoryStatusId), (res) => {
             orderLine.inventoryStatus = res;
-            this.loadingOrderDetailsRequest--;
-          }
-        }
-      );      
+
+          });
     } 
     
     if (orderLine.itemId && orderLine.item == null) {
-      this.loadingOrderDetailsRequest++;
-      this.localCacheService.getItem(orderLine.itemId).subscribe(
-        {
-          next: (res) => {
+      this.trackOrderDetail(this.localCacheService.getItem(orderLine.itemId), (res) => {
             orderLine.item = res;
             this.calculateOrderLineDisplayQuantity(orderLine);
-            this.loadingOrderDetailsRequest--;
 
 
-          }
-        }
-      );      
+
+          });
     }
     else if (orderLine.item != null) { 
       this.calculateOrderLineDisplayQuantity(orderLine);
@@ -733,7 +730,7 @@ export class OutboundOrderComponent implements OnInit {
 }
 
   calculateStatisticQuantities(order: Order) {
-    order.totalLineCount = order.orderLines.length;
+    order.totalLineCount = (order.orderLines ?? []).length;
     
     
     order.totalExpectedQuantity = 0;
@@ -744,7 +741,7 @@ export class OutboundOrderComponent implements OnInit {
     order.totalPickedQuantity = 0;
     order.totalOpenPickQuantity = 0;
 
-    order.orderLines.forEach( 
+    (order.orderLines ?? []).forEach(
         orderLine => {
           order.totalExpectedQuantity! += orderLine.expectedQuantity;
           order.totalOpenQuantity! += orderLine.openQuantity;
@@ -754,27 +751,20 @@ export class OutboundOrderComponent implements OnInit {
 
         } 
     );
-    this.loadingOrderDetailsRequest++;
-    this.shipmentLineService.getShipmentLinesByOrder(order.id!).subscribe({
-      next: (shipmentLineRes) => {
+    this.trackOrderDetail(this.shipmentLineService.getShipmentLinesByOrder(order.id!), (shipmentLineRes) => {
         shipmentLineRes.forEach(shipmentLine => {
 
           // console.log(`add ${shipmentLine.openQuantity} to totalPendingAllocationQuantity: ${order.totalPendingAllocationQuantity}`);
           order.totalPendingAllocationQuantity! += shipmentLine.openQuantity;
         })
-        this.loadingOrderDetailsRequest--;
-      }
-    });
 
-    this.loadingOrderDetailsRequest++;
-    this.pickService.getPicksByOrder(order.id!).subscribe({
-      next: (pickRes) => {
+      });
+    this.trackOrderDetail(this.pickService.getPicksByOrder(order.id!), (pickRes) => {
         
         order.totalPickedQuantity = pickRes.map(pick => pick.pickedQuantity).reduce((sum, current) => sum + current, 0);
           order.totalOpenPickQuantity = pickRes.map(pick => (pick.quantity - pick.pickedQuantity)).reduce((sum, current) => sum + current, 0);
-          this.loadingOrderDetailsRequest--;
-      }
-    })
+
+      })
      
 
   }
@@ -797,14 +787,14 @@ export class OutboundOrderComponent implements OnInit {
   calculateQuantities(orders: Order[]): Order[] {
     orders.forEach(order => {
       const existingItemIds = new Set();
-      order.totalLineCount = order.orderLines.length;
+      order.totalLineCount = (order.orderLines ?? []).length;
       order.totalItemCount = 0;
       order.totalExpectedQuantity = 0;
       order.totalOpenQuantity = 0;
       order.totalInprocessQuantity = 0;
       order.totalShippedQuantity = 0;
 
-      order.orderLines.forEach(orderLine => {
+      (order.orderLines ?? []).forEach(orderLine => {
         order.totalExpectedQuantity! += orderLine.expectedQuantity;
         order.totalOpenQuantity! += orderLine.openQuantity;
         order.totalInprocessQuantity! += orderLine.inprocessQuantity;
@@ -856,13 +846,59 @@ export class OutboundOrderComponent implements OnInit {
    */
 
   allocateOrder(order: Order): void {
-    this.isSpinning = true;
-    this.orderService.allocateOrder(order).subscribe(orderRes => {
-      this.messageService.success(this.i18n.fanyi('message.allocate.success'));
-      this.isSpinning = false;
-      this.search();
-    }, 
-    () =>  this.isSpinning = false);
+    const previous = this.allocationProgress.get(order.id!);
+    if (previous?.state === 'UNKNOWN' || previous?.requiresReview) {
+      this.lastAllocationProgress = previous;
+      return;
+    }
+    this.followAllocation(order, false);
+  }
+
+  allocationBusy(order: Order): boolean {
+    const state = this.allocationProgress.get(order.id!)?.state;
+    return state === 'CHECKING' || state === 'QUEUED' || state === 'RUNNING';
+  }
+
+  allocationDescription(progress: AllocationProgress): string {
+    if (progress.errorCode === 'INVALID_STRATEGY' && !progress.id) return this.i18n.fanyi('outbound.allocation.strategy', { lines: progress.message || '—' });
+    if (progress.state === 'UNKNOWN') return this.i18n.fanyi(progress.legacy ? 'outbound.allocation.legacyUnknown' : 'outbound.allocation.unknown');
+    if (progress.errorCode === 'NO_ALLOCATABLE_LINES') return this.i18n.fanyi('outbound.allocation.noLines');
+    if (progress.errorCode === 'ORDER_NOT_READY') return this.i18n.fanyi('outbound.allocation.notReady');
+    return progress.message || '';
+  }
+
+  private followAllocation(order: Order, resume: boolean): void {
+    if (this.allocationSubscriptions.get(order.id!) && !this.allocationSubscriptions.get(order.id!)!.closed) return;
+    // Mark immediately, before the first network response, to prevent duplicate clicks.
+    if (!resume) this.allocationProgress.set(order.id!, { orderId: order.id!, orderNumber: order.number, state: 'CHECKING' });
+    const source = resume ? this.allocationMonitor.resume(order) : this.allocationMonitor.start(order);
+    const subscription = source.subscribe(progress => {
+      const previous = this.allocationProgress.get(order.id!);
+      this.allocationProgress.set(order.id!, progress);
+      this.lastAllocationProgress = progress;
+      if (progress.state === 'SUCCEEDED' && previous?.state !== 'SUCCEEDED') this.search();
+    });
+    this.allocationSubscriptions.set(order.id!, subscription);
+  }
+
+  private restoreAllocationResults(orders: Order[]): void {
+    this.allocationLatestSubscription?.unsubscribe();
+    this.allocationLatestSubscription = this.allocationMonitor.latest(orders).subscribe({
+      next: results => results.forEach(progress => {
+        if (this.allocationBusy({ id: progress.orderId } as Order)) return;
+        this.allocationProgress.set(progress.orderId, progress);
+        if (progress.state === 'RUNNING' || progress.state === 'QUEUED') {
+          const order = orders.find(row => row.id === progress.orderId);
+          if (order) this.followAllocation(order, true);
+        } else if (progress.state === 'FAILED' || progress.state === 'UNKNOWN') this.lastAllocationProgress = progress;
+      }),
+      error: () => { /* A task lookup failure must never trigger a new allocation. */ }
+    });
+  }
+
+  checkAllocationResult(orderId: number): void {
+    const progress = this.allocationProgress.get(orderId);
+    if (progress) this.followAllocation({ id: orderId, number: progress.orderNumber } as Order, true);
   }
 
   
@@ -1038,7 +1074,7 @@ export class OutboundOrderComponent implements OnInit {
     } 
   }
   isOrderAllocatable(order: Order): boolean {
-    return this.orderService.isOrderAllocatable(order);
+    return !this.allocationBusy(order) && this.allocationProgress.get(order.id!)?.state !== 'UNKNOWN' && !this.allocationProgress.get(order.id!)?.requiresReview && this.orderService.isOrderAllocatable(order);
   }
   isOrderModifiable(order: Order): boolean {
     return order.status != OrderStatus.ALLOCATING  &&
@@ -1371,97 +1407,17 @@ export class OutboundOrderComponent implements OnInit {
 
   @ViewChild('st', { static: true })
   st!: STComponent;
+  readonly trackOrderById = (_index: number, order: STData): unknown => order['id'] ?? order;
   orderTableColumns: STColumn[] = [
-    { title: this.i18n.fanyi("order.number"), 
-      render: 'orderNumberColumn',
-      fixed: 'left', iif: () => this.isChoose('number'), width: 50},
-    { title: this.i18n.fanyi("order.category"), 
-      index: 'category', fixed: 'left',
-      format: (item, _col, index) => this.i18n.fanyi(`ORDER-CATEGORY-${ item.category}` ), 
-      
-      iif: () => this.isChoose('category'), width: 150},
-    { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 150 },   
-    { title: this.i18n.fanyi("order.completedTime"), 
-        render: 'completedTimeColumn', fixed: 'left', iif: () => this.isChoose('completedTime'), width: 150 },   
-    { title: this.i18n.fanyi("poNumber"), index: 'poNumber', iif: () => this.isChoose('poNumber'), width: 150 },   
-    
-    { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.threePartyLogisticsFlag && this.isChoose('client'), width: 150},
-    {
-      title: this.i18n.fanyi("supplier"),
-      // renderTitle: 'customTitle',
-      render: 'supplierColumn',
-      iif: () => this.isChoose('supplier'), width: 150
-    },
-    {
-      title: this.i18n.fanyi("carrier"),
-      // renderTitle: 'customTitle',
-      render: 'carrierColumn',
-      iif: () => this.isChoose('carrier'), width: 150
-    },
-    {
-      title: this.i18n.fanyi("service"),
-      // renderTitle: 'customTitle',
-      render: 'carrierServiceColumn',
-      iif: () => this.isChoose('carrierService'), width: 150
-    },
-    {
-      title: this.i18n.fanyi("shipToCustomer"),
-      // renderTitle: 'customTitle',
-      render: 'shipToCustomerColumn',
-      iif: () => this.isChoose('shipToCustomer'), width: 150
-    },
-    {
-      title: this.i18n.fanyi("shipToCustomer"),
-      // renderTitle: 'customTitle',
-      render: 'shipToCustomeAddressColumn',
-      iif: () => this.isChoose('shipToCustomerAddress'), width: 150
-    },
-    {
-      title: this.i18n.fanyi("order.billToCustomer"),
-      // renderTitle: 'customTitle',
-      render: 'billToCustomerColumn',
-      iif: () => this.isChoose('billToCustomer'), width: 150
-    },
-    {
-      title: this.i18n.fanyi("order.billToCustomer"),
-      // renderTitle: 'customTitle',
-      render: 'billToCustomerAddressColumn',
-      iif: () => this.isChoose('billToCustomerAddress'), width: 150
-    },
-    { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), width: 150},
-    { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), width: 150 },
-    { title: this.i18n.fanyi("order.totalOpenQuantity"), index: 'totalOpenQuantity', iif: () => this.isChoose('totalOpenQuantity'), width: 100 },
-    { title: this.i18n.fanyi("shipment.stage.locationGroup"), index: 'stageLocationGroup.description', iif: () => this.isChoose('stageLocationGroup'),width: 100 },
-    { title: this.i18n.fanyi("shipment.stage.location"), index: 'stageLocation.name', iif: () => this.isChoose('stageLocation'), width: 100},    
-    { title: this.i18n.fanyi("order.totalInprocessQuantity"), index: 'totalInprocessQuantity', iif: () => this.isChoose('totalInprocessQuantity'), width: 100},
-    {
-      title: this.i18n.fanyi('order.totalInprocessQuantity'),
-      iif: () => this.isChoose('totalInprocessQuantity'),
-      children: [
-        { title: this.i18n.fanyi("order.totalPendingAllocationQuantity"), index: 'totalPendingAllocationQuantity', iif: () => this.isChoose('totalPendingAllocationQuantity'), }, 
-        { title: this.i18n.fanyi("order.totalOpenPickQuantity"), index: 'totalOpenPickQuantity', iif: () => this.isChoose('totalOpenPickQuantity'), }, 
-        { title: this.i18n.fanyi("order.totalPickedQuantity"), index: 'totalPickedQuantity', iif: () => this.isChoose('totalPickedQuantity'), },    
-      ],width: 100
-    },
-    { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), width: 100},     
-    { title: this.i18n.fanyi("order.cancelRequested"), index: 'cancelRequested', iif: () => this.isChoose('cancelRequested'), width: 200 , type: 'yn'},     
-    { title: this.i18n.fanyi("order.cancelRequestedTime"), render: 'cancelRequestedTimeColumn', iif: () => this.isChoose('cancelRequestedTimeColumn'), width: 200},     
-    { title: this.i18n.fanyi("order.cancelRequestedUsername"), index: 'cancelRequestedUsername', iif: () => this.isChoose('cancelRequestedUsername'), width: 200},     
-    { 
-      title: this.i18n.fanyi("action"),fixed: 'right',width: 250, 
-      render: 'actionColumn',
-      iif: () => !this.displayOnly
-    },
-    /**
-     * 
-    {
-      title: 'print',
-      renderTitle: 'printColumnTitle',fixed: 'right',width: 210, 
-      render: 'printColumn',
-    },
-     * 
-     */
-   
+    { title: this.i18n.fanyi('order.number'), render: 'orderNumberColumn', fixed: 'left', width: 125 },
+    { title: this.i18n.fanyi('outbound.order.column.customer'), render: 'shipToCustomerColumn', width: 120 },
+    { title: this.i18n.fanyi('outbound.order.details.shipAddress'), render: 'shipToCustomeAddressColumn', width: 150 },
+    { title: this.i18n.fanyi('poNumber'), render: 'poNumberColumn', width: 115 },
+    { title: this.i18n.fanyi('status'), render: 'orderStatusColumn', width: 90 },
+    { title: this.i18n.fanyi('outbound.order.column.quantity'), index: 'totalExpectedQuantity', width: 70, className: 'order-quantity-cell' },
+    { title: this.i18n.fanyi('outbound.order.column.shipped'), index: 'totalShippedQuantity', width: 70, className: 'order-quantity-cell' },
+    { title: this.i18n.fanyi('outbound.order.column.open'), index: 'totalOpenQuantity', width: 70, className: 'order-quantity-cell' },
+    { title: this.i18n.fanyi('action'), render: 'actionColumn', fixed: 'right', width: 185, iif: () => !this.displayOnly }
   ];
   customColumns = [
 
@@ -1492,6 +1448,15 @@ export class OutboundOrderComponent implements OnInit {
     { label: this.i18n.fanyi("order.cancelRequestedTime"), value: 'cancelRequestedTimeColumn', checked: true },
     { label: this.i18n.fanyi("order.cancelRequestedUsername"), value: 'cancelRequestedUsername', checked: true },
   ];
+
+  formatOrderAddress(order: Order, kind: 'shipTo' | 'billTo'): string {
+    const parts = kind === 'shipTo'
+      ? [order.shipToContactorFirstname, order.shipToContactorLastname, order.shipToAddressLine1,
+        order.shipToAddressLine2, order.shipToAddressCity, order.shipToAddressState, order.shipToAddressPostcode]
+      : [order.billToContactorFirstname, order.billToContactorLastname, order.billToAddressLine1,
+        order.billToAddressLine2, order.billToAddressCity, order.billToAddressState, order.billToAddressPostcode];
+    return parts.filter(part => part?.trim()).join(', ');
+  }
 
   isChoose(key: string): boolean {
     return !!this.customColumns.find(w => w.value === key && w.checked);
@@ -1530,7 +1495,12 @@ export class OutboundOrderComponent implements OnInit {
             iif: () => !this.displayOnly },
   ];
 
-  orderTableChanged(event: STChange) : void { 
+  toggleOrderDetails(order: Order): void {
+    this.orderDetailsOrder = this.orderDetailsOrder === order ? undefined : order;
+  }
+
+  orderTableChanged(event: STChange) : void {
+    if (event.type === 'expand') this.orderDetailsOrder = undefined;
     if (event.type === 'expand' && event.expand.expand === true) {
       
       this.showOrderDetails(event.expand);
@@ -1547,17 +1517,34 @@ export class OutboundOrderComponent implements OnInit {
         order.totalInprocessQuantity === order.totalPendingAllocationQuantity;
   }
 
-  removeOrder(order: Order) : void{
+  removeOrder(order: Order): void {
+    if (order.id == null || this.removingOrderIds.has(order.id)) return;
+    const id = order.id;
+    this.searchSubscription?.unsubscribe();
+    this.cancelDetailLoading();
+    this.removingOrderIds.add(id);
     this.isSpinning = true;
-    this.orderService.removeOrder(order).subscribe({
+    this.orderService.removeOrder(order).pipe(
+      take(1),
+      timeout(60000),
+      throwIfEmpty(() => new Error('No deletion response')),
+      finalize(() => {
+        this.removingOrderIds.delete(id);
+        this.isSpinning = this.removingOrderIds.size > 0;
+      })
+    ).subscribe({
       next: () => {
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-        this.isSpinning = false;
+        // Show success immediately, independently of the subsequent list query.
+        this.listOfAllOrders = this.listOfAllOrders.filter(row => row.id !== id);
+        this.listOfDisplayOrders = this.listOfDisplayOrders.filter(row => row.id !== id);
+        this.messageService.success(this.i18n.fanyi('outbound.order.remove.success', { number: order.number.trim() }));
         this.search();
-      }, 
-      error: () => this.isSpinning = false
+      },
+      error: error => {
+        this.messageService.error(this.i18n.fanyi(error instanceof TimeoutError
+          ? 'outbound.order.remove.timeout' : 'outbound.order.remove.failed', { number: order.number.trim() }));
+      }
     });
-
   }
 
   cancelSelectedPick(order: Order, errorLocation: boolean, generateCycleCount: boolean): void {
@@ -2062,59 +2049,16 @@ export class OutboundOrderComponent implements OnInit {
   stOrderLineTableColumns: STColumn[] = [];
   setupOrderLineTableColumns() {
 
-    this.stOrderLineTableColumns = [ 
-      { title: this.i18n.fanyi("order.line.number"), index: 'number', width: 150 },  
-      { title: this.i18n.fanyi("item"), render: 'itemColumn',   width: 250 },  
-      { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
-      { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
-      { title: this.i18n.fanyi("style"), index: 'style', width: 150 }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
-            index: 'inventoryAttribute1' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute1Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,  
-            index: 'inventoryAttribute2' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute2Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,  
-            index: 'inventoryAttribute3' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute3Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
-            index: 'inventoryAttribute4' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute4Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
-            index: 'inventoryAttribute5' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute5Enabled == true, width: 150  
-      }, 
-
-      { title: this.i18n.fanyi("allocateByReceiptNumber"), render: 'allocateByReceiptNumberColumn', width: 150 },  
-      { title: this.i18n.fanyi("order.line.expectedQuantity"), render: 'displayExpectedQuantityColumn',  width: 150 },  
-      { title: this.i18n.fanyi("order.line.openQuantity"), render: 'displayOpenQuantityColumn', width: 150 },  
-      { title: this.i18n.fanyi("order.line.inprocessQuantity"), index: 'inprocessQuantity', width: 150 },  
-      { title: this.i18n.fanyi("production-plan.line.inprocessQuantity"), index: 'productionPlanInprocessQuantity', width: 150 },  
-      { title: this.i18n.fanyi("production-plan.line.producedQuantity"), index: 'productionPlanProducedQuantity', width: 150 },  
-      { title: this.i18n.fanyi("order.line.shippedQuantity"), index: 'shippedQuantity', width: 150 },  
-      { title: this.i18n.fanyi("inventory.status"), render: 'inventoryStatusColumn', width: 150 },  
-      { title: this.i18n.fanyi("order.line.allocationStrategyType"), render: 'allocationStrategyTypeColumn', width: 150 }, 
-        
-      {
-        title: this.i18n.fanyi("action"), 
-        render: 'actionColumn', 
-        width: 250,
-        fixed: 'right',
-        iif: () => !this.displayOnly
-  
-      },   
+    this.stOrderLineTableColumns = [
+      { title: this.i18n.fanyi('outbound.order.line.number'), index: 'number', width: '9%' },
+      { title: this.i18n.fanyi('item'), render: 'itemColumn', width: '37%' },
+      { title: this.i18n.fanyi('outbound.order.line.ordered'), render: 'displayExpectedQuantityColumn', width: '14%', className: 'order-line-quantity-cell' },
+      { title: this.i18n.fanyi('outbound.order.line.shipped'), render: 'displayShippedQuantityColumn', width: '12%', className: 'order-line-quantity-cell' },
+      { title: this.i18n.fanyi('outbound.order.line.open'), render: 'displayOpenQuantityColumn', width: '14%', className: 'order-line-quantity-cell' },
+      { title: this.i18n.fanyi('action'), render: 'actionColumn', width: '14%', iif: () => !this.displayOnly }
     ];
   }
- 
+
   formatterDollar = (value: number): string => `$ ${value}`;
   // parserDollar = (value: string): string => value.replace('$ ', '');
   parserDollar = (value: string): number => parseFloat(value?.replace(/\$\s?|(,*)/g, ''));
@@ -2126,7 +2070,7 @@ export class OutboundOrderComponent implements OnInit {
       next: () => {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("message.action.success"));
-        this.search(6);
+        this.search(5);
       }, 
       error: () => this.isSpinning = false
     })
@@ -2732,53 +2676,11 @@ export class OutboundOrderComponent implements OnInit {
  @ViewChild('shortAllocationTable', { static: false })
  shortAllocationTable!: STComponent;
  shortAllocationTableColumns: STColumn[] = [
-      { title: this.i18n.fanyi("item"), index: 'item.name', width: 150 },  
-      { title: this.i18n.fanyi("item.description"), index: 'item.description', width: 150 },  
-      { title: this.i18n.fanyi("short-allocation.quantity"), index: 'quantity', width: 150 },  
-      { title: this.i18n.fanyi("short-allocation.openQuantity"), index: 'openQuantity', width: 150 },  
-      { title: this.i18n.fanyi("short-allocation.inprocessQuantity"), index: 'inprocessQuantity', width: 150 },  
-      { title: this.i18n.fanyi("short-allocation.deliveredQuantity"), index: 'deliveredQuantity', width: 150 },   
-      
-      { title: this.i18n.fanyi("short-allocation.status"), render: 'statusColumn', width: 150 ,  },       
-      { title: this.i18n.fanyi("short-allocation.allocationCount"), index: 'allocationCount', width: 150 },   
-      { title: this.i18n.fanyi("short-allocation.lastAllocationDatetime"), render: 'lastAllocationDatetimeColumn', width: 150 },   
-
-
-      { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
-      { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
-      { title: this.i18n.fanyi("style"), index: 'style', width: 150 }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
-            index: 'inventoryAttribute1' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute1Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,  
-            index: 'inventoryAttribute2' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute2Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,  
-            index: 'inventoryAttribute3' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute3Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
-            index: 'inventoryAttribute4' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute4Enabled == true, width: 150  
-      }, 
-      { title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
-            this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
-            index: 'inventoryAttribute5' ,
-          iif: () =>  this.inventoryConfiguration?.inventoryAttribute5Enabled == true, width: 150  
-      }, 
-
-      { 
-        title: this.i18n.fanyi("action"),fixed: 'right',width: 150, 
-        render: 'actionColumn',
-        iif: () => !this.displayOnly
-      }, 
-  
+   { title: this.i18n.fanyi('item'), render: 'shortItemColumn', width: '40%' },
+   { title: this.i18n.fanyi('outbound.order.pick.qty'), index: 'quantity', width: '16%', className: 'order-compact-number' },
+   { title: this.i18n.fanyi('outbound.order.line.open'), index: 'openQuantity', width: '16%', className: 'order-compact-number' },
+   { title: this.i18n.fanyi('short-allocation.status'), render: 'statusColumn', width: '14%' },
+   { title: this.i18n.fanyi('action'), render: 'actionColumn', width: '14%', iif: () => !this.displayOnly }
  ];
 
  openChangeOrderCompletedTimeModal(

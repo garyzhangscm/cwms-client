@@ -1,3 +1,5 @@
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { PreprintedLpnsComponent } from './preprinted-lpns/preprinted-lpns.component';
 import { CommonModule, DatePipe } from '@angular/common'; 
 import { NgModule, Type } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
@@ -141,7 +143,8 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [ 
+  imports: [
+    NzAlertModule,
     InventoryRoutingModule,
     DirectivesModule,
     NzDescriptionsModule,
@@ -185,6 +188,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     
   ],
   declarations: [
+    PreprintedLpnsComponent,
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],

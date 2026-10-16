@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
-import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { take, timeout } from 'rxjs/operators';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
@@ -75,6 +76,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   avaiableLocationGroups: LocationGroup[] = [];
 
   avaiableLocations: WarehouseLocation[] = [];
+  private orderNumberValidationVersion = 0;
   orderNumberValidateStatus = 'warning'; 
   shipStageLocationGroupStatus = 'success'; 
   shipStageLocationStatus = 'success'; 
@@ -459,6 +461,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     }
   }
   passValidation() : boolean {
+    if (!this.validateOrderNumberInput()) return false;
 
     if (this.stepIndex === 0) {
       return this.orderNumberValidateStatus === 'success' && 
@@ -469,7 +472,12 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     return true;
   }
 
-  confirm() { 
+  confirm() {
+    if (!this.validateOrderNumberInput() || this.orderNumberValidateStatus !== 'success') {
+      this.stepIndex = 0;
+      this.messageService.error(this.i18n.fanyi('outbound.order.number.checkBeforeSave'));
+      return;
+    }
     this.isSpinning = true;
     // for outsourcing order, we will clear the stage location
     // for non outsource order, we will clear the supplier(supplier is the one
@@ -573,25 +581,49 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     );
   }
   
+  onOrderNumberInput(value: string): void {
+    ++this.orderNumberValidationVersion;
+    this.currentOrder!.number = value;
+    this.orderNumberValidateStatus = 'warning';
+    this.validateOrderNumberInput(false);
+  }
+
+  validateOrderNumberInput(normalize = true): boolean {
+    if (!this.currentOrder) return false;
+    const number = (this.currentOrder.number ?? '').replace(/^[\s\u200B\u2060]+|[\s\u200B\u2060]+$/g, '');
+    if (normalize) this.currentOrder.number = number;
+    if (!number) {
+      this.orderNumberValidateStatus = 'required';
+      return false;
+    }
+    if (/[\s\u200B\u2060]/.test(number)) {
+      this.orderNumberValidateStatus = 'whitespace';
+      return false;
+    }
+    return true;
+  }
+
   orderNumberChange(event: Event) {
-    // assign the value to the order, in case we press key to let the system
-    // generate the next order number
-    this.currentOrder!.number = (event.target as HTMLInputElement).value; 
-    if (this.currentOrder!.number) {
-      // THE USER input the order number, let's make sure it is not exists yet
-      this.orderService.getOrders(this.currentOrder!.number).subscribe({
-        next: (orderRes) => {
-          if (orderRes.length > 0) {
-            // the order is already exists 
-            this.orderNumberValidateStatus = 'numberExists'
-          }
+    const version = ++this.orderNumberValidationVersion;
+    const input = event.target as HTMLInputElement;
+    this.currentOrder!.number = input.value;
+    const valid = this.validateOrderNumberInput();
+    input.value = this.currentOrder!.number;
+    if (!valid) return;
+    const number = this.currentOrder!.number;
+    this.orderNumberValidateStatus = 'validating';
+    this.orderService.getOrders(number).pipe(take(1), timeout(15000)).subscribe({
+      next: orders => {
+        if (version !== this.orderNumberValidationVersion || this.currentOrder?.number !== number) return;
+        this.orderNumberValidateStatus = orders.some(order => order.id !== this.currentOrder?.id)
+          ? 'numberExists' : 'success';
+      },
+      error: () => {
+        if (version === this.orderNumberValidationVersion && this.currentOrder?.number === number) {
+          this.orderNumberValidateStatus = 'checkFailed';
         }
-      })
-      this.orderNumberValidateStatus = 'success'
-    }
-    else {
-      this.orderNumberValidateStatus = 'required'
-    }
+      }
+    });
   }
 
   removeOrderLine(index: number) {
