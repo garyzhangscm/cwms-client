@@ -48,7 +48,7 @@
               <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'required'">
                 {{ 'error.form.field.required' | i18n }}</ng-container>
               <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'numberExists'">
-                QC Inspection Request Number already exists</ng-container>
+                {{ 'web.literal.e790a8cfb303' | i18n }}</ng-container>
              
           </ng-template>
         </nz-form-control>
@@ -165,7 +165,7 @@
                   [nzIndeterminate]="stat.checkHalf"
                   (nzCheckedChange)="onItemSelectAll($event)"
                 ></th>
-                <th>Name</th>
+                <th>{{ 'web.literal.dcd1d5223f73' | i18n }}</th>
                 
               </tr>
             </thead>
@@ -233,7 +233,7 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
-                        <td>{{ qcRuleItem.checkPoint }}</td>
+                        <td>{{ qcRuleItem | qcQuestion }}</td>
                         <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
                         <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
                         <td>{{ qcRuleItem.expectedValue }}</td>

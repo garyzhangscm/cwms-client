@@ -69,7 +69,7 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
 
     if (startTime == null || endTime == null) {
       this.isSpinning = false;
-      this.messageService.error("please select the time range");
+      this.messageService.error(this.i18n.fanyi('web.message.efc175d9f9a5'));
       return;
     }
     this.lightMesService.getPulseCountHistory(

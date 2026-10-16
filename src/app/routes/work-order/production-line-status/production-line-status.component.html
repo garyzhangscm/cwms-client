@@ -54,7 +54,7 @@
     <st #st [data]="listOfProductionLineStatus"  [columns]="columns" > 
       <ng-template st-row="lastCycleTimeColumn" let-item let-index="index"> 
             
-        {{ item.lastCycleTime | number}} <strong>S</strong>
+        {{ item.lastCycleTime | number}} <strong>{{ 'web.literal.8de0b3c47f11' | i18n }}</strong>
       </ng-template>
       <ng-template st-row="lastCycleHappensTimingColumn" let-item let-index="index"> 
             
@@ -62,7 +62,7 @@
       </ng-template>
       <ng-template st-row="averageCycleTimeColumn" let-item let-index="index"> 
             
-        {{ item.averageCycleTime | number}} <strong>S</strong>
+        {{ item.averageCycleTime | number}} <strong>{{ 'web.literal.8de0b3c47f11' | i18n }}</strong>
       </ng-template>
       <ng-template st-row="startTimeColumn" let-item let-index="index"> 
             

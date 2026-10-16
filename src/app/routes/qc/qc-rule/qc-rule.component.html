@@ -52,8 +52,8 @@
               [nzShowPagination]="true" #qcRuleItemTable>
               <thead>
                 <th>
-                  {{ 'qcRule.checkPoint' | i18n }}
-                </th>
+                  {{ 'web.bound.13898880e1c0' | i18n: { p0: ('qcRule.checkPoint' | i18n) } }}</th>
+                <th>{{ 'web.literal.519a653be4d2' | i18n }}</th>
                 <th>
                   {{ 'qcRule.qcRuleItemType' | i18n }}
                 </th>
@@ -71,6 +71,7 @@
               <tbody>
                 <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
                   <td>{{ qcRuleItem.checkPoint }}</td>
+                  <td>{{ qcRuleItem.checkPointEs || '—' }}</td>
                   <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
                   <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
                   <td>{{ qcRuleItem.expectedValue }}</td>

@@ -30,9 +30,9 @@
       </div>
     </div>
     </form>
-    <h4>Token:</h4> 
+    <h4>{{ 'web.literal.043d590d8fb8' | i18n }}</h4>
     <p><strong>{{currentQBOToken.token}}</strong></p>
-    <h4>Refresh Token:</h4> 
+    <h4>{{ 'web.literal.0fb61ae7bd8d' | i18n }}</h4>
     <p><strong>{{currentQBOToken.refreshToken}}</strong></p>
       <button nz-button nzType="primary" (click)="requestToken()" *ngIf="!displayOnly">
         {{ 'get token' | i18n }}
@@ -47,9 +47,9 @@
         nzLabel="{{ quickbookEntity | i18n }}">
       </nz-option>
     </nz-select>
-    <span>for last 
+    <span>{{ 'web.literal.98138c24ec45' | i18n }}
       <nz-input-number [(ngModel)]="syncTransactionDays"  [nzMin]="0" [nzMax]="9999" [nzStep]="1"></nz-input-number> 
-      days
+      {{ 'web.literal.ab51004e9d71' | i18n }}
     </span>
     <button nz-button nzType="primary" (click)="syncEntity()" *ngIf="!displayOnly">
       {{ 'Sync' | i18n }}

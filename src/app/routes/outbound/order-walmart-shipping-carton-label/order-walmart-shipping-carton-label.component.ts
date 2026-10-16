@@ -268,7 +268,7 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
     let selectedWalmartShippnigCartonLabel: WalmartShippnigCartonLabel[] = 
         this.getSelectedWalmartShippingCartonLabel();
     if (selectedWalmartShippnigCartonLabel == null || selectedWalmartShippnigCartonLabel.length == 0) {
-      this.messageService.error("please select labels to print"); 
+      this.messageService.error(this.i18n.fanyi('web.message.bf62778ea87a'));
       return;
     }
     let SSCC18s = selectedWalmartShippnigCartonLabel.map(

@@ -2107,9 +2107,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       receiptLine.displayUnitOfMeasureForExpectedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
-        receiptLine.expectedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.c6444feeef23', { p0: receiptLine.expectedQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
   
@@ -2124,9 +2122,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       receiptLine.displayUnitOfMeasureForReceivedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
-      this.messageService.error(`can't change the display quantity as the line's received quantity ${ 
-        receiptLine.displayReceivedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
-          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+      this.messageService.error(this.i18n.fanyi('web.message.08768ac2662f', { p0: receiptLine.displayReceivedQuantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
     }
   }
 

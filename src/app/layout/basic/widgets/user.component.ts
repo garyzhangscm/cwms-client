@@ -52,7 +52,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     </nz-dropdown-menu>
 
     <nz-modal [(nzVisible)]="isSetupPrinterModalVisible" 
-        nzTitle="Printer"  (nzOnOk)="setupPrinter()" nzClosable="true" (nzOnCancel)="isSetupPrinterModalVisible = false">
+        [nzTitle]="'web.literal.024eac5b1a63' | i18n"  (nzOnOk)="setupPrinter()" nzClosable="true" (nzOnCancel)="isSetupPrinterModalVisible = false">
       <ng-container *nzModalContent> 
             <div nz-row [nzGutter]="24"> 
               <div nz-col [nzSpan]="24">

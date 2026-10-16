@@ -63,7 +63,7 @@
       <strong>{{ record.view.itemNumber }}</strong><div class="qc-secondary">{{ record.view.description }}</div>
     </ng-template>
     <ng-template st-row="context" let-record>
-      <div>{{ record.view.typeLabel }}</div><div class="qc-secondary">LPN: {{ record.view.lpns }}</div>
+      <div>{{ record.view.typeLabel }}</div><div class="qc-secondary">{{ 'web.bound.fa72e5c9a89a' | i18n: { p0: (record.view.lpns) } }}</div>
       @if (record.workOrder?.number) { <div class="qc-secondary">{{ 'work-order' | i18n }}: {{ record.workOrder.number }}</div> }
       @if (record.workOrderQCSample?.number) { <div class="qc-secondary">{{ 'work-order.qc-sample.number' | i18n }}: {{ record.workOrderQCSample.number }}</div> }
       @if (record.receipt?.number) { <div class="qc-secondary">{{ 'qc-view.receipt' | i18n }}: {{ record.receipt.number }}</div> }

@@ -1,6 +1,9 @@
 /** New Web labels must remain available while the resource server dictionary is older. */
 export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
   'en-US': {
+    'menu.main.common': 'Master Data',
+    'menu.main.auth': 'Users & Permissions',
+    'menu.main.util': 'Tools',
     "qc-review.inline-warning": "This answer does not meet the acceptance standard. Verify the observation and record the exception.",
     "qc-review.notes": "Exception notes",
     "qc-review.notes-help": "Describe the observed issue, not a reason to make the inspection pass.",

@@ -108,13 +108,13 @@ export class TransportationCarrierMaintenanceComponent implements OnInit {
       if (this.currentCarrier?.carrierServiceLevels.some(
         service =>    service.name == "" 
       )) {
-        this.messageService.error("carrier-service-name-required");
+        this.messageService.error(this.i18n.fanyi('carrier-service-name-required'));
         return false;
       }
       if (this.currentCarrier?.carrierServiceLevels.some(
         service =>   service.type == null 
       )) {
-        this.messageService.error("carrier-service-type-required");
+        this.messageService.error(this.i18n.fanyi('carrier-service-type-required'));
         return false;
       }
     }

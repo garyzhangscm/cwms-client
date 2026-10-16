@@ -1,33 +1,33 @@
 <div class="handoff-locations">
-  <h2>External System Handoff Locations</h2>
-  <p>Select WMEC locations used to hand inventory over to the external shipping system. Saving this list does not adjust inventory or start a schedule.</p>
-  <nz-card nzTitle="Handoff Locations">
+  <h2>{{ 'web.literal.20bcb318370a' | i18n }}</h2>
+  <p>{{ 'web.literal.1887219d7e05' | i18n }}</p>
+  <nz-card [nzTitle]="'web.literal.a797761895df' | i18n">
     <nz-spin [nzSpinning]="loading">
       <div class="location-picker">
-        <input nz-input [(ngModel)]="query" placeholder="Search location name, e.g. out"
+        <input nz-input [(ngModel)]="query" [placeholder]="'web.literal.8c72652b7f28' | i18n"
           (keyup.enter)="search()" [disabled]="saving" />
-        <button nz-button nzType="default" (click)="search()" [nzLoading]="searching" [disabled]="saving">Search</button>
-        <nz-select [(ngModel)]="selectedId" nzPlaceHolder="Select a location" [nzDisabled]="saving">
+        <button nz-button nzType="default" (click)="search()" [nzLoading]="searching" [disabled]="saving">{{ 'web.literal.49c266baaaa7' | i18n }}</button>
+        <nz-select [(ngModel)]="selectedId" [nzPlaceHolder]="'web.literal.98e583f4105c' | i18n" [nzDisabled]="saving">
           <nz-option *ngFor="let option of options" [nzValue]="option.id"
             [nzLabel]="option.name + ' (#' + option.id + ')'"
             [nzDisabled]="isSelected(option.id)"></nz-option>
         </nz-select>
-        <button nz-button nzType="default" (click)="add()" [disabled]="selectedId === null || saving">Add</button>
+        <button nz-button nzType="default" (click)="add()" [disabled]="selectedId === null || saving">{{ 'web.literal.9fd728c66c9a' | i18n }}</button>
       </div>
       <nz-table [nzData]="locations" [nzShowPagination]="false" nzSize="middle">
-        <thead><tr><th>Location</th><th>MES ID</th><th>Action</th></tr></thead>
+        <thead><tr><th>{{ 'web.literal.15b61974b270' | i18n }}</th><th>{{ 'web.literal.0a4c992837c8' | i18n }}</th><th>{{ 'web.literal.64cff1319d2f' | i18n }}</th></tr></thead>
         <tbody>
           <tr *ngFor="let location of locations">
             <td>{{ location.name }}</td>
             <td>{{ location.id }}</td>
             <td><button nz-button nzDanger nzType="default" (click)="remove(location.id)"
-              [disabled]="saving">Remove</button></td>
+              [disabled]="saving">{{ 'web.literal.c3812fc4acb8' | i18n }}</button></td>
           </tr>
         </tbody>
       </nz-table>
       <div class="actions">
-        <button nz-button nzType="primary" (click)="save()" [nzLoading]="saving" [disabled]="loading">Save Locations</button>
-        <button nz-button nzType="default" (click)="load()" [disabled]="loading || saving">Reload</button>
+        <button nz-button nzType="primary" (click)="save()" [nzLoading]="saving" [disabled]="loading">{{ 'web.literal.8223c11abf69' | i18n }}</button>
+        <button nz-button nzType="default" (click)="load()" [disabled]="loading || saving">{{ 'web.literal.bdc090ec61e3' | i18n }}</button>
       </div>
     </nz-spin>
   </nz-card>

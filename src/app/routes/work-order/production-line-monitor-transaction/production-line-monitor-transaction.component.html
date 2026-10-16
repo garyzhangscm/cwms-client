@@ -80,12 +80,12 @@
   <div class="search-result-list"> 
     <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;">
 
-      <button nz-button (click)="st.export()">Export</button> 
+      <button nz-button (click)="st.export()">{{ 'web.literal.3664895579f0' | i18n }}</button>
     </div>
     <st #st [data]="listOfProductionLineMonitorTransactions"  [columns]="columns" > 
       <ng-template st-row="cycleTimeColumn" let-item let-index="index"> 
             
-        {{ item.cycleTime | number}} <strong>S</strong>
+        {{ item.cycleTime | number}} <strong>{{ 'web.literal.8de0b3c47f11' | i18n }}</strong>
       </ng-template>
       <ng-template st-row="createdTimeColumn" let-item let-index="index"> 
             

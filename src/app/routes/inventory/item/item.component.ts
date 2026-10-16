@@ -593,13 +593,13 @@ export class InventoryItemComponent implements OnInit {
     return new Observable((observer: Observer<boolean>) => {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
-        this.messageService.error('You can only upload JPG file!');
+        this.messageService.error(this.i18n.fanyi('web.message.85a26afeb410'));
         observer.complete();
         return;
       }
       const isLt10M = file.size! / 1024 / 1024 < 10;
       if (!isLt10M) {
-        this.messageService.error('Image must smaller than 10MB!');
+        this.messageService.error(this.i18n.fanyi('web.message.a3bc93669391'));
         observer.complete();
         return;
       }
@@ -620,7 +620,7 @@ export class InventoryItemComponent implements OnInit {
         this.imageUploading = true;
         break;
       case 'done':
-        this.messageService.success(`${info.file.name} file uploaded successfully`);
+        this.messageService.success(this.i18n.fanyi('web.message.4730494bd181', { p0: info.file.name }));
         // Get this url from response in real world.
         this.getBase64(info.file!.originFileObj!, (img: string) => {
           this.imageUploading = false;
@@ -628,7 +628,7 @@ export class InventoryItemComponent implements OnInit {
         });
         break;
       case 'error':
-        this.messageService.error(`${info.file.name} file upload failed.`);
+        this.messageService.error(this.i18n.fanyi('web.message.b50ffb8bab66', { p0: info.file.name }));
         this.imageUploading = false;
         break;
     }
@@ -640,7 +640,7 @@ export class InventoryItemComponent implements OnInit {
         this.workOrderSOPUploading = true;
         break;
       case 'done':
-        this.messageService.success(`${info.file.name} file uploaded successfully`);
+        this.messageService.success(this.i18n.fanyi('web.message.4730494bd181', { p0: info.file.name }));
         // Get this url from response in real world.
         this.getBase64(info.file!.originFileObj!, (file: string) => {
           this.workOrderSOPUploading = false;
@@ -648,7 +648,7 @@ export class InventoryItemComponent implements OnInit {
         });
         break;
       case 'error':
-        this.messageService.error(`${info.file.name} file upload failed.`);
+        this.messageService.error(this.i18n.fanyi('web.message.b50ffb8bab66', { p0: info.file.name }));
         this.workOrderSOPUploading = false;
         break;
     }

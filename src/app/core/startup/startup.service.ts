@@ -233,10 +233,10 @@ export class StartupService {
                 if (menu.i18n === 'menu.main.integration') {
                   menu.children = menu.children ?? [];
                   if (!menu.children.some(child => child.link === '/integration/item-import-exceptions')) {
-                    menu.children.push({text: 'Item Import Exceptions', link: '/integration/item-import-exceptions'});
+                    menu.children.push({text: 'Item Import Exceptions', i18n: 'workspace.item-import', link: '/integration/item-import-exceptions'});
                   }
                   if (!menu.children.some(child => child.link === '/integration/work-order-import-exceptions')) {
-                    menu.children.push({text: 'Work Order Import Exceptions', link: '/integration/work-order-import-exceptions'});
+                    menu.children.push({text: 'Work Order Import Exceptions', i18n: 'workspace.work-order-import', link: '/integration/work-order-import-exceptions'});
                   }
                 }
                 if (menu.children) addImportExceptions(menu.children);
@@ -266,7 +266,7 @@ export class StartupService {
                       if (menu.i18n === 'menu.main.integration') {
                         menu.children = menu.children ?? [];
                         if (!menu.children.some(child => child.link === '/integration/settings')) {
-                          menu.children.push({text: 'Integration Setting', link: '/integration/settings'});
+                          menu.children.push({text: 'Integration Setting', i18n: 'workspace.integration-settings', link: '/integration/settings'});
                         }
                         foundIntegration = true;
                       }
@@ -280,7 +280,7 @@ export class StartupService {
                       if (menu.i18n === 'menu.main.inventory') {
                         menu.children = menu.children ?? [];
                         if (!menu.children.some(child => child.link === '/inventory/handoff-locations')) {
-                          menu.children.push({text: 'External Handoff Locations', link: '/inventory/handoff-locations'});
+                          menu.children.push({text: 'External Handoff Locations', i18n: 'workspace.external-handoff', link: '/inventory/handoff-locations'});
                         }
                         foundInventory = true;
                       }

@@ -115,13 +115,13 @@ export class WorkTaskWorkTaskConfigurationMaintenanceComponent implements OnInit
   }
   validateInput(): boolean {
     if (this.currentWorkTaskConfiguration.workTaskType == null) {
-        this.messageService.error("Work Task Type is required");
+        this.messageService.error(this.i18n.fanyi('web.message.92c901a827ee'));
         return false;
     }
 
     if (this.currentWorkTaskConfiguration.operationType == null || 
       this.currentWorkTaskConfiguration.operationType.id == null ) {
-        this.messageService.error("Operation Type is required");
+        this.messageService.error(this.i18n.fanyi('web.message.49ffc7513c3a'));
         return false;
     }
 
@@ -177,7 +177,7 @@ export class WorkTaskWorkTaskConfigurationMaintenanceComponent implements OnInit
             this.currentWorkTaskConfiguration.sourceLocationId = undefined;
           }
           else {
-            this.messageService.error(`location  ${locationName} is invalid`);
+            this.messageService.error(this.i18n.fanyi('web.message.66a1a529040b', { p0: locationName }));
           }
           this.isSpinning = false;
         },
@@ -204,7 +204,7 @@ export class WorkTaskWorkTaskConfigurationMaintenanceComponent implements OnInit
             this.currentWorkTaskConfiguration.sourceLocationId = undefined;
           }
           else {
-            this.messageService.error(`location  ${locationName} is invalid`);
+            this.messageService.error(this.i18n.fanyi('web.message.66a1a529040b', { p0: locationName }));
           }
           this.isSpinning = false;
         },

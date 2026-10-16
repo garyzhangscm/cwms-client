@@ -345,7 +345,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
             this.workOrderProduceTransaction.consumeByBom?.id === null
     )) {
 
-        this.messageService.error("BOM needs to be setup to produce from the work order");
+        this.messageService.error(this.i18n.fanyi('web.message.2ad3126fef82'));
         return false;
     }
 

@@ -9,7 +9,7 @@
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">ID</th>
+        <th nzShowSort nzSortKey="id">{{ 'web.literal.3843971dcfde' | i18n }}</th>
         <th nzShowSort nzSortKey="name" nzShowFilter [nzFilters]="filtersByName"
           (nzFilterChange)="filter($event, selectedFiltersByDescription)">
           {{'name' | i18n}}</th>

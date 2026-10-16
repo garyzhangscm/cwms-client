@@ -5,21 +5,21 @@
     
         <nz-card *ngIf="tiktokSellerShopIntegrationConfigurationList.length == 0">
             <div *ngIf="tiktokSellerShopIntegrationAuthUrlByCompany != ''">
-                Tiktok Seller Shop Integration is not setup yet, please click 
+                {{ 'web.literal.d3bb4d79f0b8' | i18n }}
                 <a [href]="tiktokSellerShopIntegrationAuthUrlByCompany" target="_blank" rel="noopener noreferrer">
-                    this link</a> 
-                    to allow CWMS to access your Tiktok Shop
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.253904a08722' | i18n }}
             </div>
         </nz-card>
         <nz-card *ngIf="tiktokSellerShopIntegrationConfigurationList.length > 0"> 
-            <span>Tiktok Seller Shop Integration is setup </span>
+            <span>{{ 'web.literal.88ac8466d96b' | i18n }} </span>
         </nz-card>
     </div>
     <div *ngIf="threePartyLogisticsFlag">
         <nz-card>
             <p>
 
-                <span>Choose a Client to Start: </span>
+                <span>{{ 'web.literal.d2f0c47b1805' | i18n }} </span>
             
                 <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
                     
@@ -31,10 +31,10 @@
                 </nz-select>
             </p>
             <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length == 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
-                Tiktok Seller Shop Integration is not setup yet, please click 
+                {{ 'web.literal.d3bb4d79f0b8' | i18n }}
                 <a [href]="tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
-                    this link</a> 
-                    to allow CWMS to access your Tiktok Shop for this client
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.1ba4e6946bee' | i18n }}
             </div>
             @for (tiktokSellerShopIntegrationConfiguration of tiktokSellerShopIntegrationConfigurationList; track tiktokSellerShopIntegrationConfiguration) {
             
@@ -67,10 +67,10 @@
             
             }  
             <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length > 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
-                Click 
+                {{ 'web.literal.95ba4ed9329f' | i18n }}
                 <a [href]="tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
-                    this link</a> 
-                    to add more Tiktok Shop for this client
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.1405ddeda562' | i18n }}
             </div>
         </nz-card> 
     </div>

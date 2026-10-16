@@ -1,11 +1,11 @@
 import type { Menu } from '@delon/theme';
 
 const sections = [
-  { text: 'Overview', keys: ['menu.dashboard'] },
-  { text: 'Production', keys: ['menu.main.work-order', 'menu.main.qc'] },
-  { text: 'Warehouse & Logistics', keys: ['menu.main.inbound', 'menu.main.inventory', 'menu.main.outbound', 'menu.main.transport'] },
-  { text: 'Finance', keys: ['menu.main.billing', 'menu.main.report', 'menu.main.alert'] },
-  { text: 'Administration', keys: ['menu.main.layout', 'menu.main.common', 'menu.main.integration', 'menu.main.work-task', 'menu.main.auth', 'menu.main.util'] }
+  { text: 'Overview', i18n: 'workspace.section.overview', keys: ['menu.dashboard'] },
+  { text: 'Production', i18n: 'workspace.section.production', keys: ['menu.main.work-order', 'menu.main.qc'] },
+  { text: 'Warehouse & Logistics', i18n: 'workspace.section.warehouse-logistics', keys: ['menu.main.inbound', 'menu.main.inventory', 'menu.main.outbound', 'menu.main.transport'] },
+  { text: 'Finance', i18n: 'workspace.section.finance', keys: ['menu.main.billing', 'menu.main.report', 'menu.main.alert'] },
+  { text: 'Administration', i18n: 'workspace.section.administration', keys: ['menu.main.layout', 'menu.main.common', 'menu.main.integration', 'menu.main.work-task', 'menu.main.auth', 'menu.main.util'] }
 ];
 
 const labels: Record<string, string> = {
@@ -35,12 +35,12 @@ const moduleIcons: Record<string, string> = {
 };
 
 const productionSections = [
-  { text: 'Planning', routes: ['bill-of-material', 'production-plan', 'mps', 'mps-view', 'mps-export', 'mrp'] },
-  { text: 'Work Orders & Execution', routes: ['work-order', 'work-order-flow', 'produce-transaction', 'pre-print-lpn-label'] },
-  { text: 'Lines & Equipment', routes: ['production-line-assignments', 'production-line', 'production-line-type', 'mould'] },
-  { text: 'Monitoring & Performance', routes: ['production-line-dashboard', 'production-line-status', 'production-line-monitor', 'production-line-monitor/transaction', 'light-mes-status-dashboard', 'silo', 'finish-good-productivity-report', 'production-mold-count-history'] },
-  { text: 'Labor', routes: ['labor', 'labor-activity'] },
-  { text: 'Configuration', routes: ['work-order-configuration', 'qc-rule-configuration', 'silo-configuration', 'light-mes-configuration'] }
+  { text: 'Planning', i18n: 'workspace.section.planning', routes: ['bill-of-material', 'production-plan', 'mps', 'mps-view', 'mps-export', 'mrp'] },
+  { text: 'Work Orders & Execution', i18n: 'workspace.section.work-orders-execution', routes: ['work-order', 'work-order-flow', 'produce-transaction', 'pre-print-lpn-label'] },
+  { text: 'Lines & Equipment', i18n: 'workspace.section.lines-equipment', routes: ['production-line-assignments', 'production-line', 'production-line-type', 'mould'] },
+  { text: 'Monitoring & Performance', i18n: 'workspace.section.monitoring-performance', routes: ['production-line-dashboard', 'production-line-status', 'production-line-monitor', 'production-line-monitor/transaction', 'light-mes-status-dashboard', 'silo', 'finish-good-productivity-report', 'production-mold-count-history'] },
+  { text: 'Labor', i18n: 'workspace.section.labor', routes: ['labor', 'labor-activity'] },
+  { text: 'Configuration', i18n: 'workspace.section.configuration', routes: ['work-order-configuration', 'qc-rule-configuration', 'silo-configuration', 'light-mes-configuration'] }
 ];
 
 function organizeProduction(entry: Menu): Menu {
@@ -62,10 +62,10 @@ function organizeProduction(entry: Menu): Menu {
         links.push(item);
       }
     }
-    if (links.length) children.push({ text: section.text, children: links });
+    if (links.length) children.push({ text: section.text, i18n: section.i18n, children: links });
   }
   const remaining = items.filter(item => !used.has(item));
-  if (remaining.length) children.push({ text: 'Other Production Tools', children: remaining });
+  if (remaining.length) children.push({ text: 'Other Production Tools', i18n: 'workspace.section.other-production-tools', children: remaining });
   return { ...entry, children };
 }
 
@@ -105,12 +105,12 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
       for (const entry of modules.filter(item => item.i18n === key)) {
         used.add(entry);
         children.push(key === 'menu.main.work-order' ? organizeProduction(entry)
-          : labels[key] ? { ...entry, text: labels[key], i18n: undefined } : entry);
+          : labels[key] ? { ...entry, text: labels[key], i18n: key } : entry);
       }
     }
-    if (children.length) result.push({ text: section.text, group: true, children });
+    if (children.length) result.push({ text: section.text, i18n: section.i18n, group: true, children });
   }
   const remaining = modules.filter(entry => !used.has(entry));
-  if (remaining.length) result.push({ text: 'Other', group: true, children: remaining });
+  if (remaining.length) result.push({ text: 'Other', i18n: 'workspace.section.other', group: true, children: remaining });
   return [...result, ...extra];
 }

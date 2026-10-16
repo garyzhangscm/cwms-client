@@ -44,7 +44,7 @@
                         (blur)="nameChange($event)" [disabled]="!newCustomReport"/>
                       <ng-template #nameErrorTpl let-control>  
                           <ng-container *ngIf="nameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                          <ng-container *ngIf="nameValidateStatus === 'nameExists'">Name already exists</ng-container>
+                          <ng-container *ngIf="nameValidateStatus === 'nameExists'">{{ 'web.literal.fa7e0b44902e' | i18n }}</ng-container>
                          
                       </ng-template>
                     </nz-form-control>

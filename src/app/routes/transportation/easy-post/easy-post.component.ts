@@ -198,7 +198,7 @@ export class TransportationEasyPostComponent implements OnInit {
 
     if (!this.currentEasyPostConfiguration.useWarehouseAddressAsShipFromFlag) {
         if (this.shipFromAddress == null ) {
-          this.messageService.error("ship-from-address-required");
+          this.messageService.error(this.i18n.fanyi('ship-from-address-required'));
           return;
         }
         else {
@@ -207,7 +207,7 @@ export class TransportationEasyPostComponent implements OnInit {
     }
     if (!this.currentEasyPostConfiguration.useWarehouseAddressAsReturnFlag){
         if (this.returnAddress == null ) {
-          this.messageService.error("return-address-required");
+          this.messageService.error(this.i18n.fanyi('return-address-required'));
           return;
         }
         else {

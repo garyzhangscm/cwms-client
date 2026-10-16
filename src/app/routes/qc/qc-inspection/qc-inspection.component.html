@@ -264,7 +264,7 @@
                   </thead>
                   <tbody>
                       <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
-                      <td>{{ qcRuleItem.checkPoint }}</td>
+                      <td>{{ qcRuleItem | qcQuestion }}</td>
                       <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
                       <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
                       <td>{{ qcRuleItem.expectedValue }}</td>

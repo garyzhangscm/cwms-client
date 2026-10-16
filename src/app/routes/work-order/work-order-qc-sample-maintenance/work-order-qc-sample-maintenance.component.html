@@ -34,7 +34,7 @@
         <nz-list nzBordered [nzHeader]="showAddNewSampleQuestionTemplate"> 
         </nz-list>
         <ng-template #showAddNewSampleQuestionTemplate>
-          There's sample setup for the work order, choose whether to <a (click)="loadLastSample()">load the last sample</a>, or <a  (click)="createNewSample()">create new sample</a>
+          {{ 'web.literal.516d1c793d2c' | i18n }} <a (click)="loadLastSample()">{{ 'web.literal.ea4994ae4a00' | i18n }}</a>{{ 'web.literal.3d30020b1863' | i18n }} <a  (click)="createNewSample()">{{ 'web.literal.5b9de8941b93' | i18n }}</a>
         </ng-template>
       </div>
       <div *ngIf="!showAddNewSampleQuestion">
@@ -51,7 +51,7 @@
                   (blur)="sampleNumberChange($event)" [disabled]="!newSample"/>
                 <ng-template #sampleNumberErrorTpl let-control>  
                     <ng-container *ngIf="sampleNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                    <ng-container *ngIf="sampleNumberValidateStatus === 'numberExists'">Sample number already exists</ng-container>
+                    <ng-container *ngIf="sampleNumberValidateStatus === 'numberExists'">{{ 'web.literal.bf224ac29f6c' | i18n }}</ng-container>
                             
                 </ng-template>
               </nz-form-control>

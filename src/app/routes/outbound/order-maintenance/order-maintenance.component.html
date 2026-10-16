@@ -51,7 +51,7 @@
                       }
                       @if (orderNumberValidateStatus === 'numberExists') {
 
-                        <ng-container >Order Number already exists</ng-container>
+                        <ng-container >{{ 'web.literal.981034b4a8ef' | i18n }}</ng-container>
                       }
                      
                   </ng-template>
@@ -123,8 +123,7 @@
 
                       <ng-template #shipStageLocationGroupErrorTpl let-control>  
                           @if(shipStageLocationGroupStatus === 'requiredForManualPickOrder') {
-                            <ng-container >{{ 'shipment.stage.locationGroup' | i18n }} is required for manual pick order
-                            </ng-container>
+                            <ng-container >{{ 'web.bound.9cd2b53c7ec0' | i18n: { p0: ('shipment.stage.locationGroup' | i18n) } }}</ng-container>
                           } 
                          
                       </ng-template>
@@ -147,8 +146,7 @@
 
                         <ng-template #shipStageLocationErrorTpl let-control>  
                           @if(shipStageLocationStatus === 'requiredForManualPickOrder') {
-                            <ng-container >{{ 'shipment.stage.location' | i18n }} is required for manual pick order
-                            </ng-container>
+                            <ng-container >{{ 'web.bound.9cd2b53c7ec0' | i18n: { p0: ('shipment.stage.location' | i18n) } }}</ng-container>
                           } 
                          
                       </ng-template>

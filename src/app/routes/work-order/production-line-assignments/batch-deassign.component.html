@@ -24,7 +24,7 @@
               @if (!entry.materials.length) { <p class="batch-empty">{{ 'batch-deassign.no-material' | i18n }}</p> }
               @else {
                 <div class="batch-scroll"><table class="batch-materials"><thead><tr>
-                  <th>LPN</th><th>{{ 'line-assignments.item' | i18n }}</th><th>{{ 'batch-deassign.location' | i18n }}</th>
+                  <th>{{ 'web.literal.87ef1797a292' | i18n }}</th><th>{{ 'line-assignments.item' | i18n }}</th><th>{{ 'batch-deassign.location' | i18n }}</th>
                   <th>{{ 'batch-deassign.original' | i18n }}</th><th>{{ 'batch-deassign.remaining' | i18n }}</th><th>{{ 'batch-deassign.consume' | i18n }}</th>
                 </tr></thead><tbody>
                   @for (material of entry.materials; track material.inventory.id) {

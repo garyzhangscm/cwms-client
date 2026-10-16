@@ -317,13 +317,13 @@
                 </nz-dropdown-menu>
  
                 <nz-divider nzType="vertical"></nz-divider>
-                <span>Print Selected:</span>
+                <span>{{ 'web.literal.32a1e18816cb' | i18n }}</span>
                 <cwms-common-print-button style='padding-left: 20px;'
                   (print)="printPickSheetInBatch($event, wave)"
                   (preview)="previewPickSheetInBatch(wave)">
                 </cwms-common-print-button>
                 <nz-divider nzType="vertical"></nz-divider>
-                <span>Print Whole Wave:</span>
+                <span>{{ 'web.literal.2c2ca464c6f3' | i18n }}</span>
                 <cwms-common-print-button style='padding-left: 20px;'
                   (print)="printWavePickSheet($event, wave)"
                   (preview)="previewWavePickSheet(wave)">

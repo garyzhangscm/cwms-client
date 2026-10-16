@@ -432,7 +432,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
       },
       error: () => {
         this.isSpinning = false;
-        this.messageService.error(`can't find the item ${itemName}`);
+        this.messageService.error(this.i18n.fanyi('web.message.f1bd2e172e7a', { p0: itemName }));
       }
     });
   }
@@ -504,7 +504,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
           return false;
         }
         if (!this.currentProducingUnitOfMeasure) {
-          this.messageService.error("can't get the UOM information");
+          this.messageService.error(this.i18n.fanyi('web.message.a395524a0ed4'));
 
           this.produceInventoryModal.updateConfig({
             nzOkDisabled: false,
@@ -689,7 +689,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     try {
       for (const label of job.labels) {
         if (this.printedLpns.has(label.lpn)) continue;
-        this.productionJobMessage = `Preparing label for ${label.lpn}…`;
+        this.productionJobMessage = this.i18n.fanyi('Preparing label for {{lpn}}…', {lpn: label.lpn});
         let report = this.labelReports.get(label.lpn);
         if (!report) {
           report = await firstValueFrom(this.workOrderService.generatePrePrintLPNLabel(
@@ -698,7 +698,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
           this.labelReports.set(label.lpn, report);
         }
         if (this.printAbort.signal.aborted) return;
-        this.productionJobMessage = `Downloading and submitting label for ${label.lpn}…`;
+        this.productionJobMessage = this.i18n.fanyi('Downloading and submitting label for {{lpn}}…', {lpn: label.lpn});
         if (job.warehouseId !== this.warehouseService.getCurrentWarehouse().id) throw new Error('Warehouse changed.');
         await this.printingService.printReportHistoryFromLocalAsync(report, 2, this.printAbort.signal);
         this.printedLpns.add(label.lpn);

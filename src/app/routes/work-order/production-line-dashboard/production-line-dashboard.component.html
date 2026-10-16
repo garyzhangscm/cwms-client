@@ -1,24 +1,24 @@
-<page-header *ngIf="!isKioskMode" title="Production Kanban"></page-header>
+<page-header *ngIf="!isKioskMode" [title]="'web.literal.a3b95779d5df' | i18n"></page-header>
 
 <header class="kiosk-header" *ngIf="isKioskMode">
   <div class="kiosk-brand">
     <img src="assets/claytech-one.png" alt="Claytech One" />
-    <div><span class="kiosk-eyebrow">Claytech One · Production</span><h1>Production Kanban</h1></div>
+    <div><span class="kiosk-eyebrow">{{ 'web.literal.35f9b8b99476' | i18n }}</span><h1>{{ 'web.literal.a3b95779d5df' | i18n }}</h1></div>
   </div>
   <div class="kiosk-actions">
-    <span class="kiosk-updated">{{ lastUpdated ? 'Updated ' + (lastUpdated | date:'HH:mm:ss') : 'Loading production lines…' }}</span>
-    <button type="button" class="kiosk-button" [disabled]="isSpinning" (click)="refresh()">Refresh</button>
-    <button type="button" class="kiosk-button kiosk-button--primary" (click)="exitKioskMode()">Exit full screen</button>
+    <span class="kiosk-updated">{{ lastUpdated ? ('web.dynamic.a919c7c2d1a4' | i18n) + (lastUpdated | date:'HH:mm:ss') : ('web.dynamic.8ed93b65020e' | i18n) }}</span>
+    <button type="button" class="kiosk-button" [disabled]="isSpinning" (click)="refresh()">{{ 'web.literal.0e9161011702' | i18n }}</button>
+    <button type="button" class="kiosk-button kiosk-button--primary" (click)="exitKioskMode()">{{ 'web.literal.897e0cf78b80' | i18n }}</button>
   </div>
 </header>
 <div *ngIf="productionJobMessage" role="status" aria-live="polite" class="production-job-status">
-  <span>{{productionJobMessage}}</span>
-  <button type="button" class="kiosk-button" *ngIf="productionJobRetry" (click)="continueProductionLabelJob()">Continue checking / retry remaining labels</button>
+  <span>{{ productionJobMessage | i18n }}</span>
+  <button type="button" class="kiosk-button" *ngIf="productionJobRetry" (click)="continueProductionLabelJob()">{{ 'web.literal.96e7e8256162' | i18n }}</button>
 </div>
 <div class="kiosk-summary" *ngIf="isKioskMode">
-  <span><strong>{{ productionLines.length }}</strong> Production lines</span>
-  <span><i class="summary-dot"></i><strong>{{ assignedLineCount }}</strong> Assigned</span>
-  <span>{{ doNotRefreshFlag ? 'Auto-refresh paused' : 'Next refresh in ' + countDownNumber + 's' }}</span>
+  <span><strong>{{ productionLines.length }}</strong> {{ 'web.literal.2347b549d860' | i18n }}</span>
+  <span><i class="summary-dot"></i><strong>{{ assignedLineCount }}</strong> {{ 'web.literal.8191888dd97c' | i18n }}</span>
+  <span>{{ doNotRefreshFlag ? ('web.dynamic.9a0429049c42' | i18n) : ('web.dynamic.d7ebf81b9ded' | i18n) + countDownNumber + 's' }}</span>
 </div>
 
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
@@ -28,8 +28,8 @@
        [nzTitle]="refreshTitle">
     <ng-template #refreshTitle>
       <div class="kanban-toolbar">
-        <span class="kanban-toolbar__title">Production lines</span>
-        <span class="kanban-refresh">{{ doNotRefreshFlag ? 'Auto-refresh paused' : 'Refresh in ' + countDownNumber + 's' }}</span>
+        <span class="kanban-toolbar__title">{{ 'web.literal.2347b549d860' | i18n }}</span>
+        <span class="kanban-refresh">{{ doNotRefreshFlag ? ('web.dynamic.9a0429049c42' | i18n) : ('web.dynamic.8292ce151f44' | i18n) + countDownNumber + 's' }}</span>
       </div>
     </ng-template>
        
@@ -38,30 +38,30 @@
           <label nz-checkbox [(ngModel)]="showConfiguration">
             <span>{{ 'showConfiguration' | i18n }}</span>
           </label>
-          <button type="button" class="kiosk-button kiosk-button--primary" (click)="enterKioskMode()">Full-screen board</button>
+          <button type="button" class="kiosk-button kiosk-button--primary" (click)="enterKioskMode()">{{ 'web.literal.1ac0f822a03d' | i18n }}</button>
         </div>
     </ng-template>
     <div *ngIf="showConfiguration && !isKioskMode" class="kanban-configuration">
         <div class="kanban-type-filter" role="group" [attr.aria-label]="'type' | i18n">
           <span>{{'type' | i18n}}:</span>
           <label nz-checkbox [ngModel]="allProductionLineTypesSelected"
-            (ngModelChange)="productionLineTypeSelectionChanged('All', $event)">All</label>
+            (ngModelChange)="productionLineTypeSelectionChanged('All', $event)">{{ 'web.literal.a52ace420f21' | i18n }}</label>
           <label nz-checkbox *ngFor="let type of productionLineTypes"
             [ngModel]="selectedProductionLineTypes.includes(type.name)"
             (ngModelChange)="productionLineTypeSelectionChanged(type.name, $event)">{{type.name}}</label>
         </div>
         
-        <span style="padding-left: 20px">Auto Generate New LPN?</span>
+        <span style="padding-left: 20px">{{ 'web.literal.ad5c8e03901e' | i18n }}</span>
         <label nz-checkbox [(ngModel)]="autoGenerateNewLPNFlag"  (ngModelChange)="autoGenerateNewLPNFlagChanged()" ></label>
         
-        <span style="padding-left: 20px; padding-right: 20px">Refresh Cycle(in seconds): </span>
+        <span style="padding-left: 20px; padding-right: 20px">{{ 'web.literal.e4e2d171db63' | i18n }} </span>
         <nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"  
          [(ngModel)]="refreshCountCycle" (ngModelChange)="refreshCountCycleChanged()" 
          [disabled]="doNotRefreshFlag">
         </nz-input-number> 
-        <span style="padding-left: 20px; padding-right: 20px">Do Not Refresh </span>
+        <span style="padding-left: 20px; padding-right: 20px">{{ 'web.literal.2751feb4082b' | i18n }} </span>
         <label nz-checkbox [(ngModel)]="doNotRefreshFlag"  (ngModelChange)="doNotRefreshFlagChanged()" ></label>
-        <span style="padding-left: 20px; padding-right: 20px">Only Show Active Production Line</span>
+        <span style="padding-left: 20px; padding-right: 20px">{{ 'web.literal.1622e4a1bc14' | i18n }}</span>
         <label nz-checkbox [(ngModel)]="onlyShowActiveProductionLineFlag"  (ngModelChange)="onlyShowActiveProductionLineFlagChanged()" ></label>
     
 
@@ -74,11 +74,11 @@
           <header class="line-card__header">
             <div class="line-card__heading">
               <h3 class="line-card__name">{{productionLine.name}}</h3>
-              <span class="line-card__count">{{productionLine.assignedWorkOrders?.length || 0}} work orders</span>
+              <span class="line-card__count">{{productionLine.assignedWorkOrders?.length || 0}} {{ 'web.work-orders' | i18n }}</span>
             </div>
             <span class="line-card__status">
               <span class="line-card__dot" aria-hidden="true"></span>
-              {{ productionLine.assignedWorkOrders?.length ? 'Assigned' : 'Unassigned' }}
+              {{ productionLine.assignedWorkOrders?.length ? ('web.dynamic.8191888dd97c' | i18n) : ('web.dynamic.14d33bd014e6' | i18n) }}
             </span>
           </header>
           <div class="line-card__orders">
@@ -87,15 +87,15 @@
                 [attr.aria-label]="'Produce inventory for ' + assignedWorkOrder.second + ' on ' + productionLine.name"
                 (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent,
                   productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
-                {{assignedWorkOrder.second || (itemLoadingFailed.has(assignedWorkOrder.sixth) ? 'Item unavailable' : 'Loading item…')}}
+                {{assignedWorkOrder.second || (itemLoadingFailed.has(assignedWorkOrder.sixth) ? ('web.dynamic.210366e5041e' | i18n) : ('web.dynamic.4366867fc56b' | i18n))}}
               </button>
-              <div class="line-order__number"><span class="line-order__label">Work order</span> {{assignedWorkOrder.first}}</div>
+              <div class="line-order__number"><span class="line-order__label">{{ 'web.literal.ce02285cc14e' | i18n }}</span> {{assignedWorkOrder.first}}</div>
               <div class="line-order__quantity">
-                <span>Quantity</span>
+                <span>{{ 'web.literal.822bab8d41bc' | i18n }}</span>
                 <span class="line-order__values">{{assignedWorkOrder.fourth | number}} <span class="line-order__separator">/</span> {{assignedWorkOrder.fifth | number}}</span>
               </div>
             </div>
-            <p class="line-card__empty" *ngIf="!productionLine.assignedWorkOrders?.length">No assigned work order</p>
+            <p class="line-card__empty" *ngIf="!productionLine.assignedWorkOrders?.length">{{ 'web.literal.c6b48069c1bd' | i18n }}</p>
           </div>
           <footer class="line-card__footer">
             <button type="button" class="line-card__expand"
@@ -103,13 +103,13 @@
               [attr.aria-expanded]="isProductionLineExpanded(productionLine)"
               [attr.aria-label]="(isProductionLineExpanded(productionLine) ? 'Collapse work orders on ' : 'Show all work orders on ') + productionLine.name"
               (click)="toggleProductionLineExpanded(productionLine)">
-              {{isProductionLineExpanded(productionLine) ? 'Show less' : 'Show all ' + productionLine.assignedWorkOrders?.length + ' work orders'}}
+              {{isProductionLineExpanded(productionLine) ? ('web.dynamic.94ea9b1d33a0' | i18n) : ('web.dynamic.6134b89407a6' | i18n) + productionLine.assignedWorkOrders?.length + ('web.dynamic.b28ccc1fdbfe' | i18n)}}
             </button>
           </footer>
         </article>
       </ng-container>
     </div>
-    <div class="kanban-empty" *ngIf="!isSpinning && !productionLines.length">No production lines to display.</div>
+    <div class="kanban-empty" *ngIf="!isSpinning && !productionLines.length">{{ 'web.literal.a667d013215d' | i18n }}</div>
   </nz-card>
 </nz-spin>
  

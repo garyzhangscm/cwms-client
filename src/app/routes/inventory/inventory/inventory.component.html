@@ -237,7 +237,7 @@
           <a nz-tooltip nzTooltipTitle="{{ inventory.item?.description }}">{{ inventory.item?.name }}</a> 
         }
         @else {
-          <span>** Multiple Values**</span>       
+          <span>{{ 'web.literal.1ca0bd93688f' | i18n }}</span>
         }
 
       </ng-template>
@@ -288,7 +288,7 @@
         }
         @else {
 
-          <span>** Multiple Values**</span>
+          <span>{{ 'web.literal.1ca0bd93688f' | i18n }}</span>
         }
         
               
@@ -543,9 +543,9 @@
           [nzResponsive]="true" [nzDisabled]="searching"
           (nzPageIndexChange)="inventoryPageChanged($event)"></nz-pagination>
         <select class="inventory-page-size" [ngModel]="inventoryTable.ps" [disabled]="searching"
-          (ngModelChange)="inventoryTableRecordPerPageChanged($event)" aria-label="Items per page">
+          (ngModelChange)="inventoryTableRecordPerPageChanged($event)" [attr.aria-label]="'web.literal.766a02e0125f' | i18n">
           @for(size of inventoryTableRecordPerPages; track size) {
-            <option [ngValue]="size">{{ size }} / page</option>
+            <option [ngValue]="size">{{ 'web.bound.e19acbb4efa8' | i18n: { p0: (size) } }}</option>
           }
         </select>
       </div>

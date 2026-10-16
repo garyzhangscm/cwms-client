@@ -8,7 +8,7 @@ import { QCInspectionRequestItemOption } from '../models/qc-inspection-request-i
         <p>{{ 'qc-review.inline-warning' | i18n }}</p>
         <label [attr.for]="'qc-note-' + option.id">{{ 'qc-review.notes' | i18n }} *</label>
         <textarea nz-input [id]="'qc-note-' + option.id" rows="3" maxlength="2000"
-          [(ngModel)]="option.exceptionNotes" [attr.aria-label]="('qc-review.notes' | i18n) + ': ' + option.qcRuleItem.checkPoint"
+          [(ngModel)]="option.exceptionNotes" [attr.aria-label]="('qc-review.notes' | i18n) + ': ' + (option.qcRuleItem | qcQuestion)"
           [placeholder]="'qc-review.notes-help' | i18n"></textarea>
         <small>{{ 'qc-review.notes-help' | i18n }} · {{ option.exceptionNotes?.length || 0 }}/2000</small>
       </div>

@@ -36,7 +36,7 @@
           <input nz-input [(ngModel)]="currentTrailer.number" required  (blur)="numberChange($event)" [disabled]="!newTrailer" />
           <ng-template #numberErrorTpl let-control>   
             <ng-container *ngIf="numberErrorCode === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-            <ng-container *ngIf="numberErrorCode === 'numberExists'">Number already exists</ng-container>
+            <ng-container *ngIf="numberErrorCode === 'numberExists'">{{ 'web.literal.94396ea39335' | i18n }}</ng-container>
                     
         </ng-template>
         </nz-form-control>

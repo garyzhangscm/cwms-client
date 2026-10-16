@@ -88,7 +88,7 @@ export class WorkOrderWorkOrderFlowMaintenanceComponent implements OnInit {
   nextStep(): void {
     if(this.stepIndex == 0) {
       if (this.workOrderCandidates.length < 2) {
-        this.messageService.error("please at least 2 work orders to group them into a flow");
+        this.messageService.error(this.i18n.fanyi('web.message.2d78db6945e6'));
         return;
       }
     }

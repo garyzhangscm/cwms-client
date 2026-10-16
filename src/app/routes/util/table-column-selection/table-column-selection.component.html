@@ -1,5 +1,5 @@
 <button nz-button (click)="openColumnChoosingModal(tplColumnChoosingModalTitle, tplColumnChoosingContent)"> 
-  change column
+  {{ 'web.literal.c6d5ae319b3d' | i18n }}
     </button>
 
     
@@ -20,9 +20,9 @@
         <thead>
           <tr>
             <th scope="col" style="width: 10%"># </th>
-            <th scope="col" style="width: 30%">Name</th>
-            <th scope="col" style="width: 40%">Display</th>
-            <th scope="col" style="width: 20%">Enabled</th>
+            <th scope="col" style="width: 30%">{{ 'web.literal.dcd1d5223f73' | i18n }}</th>
+            <th scope="col" style="width: 40%">{{ 'web.literal.34e108c0896d' | i18n }}</th>
+            <th scope="col" style="width: 20%">{{ 'web.literal.92c1cdfdf4cb' | i18n }}</th>
           </tr>
         </thead>
         <tbody cdkDropList (cdkDropListDropped)="drop($event)">

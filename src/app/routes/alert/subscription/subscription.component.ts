@@ -197,7 +197,7 @@ export class AlertSubscriptionComponent implements OnInit {
         });
     }
     else {
-      this.messageService.error("can-not-get-subscription-information");
+      this.messageService.error(this.i18n.fanyi('web.message.bb3380c09624'));
       return;
     }
   }

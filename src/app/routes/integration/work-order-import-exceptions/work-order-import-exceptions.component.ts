@@ -1,3 +1,5 @@
+import { inject as injectWebI18n } from '@angular/core';
+import { I18NService as WebI18nService } from '@core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -15,6 +17,7 @@ interface Detail { report: { records?: ImportRow[]; state?: string; reason?: str
 @Component({selector: 'app-work-order-import-exceptions', standalone: false,
   templateUrl: './work-order-import-exceptions.component.html', styleUrls: ['./work-order-import-exceptions.component.less']})
 export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
+  private readonly webI18n = injectWebI18n(WebI18nService);
   rows: ImportRow[] = []; jobs: Job[] = []; batch = ''; number = ''; state = '';
   loading = false; submitting = false; canRetry = false; error = ''; jobError = ''; truncated = false;
   detail?: Detail; selected?: ImportRow; detailVisible = false; detailLoading = false;
@@ -26,14 +29,14 @@ export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
   ngOnInit(): void { this.load(); this.loadJobs(); this.refresh = setInterval(() => this.loadJobs(), 5000); }
   ngOnDestroy(): void { if (this.refresh) clearInterval(this.refresh); this.destroyed.next(); this.destroyed.complete(); }
   private headers(): HttpHeaders { return new HttpHeaders({'X-CWMS-Username': this.users.getCurrentUsername()}); }
-  label(state: string): string { return ({PREPARED: 'Ready to import', BLOCKED: 'Needs attention', ACCEPTED: 'Processing in MES', BUSINESS_ERROR: 'MES error', UNCERTAIN: 'Verify previous request', COMPLETED: 'Completed', SKIPPED_EXISTING: 'Already exists', REJECTED: 'Batch rejected', NO_NEW_WORK_ORDERS: 'No changes', NOT_CHECKED: 'Not checked'} as Record<string, string>)[state] || state; }
+  label(state: string): string { return this.webI18n.fanyi(({PREPARED: 'Ready to import', BLOCKED: 'Needs attention', ACCEPTED: 'Processing in MES', BUSINESS_ERROR: 'MES error', UNCERTAIN: 'Verify previous request', COMPLETED: 'Completed', SKIPPED_EXISTING: 'Already exists', REJECTED: 'Batch rejected', NO_NEW_WORK_ORDERS: 'No changes', NOT_CHECKED: 'Not checked'} as Record<string, string>)[state] || state); }
   load(): void {
     if (this.loading) return;
     this.loading = true; this.error = '';
     const params = new HttpParams().set('batch', this.batch.trim()).set('number', this.number.trim()).set('state', this.state);
     this.http.get<Response<Listing>>('work-order-import/batches', {headers: this.headers(), params}).pipe(takeUntil(this.destroyed)).subscribe({
       next: res => { this.rows = res.data.rows; this.canRetry = res.data.canRetry; this.truncated = res.data.truncated; this.loading = false; },
-      error: err => { this.error = err.error?.message || 'Unable to load import exceptions'; this.canRetry = false; this.loading = false; }
+      error: err => { this.error = err.error?.message || this.webI18n.fanyi('Unable to load import exceptions'); this.canRetry = false; this.loading = false; }
     });
   }
   loadJobs(): void {
@@ -45,7 +48,7 @@ export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
         this.jobs = res.data; this.polling = false; this.jobError = '';
         if (changed || this.rows.some(row => row.state === 'ACCEPTED')) { this.load(); if (this.detailVisible && this.selected) this.showDetail(this.selected); }
       },
-      error: () => { this.polling = false; this.jobError = 'Unable to refresh action results. Please refresh or check your connection.'; }
+      error: () => { this.polling = false; this.jobError = this.webI18n.fanyi('Unable to refresh action results. Please refresh or check your connection.'); }
     });
   }
   showDetail(row: ImportRow): void {
@@ -53,7 +56,7 @@ export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
     const params = new HttpParams().set('file', row.file).set('number', row.workOrderNumber || '');
     this.http.get<Response<Detail>>('work-order-import/batch', {headers: this.headers(), params}).pipe(takeUntil(this.destroyed)).subscribe({
       next: res => { if (this.selected?.file !== row.file || this.selected?.workOrderNumber !== row.workOrderNumber) return; this.detail = res.data; this.detailLoading = false; },
-      error: err => { this.messages.error(err.error?.message || 'Unable to load batch details'); this.detailLoading = false; }
+      error: err => { this.messages.error(err.error?.message || this.webI18n.fanyi('Unable to load batch details')); this.detailLoading = false; }
     });
   }
   jobSummary(job: Job): string {
@@ -68,11 +71,11 @@ export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
     const submit = (): void => {
       this.submitting = true;
       this.http.post<Response<Job>>('work-order-import/actions', {file: row.file, workOrderNumber: batch ? '' : row.workOrderNumber || '', action}, {headers: this.headers()}).pipe(takeUntil(this.destroyed)).subscribe({
-        next: res => { this.jobs = [res.data, ...this.jobs]; this.submitting = false; this.messages.info('Action queued. Results will refresh automatically.'); },
-        error: err => { this.submitting = false; this.messages.error(err.error?.message || 'Unable to queue this action'); }
+        next: res => { this.jobs = [res.data, ...this.jobs]; this.submitting = false; this.messages.info(this.webI18n.fanyi('web.message.c29668711323')); },
+        error: err => { this.submitting = false; this.messages.error(err.error?.message || this.webI18n.fanyi('Unable to queue this action')); }
       });
     };
     if (action === 'check') submit();
-    else this.modal.confirm({nzTitle: batch ? 'Retry eligible Work Orders in this batch?' : `Retry Work Order ${row.workOrderNumber}?`, nzContent: 'The server rechecks master data and duplicates. Completed orders are skipped; unresolved orders stay blocked.', nzOkText: 'Retry import', nzOnOk: submit});
+    else this.modal.confirm({nzTitle: batch ? this.webI18n.fanyi('Retry eligible Work Orders in this batch?') : this.webI18n.fanyi('Retry Work Order {{order}}?', {order: row.workOrderNumber}), nzContent: this.webI18n.fanyi('The server rechecks master data and duplicates. Completed orders are skipped; unresolved orders stay blocked.'), nzOkText: this.webI18n.fanyi('Retry import'), nzOnOk: submit});
   }
 }

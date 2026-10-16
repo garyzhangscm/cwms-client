@@ -6,7 +6,7 @@
   <nz-form-item>
     <nz-form-control [nzErrorTip]="mailErrorTip">
       <nz-input-group nzSize="large" nzAddonBeforeIcon="user">
-        <input nz-input formControlName="mail" placeholder="Email" />
+        <input nz-input formControlName="mail" [placeholder]="'web.literal.969ccbd3cf63' | i18n" />
       </nz-input-group>
       <ng-template #mailErrorTip let-i>
         @if (i.errors?.required) {
@@ -31,7 +31,7 @@
         [nzPopoverOverlayStyle]="{ 'width.px': 240 }"
         [nzPopoverContent]="pwdCdkTpl"
       >
-        <input nz-input type="password" formControlName="password" placeholder="Password" />
+        <input nz-input type="password" formControlName="password" [placeholder]="'web.literal.e7cf3ef4f17c' | i18n" />
       </nz-input-group>
       <ng-template #pwdCdkTpl>
         <div style="padding: 4px 0">
@@ -57,7 +57,7 @@
   <nz-form-item>
     <nz-form-control [nzErrorTip]="confirmErrorTip">
       <nz-input-group nzSize="large" nzAddonBeforeIcon="lock">
-        <input nz-input type="password" formControlName="confirm" placeholder="Confirm Password" />
+        <input nz-input type="password" formControlName="confirm" [placeholder]="'web.literal.c292210c4416' | i18n" />
       </nz-input-group>
       <ng-template #confirmErrorTip let-i>
         @if (i.errors?.required) {
@@ -78,7 +78,7 @@
             <nz-option [nzLabel]="'+87'" [nzValue]="'+87'" />
           </nz-select>
         </ng-template>
-        <input formControlName="mobile" nz-input placeholder="Phone number" />
+        <input formControlName="mobile" nz-input [placeholder]="'web.literal.306f1bb20677' | i18n" />
       </nz-input-group>
       <ng-template #mobileErrorTip let-i>
         @if (i.errors?.required) {
@@ -95,7 +95,7 @@
       <div nz-row [nzGutter]="8">
         <div nz-col [nzSpan]="16">
           <nz-input-group nzSize="large" nzAddonBeforeIcon="mail">
-            <input nz-input formControlName="captcha" placeholder="Captcha" />
+            <input nz-input formControlName="captcha" [placeholder]="'web.literal.a535174addeb' | i18n" />
           </nz-input-group>
         </div>
         <div nz-col [nzSpan]="8">

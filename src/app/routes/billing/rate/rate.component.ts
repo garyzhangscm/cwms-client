@@ -291,13 +291,13 @@ export class BillingRateComponent implements OnInit {
         if (!this.newBillingRateByInventoryAgeForm.value.startInventoryAge ||
               !this.newBillingRateByInventoryAgeForm.value.endInventoryAge) {
            
-              this.messageService.error(`start inventory age and end inventory age are required`);
+              this.messageService.error(this.i18n.fanyi('web.message.c0997b2e1b54'));
               return false;
         }
         if (this.newBillingRateByInventoryAgeForm.value.startInventoryAge  >
              this.newBillingRateByInventoryAgeForm.value.endInventoryAge ) {
            
-              this.messageService.error(`start inventory age needs to be less than end inventory age`);
+              this.messageService.error(this.i18n.fanyi('web.message.d2ed85b0425a'));
               return false;
         }
         
