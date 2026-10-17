@@ -932,16 +932,6 @@
                     [queryParams]="{id : order.id}">
                     {{ 'upload-document' | i18n }}</a> 
                 </li>
-                <li nz-menu-item *ngIf="!userPermissionMap.has('ship-parcel') || userPermissionMap.get('ship-parcel')">
-                  <a routerLink="/outbound/parcel-by-order" routerLinkActive="active"
-                    [queryParams]="{id : order.id}">
-                    {{ 'ship-parcel' | i18n }}</a> 
-                </li>
-                <li nz-menu-item *ngIf="!userPermissionMap.has('ship-by-hualei') || userPermissionMap.get('ship-by-hualei')">
-                  <a routerLink="/outbound/ship-by-hualei" routerLinkActive="active"
-                    [queryParams]="{id : order.id}">
-                    {{ 'ship-by-hualei' | i18n }}</a> 
-                </li>
 
                 <li nz-menu-item *ngIf="order.shipToCustomer?.customerIsWalmart == true && (!userPermissionMap.has('walmart-shipping-carton-label') || userPermissionMap.get('walmart-shipping-carton-label')) ">
                   
@@ -956,12 +946,6 @@
                     {{ 'target-shipping-carton-label' | i18n }}</a> 
                 </li> 
                 
-                <li nz-menu-item 
-                *ngIf="!userPermissionMap.has('change-order-completed-time') || userPermissionMap.get('change-order-completed-time')">
-                  <a (click)="openChangeOrderCompletedTimeModal(order, tplChangeOrderCompletedTimeModalTitle, 
-                  tplChangeOrderCompletedTimeModalContent, tplChangeOrderCompletedTimeModalFooter)" >
-                  {{ 'change-order-completed-time' | i18n }}</a>
-                </li> 
               </ul>
             </nz-dropdown-menu>
           <button nz-button nz-popover nzPopoverTrigger="click" nzPopoverPlacement="bottomRight"
@@ -1035,9 +1019,9 @@
         {{ 'add' | i18n }}
       </button>
       <nz-divider nzType="vertical"></nz-divider> 
-      <button  nz-button nzType="primary" routerLink="/util/file-upload/orders" routerLinkActive="active"
-      *ngIf="!userPermissionMap.has('file-upload') || userPermissionMap.get('file-upload')">
-        {{ 'file-upload' | i18n }}
+      <button nz-button routerLink="/outbound/order-import-pdf" routerLinkActive="active"
+      *ngIf="!userPermissionMap.has('add-order') || userPermissionMap.get('add-order')">
+        <i nz-icon nzType="file-pdf"></i> Import PDF
       </button> 
     </div>
   </div> 

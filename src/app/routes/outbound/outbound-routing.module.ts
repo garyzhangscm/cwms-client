@@ -1,3 +1,4 @@
+import { OrderPdfImportComponent } from './order-pdf-import/order-pdf-import.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {  aclCanActivate, ACLGuardType } from '@delon/acl';
@@ -47,6 +48,8 @@ import { OutboundSortationComponent } from './sortation/sortation.component';
 import { OutboundSortationByShipmentComponent } from './sortation-by-shipment/sortation-by-shipment.component';
 
 const routes: Routes = [
+  { path: 'order-import-pdf', component: OrderPdfImportComponent, canActivate: [aclCanActivate],
+    data: {guard: {role: ['/outbound/order', 'admin', 'system-admin']} as ACLGuardType, guard_url: '/exception/403'} },
   { path: 'order', component: OutboundOrderComponent, 
     canActivate: [aclCanActivate], 
     data: { 
