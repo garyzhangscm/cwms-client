@@ -33,5 +33,9 @@
   "backendChanged": false,
   "fayChanged": false,
   "creationVerification": "Mocked writes only; live verification stopped at unsaved draft",
-  "temporaryMimeIssue": "Initial attempt rolled back; final image fixes mjs MIME and uses versioned module URLs"
+  "temporaryMimeIssue": "Initial attempt rolled back; final image fixes mjs MIME and uses versioned module URLs",
+  "packagingRecipe": "deploy/releases/colton-pdf-import-20261016/Dockerfile",
+  "packagingMimeTypes": "deploy/releases/colton-pdf-import-20261016/mime.types",
+  "packagingRecipeSha256": "d39e2fce7616ae56167f228c7b268086453ab5409b66d4b2e59f1fbb1c8540ab",
+  "packagingMimeTypesSha256": "b8de4792a19207e516da0ce03b207d3f77585030aa8394acf13608ae7dcc8eeb"
 }
