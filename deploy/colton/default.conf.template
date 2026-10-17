@@ -23,6 +23,14 @@ server {
         error_page 404 = @missing_asset;
     }
 
+    # PDF.js uses ES modules; browsers reject an octet-stream MIME type.
+    location ~* \.mjs$ {
+        types { application/javascript mjs; }
+        try_files $uri =404;
+        add_header Cache-Control 'no-cache';
+        error_page 404 = @missing_asset;
+    }
+
     location ~* \.(?:js|mjs|css|json|map)$ {
         try_files $uri =404;
         add_header Cache-Control 'no-cache';

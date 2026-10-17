@@ -200,7 +200,7 @@
               <nz-form-control [nzSpan]="12" nzHasFeedback  >
                 
                 <label nz-checkbox [(ngModel)]="currentOrder!.allowForManualPick" 
-                [disabled]="currentOrder.status != orderStatuses.OPEN" (ngModelChange)="allowForManualPickChanged($event)" >
+                [disabled]="currentOrder.status != orderStatuses.OPEN || (newOrder && isOutsourcingOrder(currentOrder))" (ngModelChange)="allowForManualPickChanged($event)" >
                   {{ "allowForManualPick" | i18n}}</label>  
 
               </nz-form-control>

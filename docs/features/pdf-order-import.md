@@ -14,11 +14,11 @@ System units come from item packaging and the stock unit. The review page shows 
 
 ## Creation boundary
 
-Only sales orders are created by this initial workflow, with existing FIFO defaults and an explicitly selected inventory status. Manual picking is not enabled automatically. Normal order maintenance can change order configuration afterwards. Client ownership is validated for selected items. The route and creation controls follow the existing order permissions and display-only setting. Warehouse/account changes block submission. Duplicate order numbers and current packaging are checked again before dispatch.
+Only sales orders are created by this initial workflow, with existing FIFO defaults and an explicitly selected inventory status. Manual picking is enabled by default for new orders and can be switched off in review. When enabled, the shipping stage group and an available location are required; location availability is rechecked before dispatch. Existing orders keep their saved setting. Outsourced orders do not default to manual picking. Client ownership is validated for selected items. The route and creation controls follow the existing order permissions and display-only setting. Warehouse/account changes block submission. Duplicate order numbers and current packaging are checked again before dispatch.
 
 One order POST is dispatched at most once per draft. A timeout or uncertain acknowledgement locks further writes and directs the user to check the order list. No automatic retry is performed. This avoids blindly duplicating an order when the server may have completed an earlier request. The existing backend remains responsible for persistence and authorization.
 
-The designated test website shares the live backend. A development-only notice explicitly explains that **Create Order** saves a real order. Development verification must use mocks for writes; do not create sample orders without specific authorization. No backend, production image, Docker Hub or OTA release is included in this change.
+The designated test website shares the live backend. Development verification must use mocks for writes; do not create sample orders without specific authorization. The initial implementation changed only the Web source; the separately authorized Colton release is recorded below. No backend or OTA update was required.
 
 ## Verification
 
@@ -31,3 +31,11 @@ The regression executes the actual parser, unit mapper and component submission 
 Browser checks should exercise the actual PDF worker and both native text and OCR paths with a local sample file, stop at the review page, and verify that no order write was issued. Run the Angular template compiler and development build after changes.
 
 Dependencies: [PDF.js examples](https://mozilla.github.io/pdf.js/examples/), [Tesseract worker API](https://github.com/naptha/tesseract.js/blob/master/docs/api.md).
+
+Inventory status defaults to the warehouse’s AVAL status. Reference reloads preserve an existing valid selection; if AVAL is unavailable, PDF import requires an explicit status choice. New maintenance order lines also prefer AVAL. Existing order lines are unchanged.
+
+## Colton release — 2026-10-16
+
+Published as the PDF-only overlay on the running Colton Web baseline. Native PDF and forced OCR were verified in the formal browser with an unsaved draft; no Create Order was submitted. The final Nginx image serves `.mjs` as JavaScript, and PDF module URLs carry a version to avoid old MIME caches. PDF icon registration is included. The existing backend and other pending test changes were not deployed. See `deploy/colton-pdf-import-release-20261016.json` for the exact final image and validation.
+
+The normal maintenance-form defaults remain test-only. The deployed PDF importer has its own AVAL and manual-pick defaults.

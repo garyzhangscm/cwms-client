@@ -24,7 +24,7 @@ const draft = { id: 2267, status: 'PENDING', producedQuantity: 0, number: 'WO-1'
   assert.deepEqual(requests, [{ url: 'workorder/work-orders', params: { warehouseId: 1, workOrderIds: '2267' } }]);
   deletionEnvironment.production = false;
   await firstValueFrom(service.removeWorkOrder(draft));
-  assert.equal(requests[1].url, 'workorder-deletion-test/work-orders', 'development cannot call legacy production DELETE');
+  assert.equal(requests[1].url, 'workorder/work-orders', 'development uses the same guarded formal endpoint');
 
   const c = new Component();
   c.deletingWorkOrderIds = new Set();

@@ -12,7 +12,6 @@
     </div>
   </section>
   <p class="privacy">Your PDF stays in this browser. Selecting a file does not create an order.</p>
-  <nz-alert *ngIf="testEnvironment" nzType="warning" nzMessage="This test page uses the live order database. Create Order will save a real order." nzShowIcon></nz-alert>
   <nz-alert *ngIf="error" nzType="error" [nzMessage]="error" nzShowIcon></nz-alert>
   <div class="loading" *ngIf="busy"><nz-spin nzSimple></nz-spin><span>{{ progress || 'Matching system items…' }}</span><button nz-button (click)="cancel()">Cancel</button></div>
   <button nz-button *ngIf="!referencesReady" (click)="loadReferences()">Reload customers and permissions</button>
@@ -35,6 +34,12 @@
             <label>Client (3PL)<nz-select nzShowSearch nzAllowClear nzPlaceHolder="No client" [(ngModel)]="clientId" (ngModelChange)="clientChanged()"><nz-option *ngFor="let client of clients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option></nz-select></label>
             <label>Inventory status <span class="required">*</span><nz-select nzPlaceHolder="Select status" [(ngModel)]="statusId" (ngModelChange)="changed()"><nz-option *ngFor="let status of statuses" [nzValue]="status.id" [nzLabel]="status.name"></nz-option></nz-select></label>
           </div>
+          <label class="acknowledgement"><input type="checkbox" [(ngModel)]="manualPick" (ngModelChange)="manualPickChanged()"> Allow For Manual Pick</label>
+          <div class="field-grid" *ngIf="manualPick" style="margin-top:14px">
+            <label>Shipping stage group <span class="required">*</span><nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select group" [(ngModel)]="stageGroupId" (ngModelChange)="stageGroupChanged()"><nz-option *ngFor="let group of stageGroups" [nzValue]="group.id" [nzLabel]="group.description || group.name || ''"></nz-option></nz-select></label>
+            <label>Shipping stage location <span class="required">*</span><nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select available location" [nzLoading]="stageLoading" [(ngModel)]="stageLocationId" (ngModelChange)="changed()" [nzDisabled]="stageLoading || !stageGroupId"><nz-option *ngFor="let location of stageLocations" [nzValue]="location.id" [nzLabel]="location.name || ''"></nz-option></nz-select></label>
+          </div>
+          <p class="field-error" *ngIf="manualPick && stageError">{{ stageError }} <button nz-button nzSize="small" (click)="loadStages()">Reload groups</button></p>
           <div class="section-title"><h2>Ship-to address</h2><button nz-button nzSize="small" (click)="useSavedAddress()" [disabled]="!customerId">Use saved address</button></div>
           <div class="field-grid">
             <label class="wide">Street address <span class="required">*</span><input nz-input [(ngModel)]="draft.addressLine1" (ngModelChange)="changed()" required></label>

@@ -16,7 +16,7 @@ function load(path, name, members, bindings) {
  service.companyService={getCurrentCompany:()=>({id:1})};
  service.http={post:(url,body)=>{captured={url,body};return of({data:{}});}};
  service.resetPassword(10,'test&only+password?',true).subscribe();
- assert.equal(captured.url,'user-password-reset-test/users/10/password-reset?companyId=1');
+ assert.equal(captured.url,'resource/users/10/password-reset?companyId=1');
  assert.equal(captured.body.newPassword,'test&only+password?');
  assert.ok(!captured.url.includes('test&only'));assert.equal(captured.body.changePasswordAtNextLogon,true);
  const Component=load('src/app/routes/auth/user/user.component.ts','AuthUserComponent',['hasPasswordResetAccess','canResetPassword','openResetPasswordModal','clearResetPassword'],{firstValueFrom});

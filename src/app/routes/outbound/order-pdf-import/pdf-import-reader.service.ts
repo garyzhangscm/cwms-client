@@ -11,9 +11,9 @@ export class PdfImportReaderService {
     const bytes=new Uint8Array(await file.arrayBuffer());
     if(!new TextDecoder().decode(bytes.slice(0,1024)).includes('%PDF-')) throw new Error('The selected file is not a PDF.');
     const base=new URL('assets/pdf-import/',document.baseURI).href;
-    const pdfUrl=base+'pdf/pdf.mjs';
+    const pdfUrl=base+'pdf/pdf.mjs?v=4.8.69-1';
     const pdfjs=await import(/* @vite-ignore */ /* webpackIgnore: true */ pdfUrl);
-    pdfjs.GlobalWorkerOptions.workerSrc=base+'pdf/pdf.worker.mjs';
+    pdfjs.GlobalWorkerOptions.workerSrc=base+'pdf/pdf.worker.mjs?v=4.8.69-1';
     const loading=pdfjs.getDocument({data:bytes,isEvalSupported:false,cMapUrl:base+'cmaps/',cMapPacked:true,standardFontDataUrl:base+'standard_fonts/'});
     let worker: OcrWorker | undefined; let stopped=false;
     const abort=()=>{stopped=true;void loading.destroy();if(worker)void worker.terminate();};
