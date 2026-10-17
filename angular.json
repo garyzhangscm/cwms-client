@@ -60,7 +60,37 @@
                 "glob": "**/*",
                 "input": "public"
               },
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "pdf*.mjs",
+                "input": "node_modules/pdfjs-dist/build",
+                "output": "assets/pdf-import/pdf"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/pdfjs-dist/cmaps",
+                "output": "assets/pdf-import/cmaps"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/pdfjs-dist/standard_fonts",
+                "output": "assets/pdf-import/standard_fonts"
+              },
+              {
+                "glob": "*.min.js",
+                "input": "node_modules/tesseract.js/dist",
+                "output": "assets/pdf-import/ocr"
+              },
+              {
+                "glob": "*.wasm*",
+                "input": "node_modules/tesseract.js-core",
+                "output": "assets/pdf-import/core"
+              },
+              {
+                "glob": "eng.traineddata.gz",
+                "input": "node_modules/@tesseract.js-data/eng/4.0.0",
+                "output": "assets/pdf-import/lang"
+              }
             ],
             "styles": [
               "src/styles.less"

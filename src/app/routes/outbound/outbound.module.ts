@@ -1,3 +1,4 @@
+import { OrderPdfImportComponent } from './order-pdf-import/order-pdf-import.component';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NgModule, Type } from '@angular/core'; 
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
@@ -92,6 +93,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 const COMPONENTS: Array<Type<void>> = [
+  OrderPdfImportComponent,
   OutboundOrderComponent,
   OutboundWaveComponent,
   OutboundShipmentComponent,

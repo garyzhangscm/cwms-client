@@ -1,0 +1,74 @@
+<div class="pdf-import">
+  <header class="import-header">
+    <div><p class="eyebrow">OUTBOUND ORDERS</p><h1>Import PDF</h1><p>Read the packing slip, check the details, then create your order.</p></div>
+    <a nz-button routerLink="/outbound/order">Back to orders</a>
+  </header>
+  <section class="upload-card">
+    <div><strong>{{ fileName || 'Choose a packing slip' }}</strong><p>English PDFs and scanned copies · Up to 10 pages · 15 MB maximum</p></div>
+    <div class="upload-actions">
+      <label class="ocr-option"><input type="checkbox" [(ngModel)]="forceOcr" [disabled]="busy || creating || locked"> Use OCR for all pages</label>
+      <button nz-button nzType="primary" (click)="fileInput.click()" [disabled]="busy || creating || locked">{{ draft ? 'Choose another PDF' : 'Choose PDF' }}</button>
+      <input #fileInput type="file" accept="application/pdf,.pdf" hidden (change)="selectFile($event)">
+    </div>
+  </section>
+  <p class="privacy">Your PDF stays in this browser. Selecting a file does not create an order.</p>
+  <nz-alert *ngIf="testEnvironment" nzType="warning" nzMessage="This test page uses the live order database. Create Order will save a real order." nzShowIcon></nz-alert>
+  <nz-alert *ngIf="error" nzType="error" [nzMessage]="error" nzShowIcon></nz-alert>
+  <div class="loading" *ngIf="busy"><nz-spin nzSimple></nz-spin><span>{{ progress || 'Matching system items…' }}</span><button nz-button (click)="cancel()">Cancel</button></div>
+  <button nz-button *ngIf="!referencesReady" (click)="loadReferences()">Reload customers and permissions</button>
+  <div class="review-layout" *ngIf="draft && !busy">
+    <section class="preview-pane">
+      <div class="panel-heading"><strong>Original PDF</strong><div><button nz-button nzSize="small" (click)="page = page - 1" [disabled]="page === 0">Previous</button><span>{{ page + 1 }} / {{ previews.length }}</span><button nz-button nzSize="small" (click)="page = page + 1" [disabled]="page + 1 >= previews.length">Next</button></div></div>
+      <div class="preview-tools"><button nz-button nzSize="small" (click)="previewZoom = previewZoom - 25" [disabled]="previewZoom <= 100">−</button><span>{{ previewZoom }}%</span><button nz-button nzSize="small" (click)="previewZoom = previewZoom + 25" [disabled]="previewZoom >= 250">+</button></div>
+      <div class="preview-document"><img [src]="previews[page]" [style.width.%]="previewZoom" alt="Original packing slip page"></div>
+      <p class="preview-note">{{ mode }}. Compare the source with the draft on the right.</p>
+    </section>
+    <section class="review-pane" [class.locked]="creating || locked">
+      <div class="panel-heading"><strong>Review order</strong><span class="draft-badge">Unsaved draft</span></div>
+      <fieldset [disabled]="creating || locked">
+        <div class="review-body">
+          <div class="warnings"><p *ngFor="let warning of draft.warnings">{{ warning }}</p></div>
+          <div class="field-grid">
+            <label>Order # <span class="required">*</span><input nz-input [(ngModel)]="draft.number" (ngModelChange)="changed()" (blur)="draft.number = draft.number.trim()" required></label>
+            <label>PO #<input nz-input [(ngModel)]="draft.poNumber" (ngModelChange)="changed()"></label>
+            <label class="wide">Customer <span class="required">*</span><nz-select nzShowSearch nzPlaceHolder="Select a system customer" [(ngModel)]="customerId" (ngModelChange)="changed()"><nz-option *ngFor="let customer of customers" [nzValue]="customer.id" [nzLabel]="customer.name"></nz-option></nz-select><small>PDF: {{ draft.customer || 'Not recognized' }}</small></label>
+            <label>Client (3PL)<nz-select nzShowSearch nzAllowClear nzPlaceHolder="No client" [(ngModel)]="clientId" (ngModelChange)="clientChanged()"><nz-option *ngFor="let client of clients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option></nz-select></label>
+            <label>Inventory status <span class="required">*</span><nz-select nzPlaceHolder="Select status" [(ngModel)]="statusId" (ngModelChange)="changed()"><nz-option *ngFor="let status of statuses" [nzValue]="status.id" [nzLabel]="status.name"></nz-option></nz-select></label>
+          </div>
+          <div class="section-title"><h2>Ship-to address</h2><button nz-button nzSize="small" (click)="useSavedAddress()" [disabled]="!customerId">Use saved address</button></div>
+          <div class="field-grid">
+            <label class="wide">Street address <span class="required">*</span><input nz-input [(ngModel)]="draft.addressLine1" (ngModelChange)="changed()" required></label>
+            <label class="wide">Address line 2<input nz-input [(ngModel)]="draft.addressLine2" (ngModelChange)="changed()"></label>
+            <label>City <span class="required">*</span><input nz-input [(ngModel)]="draft.city" (ngModelChange)="changed()" required></label>
+            <label>State / province <span class="required">*</span><input nz-input [(ngModel)]="draft.state" (ngModelChange)="changed()" required></label>
+            <label>Postal code <span class="required">*</span><input nz-input [(ngModel)]="draft.postcode" (ngModelChange)="changed()" required></label>
+            <label>Country <span class="required">*</span><input nz-input [(ngModel)]="draft.country" (ngModelChange)="changed()" required></label>
+          </div>
+          <div class="section-title"><h2>Order lines <span>{{ lines.length }}</span></h2><button nz-button nzSize="small" (click)="addLine()">Add line</button></div>
+          <article class="line-card" *ngFor="let row of lines; let index = index">
+            <div class="line-heading"><strong>Line {{ index + 1 }}</strong><span>PDF page {{ row.page }}</span><button nz-button nzType="text" nzDanger (click)="removeLine(row)">Remove</button></div>
+            <div class="item-lookup"><label>Item code <span class="required">*</span><input nz-input [(ngModel)]="row.code" (ngModelChange)="codeChanged(row)" (keydown.enter)="matchItem(row)"></label><button nz-button (click)="matchItem(row)" [nzLoading]="row.loading">Match</button></div>
+            <nz-select class="item-select" *ngIf="row.candidates.length" nzShowSearch nzPlaceHolder="Select the correct system item" [ngModel]="row.item?.id" (ngModelChange)="selectItem(row, $event)"><nz-option *ngFor="let item of row.candidates" [nzValue]="item.id" [nzLabel]="item.name + ' · ' + item.description"></nz-option></nz-select>
+            <p class="item-description">{{ row.item?.description || row.description }}</p>
+            <p class="field-error" *ngIf="row.error">{{ row.error }}</p>
+            <p class="source-quantity">PDF quantity: <strong>{{ row.sourceQuantity ?? 'Unrecognized' }} {{ row.unit || '(unit not recognized)' }}</strong><span *ngIf="row.cartons"> · Cartons: {{ row.cartons }}</span></p>
+            <div class="field-grid">
+              <label>Quantity <span class="required">*</span><input nz-input type="number" min="1" step="1" [(ngModel)]="row.quantity" (ngModelChange)="changed()" required></label>
+              <label>Quantity is measured in <span class="required">*</span><nz-select nzPlaceHolder="Verify the PDF unit" [(ngModel)]="row.unitKey" (ngModelChange)="changed()"><nz-option *ngFor="let unit of row.choices" [nzValue]="unit.key" [nzLabel]="unit.label"></nz-option></nz-select></label>
+              <label *ngFor="let attr of tracked(row)">{{ attr.label }} <span class="required">*</span><input nz-input [(ngModel)]="row.attributes[attr.key]" (ngModelChange)="changed()" required></label>
+            </div>
+            <p class="system-quantity">Order quantity: <strong>{{ quantity(row) ?? '—' }} {{ chosenUnit(row) }}</strong><span>FIFO</span></p>
+          </article>
+          <p class="reference-note" *ngIf="draft.invoiceDate || draft.delivery">PDF reference only: Invoice date {{ draft.invoiceDate || '—' }} · Delivery # {{ draft.delivery || '—' }}.</p>
+          <div class="validation" *ngIf="issues.length"><strong>Before creating</strong><ul><li *ngFor="let issue of issues">{{ issue }}</li></ul></div>
+          <label class="acknowledgement"><input type="checkbox" [(ngModel)]="reviewed"> I checked the order number, customer, ship-to address, every item, quantity and unit against the PDF.</label>
+        </div>
+      </fieldset>
+    </section>
+  </div>
+  <footer class="create-bar" *ngIf="draft && !busy">
+    <span>{{ locked ? 'Request sent. Check the order list for its result.' : 'Nothing is saved until you select Create Order.' }}</span>
+    <a nz-button *ngIf="locked" routerLink="/outbound/order" [queryParams]="{number: draft.number}">Check order list</a>
+    <button nz-button nzType="primary" [disabled]="!reviewed || issues.length > 0 || locked || creating" [nzLoading]="creating" (click)="confirmCreate()">Create Order</button>
+  </footer>
+</div>
