@@ -40,11 +40,11 @@ ok(baseQuantity(468,choices.find(c=>c.name==='CTNS'))===1872,'configured carton 
 const {OrderPdfImportComponent}=load(root+'/order-pdf-import.component');
 const obs=value=>({pipe:()=>Promise.resolve(value)});const failure=()=>({pipe:()=>Promise.reject(new Error('simulated timeout'))});
 function component(){let writes=0,go=0;let wh=1;const services={
- orders:{getOrders:()=>obs([]),addOrder:()=>{writes++;return obs({id:10});}},items:{getItem:()=>obs(item)},
- warehouse:{getCurrentWarehouse:()=>({id:wh})},company:{getCurrentCompany:()=>({id:1})},user:{getCurrentUsername:()=> 'TEST'},router:{navigate:async()=>{go++;return true;}}
+ orders:{getOrders:()=>obs([]),addOrder:order=>{writes++;services.saved=order;return obs({id:10});}},items:{getItem:()=>obs(item)},
+ warehouse:{getCurrentWarehouse:()=>({id:wh})},company:{getCurrentCompany:()=>({id:1})},user:{getCurrentUsername:()=> 'TEST'},router:{navigate:async()=>{go++;return true;}},locations:{getLocations:()=>obs([{id:2,name:'DEMO-STAGE',enabled:true,locationGroup:{id:1}}])}
  };
- const c=new OrderPdfImportComponent({}, {}, {},services.items,{},services.orders,services.warehouse,services.company,services.user,services.router);
- c.context='1:1:TEST';c.referencesReady=true;c.permission=true;c.customers=[{id:1,name:d.customer}];c.customerId=1;c.statuses=[{id:1}];c.statusId=1;c.draft=structuredClone(d);
+ const c=new OrderPdfImportComponent({}, {}, {},services.items,{},services.orders,services.warehouse,services.company,services.user,services.router,{},{},services.locations);
+ c.context='1:1:TEST';c.referencesReady=true;c.permission=true;c.customers=[{id:1,name:d.customer}];c.customerId=1;c.statuses=[{id:1}];c.statusId=1;c.draft=structuredClone(d);c.stageGroups=[{id:1}];c.stageGroupId=1;c.stageLocations=[{id:2,locationGroup:{id:1}}];c.stageLocationId=2;
  const row={...d.lines[0],sourceQuantity:d.lines[0].quantity,candidates:[item],item,choices,unitKey:suggestUnit(choices,'EA'),loading:false,error:'',version:0,attributes:{}};c.lines=[row];
  return {c,services,writes:()=>writes,go:()=>go,warehouse:id=>wh=id};
 }
@@ -62,6 +62,18 @@ function component(){let writes=0,go=0;let wh=1;const services={
  t=component();t.c.lines[0].quantity=40;ok(t.c.lines[0].sourceQuantity===1872,'source quantity retained after edit');
  t=component();let resolveRead;t.c.reader={read:()=>new Promise(resolve=>{resolveRead=resolve;})};const task=t.c.selectFile({target:{files:[{name:'demo.pdf'}],value:'demo.pdf'}});t.c.cancel();resolveRead({pages:[synthetic],previews:[],ocrPages:0});await task;ok(!t.c.busy&&!t.c.draft,'cancel discards late recognition results');
  t=component();t.services.items.getItem=()=>obs({...item,itemPackageTypes:[]});t.c.reviewed=true;await t.c.confirmCreate();ok(t.writes()===0&&t.c.error.includes('packaging'),'changed packaging blocks write');
+ t=component();ok(t.c.manualPick===true,'manual picking defaults on');t.c.reviewed=true;await t.c.confirmCreate();ok(t.services.saved.allowForManualPick===true&&t.services.saved.stageLocationId===2&&t.services.saved.stageLocationGroupId===1,'manual order carries selected stage');
+ t=component();t.c.stageLocationId=undefined;t.c.reviewed=true;await t.c.confirmCreate();ok(t.writes()===0&&t.c.issues.some(s=>s.includes('shipping stage')),'manual mode requires stage');
+ t=component();t.services.locations.getLocations=()=>obs([]);t.c.reviewed=true;await t.c.confirmCreate();ok(t.writes()===0&&t.c.error.includes('no longer available'),'stage availability rechecked before write');
+ t=component();t.c.manualPick=false;t.c.manualPickChanged();t.c.reviewed=true;await t.c.confirmCreate();ok(t.writes()===1&&t.services.saved.allowForManualPick===false&&t.services.saved.stageLocationId===undefined&&t.services.saved.stageLocationGroupId===undefined,'switching manual mode off omits stage');
+ t=component();const resolvers={};t.services.locations.getLocations=(_types,id)=>({pipe:()=>new Promise(resolve=>{resolvers[id]=resolve;})});
+ t.c.stageGroupId=1;const oldGroup=t.c.stageGroupChanged();t.c.stageGroupId=2;const newGroup=t.c.stageGroupChanged();resolvers['2']([{id:22,locationGroup:{id:2}}]);await newGroup;resolvers['1']([{id:11,locationGroup:{id:1}}]);await oldGroup;ok(t.c.stageLocations[0].id===22,'late group response cannot restore stale locations');
+ t=component();t.c.customerService={loadCustomers:()=>obs([])};t.c.clientService={getClients:()=>obs([])};
+ t.c.inventoryStatuses={loadInventoryStatuses:()=>obs([{id:8,name:'DMG'},{id:9,name:' AVAL '},{id:10,name:'QC'}])};
+ t.services.user.getUserPermissionByWebPage=()=>obs([]);t.services.user.isCurrentPageDisplayOnly=async()=>false;
+ t.c.draft=undefined;t.c.statusId=undefined;await t.c.loadReferences();ok(t.c.referencesReady&&t.c.statusId===9,'AVAL defaults among multiple statuses');
+ t.c.statusId=10;await t.c.loadReferences();ok(t.c.statusId===10,'reload preserves selected status');
+ t.c.statusId=undefined;t.c.inventoryStatuses.loadInventoryStatuses=()=>obs([{id:8,name:'DMG'}]);await t.c.loadReferences();ok(t.c.statusId===undefined,'missing AVAL requires explicit choice');
  const {PdfImportReaderService}=load(root+'/pdf-import-reader.service');const reader=new PdfImportReaderService();
  await assert.rejects(reader.read({size:16*1024*1024},false,new AbortController().signal,()=>{}),/15 MB/);count++;
  await assert.rejects(reader.read(new File(['Not a PDF'],'demo.pdf'),false,new AbortController().signal,()=>{}),/not a PDF/);count++;

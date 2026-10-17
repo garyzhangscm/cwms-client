@@ -137,8 +137,8 @@ export class WorkOrderService {
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
       workOrderIds: workOrderIds.join(','),
     };
-    // Development uses a dedicated protected endpoint, never the legacy production DELETE route.
-    const url = environment.production ? 'workorder/work-orders' : 'workorder-deletion-test/work-orders';
+    // The formal backend now includes the deletion guard; test and production use the same endpoint.
+    const url = 'workorder/work-orders';
     return this.http.delete(url, params).pipe(map(() => undefined));
   }
 

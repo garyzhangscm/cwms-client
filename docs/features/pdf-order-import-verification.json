@@ -2,23 +2,25 @@
   "verifiedAtUTC": "2026-10-17T00:04:45.312803+00:00",
   "environment": "test frontend only",
   "angularTemplateCompiler": "passed",
-  "regressionChecks": 42,
+  "regressionChecks": 51,
   "testInputs": [
     "synthetic geometry",
     "private sample text coordinates",
     "private OCR coordinates"
   ],
-  "browserNativePdf": "review draft verified; customer and item matched",
-  "browserForcedOcr": "review draft verified; item quantity and cartons separated",
+  "browserNativePdf": "formal review draft verified; customer and item matched",
+  "browserForcedOcr": "formal review draft verified; item quantity and cartons separated",
   "creationCallsDuringBrowserVerification": 0,
   "creationTests": "mock services only; duplicate, acknowledgement, permission, context, packaging and uncertain-write guards verified",
   "documentStorage": "browser memory only; no recognition service upload",
-  "productionDeployment": false,
+  "productionDeployment": true,
   "scope": "English packing slips; initial layout adapter; manual review required",
   "limitations": [
     "Unsupported layouts require manual correction.",
     "Live backend is shared with test website; explicit Create Order persists a real order.",
     "No real order was submitted to verify persistence."
   ],
-  "browserConfirmationGate": "Create enabled only after status selection and acknowledgement; restored unchecked; no Create click"
+  "browserConfirmationGate": "Manual pick and AVAL defaulted; required stage and acknowledgement gates verified; no Create click",
+  "latestValidationDate": "2026-10-16",
+  "productionReleaseManifest": "deploy/colton-pdf-import-release-20261016.json"
 }

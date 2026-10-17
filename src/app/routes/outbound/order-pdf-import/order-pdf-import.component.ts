@@ -1,4 +1,8 @@
-import { environment } from '@env/environment';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -32,18 +36,50 @@ const attributes=[
 ];
 @Component({selector:'app-order-pdf-import',standalone:false,templateUrl:'./order-pdf-import.component.html',styleUrls:['./order-pdf-import.component.less']})
 export class OrderPdfImportComponent implements OnInit,OnDestroy {
-  readonly testEnvironment=!environment.production;
   busy=false;creating=false;locked=false;reviewed=false;forceOcr=false;progress='';error='';fileName='';mode='';
   draft?:PdfOrderDraft;lines:ReviewLine[]=[];previews:string[]=[];page=0;previewZoom=100;
   customers:Customer[]=[];clients:Client[]=[];statuses:InventoryStatus[]=[];customerId?:number;clientId?:number;statusId?:number;
   referencesReady=false;permission=false;private controller?:AbortController;private version=0;private edits=0;
+  manualPick=true;stageGroupId?:number;stageLocationId?:number;stageGroups:LocationGroup[]=[];stageLocations:WarehouseLocation[]=[];
+  stageLoading=false;stageError='';private stageVersion=0;
   private context='';
   constructor(private reader:PdfImportReaderService,private customerService:CustomerService,private clientService:ClientService,
     private items:ItemService,private inventoryStatuses:InventoryStatusService,private orders:OrderService,
-    private warehouse:WarehouseService,private company:CompanyService,private user:UserService,private router:Router){}
-  ngOnInit():void {this.context=this.contextKey();void this.loadReferences();}
-  ngOnDestroy():void {this.controller?.abort();this.version++;}
+    private warehouse:WarehouseService,private company:CompanyService,private user:UserService,private router:Router,
+    private stageTypes:LocationGroupTypeService,private stageGroupService:LocationGroupService,private locations:LocationService){}
+  ngOnInit():void {this.context=this.contextKey();void this.loadReferences();void this.loadStages();}
+  ngOnDestroy():void {this.controller?.abort();this.version++;this.stageVersion++;}
   private contextKey():string {return `${this.company.getCurrentCompany()?.id}:${this.warehouse.getCurrentWarehouse()?.id}:${this.user.getCurrentUsername()}`;}
+  async loadStages():Promise<void> {
+    this.stageError='';
+    try {
+      const types=await firstValueFrom(this.stageTypes.loadLocationGroupTypes(true).pipe(timeout(20000)));
+      const ids=types.map(t=>t.id);
+      const groups=ids.length?await firstValueFrom(this.stageGroupService.getLocationGroups(ids,[]).pipe(timeout(20000))):[];
+      if(this.context!==this.contextKey())return;
+      this.stageGroups=groups;
+      if(!groups.length)this.stageError='No shipping stage groups are configured for this warehouse.';
+    }catch{this.stageError='Could not load shipping stage groups. Please retry.';}
+  }
+  manualPickChanged():void {
+    this.changed();this.stageVersion++;this.stageLoading=false;this.stageLocationId=undefined;this.stageLocations=[];
+    if(this.manualPick&&this.stageGroupId)void this.stageGroupChanged();
+  }
+  private availableStages(rows:WarehouseLocation[],groupId:number):WarehouseLocation[] {
+    return rows.filter(l=>l.enabled!==false&&l.locked!==true&&!l.reservedCode&&(l.locationGroup?.id==null||l.locationGroup.id===groupId));
+  }
+  async stageGroupChanged():Promise<void> {
+    this.changed();const version=++this.stageVersion;const id=this.stageGroupId;this.stageLocationId=undefined;this.stageLocations=[];this.stageError='';
+    if(id==null||!this.manualPick){this.stageLoading=false;return;}
+    this.stageLoading=true;
+    try {
+      const rows=await firstValueFrom(this.locations.getLocations(undefined,String(id),undefined,true).pipe(timeout(20000)));
+      if(version!==this.stageVersion||this.context!==this.contextKey())return;
+      this.stageLocations=this.availableStages(rows,id);
+      if(!this.stageLocations.length)this.stageError='No available shipping stage locations in this group.';
+    }catch{if(version===this.stageVersion)this.stageError='Could not load available stage locations. Select the group again to retry.';}
+    finally{if(version===this.stageVersion)this.stageLoading=false;}
+  }
   async loadReferences():Promise<void> {
     this.referencesReady=false;
     try {
@@ -54,7 +90,10 @@ export class OrderPdfImportComponent implements OnInit,OnDestroy {
       if(this.context!==this.contextKey())throw new Error('Warehouse or account changed. Reopen Import PDF.');
       this.customers=customers;this.clients=clients;this.statuses=statuses;
       this.permission=!displayOnly&&!permissions.some(p=>p.permission.name==='add-order'&&!p.allowAccess);
-      this.statusId=statuses.length===1?statuses[0].id:undefined;
+      if (!statuses.some(status=>status.id===this.statusId)) {
+        const available=statuses.filter(status=>status.name?.trim().toUpperCase()==='AVAL');
+        this.statusId=available.length===1?available[0].id:undefined;
+      }
       this.referencesReady=true;
       if(this.draft)this.matchCustomer();
     }catch{this.error='Could not load customers, inventory statuses or permissions. Retry loading before creating an order.';}
@@ -139,6 +178,7 @@ export class OrderPdfImportComponent implements OnInit,OnDestroy {
     if(!this.customers.some(c=>c.id===this.customerId))issues.push('Select a system customer.');
     if(!draft.addressLine1.trim()||!draft.city.trim()||!draft.state.trim()||!draft.postcode.trim()||!draft.country.trim())issues.push('Complete the ship-to address.');
     if(!this.statuses.some(s=>s.id===this.statusId))issues.push('Select an inventory status.');
+    if(this.manualPick&&(!this.stageGroups.some(g=>g.id===this.stageGroupId)||!this.stageLocations.some(l=>l.id===this.stageLocationId)||this.stageLoading))issues.push('Select a shipping stage group and available location for manual picking.');
     if(!this.lines.length)issues.push('Add at least one order line.');
     if(this.lines.length>100)issues.push('Import at most 100 lines per order.');
     this.lines.forEach((row,i)=>{
@@ -153,7 +193,7 @@ export class OrderPdfImportComponent implements OnInit,OnDestroy {
     const version=this.edits;const draft=this.draft!;draft.number=cleanEdge(draft.number);
     const status=this.statuses.find(s=>s.id===this.statusId)!;
     const order:Order={number:draft.number,poNumber:draft.poNumber.trim(),warehouseId:this.warehouse.getCurrentWarehouse().id,status:OrderStatus.OPEN,category:OrderCategory.SALES_ORDER,
-      orderBillableActivities:[],allowForManualPick:false,clientId:this.clientId,shipToCustomerId:this.customerId,
+      orderBillableActivities:[],allowForManualPick:this.manualPick,stageLocationGroupId:this.manualPick?this.stageGroupId:undefined,stageLocationId:this.manualPick?this.stageLocationId:undefined,clientId:this.clientId,shipToCustomerId:this.customerId,
       shipToAddressLine1:draft.addressLine1.trim(),shipToAddressLine2:draft.addressLine2.trim(),shipToAddressCity:draft.city.trim(),shipToAddressState:draft.state.trim(),shipToAddressPostcode:draft.postcode.trim(),shipToAddressCountry:draft.country.trim(),
       orderLines:this.lines.map((row,i)=>({number:String(i+1),orderNumber:draft.number,warehouseId:this.warehouse.getCurrentWarehouse().id,itemId:row.item!.id,
         clientId:this.clientId,expectedQuantity:this.quantity(row)!,openQuantity:this.quantity(row)!,inprocessQuantity:0,shippedQuantity:0,productionPlanInprocessQuantity:0,productionPlanProducedQuantity:0,
@@ -170,6 +210,11 @@ export class OrderPdfImportComponent implements OnInit,OnDestroy {
         const item=fresh.get(row.item!.id!)!;const old=row.choices.find(c=>c.key===row.unitKey)!;const current=unitChoices(item).find(c=>c.key===row.unitKey);
         if(!current||current.factor!==old.factor||current.base!==old.base||(this.clientId===undefined?item.clientId!=null:item.clientId!==this.clientId)||attributes.some(([flag,,key])=>Boolean((item as unknown as Record<string,unknown>)[flag])&&!row.attributes[key]?.trim()))throw new Error('Item packaging or client changed. Match the items again before creating the order.');
       }
+      if(order.allowForManualPick) {
+        const rows=await firstValueFrom(this.locations.getLocations(undefined,String(order.stageLocationGroupId),undefined,true).pipe(timeout(20000)));
+        if(!this.availableStages(rows,order.stageLocationGroupId!).some(l=>l.id===order.stageLocationId))throw new Error('The selected shipping stage is no longer available. Select another location.');
+      }
+      if(version!==this.edits||this.context!==this.contextKey())throw new Error('The draft or warehouse changed. Review it again.');
       // Once a write is dispatched, never automatically resend it, including after a timeout.
       this.locked=true;
       const saved=await firstValueFrom(this.orders.addOrder(order).pipe(timeout(45000)));

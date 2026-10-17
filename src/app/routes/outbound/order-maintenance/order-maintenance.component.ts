@@ -140,6 +140,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       else {
         // this.currentProductionLine = this.createEmptyProductionLine();
         this.currentOrder = this.getEmptyOrder();
+        this.validateShipStageLocationAndGroupRequirement();
         this.newOrder = true;
         this.loadCarriers();
       }
@@ -216,7 +217,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     this.inventoryStatusService.getAvailableInventoryStatuses()
     .subscribe(inventoryStatuses => {
       if (inventoryStatuses.length > 0) {
-        this.availableInventoryStatus = inventoryStatuses[0];
+        this.availableInventoryStatus = inventoryStatuses.find(status => status.name?.trim().toUpperCase() === 'AVAL') || inventoryStatuses[0];
       }
     });
   }
@@ -239,6 +240,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       orderBillableActivities: [],
       status: OrderStatus.OPEN,
       category: OrderCategory.SALES_ORDER,
+      allowForManualPick: true,
       orderLines: [],
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
       shipToCustomer: this.getEmptyCustomer(),
@@ -262,6 +264,10 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   }
 
   orderCategoryChanged() {
+    if (this.currentOrder && this.isOutsourcingOrder(this.currentOrder)) {
+      this.currentOrder.allowForManualPick = false;
+    }
+    this.validateShipStageLocationAndGroupRequirement();
     console.log(`current order's category is changed to ${this.currentOrder?.category}`)
   }
 
@@ -370,7 +376,11 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     };
 
     // get the default inventory status for the newly added line
-    if (this.validInventoryStatuses.length === 1) {
+    const avalStatus = this.validInventoryStatuses.find(status => status.name?.trim().toUpperCase() === 'AVAL');
+    if (avalStatus) {
+      defaultInventoryStatus = avalStatus;
+    }
+    else if (this.validInventoryStatuses.length === 1) {
       defaultInventoryStatus = this.validInventoryStatuses[0]; 
     }
     else if (this.availableInventoryStatus != null) {
@@ -461,6 +471,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     }
   }
   passValidation() : boolean {
+    this.validateShipStageLocationAndGroupRequirement();
     if (!this.validateOrderNumberInput()) return false;
 
     if (this.stepIndex === 0) {
@@ -694,7 +705,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     this.shipStageLocationGroupStatus = "success";
     this.shipStageLocationStatus = "success";
 
-    if (this.currentOrder!.allowForManualPick) {
+    if (this.currentOrder!.allowForManualPick && !this.isOutsourcingOrder(this.currentOrder!)) {
       if (this.currentOrder!.stageLocationId == null) {
         this.shipStageLocationStatus = "requiredForManualPickOrder";
       } 
