@@ -74,6 +74,13 @@ server {
         proxy_read_timeout 120s;
     }
 
+    location ^~ /api/qc-shift-report/ {
+        proxy_pass http://qc-shift-report:18794/qc-shift-report/;
+        proxy_set_header Authorization $http_authorization;
+        proxy_set_header Host $proxy_host;
+        proxy_read_timeout 60s;
+    }
+
     location ^~ /api/ {
         # Forward the normalized URI, including legacy clients' duplicate slashes.
         proxy_pass ${COLTON_API_TARGET}/api/;

@@ -1,4 +1,5 @@
 import { formatDate } from '@angular/common';
+import { finalize, timeout } from 'rxjs';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,6 +45,7 @@ export class QcQcRuleComponent implements OnInit {
 listOfAllQCRules: QCRule[] = [];
 
 searchResult = '';
+removeMessage = '';
 isSpinning = false; 
 
 ngOnInit(): void { 
@@ -69,10 +71,12 @@ resetForm(): void {
 search(): void {
   this.isSpinning = true;
   this.searchResult = '';
-  this.qcRuleService.getQCRules(this.searchForm.value.name).subscribe(
+  this.qcRuleService.getQCRules(this.searchForm.value.name)
+    .pipe(timeout(30000), finalize(() => this.isSpinning = false)).subscribe(
     {
       next: (qcRuleRes) => {
         this.listOfAllQCRules = qcRuleRes;
+        this.st?.reload();
 
         this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -123,16 +127,31 @@ modifyQCRule(qcRule: QCRule) {
   this.router.navigateByUrl(
       `/qc/qc-rule/maintenance?id=${qcRule.id}`);
 }
-removeQCRule(qcRule: QCRule) { 
-    this.isSpinning = true;
-    this.qcRuleService.removeQCRule(qcRule)
+removeQCRule(qcRule: QCRule) {
+  if (this.isSpinning || this.displayOnly || !qcRule.id) return;
+  this.isSpinning = true;
+  this.removeMessage = '';
+  let confirmed = false;
+  this.qcRuleService.removeQCRule(qcRule)
+    .pipe(timeout(30000), finalize(() => this.isSpinning = false))
     .subscribe({
       next: () => {
-        this.isSpinning = false;
-        this.search();
-
-      }, 
-      error: () =>  this.isSpinning = false
+        confirmed = true;
+        this.listOfAllQCRules = this.listOfAllQCRules.filter(rule => rule.id !== qcRule.id);
+        this.st?.reload();
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: this.listOfAllQCRules.length,
+        });
+        this.removeMessage = this.i18n.fanyi('qc-rule.removed', {name: qcRule.name});
+      },
+      error: (error: {statusText?: string}) => {
+        const referenced = /foreign key|constraint|referenc|in use/i.test(error?.statusText || '');
+        this.removeMessage = this.i18n.fanyi(referenced ? 'qc-rule.in-use' : 'qc-rule.remove-unknown', {name: qcRule.name});
+      },
+      complete: () => {
+        if (!confirmed) this.removeMessage = this.i18n.fanyi('qc-rule.remove-unknown', {name: qcRule.name});
+      }
     });
 }
 

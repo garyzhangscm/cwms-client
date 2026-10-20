@@ -47,6 +47,8 @@
   </div>
 </form>
 
+<div role="status" *ngIf="removeMessage" style="margin: 12px 0;">{{ removeMessage }}</div>
+<div role="status" *ngIf="detailLoadWarnings" style="margin: 12px 0;">{{ 'qc-config.detail-warning' | i18n }}</div>
 <div class="search-result-list">
   <!--
     <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
@@ -216,7 +218,7 @@
               </thead>
               <tbody>
                 <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
-                  <td>{{ qcRuleItem.checkPoint }}</td>
+                  <td>{{ qcRuleItem | qcQuestion }}</td>
                   <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
                   <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
                   <td>{{ qcRuleItem.expectedValue }}</td>

@@ -1,4 +1,5 @@
 import { formatDate } from '@angular/common';
+import { Observable, finalize, timeout } from 'rxjs';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -55,6 +56,8 @@ export class WorkOrderQcRuleConfigurationComponent implements OnInit {
 listOfAllQCRuleConfiguration: WorkOrderQcRuleConfiguration[] = [];
 
 searchResult = '';
+removeMessage = '';
+detailLoadWarnings = 0;
 isSpinning = false;
 searchForm!: UntypedFormGroup;
 validproductionLines: ProductionLine[] = []; 
@@ -91,11 +94,12 @@ resetForm(): void {
 search(): void {
   this.isSpinning = true;
   this.searchResult = '';
+  this.detailLoadWarnings = 0;
   this.workOrderQcRuleConfigurationService.getQCRuleConfigurations(
     undefined,
     this.searchForm!.value.workOrder,
     this.searchForm!.value.productionLine, 
-  ).subscribe({
+  ).pipe(timeout(30000), finalize(() => this.isSpinning = false)).subscribe({
     next: (qcRuleConfigurationRes) => {
       this.listOfAllQCRuleConfiguration = qcRuleConfigurationRes; 
  
@@ -104,6 +108,7 @@ search(): void {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: qcRuleConfigurationRes.length,
         });
+        this.st?.reload();
         this.refreshDetailInformations(this.listOfAllQCRuleConfiguration);
       }, 
       error: () => {
@@ -165,121 +170,64 @@ search(): void {
  
   }
 
-  loadWarehouse(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
-    if (workOrderQcRuleConfiguration.warehouseId) {
+  private trackDetail<T>(source: Observable<T>, assign: (value: T) => void): void {
+    this.loadingQCConfigurationDetailsRequest++;
+    source.pipe(timeout(15000), finalize(() => this.loadingQCConfigurationDetailsRequest--))
+      .subscribe({next: assign, error: () => this.detailLoadWarnings++});
+  }
 
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getWarehouse(workOrderQcRuleConfiguration.warehouseId)
-      .subscribe((warehouse: Warehouse) => {
-
-        workOrderQcRuleConfiguration.warehouse = warehouse;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
+  loadWarehouse(row: WorkOrderQcRuleConfiguration): void {
+    if (row.warehouseId) {
+      this.trackDetail<Warehouse>(this.localCacheService.getWarehouse(row.warehouseId), value => row.warehouse = value);
     }
   }
-  loadOrder(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
-    if (workOrderQcRuleConfiguration.outboundOrderId) {
 
-      this.loadingQCConfigurationDetailsRequest++;
-      this.orderService
-      .getOrder(workOrderQcRuleConfiguration.outboundOrderId)
-      .subscribe((order: Order) => {
-
-        workOrderQcRuleConfiguration.outboundOrder = order;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
-    }}
-  loadCustomer(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
-    if (workOrderQcRuleConfiguration.customerId) {
-
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getCustomer(workOrderQcRuleConfiguration.customerId)
-      .subscribe((customer: Customer) => {
-
-        workOrderQcRuleConfiguration.customer = customer;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
-    }}
-  loadItem(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
-    if (workOrderQcRuleConfiguration.itemId) {
-
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getItem(workOrderQcRuleConfiguration.itemId)
-      .subscribe((item: Item) => {
-
-        workOrderQcRuleConfiguration.item = item;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
-    }}
-  loadItemFamily(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
-    if (workOrderQcRuleConfiguration.itemFamilyId) {
-
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getItemFamily(workOrderQcRuleConfiguration.itemFamilyId)
-      .subscribe((itemFamily: ItemFamily) => {
-
-        workOrderQcRuleConfiguration.itemFamily = itemFamily;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
-    }}
-  loadInventoryStatus(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
-    if (workOrderQcRuleConfiguration.fromInventoryStatusId) {
-
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getInventoryStatus(workOrderQcRuleConfiguration.fromInventoryStatusId)
-      .subscribe((inventoryStatus: InventoryStatus) => {
-
-        workOrderQcRuleConfiguration.fromInventoryStatus = inventoryStatus;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
+  loadOrder(row: WorkOrderQcRuleConfiguration): void {
+    if (row.outboundOrderId) {
+      this.trackDetail<Order>(this.orderService.getOrder(row.outboundOrderId), value => row.outboundOrder = value);
     }
-    if (workOrderQcRuleConfiguration.toInventoryStatusId) {
-
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getInventoryStatus(workOrderQcRuleConfiguration.toInventoryStatusId)
-      .subscribe((inventoryStatus: InventoryStatus) => {
-
-        workOrderQcRuleConfiguration.toInventoryStatus = inventoryStatus;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
-    }
-
   }
-  loadInventoryLock(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
-    if (workOrderQcRuleConfiguration.inventoryLockId) {
 
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getInventoryLock(workOrderQcRuleConfiguration.inventoryLockId)
-      .subscribe((inventoryLock: InventoryLock) => {
-
-        workOrderQcRuleConfiguration.inventoryLock = inventoryLock;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
+  loadCustomer(row: WorkOrderQcRuleConfiguration): void {
+    if (row.customerId) {
+      this.trackDetail<Customer>(this.localCacheService.getCustomer(row.customerId), value => row.customer = value);
     }
-    if (workOrderQcRuleConfiguration.futureInventoryLockId) {
-
-      this.loadingQCConfigurationDetailsRequest++;
-      this.localCacheService
-      .getInventoryLock(workOrderQcRuleConfiguration.futureInventoryLockId)
-      .subscribe((inventoryLock: InventoryLock) => {
-
-        workOrderQcRuleConfiguration.futureInventoryLock = inventoryLock;
-        this.loadingQCConfigurationDetailsRequest--;
-      });
-    }
-
   }
-  
+
+  loadItem(row: WorkOrderQcRuleConfiguration): void {
+    if (row.itemId) {
+      this.trackDetail<Item>(this.localCacheService.getItem(row.itemId), value => row.item = value);
+    }
+  }
+
+  loadItemFamily(row: WorkOrderQcRuleConfiguration): void {
+    if (row.itemFamilyId) {
+      this.trackDetail<ItemFamily>(this.localCacheService.getItemFamily(row.itemFamilyId), value => row.itemFamily = value);
+    }
+  }
+
+  loadInventoryStatus(row: WorkOrderQcRuleConfiguration): void {
+    if (row.fromInventoryStatusId) {
+      this.trackDetail<InventoryStatus>(this.localCacheService.getInventoryStatus(row.fromInventoryStatusId), value => row.fromInventoryStatus = value);
+    }
+    if (row.toInventoryStatusId) {
+      this.trackDetail<InventoryStatus>(this.localCacheService.getInventoryStatus(row.toInventoryStatusId), value => row.toInventoryStatus = value);
+    }
+  }
+
+  loadInventoryLock(row: WorkOrderQcRuleConfiguration): void {
+    if (row.inventoryLockId) {
+      this.trackDetail<InventoryLock>(this.localCacheService.getInventoryLock(row.inventoryLockId), value => row.inventoryLock = value);
+    }
+    if (row.futureInventoryLockId) {
+      this.trackDetail<InventoryLock>(this.localCacheService.getInventoryLock(row.futureInventoryLockId), value => row.futureInventoryLock = value);
+    }
+  }
+
 @ViewChild('st', { static: true })
 st!: STComponent;
 columns: STColumn[] = [
+{title: this.i18n.fanyi('qc-config.id'), index: 'id', width: '100px'},
  // Used by QC by sampling
 { title: this.i18n.fanyi("work-order"), index: 'workOrder.number', iif: () => this.isChoose('workOrder'), width: "100px"},
 { title: this.i18n.fanyi("production-line"), index: 'productionLine.name', iif: () => this.isChoose('productionLine'), width: "150px"}, 
@@ -358,18 +306,30 @@ modifyQCRuleConfiguration(qcRuleConfiguration: WorkOrderQcRuleConfiguration) {
   this.router.navigateByUrl(
   `/work-order/qc-rule-configuration/maintenance?id=${qcRuleConfiguration.id}`);
 }
-removeQCRuleConfiguration(qcRuleConfiguration: WorkOrderQcRuleConfiguration) { 
+removeQCRuleConfiguration(qcRuleConfiguration: WorkOrderQcRuleConfiguration) {
+  if (this.isSpinning || this.displayOnly || !qcRuleConfiguration.id) return;
   this.isSpinning = true;
-  this.workOrderQcRuleConfigurationService
-  .removeQCRuleConfiguration(qcRuleConfiguration)
+  this.removeMessage = '';
+  let confirmed = false;
+  this.workOrderQcRuleConfigurationService.removeQCRuleConfiguration(qcRuleConfiguration)
+    .pipe(timeout(30000), finalize(() => this.isSpinning = false))
     .subscribe({
       next: () => {
-        this.isSpinning = false;
-        this.search();
-
-      }, 
-      error: () =>  this.isSpinning = false
-  });
+        confirmed = true;
+        this.listOfAllQCRuleConfiguration = this.listOfAllQCRuleConfiguration
+          .filter(row => row.id !== qcRuleConfiguration.id);
+        this.st?.reload();
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: this.listOfAllQCRuleConfiguration.length,
+        });
+        this.removeMessage = this.i18n.fanyi('qc-config.removed', {id: qcRuleConfiguration.id});
+      },
+      error: () => this.removeMessage = this.i18n.fanyi('qc-config.remove-unknown', {id: qcRuleConfiguration.id}),
+      complete: () => {
+        if (!confirmed) this.removeMessage = this.i18n.fanyi('qc-config.remove-unknown', {id: qcRuleConfiguration.id});
+      }
+    });
 }
 
 }

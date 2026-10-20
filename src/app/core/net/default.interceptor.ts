@@ -42,11 +42,11 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
             // this.http.get('/').subscribe() 并不会触发
             // return throwError({});
             const error: any = new Error();
-            return throwError({
+            return throwError(() => ({
               status: body.result,
               statusText: body.message,
               url: '',
-            });
+            }));
           } else {
             // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
             //        return of(new HttpResponse(Object.assign(event, { body: body.response })));

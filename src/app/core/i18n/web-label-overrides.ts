@@ -1,6 +1,10 @@
+import { QC_CONFIG_LABELS } from './qc-config-labels';
+import { QC_SHIFT_LABELS } from './qc-shift-labels';
 /** New Web labels must remain available while the resource server dictionary is older. */
 export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
   'es-ES': {
+    ...QC_SHIFT_LABELS['es-ES'],
+    ...QC_CONFIG_LABELS['es-ES'],
     "outbound.allocation.CHECKING": "Verificando estrategia…",
     "outbound.allocation.QUEUED": "Enviado",
     "outbound.allocation.RUNNING": "Asignando…",
@@ -67,6 +71,8 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     "outbound.order.no": "No",
   },
   'en-US': {
+    ...QC_SHIFT_LABELS['en-US'],
+    ...QC_CONFIG_LABELS['en-US'],
     "outbound.allocation.CHECKING": "Checking strategy…",
     "outbound.allocation.QUEUED": "Submitted",
     "outbound.allocation.RUNNING": "Allocating…",
@@ -302,6 +308,8 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': 'The work order could not be deleted. Please refresh and try again.'
   },
   'zh-CN': {
+    ...QC_SHIFT_LABELS['zh-CN'],
+    ...QC_CONFIG_LABELS['zh-CN'],
     "outbound.allocation.CHECKING": "正在检查策略…",
     "outbound.allocation.QUEUED": "已提交",
     "outbound.allocation.RUNNING": "分配处理中…",
@@ -534,6 +542,8 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': '工单删除失败，请刷新后重试。'
   },
   'zh-TW': {
+    ...QC_SHIFT_LABELS['zh-TW'],
+    ...QC_CONFIG_LABELS['zh-TW'],
     "outbound.order.number.noSpaces": "訂單號中間不能包含空格或隱藏字元。",
     "outbound.order.number.checkFailed": "訂單號驗證失敗，請重新離開輸入框以重試。",
     "outbound.order.number.checkBeforeSave": "請填寫有效的訂單號，並等待驗證通過後再儲存。",

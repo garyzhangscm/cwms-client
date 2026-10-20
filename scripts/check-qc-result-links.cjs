@@ -1,0 +1,26 @@
+const fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript'),assert=require('node:assert/strict');
+const {Subject}=require('rxjs');const params=new Subject();const calls=[];
+const form={values:{lpn:null,number:null,workOrderQCSampleNumber:null},reset(){this.values={lpn:null,number:null,workOrderQCSampleNumber:null}},patchValue(v){Object.assign(this.values,v)},getRawValue(){return this.values}};
+const warehouse={getCurrentWarehouse:()=>({id:1})};
+const tokens={i18n:{fanyi:k=>k,currentLang:'en-US'},fb:{group:()=>form},route:{queryParams:params,snapshot:{data:{}}},warehouse,destroy:{},service:{getQCInspectionResult(...a){calls.push(a);return new Subject()}}};
+const scope={exports:{},require(name){
+ if(name==='@angular/common')return{formatDate:()=>''};
+ if(name==='@angular/core')return{Component:()=>c=>c,inject:x=>tokens[x],DestroyRef:'destroy'};
+ if(name==='@angular/core/rxjs-interop')return{takeUntilDestroyed:()=>s=>s};
+ if(name==='@angular/forms')return{UntypedFormBuilder:'fb'};
+ if(name==='@angular/router')return{ActivatedRoute:'route'};
+ if(name==='@delon/theme')return{ALAIN_I18N_TOKEN:'i18n'};
+ if(name==='@core'||name==='@delon/abc/st')return{};
+ if(name==='rxjs')return require('rxjs');
+ if(name.endsWith('warehouse.service'))return{WarehouseService:'warehouse'};
+ if(name.endsWith('qc-inspection-request.service'))return{QcInspectionRequestService:'service'};
+ if(name==='./qc-result.presentation')return{presentQcRecord:x=>x};
+ throw Error(name);
+}};
+vm.runInNewContext(ts.transpile(fs.readFileSync('src/app/routes/qc/qc-result/qc-result.component.ts','utf8'),{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,experimentalDecorators:true}),scope);
+const page=new scope.exports.QcQcResultComponent();page.ngOnInit();
+params.next({number:'QCR0000173145',reportWarehouseId:'1'});assert.equal(calls.at(-1)[2],'QCR0000173145');assert.equal(calls.at(-1)[3],false);
+params.next({workOrderQCSampleNumber:'WQC17351',reportWarehouseId:'1'});assert.equal(calls.at(-1)[1],'WQC17351');assert.equal(calls.at(-1)[2],null);
+const before=calls.length;params.next({number:'QCR1',reportWarehouseId:'2'});assert.equal(calls.length,before);assert.equal(page.searchFailed,true);
+params.next({number:['QCR1','QCR2']});assert.equal(calls.length,before);
+page.ngOnDestroy();console.log('PASS: production record/sample deep links, filter isolation, wrong-warehouse rejection and malformed parameter guard. No API calls.');

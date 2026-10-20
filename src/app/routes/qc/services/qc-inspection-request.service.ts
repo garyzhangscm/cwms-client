@@ -100,7 +100,7 @@ export class QcInspectionRequestService {
     }
 
     if (workOrderQCSampleNumber) {
-      url = `${url}&workOrderQCSampleNumber=${workOrderQCSampleNumber}`;
+      url = `${url}&workOrderQCSampleNumber=${this.utilService.encodeValue(workOrderQCSampleNumber.trim())}`;
     }
 
 

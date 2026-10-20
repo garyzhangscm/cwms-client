@@ -2,7 +2,7 @@ import type { Menu } from '@delon/theme';
 
 const sections = [
   { text: 'Overview', i18n: 'workspace.section.overview', keys: ['menu.dashboard'] },
-  { text: 'Production', i18n: 'workspace.section.production', keys: ['menu.main.work-order', 'menu.main.qc'] },
+  { text: 'Production', i18n: 'workspace.section.production', keys: ['menu.main.work-order', 'menu.main.qc', 'qc-shift.reports-menu'] },
   { text: 'Warehouse & Logistics', i18n: 'workspace.section.warehouse-logistics', keys: ['menu.main.inbound', 'menu.main.inventory', 'menu.main.outbound', 'menu.main.transport'] },
   { text: 'Finance', i18n: 'workspace.section.finance', keys: ['menu.main.billing', 'menu.main.report', 'menu.main.alert'] },
   { text: 'Administration', i18n: 'workspace.section.administration', keys: ['menu.main.layout', 'menu.main.common', 'menu.main.integration', 'menu.main.work-task', 'menu.main.auth', 'menu.main.util'] }
@@ -94,6 +94,20 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
       modules.push(entry);
     } else {
       extra.push(entry);
+    }
+  }
+
+  // Report navigation is a separate module, with the existing QC permissions retained.
+  for (const [index, entry] of modules.entries()) {
+    if (entry.i18n !== 'menu.main.qc' || !entry.children) continue;
+    const existing = entry.children.find(child => child.link === '/qc/shift-report');
+    const source = existing ?? entry.children.find(child => child.link === '/qc/result');
+    if (!source) continue;
+    modules[index] = { ...entry, children: entry.children.filter(child => child.link !== '/qc/shift-report') };
+    if (!modules.some(module => module.i18n === 'qc-shift.reports-menu')) {
+      modules.push({ ...entry, text: 'QC report', i18n: 'qc-shift.reports-menu', link: undefined,
+        icon: { type: 'icon', value: 'bar-chart', theme: 'outline' },
+        children: [{ ...source, text: 'QC Shift Summary', i18n: 'qc-shift.title', link: '/qc/shift-report' }] });
     }
   }
 

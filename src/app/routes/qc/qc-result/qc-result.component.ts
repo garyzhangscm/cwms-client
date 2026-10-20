@@ -35,10 +35,19 @@ export class QcQcResultComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      if (this.route.snapshot.data['qcSandbox'] === true && params['number']) {
+      if (params['reportWarehouseId'] && String(this.warehouse.getCurrentWarehouse()?.id) !== params['reportWarehouseId']) {
+        this.resetForm(); this.searchFailed = true; return;
+      }
+      if (typeof params['number'] === 'string' && params['number'].trim()) {
+        this.searchForm.reset();
         this.searchForm.patchValue({ number: params['number'] });
         this.search();
-      } else if (params['lpn']) {
+      } else if (typeof params['workOrderQCSampleNumber'] === 'string' && params['workOrderQCSampleNumber'].trim()) {
+        this.searchForm.reset();
+        this.searchForm.patchValue({ workOrderQCSampleNumber: params['workOrderQCSampleNumber'] });
+        this.search();
+      } else if (typeof params['lpn'] === 'string' && params['lpn'].trim()) {
+        this.searchForm.reset();
         this.searchForm.patchValue({ lpn: params['lpn'] });
         this.search();
       }

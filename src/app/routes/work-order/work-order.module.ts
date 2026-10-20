@@ -1,3 +1,4 @@
+import { QcQuestionPipe } from '../qc/qc-question.pipe';
 import { ScrollingModule } from '@angular/cdk/scrolling'; 
 import { NgModule, Type  } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
@@ -177,6 +178,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
   imports: [ 
+    QcQuestionPipe,
     WorkOrderRoutingModule, DirectivesModule,
     NzLayoutModule,
     NzDescriptionsModule,

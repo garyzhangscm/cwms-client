@@ -1,4 +1,5 @@
 import { QcQuestionPipe } from './qc-question.pipe';
+import { QcShiftReportComponent } from './shift-report/shift-report.component';
 import { QcDefectiveLabelsComponent } from './defective-labels/defective-labels.component';
 import { NgModule, Type } from '@angular/core'; 
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
@@ -53,6 +54,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { QcFailureNoteComponent } from './failure-review/qc-failure-note.component';
 
 const COMPONENTS: Array<Type<void>> = [
+  QcShiftReportComponent,
   QcFailureNoteComponent,
   QcDefectiveLabelsComponent,
   QcQcRuleComponent,

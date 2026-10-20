@@ -1,0 +1,84 @@
+<header class="qc-page-heading">
+  <h1>{{ t('title') }}</h1>
+  <p class="intro">{{ t('description') }}</p>
+</header>
+<nz-card class="qc-filter-card">
+  <form class="filters" (ngSubmit)="search()">
+    <div class="filter-fields">
+    <label>{{ t('date') }}<input nz-input type="date" name="date" [(ngModel)]="date" (ngModelChange)="clear()" required /></label>
+    <label>{{ t('shift') }}<select class="ant-input" name="shift" [(ngModel)]="shift" (ngModelChange)="clear()">
+      @for (schedule of shifts; track schedule.id) { <option [value]="schedule.id">{{ shiftLabel(schedule) }}</option> }
+    </select></label>
+    <button nz-button nzType="primary" type="submit" [nzLoading]="busy || loadingShifts" [disabled]="loadingShifts || !shift">{{ t('run') }}</button>
+    <button nz-button type="button" (click)="loadShifts()" [disabled]="loadingShifts">{{ t('reload-shifts') }}</button>
+    </div>
+    <div class="export-actions">
+    <button nz-button type="button" [disabled]="!current || busy || exporting" [nzLoading]="exporting && exportFormat === 'xlsx'" (click)="export()">{{ t('export') }}</button>
+    <button nz-button class="pdf-export" type="button" [disabled]="!current || busy || exporting" [nzLoading]="exporting && exportFormat === 'pdf'" (click)="export('pdf')">{{ t('export-pdf') }}</button>
+    </div>
+  </form>
+  <div class="filter-note"><p class="help">{{ t('shift-note') }}</p><span class="timezone">{{ timezone }}</span></div>
+</nz-card>
+@if (error) { <div role="alert" class="report-error">{{ error }}</div> }
+<nz-spin class="qc-report-content" [nzSpinning]="busy">
+  @if (report && current) {
+    <nz-card class="qc-result-card">
+      <div class="report-heading"><h2>{{ report.date }} · {{ shiftLabel(report.schedule) }}</h2>
+        <span>{{ report.timezone }} · {{ t('generated') }} {{ generatedAt(report) }}</span></div>
+      @for (warning of report.warnings; track $index) { <p class="report-warning" role="status">{{ warning }}</p> }
+      <div class="summary-metrics">
+        <div><span>{{ t('first') }}</span><strong>{{ report.totals.firstSample }}</strong></div>
+        <div><span>{{ t('inline') }}</span><strong>{{ report.totals.inline }}</strong></div>
+        <div><span>{{ t('finished') }}</span><strong>{{ report.totals.finishedGoods }}</strong></div>
+        <div><span>{{ t('pallets') }}</span><strong>{{ report.totals.producedPallets }}</strong></div>
+        <div><span>{{ t('covered') }}</span><strong>{{ report.totals.inspectedProducedPallets }}</strong></div>
+        <div class="coverage-metric"><span>{{ t('rate') }}</span><strong>{{ report.totals.inspectionRate === null ? '—' : (report.totals.inspectionRate | percent:'1.2-2') }}</strong></div>
+      </div>
+      <p class="help inspector-help">{{ t('inspector-help') }}</p>
+      <div class="table-scroll"><table>
+        <colgroup><col class="product-column" /><col class="machine-column" /><col /><col /><col /></colgroup>
+        <thead><tr><th>{{ t('product') }}</th><th>{{ t('machine') }}</th><th class="number">{{ t('first') }}</th><th class="number">{{ t('inline') }}</th><th class="number">{{ t('finished') }}</th></tr></thead>
+        <tbody>
+          @for (row of report.rows; track $index) {
+            <tr><td>{{ row.product }}</td><td>{{ row.machine }}</td>
+              @for (kind of inspectionKinds; track kind) {
+                <td class="number inspection-cell">
+                  @if (row[kind]) {
+                    <button class="inspection-count" type="button" (click)="toggleDetails(row, kind)"
+                      [attr.aria-expanded]="selectedRow === row && selectedKind === kind" [attr.aria-label]="t('view-details') + ': ' + row.product + ' / ' + row.machine + ' / ' + t(kind === 'firstSample' ? 'first' : 'inline')">{{ row[kind] }}</button>
+                    @for (person of people(kind === 'firstSample' ? row.firstSampleDetails : row.inlineDetails); track $index) { <span class="inspector-name">{{ person }}</span> }
+                  } @else { 0 }
+                </td>
+              }
+              <td class="number">{{ row.finishedGoods }}</td></tr>
+            @if (selectedRow === row) {
+              <tr class="inspection-detail-row"><td colspan="5">
+                <section class="inspection-details" [attr.aria-label]="t('view-details')">
+                  <div class="detail-heading"><strong>{{ row.product }} · {{ row.machine }} · {{ t(selectedKind === 'firstSample' ? 'first' : 'inline') }}</strong>
+                    <button nz-button nzSize="small" type="button" (click)="selectedRow = undefined">{{ t('close-details') }}</button></div>
+                  @if (selectedKind === 'firstSample') { <p class="help">{{ t('registrant-note') }}</p> }
+                  <table class="detail-table"><thead><tr><th>{{ t('record') }}</th><th>{{ t('time') }}</th><th>{{ t(selectedKind === 'firstSample' ? 'registered-by' : 'inspector') }}</th><th>{{ t('result') }}</th></tr></thead>
+                    <tbody>@for (entry of (selectedKind === 'firstSample' ? row.firstSampleDetails : row.inlineDetails); track entry.id) {
+                      <tr><td>
+                        @if (selectedKind === 'firstSample' || entry.id.startsWith('request:')) {
+                          <a [routerLink]="['/qc/result']" [queryParams]="selectedKind === 'firstSample' ? {workOrderQCSampleNumber: entry.number, reportWarehouseId: report.warehouseId} : {number: entry.number, reportWarehouseId: report.warehouseId}" target="_blank" rel="noopener">{{ entry.number }} ↗</a>
+                        } @else { {{ entry.number }} }
+                        <small>{{ entry.workOrderNumber }}</small></td><td>{{ inspectionTime(entry) }}</td>
+                        <td>{{ personName(entry) }}@if (entry.username && entry.displayName !== entry.username) { <small>{{ entry.username }}</small> }</td>
+                        <td><span [class.result-fail]="entry.result === 'FAIL'">{{ entry.result === 'REGISTERED' ? t('registered') : entry.result }}</span></td></tr>
+                    }</tbody>
+                  </table>
+                </section>
+              </td></tr>
+            }
+          } @empty { <tr><td colspan="5" class="empty">{{ t('empty') }}</td></tr> }
+        </tbody>
+        <tfoot><tr><th>{{ t('total') }}</th><td>{{ report.totals.machines }} {{ t('machines') }}</td><td class="number">{{ report.totals.firstSample }}</td><td class="number">{{ report.totals.inline }}</td><td class="number">{{ report.totals.finishedGoods }}</td></tr></tfoot>
+      </table></div>
+      <details class="counting-notes">
+        <summary>{{ t('counting-rules') }}</summary>
+        <p class="help">{{ t('count-note') }}</p><p class="help">{{ t('coverage-note') }}</p>
+      </details>
+    </nz-card>
+  } @else if (!busy && !error) { <div class="start-hint">{{ t('start') }}</div> }
+</nz-spin>

@@ -8,6 +8,8 @@ RUN node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --co
 
 FROM nginx:stable-alpine AS runtime
 ENV COLTON_API_TARGET=http://apigateway:5555
+ENV MES_ITEM_IMPORT_TARGET=http://server.example.invalid:18793
+ENV MES_WORK_ORDER_IMPORT_TARGET=http://server.example.invalid:18792
 ENV MES_ITEM_SETTINGS_TARGET=http://server.example.invalid:18790
 ENV MES_INVENTORY_HANDOFF_TARGET=http://server.example.invalid:18791
 ENV ADMINER_TARGET=http://adminer:8080

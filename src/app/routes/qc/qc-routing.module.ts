@@ -1,4 +1,5 @@
 import { QcDefectiveLabelsComponent } from './defective-labels/defective-labels.component';
+import { QcShiftReportComponent } from './shift-report/shift-report.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {  aclCanActivate, ACLGuardType } from '@delon/acl';
@@ -16,6 +17,10 @@ import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-main
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
 
 const routes: Routes = [
+  { path: 'shift-report', component: QcShiftReportComponent,
+    canActivate: [aclCanActivate],
+    data: { guard: { role: ['/qc/result', 'admin', 'system-admin'] } as ACLGuardType, guard_url: '/exception/403' }
+  },
   { path: 'defective-labels', component: QcDefectiveLabelsComponent,
     canActivate: [aclCanActivate],
     data: { guard: { role: ['/qc/defective-labels', 'admin', 'system-admin'] } as ACLGuardType, guard_url: '/exception/403' }

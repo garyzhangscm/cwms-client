@@ -1,0 +1,4 @@
+Noto Sans SC variable TrueType font, unmodified.
+Source: https://github.com/google/fonts/tree/main/ofl/notosanssc
+Downloaded 2026-10-19 (America/Chicago). See OFL.txt for copyright and license.
+Used only for embedded CJK glyphs; Latin text uses ReportLab bundled Bitstream Vera.

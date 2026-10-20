@@ -1,5 +1,5 @@
-const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript'),{of,firstValueFrom,forkJoin,map}=require('rxjs');
-function compiled(file,require=()=>{throw Error('Unexpected import');}){const context={exports:{},require,navigator:{languages:['es-MX'],language:'es-MX'}};vm.runInNewContext(ts.transpile(fs.readFileSync(file,'utf8'),{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,experimentalDecorators:true}),context);return context.exports;}
+const path=require('node:path'),fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),ts=require('typescript'),{of,firstValueFrom,forkJoin,map}=require('rxjs');
+function compiled(file,require=name=>{if(!name.startsWith('.'))throw Error('Unexpected import');return compiled(path.resolve(path.dirname(file),name)+'.ts');}){const context={exports:{},require,navigator:{languages:['es-MX'],language:'es-MX'}};vm.runInNewContext(ts.transpile(fs.readFileSync(file,'utf8'),{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,experimentalDecorators:true}),context);return context.exports;}
 const spanish=JSON.parse(fs.readFileSync('src/assets/tmp/i18n/es-ES.json','utf8'));
 const overrides=compiled('src/app/core/i18n/web-label-overrides.ts').WEB_LABEL_OVERRIDES;
 const fallbacks=compiled('src/app/core/i18n/static-label-fallbacks.ts').STATIC_LABEL_FALLBACKS;
