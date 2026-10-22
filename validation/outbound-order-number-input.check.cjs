@@ -6,7 +6,7 @@ const ts = projectRequire('typescript'), rx = projectRequire('rxjs');
 const source = fs.readFileSync('src/app/routes/outbound/order-maintenance/order-maintenance.component.ts','utf8');
 const ast = ts.createSourceFile('component.ts',source,ts.ScriptTarget.Latest,true);
 const cls = ast.statements.find(n=>ts.isClassDeclaration(n)&&n.name.text==='OutboundOrderMaintenanceComponent');
-const names = ['onOrderNumberInput','validateOrderNumberInput','orderNumberChange','passValidation','nextStep','confirm'];
+const names = ['onOrderNumberInput','validateOrderNumberInput','orderNumberChange','passValidation','nextStep','confirm','validateShipStageLocationAndGroupRequirement'];
 const methods = cls.members.filter(n=>ts.isMethodDeclaration(n)&&names.includes(n.name.getText(ast))).map(n=>n.getText(ast)).join('\n');
 const scope = {exports:{},...rx,setTimeout:()=>{},console};
 vm.runInNewContext(ts.transpileModule('exports.TestComponent=class {'+methods+'}',{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS}}).outputText,scope);
@@ -41,5 +41,10 @@ for(const value of ['  ABC-123  ','\u00a0\u200bABC-123\u2060']){
 }
 {
  const {c,writes}=setup();c.currentOrder.number='\u00a0\u200b ';c.orderNumberValidateStatus='success';c.confirm();assert.equal(c.orderNumberValidateStatus,'required');assert.equal(writes.length,0);
+}
+{
+ const {c}=setup();c.currentOrder={number:'MANUAL-1',allowForManualPick:true,shipToCustomer:{}};c.orderNumberValidateStatus='success';
+ c.nextStep();assert.equal(c.stepIndex,0);assert.equal(c.shipStageLocationStatus,'requiredForManualPickOrder');assert.equal(c.shipStageLocationGroupStatus,'requiredForManualPickOrder');
+ c.currentOrder.stageLocationId=10;c.currentOrder.stageLocationGroupId=20;c.nextStep();assert.equal(c.stepIndex,1);
 }
 console.log('Passed: edge trimming, internal whitespace errors, blank/pending/duplicate blocks, final save guard for create/edit, stale validation, failed uniqueness check; no business API calls.');

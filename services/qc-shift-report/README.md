@@ -11,3 +11,8 @@ Required runtime variables: `QC_DB_HOST`, `QC_DB_PORT`, `QC_DB_NAME`, `QC_DB_USE
 Run `python -m pip install -r requirements-test.txt`, then `python -m unittest -v test_report.py test_finished_mapping.py test_inspector_details.py`. Tests use fixtures/mocks and a local HTTP server; no business database is required. Source checks cover attribution, unknown identities, original work-order/production timing, duplicate inspections, missing mappings, snapshot access, Excel/PDF and unchanged counting rules.
 
 Noto Sans SC is bundled under the adjacent OFL license; ReportLab supplies the Vera font. Existing inspection questions, standards, answers and saved results are never rewritten.
+
+
+## Historical receiving identification (2026-10-22 release)
+
+Missing current-inventory joins are resolved only when original receiving activity provides consistent evidence scoped to the warehouse and inventory. Proven receiving QC is excluded from production finished-goods counts. Unknown or contradictory evidence still rejects an incomplete report. No history is rewritten and no business writes are performed. Run `python -m unittest -v test_report.py test_finished_mapping.py test_inspector_details.py test_report_history.py`.

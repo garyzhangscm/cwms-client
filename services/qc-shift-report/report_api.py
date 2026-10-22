@@ -18,6 +18,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 from report_pdf import pdf_bytes
+from report_history import resolve_historical_receipts
 from report_core import aggregate, excel_bytes, shift_bounds, normalize_schedule, inspector_username, attach_inspection_details
 
 LOG = logging.getLogger('qc-shift-report')
@@ -208,7 +209,8 @@ def query_report(company_id, warehouse_id, day, shift):
             WHERE t.warehouse_id=%(warehouse)s AND t.created_time >= %(start)s AND t.created_time < %(end)s
               AND p.quantity > COALESCE((SELECT SUM(r.quantity) FROM work_order_reversed_production_inventory r
                 WHERE r.work_order_produce_transaction_id=t.work_order_produce_transaction_id AND r.lpn=p.lpn),0)''')
-        finished = load('''SELECT DISTINCT q.warehouse_id warehouseId,q.qc_time timestamp,
+        finished = load('''SELECT DISTINCT q.qc_inspection_request_id qcRequestId,link.inventory_id inventoryId,
+            q.warehouse_id warehouseId,q.qc_time timestamp,
             q.qc_inspection_result status, inv.lpn,
             COALESCE(q.work_order_id,inv.work_order_id) workOrderId
             FROM qc_inspection_request q
@@ -225,6 +227,11 @@ def query_report(company_id, warehouse_id, day, shift):
                    OR (q.qc_inspection_request_type IS NULL AND q.work_order_qc_sample_id IS NULL
                        AND (q.inventory_id IS NOT NULL OR link.inventory_id IS NOT NULL)))
               AND (COALESCE(q.work_order_id,inv.work_order_id) IS NOT NULL OR inv.inventory_id IS NULL)''')
+        receiving_history = resolve_historical_receipts(cursor, warehouse_id, finished)
+        excluded_receiving = {r['qcRequestId'] for r in finished if (r.get('qcRequestId'), r.get('inventoryId')) in receiving_history
+                              and not r.get('lpn') and r.get('workOrderId') is None}
+        finished = [r for r in finished if not ((r.get('qcRequestId'), r.get('inventoryId')) in receiving_history
+                    and not r.get('lpn') and r.get('workOrderId') is None)]
         # Resolve only inspected LPNs against their original work orders. This avoids
         # repeating a full historical production join for every inspected pallet.
         workorders = tuple(sorted({r['workOrderId'] for r in finished if r.get('workOrderId') is not None}))
@@ -273,6 +280,9 @@ def query_report(company_id, warehouse_id, day, shift):
         for key in ambiguous:
             users.pop(key, None)  # Keep recorded username when a full name is ambiguous.
         report = aggregate(warehouse_id, day, schedule, zone, samples, inline + legacy, produced, finished)
+        if excluded_receiving:
+            report['warnings'].append(f'{len(excluded_receiving)} historical receiving inspection(s) excluded from production finished-goods totals.')
+            report['excludedReceivingInspections'] = len(excluded_receiving)
         return attach_inspection_details(report, samples, inline + legacy, users)
 
 

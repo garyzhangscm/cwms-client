@@ -1,0 +1,4 @@
+FROM brianwang1912/mes-qc-shift-report:v20261020-receiving-history@sha256:3e1af97648bc408fc256838dcb023aa7bd024cd951c584eb6ac56fcb89633f74
+USER 0
+RUN pip install --no-cache-dir pypdf==6.10.0
+USER 65532:65532
