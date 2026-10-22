@@ -118,6 +118,8 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       const errortext = CODEMESSAGE[err.status] || err.statusText; 
       // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
       console.log(`!! will throw error ${err.status}`);
+      // Import pages render the service error and keep retry actions disabled.
+      if (err.status === 503 && (url.includes('/work-order-import/') || url.includes('/item-import/'))) return throwError(() => err);
       // A missing capability endpoint is expected while the backend upgrade is pending.
       if (err.status === 404 && newReq.method === 'GET'
         && /\/outbound\/allocation-tasks\/capabilities(?:\?|$)/.test(url)) return throwError(() => err);

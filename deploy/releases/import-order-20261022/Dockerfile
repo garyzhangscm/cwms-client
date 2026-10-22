@@ -9,6 +9,6 @@ RUN node validation/outbound-order-search.check.cjs && node validation/outbound-
 RUN node --max_old_space_size=8000 node_modules/@angular/cli/bin/ng build --configuration production
 
 # Preserve the exact existing runtime, old hashed assets, routes and entrypoint.
-FROM brianwang1912/mes-web:v19.2-qc-inspectors-20261019@sha256:5bd143b214997f226399815bdea535270bba040f92277e4c64b28ed7455b30e4
+FROM brianwang1912/mes-web:v19.2-import-orders-20261022@sha256:8916cb39dc00ac24e005b3e965a41f030e60021409361279d5d3a31ac8c4d932
 COPY deploy/colton/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist/ng-alain-v19-without-ssr/browser/ /usr/share/nginx/html/

@@ -24,6 +24,7 @@ export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
   private readonly destroyed = new Subject<void>();
   private refresh?: ReturnType<typeof setInterval>;
   private polling = false;
+  private sourceUnconfigured = false;
   readonly states = ['BLOCKED', 'BUSINESS_ERROR', 'UNCERTAIN', 'REJECTED'];
   constructor(private http: HttpClient, private users: UserService, private messages: NzMessageService, private modal: NzModalService) {}
   ngOnInit(): void { this.load(); this.loadJobs(); this.refresh = setInterval(() => this.loadJobs(), 5000); }
@@ -36,11 +37,18 @@ export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
     const params = new HttpParams().set('batch', this.batch.trim()).set('number', this.number.trim()).set('state', this.state);
     this.http.get<Response<Listing>>('work-order-import/batches', {headers: this.headers(), params}).pipe(takeUntil(this.destroyed)).subscribe({
       next: res => { this.rows = res.data.rows; this.canRetry = res.data.canRetry; this.truncated = res.data.truncated; this.loading = false; },
-      error: err => { this.error = err.error?.message || this.webI18n.fanyi('Unable to load import exceptions'); this.canRetry = false; this.loading = false; }
+      error: err => { this.error = err.error?.message || this.webI18n.fanyi('Unable to load import exceptions'); this.canRetry = false; this.loading = false; this.handleUnconfiguredSource(err); }
     });
   }
+  private handleUnconfiguredSource(err: {status?: number; error?: {message?: string}}): boolean {
+    if (err.status !== 503 || !err.error?.message?.includes('Work Order file import is not configured')) return false;
+    this.sourceUnconfigured = true; this.rows = []; this.jobs = []; this.canRetry = false;
+    this.error = err.error.message; this.jobError = '';
+    if (this.refresh) clearInterval(this.refresh);
+    return true;
+  }
   loadJobs(): void {
-    if (this.polling) return;
+    if (this.polling || this.sourceUnconfigured) return;
     this.polling = true;
     this.http.get<Response<Job[]>>('work-order-import/jobs', {headers: this.headers()}).pipe(takeUntil(this.destroyed)).subscribe({
       next: res => {
@@ -48,7 +56,7 @@ export class WorkOrderImportExceptionsComponent implements OnInit, OnDestroy {
         this.jobs = res.data; this.polling = false; this.jobError = '';
         if (changed || this.rows.some(row => row.state === 'ACCEPTED')) { this.load(); if (this.detailVisible && this.selected) this.showDetail(this.selected); }
       },
-      error: () => { this.polling = false; this.jobError = this.webI18n.fanyi('Unable to refresh action results. Please refresh or check your connection.'); }
+      error: err => { this.polling = false; if (!this.handleUnconfiguredSource(err)) this.jobError = this.webI18n.fanyi('Unable to refresh action results. Please refresh or check your connection.'); }
     });
   }
   showDetail(row: ImportRow): void {

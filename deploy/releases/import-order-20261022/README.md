@@ -1,7 +1,5 @@
 # Import exceptions, order UI and QC receiving-history release — 2026-10-22
 
-Sites: Colton and FAY formal environments, plus the existing test environment. Factory import sources must remain isolated.
-
 Authorized scope: Work Order Import Exceptions, Item Import Exceptions, QC historical
 receiving identification, PDF sales-order import, and order list/maintenance UI.
 The user explicitly requires backend release as well as Web, source saved to GitHub,
@@ -40,6 +38,32 @@ Git commit, image digests, previous images, state mounts, ready replica/probe ch
 and rollback paths. Image-based testing must retain the previously separate Line
 Clearance test service and must not silently remove its existing acceptance pages.
 
-Status is tracked in the external release directory; this document does not claim
-a completed upload, rollout or business import. Network access and final factory
-scope must be resolved before deployment.
+Released to Colton and FAY production and the image-based test endpoint on 2026-10-22.
+See `release-evidence.json` for exact digests and verification. The final Web image
+also handles FAY's explicitly unconfigured Work Order source without repeated error
+toasts or action polling. Retry remains disabled. FAY Item retains `fayint_item`,
+`deleteSourceFiles=false`, and its existing manual import setup; Colton daily timers
+remain active and unchanged. No business import retry was used for verification.
+
+Test URL: http://server.example.invalid:4200 . This streams separate Kubernetes Web/report
+workloads running the same production images. The test gateway and import APIs
+still use Colton data; retry and order creation are real business actions.
+The original Angular/Line Clearance preview remains at http://server.example.invalid:4201 .
+The 4200 Line Clearance API and test-preview download paths continue forwarding
+to that preserved preview. No Docker daemon was installed on the test Web host.
+
+Rollback: master backups under `/root/k8s/backups/import-orders-*` contain the
+previous Deployment/configuration and persistent manifest. Operator backups under
+`/root/cwms-import-backups/image-*` contain the old systemd unit (where one existed)
+and private state archive. Never restore a state archive after new real actions
+have run without reconciling them. Test entry backup is under the Web user's
+`mes-web/release-backups/`; restore its `mes-web-dev.service`, reload user systemd
+and restart that unit to restore the former 4200 entry. Preserve private configs,
+credentials, and all current queues during any rollback.
+
+Validation covers the offline frontend/backend suites, production compilation,
+exact image rollout readiness, Nginx, homepage/cache and PDF module MIME, missing
+asset 404s, import anonymous access guards, unconfigured-source rejection, report
+health, existing schedule retention and preserved test routes. Authenticated
+business acceptance and sample PDF confirmation remain operator checks; no real
+order was created and no inventory or schema was changed by release QA.
