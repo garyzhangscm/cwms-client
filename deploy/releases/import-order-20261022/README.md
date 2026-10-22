@@ -67,3 +67,8 @@ asset 404s, import anonymous access guards, unconfigured-source rejection, repor
 health, existing schedule retention and preserved test routes. Authenticated
 business acceptance and sample PDF confirmation remain operator checks; no real
 order was created and no inventory or schema was changed by release QA.
+
+FAY runtime check identified report health reachable inside its own pod but
+unreachable from Web while scheduled on the Kafka node. The report is now pinned
+to the existing application node `k8s-app1-ar`; its persistent manifest and private
+rollback backup include this placement. No cluster-wide networking change was made.

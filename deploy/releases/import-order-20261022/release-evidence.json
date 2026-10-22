@@ -29,7 +29,8 @@
     "fayFilenamePrefix": "fayint_item",
     "fayDeleteSourceFiles": false,
     "fayBatchTimerEnabled": false,
-    "fayWorkOrderSource": "explicitly unconfigured; retries rejected; no queue worker"
+    "fayWorkOrderSource": "explicitly unconfigured; retries rejected; no queue worker",
+    "fayReportPlacement": "k8s-app1-ar; co-located with Web to avoid observed cross-node timeout"
   },
   "test": {
     "url": "http://server.example.invalid:4200",
@@ -41,5 +42,10 @@
   },
   "databaseSchemaChanged": false,
   "businessWritesForVerification": false,
-  "credentialsOrBusinessRowsIncluded": false
+  "credentialsOrBusinessRowsIncluded": false,
+  "source": {
+    "webInitialReleaseCommit": "7a9ab85",
+    "webReleaseCommit": "48bd669",
+    "backendOperatorCommit": "9713923"
+  }
 }
