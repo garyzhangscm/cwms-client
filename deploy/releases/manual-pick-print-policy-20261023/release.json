@@ -1,0 +1,12 @@
+{
+  "webImage": "brianwang1912/mes-web:v19.2-print-policy-20261023-01@sha256:8390455dee4d22f04c484735b10bcf5517e2868c2b4fdcdc089b6391fae1532f",
+  "backendBranch": "v1.64",
+  "frontendBranch": "V19.2",
+  "frontendCommit": "a2b7b3d",
+  "printPolicyComponentChecks": 16,
+  "existingWorkOrderChecks": 25,
+  "existingQcChecks": 17,
+  "productionDeployment": "verified on FAY and Colton",
+  "siteSettingsPreserved": true,
+  "backendCommit": "335d976a"
+}
