@@ -3,6 +3,6 @@
   "productionAngularBuild": "passed",
   "browserPublicConfiguration": "Existing public Maps key provisioned privately; no rotation; key is not in Git",
   "siteNginxConfiguration": "Preserved from current image and site mounts",
-  "productionRollout": "authorized; pending rollout verification",
+  "productionRollout": "verified at FAY and Colton; ready, health checks passed, persistent manifests updated, site configuration and Integration preserved",
   "image": "brianwang1912/mes-web:v19.2-workorder-pick-scope-20261023-01@sha256:cd7acc453b2778391df29485030dd424985ebefe6b5818a01ff49e69cd5d035e"
 }

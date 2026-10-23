@@ -1,0 +1,28 @@
+{
+  "site": "colton",
+  "service": "webclient",
+  "image": "brianwang1912/mes-web:v19.2-workorder-pick-scope-20261023-01@sha256:cd7acc453b2778391df29485030dd424985ebefe6b5818a01ff49e69cd5d035e",
+  "ready": true,
+  "configurationAndMountsPreserved": true,
+  "persistentManifestUpdated": true,
+  "integrationUnchanged": true,
+  "readOnlyChecks": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/mes-public-config-20261023.js",
+      "status": 200
+    },
+    {
+      "path": "/api/resource/assets/i18n/en-US.json",
+      "status": 200
+    },
+    {
+      "path": "/api/resource/assets/i18n/zh-CN.json",
+      "status": 200
+    }
+  ],
+  "databaseChanged": false
+}
