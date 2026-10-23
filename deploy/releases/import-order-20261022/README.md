@@ -72,3 +72,12 @@ FAY runtime check identified report health reachable inside its own pod but
 unreachable from Web while scheduled on the Kafka node. The report is now pinned
 to the existing application node `k8s-app1-ar`; its persistent manifest and private
 rollback backup include this placement. No cluster-wide networking change was made.
+
+FAY API JSON routing correction (2026-10-22): its site-specific Nginx template
+used `location /api/`, allowing the static JSON regex to intercept language-file
+requests. `fix_fay_api_route.py` switches only that directive to `location ^~ /api/`,
+using a new ConfigMap with private rollback backups and a persisted manifest.
+It retains the shared Web image and all site-specific upstreams. Run this script
+on the FAY master only. Both English and Chinese language files are now included
+in `verify_http.py`, alongside homepage, missing assets, PDF MIME, import guards
+and report-health probes. See `fay-api-route-verification.json` for live evidence.

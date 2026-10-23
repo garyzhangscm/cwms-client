@@ -11,6 +11,8 @@ def req(path,expected):
 r,b=req('/healthz',200);assert b.strip()==b'ok'
 r,b=req('/',200);assert b'main-RWP5ZHWM.js' in b
 r,b=req('/index.html',200);assert 'no-store' in r.headers.get('Cache-Control','')
+for language in ('en-US','zh-CN'):
+ r,b=req('/api/resource/assets/i18n/'+language+'.json',200);assert isinstance(json.loads(b),dict)
 r,b=req('/assets/pdf-import/pdf/pdf.worker.min.mjs',200);assert 'javascript' in r.headers.get('Content-Type','')
 req('/missing-RELEASECHECK.js',404)
 req('/api/item-import/batches',403)

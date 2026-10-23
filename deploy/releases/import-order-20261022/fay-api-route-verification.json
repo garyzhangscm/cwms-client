@@ -1,0 +1,147 @@
+{
+  "site": "fay",
+  "cause": "Static-file regex took precedence over API JSON routes",
+  "configMap": "mes-web-imports-fay-api-priority-20261022",
+  "imageUnchanged": true,
+  "backup": "/root/k8s/backups/fay-api-priority-20261023T011548Z",
+  "persistentManifestUpdated": true,
+  "businessWritesForVerification": false,
+  "checks": [
+    {
+      "url": "http://server.example.invalid/",
+      "status": 200,
+      "jsonObject": false
+    },
+    {
+      "url": "http://server.example.invalid/api/resource/assets/i18n/en-US.json",
+      "status": 200,
+      "jsonObject": true
+    },
+    {
+      "url": "http://server.example.invalid/api/resource/assets/i18n/zh-CN.json",
+      "status": 200,
+      "jsonObject": true
+    },
+    {
+      "url": "http://server.example.invalid/missing-ota-release-check.js",
+      "status": 404,
+      "jsonObject": false
+    },
+    {
+      "url": "http://server.example.invalid/",
+      "status": 200,
+      "jsonObject": false
+    },
+    {
+      "url": "http://server.example.invalid/api/resource/assets/i18n/en-US.json",
+      "status": 200,
+      "jsonObject": true
+    },
+    {
+      "url": "http://server.example.invalid/api/resource/assets/i18n/zh-CN.json",
+      "status": 200,
+      "jsonObject": true
+    },
+    {
+      "url": "http://server.example.invalid/missing-ota-release-check.js",
+      "status": 404,
+      "jsonObject": false
+    }
+  ],
+  "webSmoke": {
+    "fay": {
+      "site": "fay",
+      "base": "http://server.example.invalid",
+      "checks": [
+        {
+          "path": "/healthz",
+          "status": 200
+        },
+        {
+          "path": "/",
+          "status": 200
+        },
+        {
+          "path": "/index.html",
+          "status": 200
+        },
+        {
+          "path": "/api/resource/assets/i18n/en-US.json",
+          "status": 200
+        },
+        {
+          "path": "/api/resource/assets/i18n/zh-CN.json",
+          "status": 200
+        },
+        {
+          "path": "/assets/pdf-import/pdf/pdf.worker.min.mjs",
+          "status": 200
+        },
+        {
+          "path": "/missing-RELEASECHECK.js",
+          "status": 404
+        },
+        {
+          "path": "/api/item-import/batches",
+          "status": 403
+        },
+        {
+          "path": "/api/work-order-import/batches",
+          "status": 503
+        },
+        {
+          "path": "/api/qc-shift-report/health",
+          "status": 200
+        }
+      ],
+      "businessWrites": false
+    },
+    "colton": {
+      "site": "colton",
+      "base": "http://server.example.invalid",
+      "checks": [
+        {
+          "path": "/healthz",
+          "status": 200
+        },
+        {
+          "path": "/",
+          "status": 200
+        },
+        {
+          "path": "/index.html",
+          "status": 200
+        },
+        {
+          "path": "/api/resource/assets/i18n/en-US.json",
+          "status": 200
+        },
+        {
+          "path": "/api/resource/assets/i18n/zh-CN.json",
+          "status": 200
+        },
+        {
+          "path": "/assets/pdf-import/pdf/pdf.worker.min.mjs",
+          "status": 200
+        },
+        {
+          "path": "/missing-RELEASECHECK.js",
+          "status": 404
+        },
+        {
+          "path": "/api/item-import/batches",
+          "status": 403
+        },
+        {
+          "path": "/api/work-order-import/batches",
+          "status": 403
+        },
+        {
+          "path": "/api/qc-shift-report/health",
+          "status": 200
+        }
+      ],
+      "businessWrites": false
+    }
+  }
+}

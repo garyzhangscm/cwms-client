@@ -39,7 +39,7 @@ def main():
         if args.site=='fay':
             config_name='mes-web-imports-fay-20261022-02';mount=next(v for v in old['volumes'] if v['name']=='fay-web-nginx');previous=mount['configMap']['name'];config=get('configmap',previous);text=config['data']['default.conf.template']
             if 'redacted-site-prefix.' in text:raise RuntimeError('Cross-factory target in Fay configuration')
-            marker='    location /api/ {'
+            marker='    location ^~ /api/ {' if '    location ^~ /api/ {' in text else '    location /api/ {'
             if marker not in text:raise RuntimeError('Expected Fay gateway route missing')
             imports='''    location ^~ /api/item-import/ {
         proxy_pass http://server.example.invalid:18793/item-import/;
@@ -61,7 +61,10 @@ def main():
     }
 '''
             text=text.replace("add_header Cache-Control 'no-cache';","add_header Cache-Control 'no-store' always;",1)
-            text=text if 'location ^~ /api/item-import/' in text else text.replace(marker,imports+marker,1);config={'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':config_name,'namespace':'staging'},'data':{'default.conf.template':text}}
+            text=text if 'location ^~ /api/item-import/' in text else text.replace(marker,imports+marker,1)
+            # API JSON/download paths must take precedence over static-file regexes.
+            text=text.replace('location /api/ {','location ^~ /api/ {')
+            config={'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':config_name,'namespace':'staging'},'data':{'default.conf.template':text}}
             (backup/'nginx-before.json').write_text(json.dumps(get('configmap',previous),indent=2))
             subprocess.run(K+['apply','-f','-'],input=json.dumps(config),universal_newlines=True,check=True)
             index=next(i for i,v in enumerate(old['volumes']) if v['name']=='fay-web-nginx');patches.append({'op':'replace','path':'/spec/template/spec/volumes/'+str(index)+'/configMap/name','value':config_name})
