@@ -15,4 +15,16 @@ Noto Sans SC is bundled under the adjacent OFL license; ReportLab supplies the V
 
 ## Historical receiving identification (2026-10-22 release)
 
-Missing current-inventory joins are resolved only when original receiving activity provides consistent evidence scoped to the warehouse and inventory. Proven receiving QC is excluded from production finished-goods counts. Unknown or contradictory evidence still rejects an incomplete report. No history is rewritten and no business writes are performed. Run `python -m unittest -v test_report.py test_finished_mapping.py test_inspector_details.py test_report_history.py`.
+Missing current-inventory joins are resolved only when original receiving activity provides consistent evidence scoped to the warehouse and inventory. Proven receiving QC is excluded from production finished-goods counts. Unknown or contradictory evidence still rejects an incomplete report. No history is rewritten and no business writes are performed. Run `python -m unittest -v test_report.py test_finished_mapping.py test_inspector_details.py test_report_history.py test_custom_range.py`.
+
+## Custom local date/time ranges
+
+The existing configured-shift query is preserved. GET `/qc-shift-report/report`
+also accepts exactly `companyId`, `warehouseId`, `startLocal`, and `endLocal` for
+custom ranges. Local values use `YYYY-MM-DDTHH:mm[:ss]` without an offset; the
+server resolves the verified warehouse IANA timezone. Neither browser nor server
+OS timezone determines the query interval. Start is inclusive and end exclusive.
+Ranges can cross midnight and span at most 31 local days; existing record limits,
+read-only transactions, authorization, attribution, history mapping, and owner-bound
+snapshot exports remain in force. Nonexistent or ambiguous local DST boundary times
+are rejected rather than silently shifted. Excel and PDF show warehouse local time.

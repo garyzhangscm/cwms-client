@@ -48,7 +48,8 @@ def pdf_bytes(report):
     zone = ZoneInfo(report['timezone'])
     start, end, generated = [as_utc(report[key]).astimezone(zone) for key in ('startTime', 'endTime', 'generatedAt')]
     schedule = report['schedule']
-    shift = f"{schedule['start']} - {schedule['end']}" + (' (next day)' if schedule['nextDay'] else '')
+    shift = (f"{schedule['start']} - {schedule['end']}" + (' (next day)' if schedule['nextDay'] else '')
+             if schedule else 'Custom date/time range')
     totals = report['totals']
     rate = f"{totals['inspectionRate']:.2%}" if totals['inspectionRate'] is not None else 'N/A'
     output = BytesIO()

@@ -19,7 +19,7 @@ from urllib.parse import parse_qs, urlencode, urlsplit
 
 from report_pdf import pdf_bytes
 from report_history import resolve_historical_receipts
-from report_core import aggregate, excel_bytes, shift_bounds, normalize_schedule, inspector_username, attach_inspection_details
+from report_core import aggregate, excel_bytes, shift_bounds, range_bounds, normalize_schedule, inspector_username, attach_inspection_details
 
 LOG = logging.getLogger('qc-shift-report')
 SLOTS = threading.BoundedSemaphore(3)
@@ -116,7 +116,7 @@ def database():
         connection.close()
 
 
-def load_shift_configuration(cursor, company_id, warehouse_id):
+def load_warehouse_timezone(cursor, company_id, warehouse_id):
     cursor.execute('''SELECT w.company_id, wc.time_zone FROM warehouse w
         LEFT JOIN warehouse_configuration wc ON wc.warehouse_id=w.warehouse_id
         WHERE w.warehouse_id=%s''', (warehouse_id,))
@@ -126,6 +126,14 @@ def load_shift_configuration(cursor, company_id, warehouse_id):
     zone = scope[0].get('time_zone') or json.loads(os.environ.get('QC_SITE_TIMEZONES', '{}')).get(str(warehouse_id))
     if not zone:
         raise ReportError(503, 'Warehouse timezone is required')
+    # Validate the configured zone before using it for a query.
+    from zoneinfo import ZoneInfo
+    ZoneInfo(zone)
+    return zone
+
+
+def load_shift_configuration(cursor, company_id, warehouse_id):
+    zone = load_warehouse_timezone(cursor, company_id, warehouse_id)
     cursor.execute('''SELECT production_shift_schedule_id id, shift_start_time start,
         shift_end_time end, shift_end_next_day nextDay FROM production_shift_schedule
         WHERE warehouse_id=%s ORDER BY shift_start_time, production_shift_schedule_id''', (warehouse_id,))
@@ -143,15 +151,27 @@ def query_shifts(company_id, warehouse_id):
         return load_shift_configuration(cursor, company_id, warehouse_id)
 
 
-def query_report(company_id, warehouse_id, day, shift):
-    positive(shift)
+def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=None, end_local=None):
+    custom = start_local is not None or end_local is not None
+    if custom and (day is not None or shift is not None):
+        raise ReportError(400, 'Choose either a shift or a custom range')
+    if not custom:
+        positive(shift)
     with database() as cursor:
-        config = load_shift_configuration(cursor, company_id, warehouse_id)
-        zone = config['timezone']
-        schedule = next((row for row in config['shifts'] if row['id'] == str(shift)), None)
-        if schedule is None:
-            raise ReportError(409, 'Shift configuration changed; reload the report page')
-        start, end = shift_bounds(day, schedule, zone)
+        if custom:
+            zone = load_warehouse_timezone(cursor, company_id, warehouse_id)
+            try:
+                start, end = range_bounds(start_local, end_local, zone)
+            except ValueError as error:
+                raise ReportError(400, str(error)) from None
+            day, schedule = start_local[:10], None
+        else:
+            config = load_shift_configuration(cursor, company_id, warehouse_id)
+            zone = config['timezone']
+            schedule = next((row for row in config['shifts'] if row['id'] == str(shift)), None)
+            if schedule is None:
+                raise ReportError(409, 'Shift configuration changed; reload the report page')
+            start, end = shift_bounds(day, schedule, zone)
         params = dict(warehouse=warehouse_id, start=start.replace(tzinfo=None), end=end.replace(tzinfo=None))
 
         def load(sql):
@@ -279,7 +299,8 @@ def query_report(company_id, warehouse_id, day, shift):
                 users[key] = name
         for key in ambiguous:
             users.pop(key, None)  # Keep recorded username when a full name is ambiguous.
-        report = aggregate(warehouse_id, day, schedule, zone, samples, inline + legacy, produced, finished)
+        report = aggregate(warehouse_id, day, schedule, zone, samples, inline + legacy, produced, finished,
+                           bounds=(start, end) if custom else None)
         if excluded_receiving:
             report['warnings'].append(f'{len(excluded_receiving)} historical receiving inspection(s) excluded from production finished-goods totals.')
             report['excludedReceivingInspections'] = len(excluded_receiving)
@@ -318,7 +339,8 @@ class Handler(BaseHTTPRequestHandler):
             if method == 'GET' and path.path in ('/qc-shift-report/report', '/qc-shift-report/shifts'):
                 values = parse_qs(path.query, keep_blank_values=True)
                 expected = {'companyId', 'warehouseId'} if path.path.endswith('/shifts') else {'companyId', 'warehouseId', 'date', 'shift'}
-                if set(values) != expected or any(len(v) != 1 for v in values.values()):
+                custom = {'companyId', 'warehouseId', 'startLocal', 'endLocal'}
+                if (set(values) != expected and not (path.path.endswith('/report') and set(values) == custom)) or any(len(v) != 1 for v in values.values()):
                     raise ReportError(400, 'Invalid report parameters')
                 request = {k: v[0] for k, v in values.items()}
             elif method == 'POST' and path.path in ('/qc-shift-report/export', '/qc-shift-report/export-pdf'):
@@ -354,7 +376,10 @@ class Handler(BaseHTTPRequestHandler):
                 if path.path.endswith('/shifts'):
                     self.respond(200, dict(result=0, data=query_shifts(company, warehouse)))
                     return
-                report = query_report(company, warehouse, request['date'], request['shift'])
+                if 'startLocal' in request:
+                    report = query_report(company, warehouse, start_local=request['startLocal'], end_local=request['endLocal'])
+                else:
+                    report = query_report(company, warehouse, request['date'], request['shift'])
             finally:
                 SLOTS.release()
             report['snapshotId'] = secrets.token_urlsafe(24)

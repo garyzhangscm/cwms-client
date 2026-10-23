@@ -2,6 +2,7 @@
 from collections import defaultdict
 from datetime import date, datetime, time, timedelta, timezone
 from io import BytesIO
+import re
 from zoneinfo import ZoneInfo
 
 UTC = timezone.utc
@@ -46,6 +47,34 @@ def shift_bounds(day, schedule, zone):
         if boundary.astimezone(UTC).astimezone(tz) != boundary:
             raise ValueError('Configured shift boundary does not exist on this date')
     return start.astimezone(UTC), end.astimezone(UTC)
+
+
+def range_bounds(start_local, end_local, zone):
+    """Interpret user-entered wall clocks in the warehouse zone, never the browser zone."""
+    tz = ZoneInfo(zone)
+    def parse(value):
+        if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?', value):
+            raise ValueError('Use local dates and times without a timezone offset')
+        local = datetime.fromisoformat(value)
+        candidates = set()
+        for fold in (0, 1):
+            utc = local.replace(tzinfo=tz, fold=fold).astimezone(UTC)
+            if utc.astimezone(tz).replace(tzinfo=None) == local:
+                candidates.add(utc)
+        if len(candidates) != 1:
+            raise ValueError('The selected local time is missing or ambiguous because of daylight saving time')
+        return local, candidates.pop()
+    first, start = parse(start_local)
+    last, end = parse(end_local)
+    if not timedelta(0) < last - first <= timedelta(days=31) or end <= start:
+        raise ValueError('End must follow start; select at most 31 days')
+    return start, end
+
+
+def report_period(report):
+    zone = ZoneInfo(report['timezone'])
+    start, end = [as_utc(report[key]).astimezone(zone) for key in ('startTime', 'endTime')]
+    return f"{start:%Y-%m-%d %H:%M:%S %z} – {end:%Y-%m-%d %H:%M:%S %z} | {report['timezone']}"
 
 
 def as_utc(value):
@@ -101,9 +130,13 @@ def attach_inspection_details(report, samples, inline, users):
     return report
 
 
-def aggregate(warehouse_id, day, schedule, zone, samples, inline, produced, finished, generated=None):
-    schedule = normalize_schedule(schedule)
-    start, end = shift_bounds(day, schedule, zone)
+def aggregate(warehouse_id, day, schedule, zone, samples, inline, produced, finished, generated=None, *, bounds=None):
+    if bounds is None:
+        schedule = normalize_schedule(schedule)
+        start, end = shift_bounds(day, schedule, zone)
+    else:
+        start, end = bounds
+        schedule = None
     rows = defaultdict(lambda: dict(firstSample=0, inline=0, finishedGoods=0))
     warnings = []
 
@@ -166,8 +199,10 @@ def aggregate(warehouse_id, day, schedule, zone, samples, inline, produced, fini
         warnings.append(f'{previous} inspected LPN(s) were not produced in this shift; excluded from coverage.')
     if end > datetime.now(UTC):
         warnings.append('This shift has not ended. Totals reflect records available at the generated time.')
+    if bounds is not None:
+        warnings = [message.replace('this shift', 'the selected period').replace('This shift', 'The selected period') for message in warnings]
     result_rows = [dict(product=p, machine=m, **counts) for (p, m), counts in sorted(rows.items())]
-    return dict(warehouseId=warehouse_id, date=day, shift=schedule['id'], schedule=schedule, timezone=zone,
+    return dict(warehouseId=warehouse_id, date=day, shift=schedule['id'] if schedule else 'custom', schedule=schedule, timezone=zone,
                 startTime=start.isoformat(), endTime=end.isoformat(),
                 generatedAt=(generated or datetime.now(UTC)).isoformat(), rows=result_rows,
                 totals=dict(machines=len({r['machine'] for r in result_rows}),
@@ -189,10 +224,8 @@ def excel_bytes(report):
     text(ws['A1'], 'QC Shift Inspection Summary')
     ws.merge_cells('A1:E1')
     ws['A1'].font = Font(size=18, bold=True)
-    text(ws['A2'], f"{report['date']} | {report['schedule']['start']}–{report['schedule']['end']}"
-         f"{' (+1 day)' if report['schedule']['nextDay'] else ''} | {report['timezone']}")
-    ws.merge_cells('A2:E2')
-    text(ws['A3'], f"{report['startTime']} to {report['endTime']} (end excluded)")
+    text(ws['A2'], report_period(report))
+    text(ws['A3'], 'Warehouse local time; end excluded')
     ws.merge_cells('A3:E3')
     headers = ['Product', 'Machine', '1st Sample', 'Inline', 'Finished Goods']
     for column, label in enumerate(headers, 1):

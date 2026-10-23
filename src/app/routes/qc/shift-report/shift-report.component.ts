@@ -14,6 +14,10 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
   private readonly rawHttp = inject(HttpClient);
   private readonly warehouse = inject(WarehouseService);
   readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  mode: 'shift' | 'custom' = 'shift';
+  startLocal = '';
+  endLocal = '';
+  private reportRangeKey = '';
   date = '';
   shift = '';
   shifts: QcShiftSchedule[] = [];
@@ -31,14 +35,9 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
   private version = 0;
   private query?: Subscription;
   private download?: Subscription;
-  private readonly site = this.warehouse.getCurrentWarehouse();
-  timezone = this.site?.timeZone || (['CA', 'CALIFORNIA'].includes((this.site?.addressState || '').toUpperCase())
-    ? 'America/Los_Angeles' : Intl.DateTimeFormat().resolvedOptions().timeZone);
+  timezone = '';
 
   constructor() {
-    const parts = new Intl.DateTimeFormat('en-US', {timeZone: this.timezone, year: 'numeric', month: '2-digit', day: '2-digit'})
-      .formatToParts(new Date());
-    this.date = ['year', 'month', 'day'].map(type => parts.find(part => part.type === type)?.value).join('-');
     inject(TitleService).setTitle(this.i18n.fanyi('qc-shift.title'));
   }
   ngOnInit(): void { this.loadShifts(); }
@@ -54,11 +53,31 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
         try {
           const config = validateShiftConfiguration(response.data, warehouse.id);
           this.shifts = config.shifts; this.timezone = config.timezone;
+          if (!this.date) {
+            const parts = new Intl.DateTimeFormat('en-US', {timeZone: config.timezone, year: 'numeric', month: '2-digit', day: '2-digit'}).formatToParts(new Date());
+            this.date = ['year', 'month', 'day'].map(type => parts.find(part => part.type === type)?.value).join('-');
+          }
           this.shift = config.shifts[0].id; this.configWarehouse = warehouse.id;
+          this.initializeRange();
         } catch { this.error = this.t('config-failed'); }
       },
       error: () => { this.loadingShifts = false; this.error = this.t('config-failed'); }
     });
+  }
+  initializeRange(): void {
+    this.clear();
+    if (this.mode !== 'custom') return;
+    if (this.startLocal && this.endLocal) return;
+    const schedule = this.shifts.find(s => s.id === this.shift);
+    if (!schedule || !this.date) return;
+    const end = new Date(this.date + 'T00:00:00Z');
+    end.setUTCDate(end.getUTCDate() + Number(schedule.nextDay));
+    this.startLocal = `${this.date}T${schedule.start}`;
+    this.endLocal = `${end.toISOString().slice(0, 10)}T${schedule.end}`;
+  }
+  periodLabel(report: QcShiftReport): string {
+    const format = new Intl.DateTimeFormat(this.i18n.currentLang, {timeZone: report.timezone, dateStyle: 'short', timeStyle: 'medium'});
+    return `${format.format(new Date(report.startTime))} – ${format.format(new Date(report.endTime))}`;
   }
   shiftLabel(schedule: QcShiftSchedule): string {
     return `${schedule.start}–${schedule.end}${schedule.nextDay ? ' · ' + this.t('next-day') : ''}`;
@@ -89,7 +108,8 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
   }
   get current(): boolean {
     return !!this.report && this.report.warehouseId === this.warehouse.getCurrentWarehouse()?.id &&
-      this.report.date === this.date && this.report.shift === this.shift;
+      (this.mode === 'custom' ? this.report.shift === 'custom' && this.reportRangeKey === `${this.startLocal}|${this.endLocal}` :
+        this.report.date === this.date && this.report.shift === this.shift);
   }
   clear(): void {
     ++this.version; this.query?.unsubscribe(); this.download?.unsubscribe();
@@ -98,20 +118,27 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
   }
   search(): void {
     this.clear();
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(this.date)) { this.error = this.t('invalid-date'); return; }
+    if (this.mode === 'shift' && !/^\d{4}-\d{2}-\d{2}$/.test(this.date)) { this.error = this.t('invalid-date'); return; }
     const version = this.version;
     const warehouse = this.warehouse.getCurrentWarehouse();
     if (this.configWarehouse !== warehouse.id) { this.loadShifts(); return; }
-    if (!this.shifts.some(s => s.id === this.shift)) { this.error = this.t('config-failed'); return; }
-    const date = this.date, shift = this.shift;
+    if (this.mode === 'custom' && (!this.startLocal || !this.endLocal || this.endLocal <= this.startLocal)) { this.error = this.t('invalid-range'); return; }
+    if (this.mode === 'shift' && !this.shifts.some(s => s.id === this.shift)) { this.error = this.t('config-failed'); return; }
+    const custom = this.mode === 'custom';
+    const date = custom ? this.startLocal.slice(0, 10) : this.date, shift = custom ? 'custom' : this.shift;
+    const range = custom ? {start: this.startLocal, end: this.endLocal} : undefined;
+    const parameters = custom ? {startLocal: this.startLocal, endLocal: this.endLocal} : {date, shift};
     this.busy = true;
     this.query = this.api.get('qc-shift-report/report', {warehouseId: warehouse.id,
-      companyId: warehouse.companyId, date, shift}).pipe(timeout(60000)).subscribe({
+      companyId: warehouse.companyId, ...parameters}).pipe(timeout(60000)).subscribe({
       next: response => {
         if (version !== this.version || warehouse.id !== this.warehouse.getCurrentWarehouse()?.id) {
           if (version === this.version) this.clear(); return;
         }
-        try { this.report = validateShiftReport(response.data, warehouse.id, date, shift); }
+        try {
+          this.report = validateShiftReport(response.data, warehouse.id, date, shift, range);
+          this.reportRangeKey = range ? `${range.start}|${range.end}` : '';
+        }
         catch { this.error = this.t('failed'); }
         this.busy = false;
       },

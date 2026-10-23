@@ -1,0 +1,5 @@
+{
+  "webclient": "brianwang1912/mes-web:v19.2-qc-transit-20261023-01@sha256:b6cb00b0b141d8ede2f8b2e951998c30159260558f4aee7fcc4d55ab4ac14e55",
+  "qc-shift-report": "brianwang1912/mes-qc-shift-report:v20261023-custom-period@sha256:6fb9ec6743b464618cf40903ae77beca781a39d9e7f21cd1b61ae4c0b69d7331",
+  "outboundservice": "brianwang1912/cwms-outboundserver:v1.62-unified-20261023-transit-01@sha256:ff96adf85ab1206782fd64f877a76a99c725d1d5fcdb29a620db36b832aca12d"
+}

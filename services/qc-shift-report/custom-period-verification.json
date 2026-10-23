@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-23",
+  "backendRegressionTests": 49,
+  "frontendComponentAndModelChecks": 13,
+  "productionAngularBuild": "passed",
+  "browserCheck": {
+    "actualAngularFilterRendered": true,
+    "customInputsEditable": true,
+    "overnightDefaultsCorrect": true,
+    "browserTimezone": "Asia/Shanghai",
+    "displayedWarehouseTimezone": "America/Chicago",
+    "mobileOverflow": false,
+    "pageErrors": []
+  },
+  "verifiedSiteTimezones": {
+    "FAY/WMEC": "America/Chicago",
+    "Colton/WMEC": "America/Los_Angeles"
+  },
+  "customRange": "Warehouse local start inclusive/end exclusive; up to 31 local days",
+  "productionDeployed": false,
+  "databaseWrites": false,
+  "inTransitRelease": "paused per user request"
+}

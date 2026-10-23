@@ -7,7 +7,7 @@ h1 { margin: 0 0 6px; color: inherit; font-size: 24px; line-height: 1.35; font-w
 .filters { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 16px; }
 .filter-fields, .export-actions { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
 .filters label { display: flex; flex-direction: column; gap: 6px; width: 178px; min-width: 0; font-size: 12px; font-weight: 600; }
-.filters label:nth-child(2) { width: 242px; }
+.filters label.datetime-field { width: 240px; }
 .filters input, .filters select { width: 100%; height: 36px; box-sizing: border-box; }
 .filters button { height: 36px; margin: 0; white-space: nowrap; }
 .export-actions { justify-content: flex-end; }
@@ -51,7 +51,7 @@ tfoot td, tfoot th { border-top: 1px solid var(--mes-border, #eaecf0); border-bo
 @media (max-width: 600px) {
   h1 { font-size: 21px; }
   .filter-fields { gap: 12px 10px; }
-  .filters label, .filters label:nth-child(2) { width: calc(50% - 5px); }
+  .filters label, .filters label.datetime-field { width: calc(50% - 5px); }
   .filter-fields button, .export-actions button { flex: 1; }
   .summary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .summary-metrics > div { padding: 12px; }

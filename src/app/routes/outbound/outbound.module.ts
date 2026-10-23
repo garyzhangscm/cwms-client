@@ -1,3 +1,4 @@
+import { InTransitShippingComponent } from './in-transit-shipping/in-transit-shipping.component';
 import { OrderPdfImportComponent } from './order-pdf-import/order-pdf-import.component';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NgModule, Type } from '@angular/core'; 
@@ -145,7 +146,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         ...COMPONENTS_NOROUNT
     ],
     exports: [OutboundOutboundOrderPopupQueryComponent],
-    imports: [ 
+    imports: [
+        InTransitShippingComponent,
         OutboundRoutingModule,
         DirectivesModule,
         NzDescriptionsModule,

@@ -5,11 +5,19 @@
 <nz-card class="qc-filter-card">
   <form class="filters" (ngSubmit)="search()">
     <div class="filter-fields">
+    <label>{{ t('period-mode') }}<select class="ant-input" name="mode" [(ngModel)]="mode" (ngModelChange)="initializeRange()">
+      <option value="shift">{{ t('configured-shift') }}</option><option value="custom">{{ t('custom-range') }}</option>
+    </select></label>
+    @if (mode === 'shift') {
     <label>{{ t('date') }}<input nz-input type="date" name="date" [(ngModel)]="date" (ngModelChange)="clear()" required /></label>
     <label>{{ t('shift') }}<select class="ant-input" name="shift" [(ngModel)]="shift" (ngModelChange)="clear()">
       @for (schedule of shifts; track schedule.id) { <option [value]="schedule.id">{{ shiftLabel(schedule) }}</option> }
     </select></label>
-    <button nz-button nzType="primary" type="submit" [nzLoading]="busy || loadingShifts" [disabled]="loadingShifts || !shift">{{ t('run') }}</button>
+    } @else {
+      <label class="datetime-field">{{ t('range-start') }}<input nz-input type="datetime-local" step="1" name="startLocal" [(ngModel)]="startLocal" (ngModelChange)="clear()" required /></label>
+      <label class="datetime-field">{{ t('range-end') }}<input nz-input type="datetime-local" step="1" name="endLocal" [(ngModel)]="endLocal" (ngModelChange)="clear()" required /></label>
+    }
+    <button nz-button nzType="primary" type="submit" [nzLoading]="busy || loadingShifts" [disabled]="loadingShifts || !timezone || (mode === 'shift' && !shift)">{{ t('run') }}</button>
     <button nz-button type="button" (click)="loadShifts()" [disabled]="loadingShifts">{{ t('reload-shifts') }}</button>
     </div>
     <div class="export-actions">
@@ -17,13 +25,13 @@
     <button nz-button class="pdf-export" type="button" [disabled]="!current || busy || exporting" [nzLoading]="exporting && exportFormat === 'pdf'" (click)="export('pdf')">{{ t('export-pdf') }}</button>
     </div>
   </form>
-  <div class="filter-note"><p class="help">{{ t('shift-note') }}</p><span class="timezone">{{ timezone }}</span></div>
+  <div class="filter-note"><p class="help">{{ t(mode === 'custom' ? 'range-note' : 'shift-note') }}</p><span class="timezone">{{ t('warehouse-time') }}: {{ timezone || '—' }}</span></div>
 </nz-card>
 @if (error) { <div role="alert" class="report-error">{{ error }}</div> }
 <nz-spin class="qc-report-content" [nzSpinning]="busy">
   @if (report && current) {
     <nz-card class="qc-result-card">
-      <div class="report-heading"><h2>{{ report.date }} · {{ shiftLabel(report.schedule) }}</h2>
+      <div class="report-heading"><h2>{{ periodLabel(report) }}</h2>
         <span>{{ report.timezone }} · {{ t('generated') }} {{ generatedAt(report) }}</span></div>
       @for (warning of report.warnings; track $index) { <p class="report-warning" role="status">{{ warning }}</p> }
       <div class="summary-metrics">

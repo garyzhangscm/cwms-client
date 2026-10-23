@@ -30,7 +30,7 @@ export interface QcShiftReport {
   warehouseId: number;
   date: string;
   shift: string;
-  schedule: QcShiftSchedule;
+  schedule: QcShiftSchedule | null;
   timezone: string;
   startTime: string;
   endTime: string;
@@ -42,7 +42,7 @@ export interface QcShiftReport {
 }
 
 /** Reject partial/malformed responses rather than presenting missing data as zero. */
-export function validateShiftReport(value: QcShiftReport, warehouseId: number, date: string, shift: string): QcShiftReport {
+export function validateShiftReport(value: QcShiftReport, warehouseId: number, date: string, shift: string, range?: {start: string; end: string}): QcShiftReport {
   const count = (v: unknown): boolean => Number.isSafeInteger(v) && Number(v) >= 0;
   if (!value || typeof value.snapshotId !== 'string' || !value.snapshotId || value.warehouseId !== warehouseId || value.date !== date || value.shift !== shift ||
       !value.timezone || !value.startTime || !value.endTime || !value.generatedAt ||
@@ -50,8 +50,20 @@ export function validateShiftReport(value: QcShiftReport, warehouseId: number, d
       !value.totals || !value.rows.every(row => typeof row.product === 'string' && row.product.length > 0 &&
         typeof row.machine === 'string' && row.machine.length > 0 &&
         [row.firstSample, row.inline, row.finishedGoods].every(count))) throw new Error('Invalid report');
-  validateShiftConfiguration({warehouseId, timezone: value.timezone, shifts: [value.schedule]}, warehouseId);
-  if (value.schedule.id !== shift) throw new Error('Invalid shift');
+  if (shift === 'custom') {
+    if (!range || value.schedule !== null) throw new Error('Invalid custom range');
+    const local = (timestamp: string): string => {
+      const parts = new Intl.DateTimeFormat('en-CA', {timeZone: value.timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'}).formatToParts(new Date(timestamp));
+      const get = (key: string): string => parts.find(p => p.type === key)!.value;
+      return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}`;
+    };
+    const seconds = (v: string): string => v.length === 16 ? v + ':00' : v;
+    if (local(value.startTime) !== seconds(range.start) || local(value.endTime) !== seconds(range.end)) throw new Error('Range mismatch');
+  } else {
+    if (!value.schedule) throw new Error('Missing schedule');
+    validateShiftConfiguration({warehouseId, timezone: value.timezone, shifts: [value.schedule]}, warehouseId);
+    if (value.schedule.id !== shift) throw new Error('Invalid shift');
+  }
   const totals = value.totals;
   if (![value.startTime, value.endTime, value.generatedAt].every(v => Number.isFinite(Date.parse(v))) ||
       Date.parse(value.startTime) >= Date.parse(value.endTime)) throw new Error('Invalid report times');
