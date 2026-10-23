@@ -1,0 +1,8 @@
+{
+  "actualServiceCases": 25,
+  "productionAngularBuild": "passed",
+  "browserPublicConfiguration": "Existing public Maps key provisioned privately; no rotation; key is not in Git",
+  "siteNginxConfiguration": "Preserved from current image and site mounts",
+  "productionRollout": "authorized; pending rollout verification",
+  "image": "brianwang1912/mes-web:v19.2-workorder-pick-scope-20261023-01@sha256:cd7acc453b2778391df29485030dd424985ebefe6b5818a01ff49e69cd5d035e"
+}

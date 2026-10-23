@@ -81,10 +81,9 @@ export class PickService {
     );
   }
   getPicksByWorkOrder(workOrder: WorkOrder): Observable<PickWork[]> {
-    const workOrderLineIds: number[] = [];
-    workOrder.workOrderLines.forEach(workOrderLine => {
-      workOrderLineIds.push(workOrderLine.id!);
-    });
+    const workOrderLineIds = this.workOrderLineFilter(workOrder);
+    // Omitting this filter would query every pick in the warehouse.
+    if (!workOrderLineIds) return of([]);
 
     return this.getPicks(
       undefined,
@@ -109,15 +108,13 @@ export class PickService {
       undefined,
       undefined,
       undefined,
-      workOrderLineIds.join(','),
+      workOrderLineIds,
     );
   }
   
   getPicksByWorkOrderAndProductionLine(workOrder: WorkOrder, productionLine: ProductionLine): Observable<PickWork[]> {
-    const workOrderLineIds: number[] = [];
-    workOrder.workOrderLines.forEach(workOrderLine => {
-      workOrderLineIds.push(workOrderLine.id!);
-    });
+    const workOrderLineIds = this.workOrderLineFilter(workOrder);
+    if (!workOrderLineIds) return of([]);
 
     return this.getPicks(
       undefined,
@@ -142,8 +139,14 @@ export class PickService {
       undefined,
       undefined,
       undefined,
-      workOrderLineIds.join(','),
+      workOrderLineIds,
     );
+  }
+  private workOrderLineFilter(workOrder: WorkOrder): string {
+    return (workOrder.workOrderLines ?? [])
+      .map(line => line?.id)
+      .filter((id): id is number => typeof id === 'number' && Number.isSafeInteger(id) && id > 0)
+      .join(',');
   }
   getPicksByWorkOrderNumber(workOrderNumber: string): Observable<PickWork[]> {
     return this.getPicks(

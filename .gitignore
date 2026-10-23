@@ -79,3 +79,5 @@ config/private/
 *.p12
 *.pfx
 hs_err_pid*.log
+
+.release-public-config.js
