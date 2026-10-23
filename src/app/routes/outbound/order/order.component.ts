@@ -72,6 +72,31 @@ import { DateTimeService } from '../../util/services/date-time.service';
     standalone: false
 })
 export class OutboundOrderComponent implements OnInit, OnDestroy {
+  printPolicies = new Map<number, any>();
+  printPolicyLoading = new Set<number>();
+  printShipmentIds = new Map<number, number>();
+  loadPrintPolicy(order: Order, visible: boolean): void {
+    if (!visible || order.id == null) return;
+    this.printPolicies.delete(order.id); this.printPolicyLoading.add(order.id);
+    this.orderService.printEligibility(order).subscribe({
+      next: policy => {
+        this.printPolicies.set(order.id!, policy);
+        const ready = policy.shipments.filter((s: any) => s.ready);
+        const previous = this.printShipmentIds.get(order.id!);
+        if (!ready.some((s: any) => s.id === previous)) {
+          this.printShipmentIds.delete(order.id!);
+          if (ready.length === 1) this.printShipmentIds.set(order.id!, ready[0].id);
+        }
+        this.printPolicyLoading.delete(order.id!);
+      }, error: () => { this.printPolicyLoading.delete(order.id!); }
+    });
+  }
+  canPrintShipping(order: Order): boolean {
+    const p = this.printPolicies.get(order.id!);
+    return !!p?.shipping && p.shipments.some((s: any) => s.ready && s.id === this.printShipmentIds.get(order.id!));
+  }
+  canPrintManual(order: Order): boolean { return !!this.printPolicies.get(order.id!)?.manualPick; }
+
  
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   private readonly allocationMonitor = inject(AllocationMonitorService);
@@ -903,11 +928,13 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
   
   printPackingSlip(event: any, order: Order) {
+    if (!this.canPrintShipping(order)) { this.messageService.warning("Select a shipment with completed picking before printing." ); return; }
+
 
     this.isSpinning = true;
 
     this.orderService.generateOrderPackingList(
-      order)
+      order, undefined, this.printShipmentIds.get(order.id!))
       .subscribe(printResult => {
 
         // send the result to the printer
@@ -936,11 +963,13 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
   }
   previewPackingSlip(order: Order): void {
+    if (!this.canPrintShipping(order)) { this.messageService.warning("Select a shipment with completed picking before printing." ); return; }
+
 
 
     this.isSpinning = true;
     this.orderService.generateOrderPackingList(
-      order)
+      order, undefined, this.printShipmentIds.get(order.id!))
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
@@ -957,11 +986,13 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
   
   printBillOfLading(event: any, order: Order) {
+    if (!this.canPrintShipping(order)) { this.messageService.warning("Select a shipment with completed picking before printing." ); return; }
+
 
     this.isSpinning = true;
 
     this.orderService.generateOrderBillOfLading(
-      order)
+      order, undefined, this.printShipmentIds.get(order.id!))
       .subscribe(printResult => {
 
         // send the result to the printer
@@ -990,11 +1021,13 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
   }
   previewBillOfLading(order: Order): void {
+    if (!this.canPrintShipping(order)) { this.messageService.warning("Select a shipment with completed picking before printing." ); return; }
+
 
 
     this.isSpinning = true;
     this.orderService.generateOrderBillOfLading(
-      order)
+      order, undefined, this.printShipmentIds.get(order.id!))
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
@@ -1009,6 +1042,8 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   }
   
   printManualPickSheet(event: any, order: Order) {
+    if (!this.canPrintManual(order)) { this.messageService.warning("No pending manual pick demand." ); return; }
+
 
     this.isSpinning = true;
 
@@ -1039,6 +1074,8 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
   }
   previewManualPickSheet(order: Order): void {
+    if (!this.canPrintManual(order)) { this.messageService.warning("No pending manual pick demand." ); return; }
+
 
 
     this.isSpinning = true;

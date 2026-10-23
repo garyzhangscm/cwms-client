@@ -949,28 +949,43 @@
               </ul>
             </nz-dropdown-menu>
           <button nz-button nz-popover nzPopoverTrigger="click" nzPopoverPlacement="bottomRight"
-            [nzPopoverContent]="orderPrintOptions" [attr.aria-label]="'print' | i18n">
+            (nzPopoverVisibleChange)="loadPrintPolicy(order, $event)" [nzPopoverContent]="orderPrintOptions" [attr.aria-label]="'print' | i18n">
             <i nz-icon nzType="printer"></i> {{ 'print' | i18n }}
           </button>
           <ng-template #orderPrintOptions>
             <div class="order-print-options">
-              <div class="order-print-options__row">
-                <span>{{ 'packing-slip' | i18n }}</span>
-                <cwms-common-print-button (print)="printPackingSlip($event, order)"
-                  (preview)="previewPackingSlip(order)"></cwms-common-print-button>
-              </div>
-              <div class="order-print-options__row">
-                <span>{{ 'bill-of-lading' | i18n }}</span>
-                <cwms-common-print-button (print)="printBillOfLading($event, order)"
-                  (preview)="previewBillOfLading(order)"></cwms-common-print-button>
-              </div>
-              @if(order.allowForManualPick) {
+              @let policy = printPolicies.get(order.id!);
+              @if(printPolicyLoading.has(order.id!)) { <p>Checking picking progress…</p> }
+              @else if(policy) {
+                @if(policy.shipments.length) {
+                  <label>Shipment</label>
+                  <nz-select style="width:100%;margin-bottom:12px" nzPlaceHolder="Select shipment" [ngModel]="printShipmentIds.get(order.id!)" (ngModelChange)="printShipmentIds.set(order.id!, $event)">
+                    @for(shipment of policy.shipments; track shipment.id) {
+                      <nz-option [nzValue]="shipment.id" [nzLabel]="shipment.number + ' · ' + shipment.status" [nzDisabled]="!shipment.ready"></nz-option>
+                    }
+                  </nz-select>
+                }
                 <div class="order-print-options__row">
-                  <span>{{ 'manual-pick-sheet' | i18n }}</span>
-                  <cwms-common-print-button (print)="printManualPickSheet($event, order)"
-                    (preview)="previewManualPickSheet(order)"></cwms-common-print-button>
+                  <span>{{ 'packing-slip' | i18n }}</span>
+                  @if(canPrintShipping(order)) {
+                    <cwms-common-print-button (print)="printPackingSlip($event, order)" (preview)="previewPackingSlip(order)"></cwms-common-print-button>
+                  } @else { <span class="text-grey">Complete picking and select shipment</span> }
                 </div>
-              }
+                <div class="order-print-options__row">
+                  <span>{{ 'bill-of-lading' | i18n }}</span>
+                  @if(canPrintShipping(order)) {
+                    <cwms-common-print-button (print)="printBillOfLading($event, order)" (preview)="previewBillOfLading(order)"></cwms-common-print-button>
+                  } @else { <span class="text-grey">Complete picking and select shipment</span> }
+                </div>
+                @if(order.allowForManualPick) {
+                  <div class="order-print-options__row">
+                    <span>{{ 'manual-pick-sheet' | i18n }}</span>
+                    @if(canPrintManual(order)) {
+                      <cwms-common-print-button (print)="printManualPickSheet($event, order)" (preview)="previewManualPickSheet(order)"></cwms-common-print-button>
+                    } @else { <span class="text-grey">No pending picking</span> }
+                  </div>
+                }
+              } @else { <p>Unable to check printing availability. Close and reopen to retry.</p> }
             </div>
           </ng-template>
         </div>

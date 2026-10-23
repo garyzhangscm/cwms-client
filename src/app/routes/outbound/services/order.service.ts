@@ -177,7 +177,11 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/pick-report`, null, params).pipe(map(res => res.data));
   }
  
-  generateOrderPackingList(order: Order, locale?: string): Observable<ReportHistory> {
+  printEligibility(order: Order): Observable<any> {
+    return this.http.get(`outbound/orders/${order.id}/print-eligibility`).pipe(map(res => res.data));
+  }
+
+  generateOrderPackingList(order: Order, locale?: string, shipmentId?: number): Observable<ReportHistory> {
      
     let params = new HttpParams();
 
@@ -185,11 +189,15 @@ export class OrderService {
       locale = this.i18n.defaultLang;
     }
     params = params.append('locale', locale);
+    if (shipmentId != null) {
+      params = params.append('shipmentId', shipmentId).append('type', 'PACKING_SLIP');
+      return this.http.post(`outbound/orders/${order.id}/shipping-report`, null, params).pipe(map(res => res.data));
+    }
 
     return this.http.post(`outbound/orders/${order.id}/packing-list-report`, null, params).pipe(map(res => res.data));
   }
   
-  generateOrderBillOfLading(order: Order, locale?: string): Observable<ReportHistory> {
+  generateOrderBillOfLading(order: Order, locale?: string, shipmentId?: number): Observable<ReportHistory> {
     
     let params = new HttpParams();
 
@@ -197,6 +205,10 @@ export class OrderService {
       locale = this.i18n.defaultLang;
     }
     params = params.append('locale', locale);
+    if (shipmentId != null) {
+      params = params.append('shipmentId', shipmentId).append('type', 'BILL_OF_LADING');
+      return this.http.post(`outbound/orders/${order.id}/shipping-report`, null, params).pipe(map(res => res.data));
+    }
 
     return this.http.post(`outbound/orders/${order.id}/bill-of-lading-report`, null, params).pipe(map(res => res.data));
   }
