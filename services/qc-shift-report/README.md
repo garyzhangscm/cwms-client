@@ -28,3 +28,15 @@ Ranges can cross midnight and span at most 31 local days; existing record limits
 read-only transactions, authorization, attribution, history mapping, and owner-bound
 snapshot exports remain in force. Nonexistent or ambiguous local DST boundary times
 are rejected rather than silently shifted. Excel and PDF show warehouse local time.
+
+## Item family selection
+
+Both report query modes accept optional `itemFamilyIds` as a comma-separated list
+of up to 100 positive IDs. Omission includes all families, including unclassified
+items. Multiple selections are ORed. IDs must belong to the current company and
+either the current warehouse or company scope. Family membership uses the work
+order's manufactured item; finished-goods checks use their original production
+mapping. Unknown production mappings still reject incomplete reports. All source
+categories, details, coverage denominators and snapshots use the same selection.
+The report and exports include selected family names. Changing a selection clears
+the old result and prevents exporting a previous selection.

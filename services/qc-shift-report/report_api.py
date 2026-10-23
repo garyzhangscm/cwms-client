@@ -151,7 +151,19 @@ def query_shifts(company_id, warehouse_id):
         return load_shift_configuration(cursor, company_id, warehouse_id)
 
 
-def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=None, end_local=None):
+def parse_family_ids(value):
+    if value is None:
+        return ()
+    if not isinstance(value, str) or len(value) > 2000:
+        raise ReportError(400, 'Invalid item family filter')
+    parts = value.split(',')
+    if not 1 <= len(parts) <= 100:
+        raise ReportError(400, 'Select at most 100 item families')
+    return tuple(sorted({positive(part) for part in parts}))
+
+
+def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=None, end_local=None, item_family_ids=None):
+    families = parse_family_ids(item_family_ids)
     custom = start_local is not None or end_local is not None
     if custom and (day is not None or shift is not None):
         raise ReportError(400, 'Choose either a shift or a custom range')
@@ -172,6 +184,15 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
             if schedule is None:
                 raise ReportError(409, 'Shift configuration changed; reload the report page')
             start, end = shift_bounds(day, schedule, zone)
+        family_names = []
+        if families:
+            cursor.execute('''SELECT item_family_id id,name FROM item_family
+                WHERE company_id=%s AND (warehouse_id IS NULL OR warehouse_id=%s)
+                  AND item_family_id IN %s LIMIT 101''', (company_id, warehouse_id, families))
+            choices = list(cursor.fetchall())
+            if {row['id'] for row in choices} != set(families):
+                raise ReportError(403, 'Item family is unavailable in this company or warehouse')
+            family_names = [row['name'] for row in sorted(choices, key=lambda row: row['id'])]
         params = dict(warehouse=warehouse_id, start=start.replace(tzinfo=None), end=end.replace(tzinfo=None))
 
         def load(sql):
@@ -185,7 +206,7 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
         # references: replacing today's active sample must not erase yesterday's count.
         samples = load('''SELECT CONCAT('sample:',s.work_order_qc_sample_id) id,
             s.number,s.created_by username,wo.number workOrderNumber,
-            s.warehouse_id warehouseId, s.created_time timestamp, i.name product, pl.name machine
+            s.warehouse_id warehouseId, s.created_time timestamp, i.name product,i.item_family_id itemFamilyId, pl.name machine
             FROM work_order_qc_sample s
             LEFT JOIN production_line_assignment a ON a.production_line_assignment_id=s.production_line_assignment_id
             LEFT JOIN work_order wo ON wo.work_order_id=COALESCE(s.work_order_id,a.work_order_id) AND wo.warehouse_id=s.warehouse_id
@@ -194,7 +215,7 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
             WHERE s.warehouse_id=%(warehouse)s AND s.created_time >= %(start)s AND s.created_time < %(end)s''')
         inline = load('''SELECT CONCAT('request:',q.qc_inspection_request_id) id,
             q.number,q.qc_username username,wo.number workOrderNumber,
-            q.warehouse_id warehouseId,q.qc_time timestamp,q.qc_inspection_result status,i.name product,pl.name machine
+            q.warehouse_id warehouseId,q.qc_time timestamp,q.qc_inspection_result status,i.name product,i.item_family_id itemFamilyId,pl.name machine
             FROM qc_inspection_request q
             LEFT JOIN work_order_qc_sample s ON s.work_order_qc_sample_id=q.work_order_qc_sample_id AND s.warehouse_id=q.warehouse_id
             LEFT JOIN production_line_assignment a ON a.production_line_assignment_id=s.production_line_assignment_id
@@ -207,7 +228,7 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
               AND q.qc_inspection_result IN ('PASS','FAIL')''')
         legacy = load('''SELECT CONCAT('legacy:',q.work_order_qc_result_id) id,
             q.number,q.qc_username username,wo.number workOrderNumber,
-            q.warehouse_id warehouseId,q.qc_time timestamp,q.qc_inspection_result status,i.name product,pl.name machine
+            q.warehouse_id warehouseId,q.qc_time timestamp,q.qc_inspection_result status,i.name product,i.item_family_id itemFamilyId,pl.name machine
             FROM work_order_qc_result q
             LEFT JOIN work_order_qc_sample s ON s.work_order_qc_sample_id=q.work_order_qc_sample_id AND s.warehouse_id=q.warehouse_id
             LEFT JOIN production_line_assignment a ON a.production_line_assignment_id=s.production_line_assignment_id
@@ -220,7 +241,7 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
         # mix unverified timestamps into a shift if historical legacy rows are present.
         if legacy and os.environ.get('QC_LEGACY_TIMEZONE') != 'UTC':
             raise ReportError(503, 'Legacy QC timestamp timezone requires verification')
-        produced = load('''SELECT t.warehouse_id warehouseId,t.created_time timestamp,p.lpn,i.name product,pl.name machine
+        produced = load('''SELECT t.warehouse_id warehouseId,t.created_time timestamp,p.lpn,i.name product,i.item_family_id itemFamilyId,pl.name machine
             FROM work_order_produce_transaction t
             JOIN work_order_produced_inventory p ON p.work_order_produce_transaction_id=t.work_order_produce_transaction_id
             LEFT JOIN work_order wo ON wo.work_order_id=t.work_order_id AND wo.warehouse_id=t.warehouse_id
@@ -260,7 +281,7 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
         if workorders and lpns:
             lookup = dict(params, workorders=workorders, lpns=lpns)
             cursor.execute('''SELECT t.warehouse_id warehouseId,t.work_order_id workOrderId,
-                t.created_time producedTime,p.lpn,i.name product,pl.name machine
+                t.created_time producedTime,p.lpn,i.name product,i.item_family_id itemFamilyId,pl.name machine
                 FROM work_order_produce_transaction t
                 JOIN work_order_produced_inventory p ON p.work_order_produce_transaction_id=t.work_order_produce_transaction_id
                 LEFT JOIN work_order wo ON wo.work_order_id=t.work_order_id AND wo.warehouse_id=t.warehouse_id
@@ -275,12 +296,16 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
         for row in mappings:
             by_pallet.setdefault((row['warehouseId'], row['workOrderId'], row['lpn']), []).append(row)
         for row in finished:
-            candidates = {(m['product'], m['machine']) for m in by_pallet.get(
+            candidates = {(m['product'], m['machine'], m.get('itemFamilyId')) for m in by_pallet.get(
                 (row['warehouseId'], row.get('workOrderId'), row.get('lpn')), [])
                 if m['producedTime'] <= row['timestamp']}
             if len(candidates) != 1:
                 raise ReportError(503, 'Missing or ambiguous original production mapping')
-            row['product'], row['machine'] = next(iter(candidates))
+            row['product'], row['machine'], row['itemFamilyId'] = next(iter(candidates))
+        if families:
+            samples, inline, legacy, produced, finished = [
+                [row for row in rows if row.get('itemFamilyId') in families]
+                for rows in (samples, inline, legacy, produced, finished)]
         people = sorted({name.casefold() for r in samples + inline + legacy
                          if (name := inspector_username(r.get('username')))})
         users, ambiguous = {}, set()
@@ -301,6 +326,8 @@ def query_report(company_id, warehouse_id, day=None, shift=None, *, start_local=
             users.pop(key, None)  # Keep recorded username when a full name is ambiguous.
         report = aggregate(warehouse_id, day, schedule, zone, samples, inline + legacy, produced, finished,
                            bounds=(start, end) if custom else None)
+        report['itemFamilyIds'] = list(families)
+        report['itemFamilyNames'] = family_names
         if excluded_receiving:
             report['warnings'].append(f'{len(excluded_receiving)} historical receiving inspection(s) excluded from production finished-goods totals.')
             report['excludedReceivingInspections'] = len(excluded_receiving)
@@ -340,7 +367,8 @@ class Handler(BaseHTTPRequestHandler):
                 values = parse_qs(path.query, keep_blank_values=True)
                 expected = {'companyId', 'warehouseId'} if path.path.endswith('/shifts') else {'companyId', 'warehouseId', 'date', 'shift'}
                 custom = {'companyId', 'warehouseId', 'startLocal', 'endLocal'}
-                if (set(values) != expected and not (path.path.endswith('/report') and set(values) == custom)) or any(len(v) != 1 for v in values.values()):
+                keys = set(values) - ({'itemFamilyIds'} if path.path.endswith('/report') else set())
+                if (keys != expected and not (path.path.endswith('/report') and keys == custom)) or any(len(v) != 1 for v in values.values()):
                     raise ReportError(400, 'Invalid report parameters')
                 request = {k: v[0] for k, v in values.items()}
             elif method == 'POST' and path.path in ('/qc-shift-report/export', '/qc-shift-report/export-pdf'):
@@ -376,10 +404,11 @@ class Handler(BaseHTTPRequestHandler):
                 if path.path.endswith('/shifts'):
                     self.respond(200, dict(result=0, data=query_shifts(company, warehouse)))
                     return
+                filters = {'item_family_ids': request['itemFamilyIds']} if 'itemFamilyIds' in request else {}
                 if 'startLocal' in request:
-                    report = query_report(company, warehouse, start_local=request['startLocal'], end_local=request['endLocal'])
+                    report = query_report(company, warehouse, start_local=request['startLocal'], end_local=request['endLocal'], **filters)
                 else:
-                    report = query_report(company, warehouse, request['date'], request['shift'])
+                    report = query_report(company, warehouse, request['date'], request['shift'], **filters)
             finally:
                 SLOTS.release()
             report['snapshotId'] = secrets.token_urlsafe(24)

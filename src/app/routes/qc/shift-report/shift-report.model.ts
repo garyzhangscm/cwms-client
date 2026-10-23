@@ -27,6 +27,8 @@ export interface QcShiftRow {
 
 export interface QcShiftReport {
   snapshotId: string;
+  itemFamilyIds?: number[];
+  itemFamilyNames?: string[];
   warehouseId: number;
   date: string;
   shift: string;
@@ -42,7 +44,9 @@ export interface QcShiftReport {
 }
 
 /** Reject partial/malformed responses rather than presenting missing data as zero. */
-export function validateShiftReport(value: QcShiftReport, warehouseId: number, date: string, shift: string, range?: {start: string; end: string}): QcShiftReport {
+export function validateShiftReport(value: QcShiftReport, warehouseId: number, date: string, shift: string, range?: {start: string; end: string}, familyIds: number[] = []): QcShiftReport {
+  if (JSON.stringify(value?.itemFamilyIds || []) !== JSON.stringify(familyIds) ||
+      (value?.itemFamilyNames !== undefined && (!Array.isArray(value.itemFamilyNames) || value.itemFamilyNames.length !== familyIds.length || !value.itemFamilyNames.every(n => typeof n === 'string')))) throw new Error('Invalid item family scope');
   const count = (v: unknown): boolean => Number.isSafeInteger(v) && Number(v) >= 0;
   if (!value || typeof value.snapshotId !== 'string' || !value.snapshotId || value.warehouseId !== warehouseId || value.date !== date || value.shift !== shift ||
       !value.timezone || !value.startTime || !value.endTime || !value.generatedAt ||

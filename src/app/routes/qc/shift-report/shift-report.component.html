@@ -17,6 +17,12 @@
       <label class="datetime-field">{{ t('range-start') }}<input nz-input type="datetime-local" step="1" name="startLocal" [(ngModel)]="startLocal" (ngModelChange)="clear()" required /></label>
       <label class="datetime-field">{{ t('range-end') }}<input nz-input type="datetime-local" step="1" name="endLocal" [(ngModel)]="endLocal" (ngModelChange)="clear()" required /></label>
     }
+    <label class="family-filter">{{ t('item-family') }}
+      <nz-select nzMode="multiple" nzShowSearch nzAllowClear name="itemFamilyIds" [(ngModel)]="selectedFamilyIds"
+        (ngModelChange)="clear()" [nzPlaceHolder]="t('all-families')" [nzLoading]="loadingFamilies" [nzMaxTagCount]="2">
+        @for (family of itemFamilies; track family.id) { <nz-option [nzValue]="family.id!" [nzLabel]="family.name"></nz-option> }
+      </nz-select>
+    </label>
     <button nz-button nzType="primary" type="submit" [nzLoading]="busy || loadingShifts" [disabled]="loadingShifts || !timezone || (mode === 'shift' && !shift)">{{ t('run') }}</button>
     <button nz-button type="button" (click)="loadShifts()" [disabled]="loadingShifts">{{ t('reload-shifts') }}</button>
     </div>
@@ -27,12 +33,14 @@
   </form>
   <div class="filter-note"><p class="help">{{ t(mode === 'custom' ? 'range-note' : 'shift-note') }}</p><span class="timezone">{{ t('warehouse-time') }}: {{ timezone || '—' }}</span></div>
 </nz-card>
+@if (familyError) { <div role="alert" class="report-error">{{ familyError }} <button nz-button type="button" (click)="loadFamilies()">{{ t('retry-families') }}</button></div> }
 @if (error) { <div role="alert" class="report-error">{{ error }}</div> }
 <nz-spin class="qc-report-content" [nzSpinning]="busy">
   @if (report && current) {
     <nz-card class="qc-result-card">
       <div class="report-heading"><h2>{{ periodLabel(report) }}</h2>
         <span>{{ report.timezone }} · {{ t('generated') }} {{ generatedAt(report) }}</span></div>
+      <p class="help">{{ t('item-family') }}: {{ report.itemFamilyNames?.length ? report.itemFamilyNames?.join(', ') : t('all-families') }}</p>
       @for (warning of report.warnings; track $index) { <p class="report-warning" role="status">{{ warning }}</p> }
       <div class="summary-metrics">
         <div><span>{{ t('first') }}</span><strong>{{ report.totals.firstSample }}</strong></div>

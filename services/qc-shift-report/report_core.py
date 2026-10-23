@@ -227,6 +227,7 @@ def excel_bytes(report):
     text(ws['A2'], report_period(report))
     text(ws['A3'], 'Warehouse local time; end excluded')
     ws.merge_cells('A3:E3')
+    text(ws['A4'], 'Item families: ' + (', '.join(report.get('itemFamilyNames', [])) or 'All'))
     headers = ['Product', 'Machine', '1st Sample', 'Inline', 'Finished Goods']
     for column, label in enumerate(headers, 1):
         cell = ws.cell(5, column, label)

@@ -62,6 +62,7 @@ def pdf_bytes(report):
              p(f"Shift start date: {report['date']}    |    {shift}", bold),
              p(f"Warehouse: {report.get('warehouseName') or report['warehouseId']}    |    Time zone: {report['timezone']}", small),
              p(f"Period: {start:%Y-%m-%d %H:%M:%S} to {end:%Y-%m-%d %H:%M:%S} (end excluded)", small),
+             p('Item families: ' + (', '.join(report.get('itemFamilyNames', [])) or 'All'), small),
              p(f"Generated: {generated:%Y-%m-%d %H:%M:%S %Z}    |    {totals['machines']:,} machines", small), Spacer(1, 15)]
 
     cards = Table([[[p('PALLETS PRODUCED', label), p(f"{totals['producedPallets']:,}", value)],

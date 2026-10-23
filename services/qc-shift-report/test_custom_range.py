@@ -90,7 +90,11 @@ class CustomPeriods(unittest.TestCase):
                 with urllib.request.urlopen(prefix+valid) as response:
                     self.assertEqual(json.load(response)['data']['shift'],'custom')
                 query.assert_called_once_with(1,1,start_local='2026-10-23T06:30',end_local='2026-10-24T06:30')
-                for suffix in ['&date=2026-10-23&shift=1','&startLocal=2026-10-22T06:30','&timezone=UTC']:
+                query.reset_mock()
+                with urllib.request.urlopen(prefix+valid+'&itemFamilyIds=10%2C20') as response:
+                    self.assertEqual(response.status,200)
+                query.assert_called_once_with(1,1,start_local='2026-10-23T06:30',end_local='2026-10-24T06:30',item_family_ids='10,20')
+                for suffix in ['&itemFamilyIds=10&itemFamilyIds=20','&date=2026-10-23&shift=1','&startLocal=2026-10-22T06:30','&timezone=UTC']:
                     with self.subTest(suffix=suffix), self.assertRaises(urllib.error.HTTPError) as error:
                         urllib.request.urlopen(prefix+valid+suffix)
                     self.assertEqual(error.exception.code,400)

@@ -1,0 +1,5 @@
+{
+  "webclient": "brianwang1912/mes-web:v19.2-item-family-20261023-01@sha256:e2d0a50f22b80f52f0a5e841698c1591e58c5d577bad4f71c0d3eff1dc678aeb",
+  "qc-shift-report": "brianwang1912/mes-qc-shift-report:v20261023-item-family@sha256:e293ee03f840903583606f47d397168ae11c81f616535b384a25b5bed37e05c5",
+  "outboundservice": "brianwang1912/cwms-outboundserver:v1.62-unified-20261023-null-dates-01@sha256:a99d0b8549bbfe27e8a803008d078a0a9f8eeee2aa23297125dc8bc52014f039"
+}

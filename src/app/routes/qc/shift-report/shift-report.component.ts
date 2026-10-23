@@ -4,6 +4,8 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { I18NService } from '@core';
 import { Subscription, timeout } from 'rxjs';
 import { saveAs } from 'file-saver';
+import { ItemFamilyService } from '../../inventory/services/item-family.service';
+import { ItemFamily } from '../../inventory/models/item-family';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcShiftReport, QcShiftSchedule, QcShiftRow, QcShiftInspection, validateShiftReport, validateShiftConfiguration } from './shift-report.model';
 
@@ -18,6 +20,12 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
   startLocal = '';
   endLocal = '';
   private reportRangeKey = '';
+  private readonly familyService = inject(ItemFamilyService);
+  itemFamilies: ItemFamily[] = [];
+  selectedFamilyIds: number[] = [];
+  loadingFamilies = false;
+  familyError = '';
+  private familyQuery?: Subscription;
   date = '';
   shift = '';
   shifts: QcShiftSchedule[] = [];
@@ -40,7 +48,25 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
   constructor() {
     inject(TitleService).setTitle(this.i18n.fanyi('qc-shift.title'));
   }
-  ngOnInit(): void { this.loadShifts(); }
+  ngOnInit(): void { this.loadFamilies(); this.loadShifts(); }
+  loadFamilies(): void {
+    this.clear(); this.familyQuery?.unsubscribe();
+    const warehouseId = this.warehouse.getCurrentWarehouse().id;
+    this.itemFamilies = []; this.selectedFamilyIds = []; this.loadingFamilies = true; this.familyError = '';
+    this.familyQuery = this.familyService.loadItemFamilies(true).pipe(timeout(30000)).subscribe({
+      next: families => {
+        if (warehouseId !== this.warehouse.getCurrentWarehouse()?.id) return;
+        this.loadingFamilies = false;
+        if (!Array.isArray(families) || !families.every(f => Number.isSafeInteger(f.id) && f.id! > 0 && typeof f.name === 'string')) {
+          this.familyError = this.t('families-failed'); return;
+        }
+        this.itemFamilies = families;
+      },
+      error: () => { this.loadingFamilies = false; this.familyError = this.t('families-failed'); }
+    });
+  }
+  get familyIds(): number[] { return [...new Set(this.selectedFamilyIds)].sort((a, b) => a - b); }
+
   loadShifts(): void {
     this.clear(); this.configQuery?.unsubscribe();
     this.shifts = []; this.shift = ''; this.configWarehouse = undefined; this.loadingShifts = true;
@@ -107,7 +133,7 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
       .format(new Date(entry.timestamp));
   }
   get current(): boolean {
-    return !!this.report && this.report.warehouseId === this.warehouse.getCurrentWarehouse()?.id &&
+    return !!this.report && JSON.stringify(this.report.itemFamilyIds || []) === JSON.stringify(this.familyIds) && this.report.warehouseId === this.warehouse.getCurrentWarehouse()?.id &&
       (this.mode === 'custom' ? this.report.shift === 'custom' && this.reportRangeKey === `${this.startLocal}|${this.endLocal}` :
         this.report.date === this.date && this.report.shift === this.shift);
   }
@@ -121,22 +147,24 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
     if (this.mode === 'shift' && !/^\d{4}-\d{2}-\d{2}$/.test(this.date)) { this.error = this.t('invalid-date'); return; }
     const version = this.version;
     const warehouse = this.warehouse.getCurrentWarehouse();
-    if (this.configWarehouse !== warehouse.id) { this.loadShifts(); return; }
+    if (this.configWarehouse !== warehouse.id) { this.loadFamilies(); this.loadShifts(); return; }
     if (this.mode === 'custom' && (!this.startLocal || !this.endLocal || this.endLocal <= this.startLocal)) { this.error = this.t('invalid-range'); return; }
     if (this.mode === 'shift' && !this.shifts.some(s => s.id === this.shift)) { this.error = this.t('config-failed'); return; }
+    const familyIds = this.familyIds;
+    if (familyIds.length > 100 || !familyIds.every(id => this.itemFamilies.some(f => f.id === id))) { this.error = this.t('families-failed'); return; }
     const custom = this.mode === 'custom';
     const date = custom ? this.startLocal.slice(0, 10) : this.date, shift = custom ? 'custom' : this.shift;
     const range = custom ? {start: this.startLocal, end: this.endLocal} : undefined;
     const parameters = custom ? {startLocal: this.startLocal, endLocal: this.endLocal} : {date, shift};
     this.busy = true;
     this.query = this.api.get('qc-shift-report/report', {warehouseId: warehouse.id,
-      companyId: warehouse.companyId, ...parameters}).pipe(timeout(60000)).subscribe({
+      companyId: warehouse.companyId, ...parameters, ...(familyIds.length ? {itemFamilyIds: familyIds.join(',')} : {})}).pipe(timeout(60000)).subscribe({
       next: response => {
         if (version !== this.version || warehouse.id !== this.warehouse.getCurrentWarehouse()?.id) {
           if (version === this.version) this.clear(); return;
         }
         try {
-          this.report = validateShiftReport(response.data, warehouse.id, date, shift, range);
+          this.report = validateShiftReport(response.data, warehouse.id, date, shift, range, familyIds);
           this.reportRangeKey = range ? `${range.start}|${range.end}` : '';
         }
         catch { this.error = this.t('failed'); }
@@ -165,5 +193,5 @@ export class QcShiftReportComponent implements OnDestroy, OnInit {
       error: () => { if (version === this.version) { this.error = this.t('export-failed'); this.exporting = false; } }
     });
   }
-  ngOnDestroy(): void { this.clear(); this.configQuery?.unsubscribe(); }
+  ngOnDestroy(): void { this.clear(); this.configQuery?.unsubscribe(); this.familyQuery?.unsubscribe(); }
 }

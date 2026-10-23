@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-23",
+  "backendTests": 54,
+  "frontendChecks": 17,
+  "productionAngularBuild": "passed",
+  "browser": {
+    "actualAngularFilterRendered": true,
+    "multiSelect": true,
+    "searchable": true,
+    "clearSelection": true,
+    "mobileOverflow": false,
+    "pageErrors": []
+  },
+  "filterSemantics": "No selection = all; multiple families = OR; original manufactured-item membership; shared totals/details/export snapshot",
+  "productionDeployed": false,
+  "databaseWrites": false
+}
