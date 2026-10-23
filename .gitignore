@@ -44,3 +44,14 @@ Thumbs.db
 # Local deployment records, captured business output and duplicate patch archives
 /output/
 /backend-changes/
+
+# Site addresses and credentials are provisioned outside Git.
+.env
+.env.*
+!.env.example
+*.local.env
+config/private/
+*.pem
+*.key
+*.p12
+*.pfx

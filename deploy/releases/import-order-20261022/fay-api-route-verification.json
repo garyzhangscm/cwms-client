@@ -3,7 +3,7 @@
   "cause": "Static-file regex took precedence over API JSON routes",
   "configMap": "mes-web-imports-fay-api-priority-20261022",
   "imageUnchanged": true,
-  "backup": "/root/k8s/backups/fay-api-priority-20261023T011548Z",
+  "backup": "[server-local value redacted]",
   "persistentManifestUpdated": true,
   "businessWritesForVerification": false,
   "checks": [

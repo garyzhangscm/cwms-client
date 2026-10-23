@@ -1,9 +1,10 @@
 'use strict';
 // Run the actual Kubernetes image at the existing test URL. Preserve older previews.
 const http = require('node:http');
-const httpProxy = require('/home/LOCAL_USER/mes-web/cwms-client/node_modules/http-proxy');
+const httpProxy = require(process.env.MES_HTTP_PROXY_MODULE || 'http-proxy');
 const target = process.argv[2];
-if (!/^http:\/\/server\.example\.invalid:\d+$/.test(target || '')) throw new Error('Expected approved Colton test-image upstream');
+const approved = process.env.MES_TEST_IMAGE_UPSTREAM;
+if (!approved || target !== approved || !/^https?:\/\//.test(approved)) throw new Error('Expected explicitly configured test-image upstream');
 const proxy = httpProxy.createProxyServer({xfwd: true, proxyTimeout: 120000, timeout: 120000});
 proxy.on('error', (_error, _req, res) => {
   if (res && typeof res.writeHead === 'function' && !res.headersSent) {

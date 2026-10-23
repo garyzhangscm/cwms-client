@@ -7,27 +7,27 @@
  */
 module.exports = {
   '/api/item-import/**': {
-    target: process.env.MES_ITEM_IMPORT_TARGET || 'http://server.example.invalid:18793',
+    target: process.env.MES_ITEM_IMPORT_TARGET || 'http://127.0.0.1:18793',
     changeOrigin: true,
     pathRewrite: {'^/api': ''}
   },
   '/api/work-order-import/**': {
-    target: process.env.MES_WORK_ORDER_IMPORT_TARGET || 'http://server.example.invalid:18792',
+    target: process.env.MES_WORK_ORDER_IMPORT_TARGET || 'http://127.0.0.1:18792',
     changeOrigin: true,
     pathRewrite: {'^/api': ''}
   },
   '/api/inventory-handoff/**': {
-    target: process.env.MES_INVENTORY_HANDOFF_TARGET || 'http://server.example.invalid:18791',
+    target: process.env.MES_INVENTORY_HANDOFF_TARGET || 'http://127.0.0.1:18791',
     changeOrigin: true,
     pathRewrite: {'^/api': ''}
   },
   '/api/integration-settings/**': {
-    target: process.env.MES_ITEM_SETTINGS_TARGET || 'http://server.example.invalid:18790',
+    target: process.env.MES_ITEM_SETTINGS_TARGET || 'http://127.0.0.1:18790',
     changeOrigin: true,
     pathRewrite: {'^/api': ''}
   },
   '/api/**': {
-    target: process.env.COLTON_API_TARGET || 'http://server.example.invalid:31252',
+    target: process.env.COLTON_API_TARGET || 'http://127.0.0.1:5555',
     changeOrigin: true
   },
   /**

@@ -1,5 +1,5 @@
 """Backed-up FAY web configuration fix; business images and data stay unchanged."""
-import datetime,json,pathlib,socket,subprocess,urllib.request,urllib.error,sys,yaml
+import datetime,json,pathlib,socket,subprocess,urllib.request,urllib.error,sys,yaml,os
 P=pathlib.Path;K=['kubectl','-n','staging']
 def run(args):
     p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
@@ -24,11 +24,12 @@ def probe(base,path,expected,json_body=False):
     if json_body and not isinstance(json.loads(body),dict):raise RuntimeError('Language response is not a JSON object')
     return {'url':base+path,'status':r.status,'jsonObject':json_body}
 if socket.gethostname()!='k8s-master-ar':raise RuntimeError('FAY master only')
+public_base=None if '--persist-current' in sys.argv else os.environ['MES_FAY_WEB_BASE']
 d=get('deployment','webclient');volumes=d['spec']['template']['spec']['volumes'];i=next(i for i,v in enumerate(volumes) if v['name']=='fay-web-nginx');previous=volumes[i]['configMap']['name'];c=get('configmap',previous);text=c['data']['default.conf.template']
 prefixes=('/api/','/api/inventory-handoff/','/api/integration-settings/')
 for prefix in prefixes:
     if text.count('location '+prefix+' {')+text.count('location ^~ '+prefix+' {')!=1:raise RuntimeError('Expected exactly one API prefix location: '+prefix)
-if 'redacted-site-prefix.' in text:raise RuntimeError('Cross-site proxy target')
+if os.environ['MES_FORBIDDEN_SITE_PREFIX'] in text:raise RuntimeError('Cross-site proxy target')
 updated=text
 for prefix in prefixes:updated=updated.replace('location '+prefix+' {','location ^~ '+prefix+' {')
 if '--persist-current' in sys.argv:
@@ -54,7 +55,7 @@ try:
     if len(ready)!=1:raise RuntimeError('Expected one ready web pod')
     run(K+['exec',ready[0]['metadata']['name'],'--','nginx','-t'])
     cluster='http://'+get('service','webclient')['spec']['clusterIP'];checks=[]
-    for base in (cluster,'http://server.example.invalid'):
+    for base in (cluster,public_base):
         checks.append(probe(base,'/',200))
         checks.append(probe(base,'/api/resource/assets/i18n/en-US.json',200,True))
         checks.append(probe(base,'/api/resource/assets/i18n/zh-CN.json',200,True))

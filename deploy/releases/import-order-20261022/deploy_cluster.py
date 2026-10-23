@@ -1,5 +1,5 @@
 """Narrow, backed-up image deployment; execute on the authorized site's master."""
-import argparse,datetime,hashlib,json,pathlib,subprocess,time,yaml
+import argparse,datetime,hashlib,json,pathlib,subprocess,time,yaml,os
 P=pathlib.Path
 WEB='brianwang1912/mes-web:v19.2-import-orders-20261022-02@sha256:d4c92a82f0d79da059982325fb625f2649275bfbf0e891de375e34f627406ae3'
 REPORT='brianwang1912/mes-qc-shift-report:v20261022-receiving-history@sha256:3abc0f80c118653255c18be0330f10bc7ae60e165a9a5fedf987387d6e86b4cf'
@@ -38,16 +38,16 @@ def main():
     else:
         if args.site=='fay':
             config_name='mes-web-imports-fay-20261022-02';mount=next(v for v in old['volumes'] if v['name']=='fay-web-nginx');previous=mount['configMap']['name'];config=get('configmap',previous);text=config['data']['default.conf.template']
-            if 'redacted-site-prefix.' in text:raise RuntimeError('Cross-factory target in Fay configuration')
+            if os.environ['MES_FORBIDDEN_SITE_PREFIX'] in text:raise RuntimeError('Cross-factory target in Fay configuration')
             marker='    location ^~ /api/ {' if '    location ^~ /api/ {' in text else '    location /api/ {'
             if marker not in text:raise RuntimeError('Expected Fay gateway route missing')
             imports='''    location ^~ /api/item-import/ {
-        proxy_pass http://server.example.invalid:18793/item-import/;
+        proxy_pass ${MES_ITEM_IMPORT_TARGET}/item-import/;
         proxy_set_header Host $proxy_host;
         proxy_read_timeout 120s;
     }
     location ^~ /api/work-order-import/ {
-        proxy_pass http://server.example.invalid:18792/work-order-import/;
+        proxy_pass ${MES_WORK_ORDER_IMPORT_TARGET}/work-order-import/;
         proxy_set_header Host $proxy_host;
         proxy_read_timeout 120s;
     }
@@ -60,6 +60,8 @@ def main():
         try_files $uri =404;
     }
 '''
+            for key in ('MES_ITEM_IMPORT_TARGET','MES_WORK_ORDER_IMPORT_TARGET'):
+                imports=imports.replace('${'+key+'}',os.environ[key].rstrip('/'))
             text=text.replace("add_header Cache-Control 'no-cache';","add_header Cache-Control 'no-store' always;",1)
             text=text if 'location ^~ /api/item-import/' in text else text.replace(marker,imports+marker,1)
             # API JSON/download paths must take precedence over static-file regexes.

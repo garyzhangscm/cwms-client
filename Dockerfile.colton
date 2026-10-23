@@ -8,10 +8,10 @@ RUN node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --co
 
 FROM nginx:stable-alpine AS runtime
 ENV COLTON_API_TARGET=http://apigateway:5555
-ENV MES_ITEM_IMPORT_TARGET=http://server.example.invalid:18793
-ENV MES_WORK_ORDER_IMPORT_TARGET=http://server.example.invalid:18792
-ENV MES_ITEM_SETTINGS_TARGET=http://server.example.invalid:18790
-ENV MES_INVENTORY_HANDOFF_TARGET=http://server.example.invalid:18791
+ENV MES_ITEM_IMPORT_TARGET=http://item-import:18793
+ENV MES_WORK_ORDER_IMPORT_TARGET=http://work-order-import:18792
+ENV MES_ITEM_SETTINGS_TARGET=http://integration-settings:18790
+ENV MES_INVENTORY_HANDOFF_TARGET=http://inventory-handoff:18791
 ENV ADMINER_TARGET=http://adminer:8080
 COPY deploy/colton/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist/ng-alain-v19-without-ssr/browser/ /usr/share/nginx/html/
