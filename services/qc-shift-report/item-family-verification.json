@@ -12,6 +12,6 @@
     "pageErrors": []
   },
   "filterSemantics": "No selection = all; multiple families = OR; original manufactured-item membership; shared totals/details/export snapshot",
-  "productionDeployed": false,
+  "productionDeployed": true,
   "databaseWrites": false
 }
