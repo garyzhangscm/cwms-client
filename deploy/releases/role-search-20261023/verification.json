@@ -1,0 +1,26 @@
+{
+  "problem": "Role rows were enclosed in an uninstantiated ng-template inside the Angular row loop",
+  "fix": "Remove only the outer ng-template; preserve role actions, expansion and permissions",
+  "browserBefore": {
+    "fixtureRoles": 6,
+    "renderedRows": 0,
+    "names": [],
+    "pageErrors": []
+  },
+  "browserAfter": {
+    "fixtureRoles": 6,
+    "renderedRows": 6,
+    "names": [
+      " Admin",
+      " Receiving",
+      " Shipping",
+      " QC",
+      " Production",
+      " ViewOnly"
+    ],
+    "pageErrors": []
+  },
+  "productionAngularBuild": "passed",
+  "databaseOrPermissionsChanged": false,
+  "productionRollout": "authorized; pending"
+}
