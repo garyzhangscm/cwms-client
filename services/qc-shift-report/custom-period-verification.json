@@ -17,7 +17,7 @@
     "Colton/WMEC": "America/Los_Angeles"
   },
   "customRange": "Warehouse local start inclusive/end exclusive; up to 31 local days",
-  "productionDeployed": false,
+  "productionDeployed": true,
   "databaseWrites": false,
-  "inTransitRelease": "paused per user request"
+  "inTransitRelease": "Enabled for FAY Olivet only; Colton disabled"
 }
