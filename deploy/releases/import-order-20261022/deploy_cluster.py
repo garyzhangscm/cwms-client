@@ -63,7 +63,8 @@ def main():
             text=text.replace("add_header Cache-Control 'no-cache';","add_header Cache-Control 'no-store' always;",1)
             text=text if 'location ^~ /api/item-import/' in text else text.replace(marker,imports+marker,1)
             # API JSON/download paths must take precedence over static-file regexes.
-            text=text.replace('location /api/ {','location ^~ /api/ {')
+            for prefix in ('/api/','/api/inventory-handoff/','/api/integration-settings/'):
+                text=text.replace('location '+prefix+' {','location ^~ '+prefix+' {')
             config={'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':config_name,'namespace':'staging'},'data':{'default.conf.template':text}}
             (backup/'nginx-before.json').write_text(json.dumps(get('configmap',previous),indent=2))
             subprocess.run(K+['apply','-f','-'],input=json.dumps(config),universal_newlines=True,check=True)
@@ -79,7 +80,12 @@ def main():
             print(run(K+['exec',pod,'--','nginx','-t']),flush=True)
             print(run(K+['exec',pod,'--','sh','-ec','wget -qO- http://127.0.0.1/healthz; wget -qO /tmp/release-index.html http://127.0.0.1/; test -s /tmp/release-index.html']),flush=True)
         persist(file,name,image)
-        if args.component=='web' and args.site=='fay':file.write_text(file.read_text().replace(previous,config_name))
+        if args.component=='web' and args.site=='fay':
+            docs=list(yaml.safe_load_all(file.read_text().replace(previous,config_name)))
+            maps=[i for i,d in enumerate(docs) if d and d.get('kind')=='ConfigMap' and 'default.conf.template' in d.get('data',{})]
+            if len(maps)!=1:raise RuntimeError('Persistent FAY Nginx ConfigMap is not unique')
+            docs[maps[0]]=config
+            file.write_text(yaml.safe_dump_all(docs))
         result={'site':args.site,'component':name,'image':image,'previousImage':oldimage,'pod':pod,'backup':str(backup),'persistentManifestUpdated':True,'businessWritesForVerification':False}
         (backup/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
     except BaseException:

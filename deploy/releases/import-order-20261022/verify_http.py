@@ -18,5 +18,8 @@ req('/missing-RELEASECHECK.js',404)
 req('/api/item-import/batches',403)
 r,b=req('/api/work-order-import/batches',503 if args.site=='fay' else 403)
 if args.site=='fay':assert 'Work Order file import is not configured' in json.loads(b)['message']
+if args.site=='fay':
+ for prefix in ('inventory-handoff','integration-settings'):
+  r,b=req('/api/'+prefix+'/__audit__.json',503);assert 'not deployed' in json.loads(b)['error']
 req('/api/qc-shift-report/health',200)
 print(json.dumps({'site':args.site,'base':args.base,'checks':checks,'businessWrites':False}))

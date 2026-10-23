@@ -1,11 +1,21 @@
 """Backed-up FAY web configuration fix; business images and data stay unchanged."""
-import datetime,json,pathlib,socket,subprocess,urllib.request,urllib.error
+import datetime,json,pathlib,socket,subprocess,urllib.request,urllib.error,sys,yaml
 P=pathlib.Path;K=['kubectl','-n','staging']
 def run(args):
     p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
     if p.returncode:raise RuntimeError('Deployment command failed: '+args[0])
     return p.stdout
 def get(kind,name):return json.loads(run(K+['get',kind,name,'-o','json']))
+def persist(original,cm,previous,name):
+    docs=list(yaml.safe_load_all(original));maps=[i for i,x in enumerate(docs) if x and x.get('kind')=='ConfigMap' and 'default.conf.template' in x.get('data',{})]
+    if len(maps)!=1:raise RuntimeError('Persistent Nginx ConfigMap is not unique')
+    docs[maps[0]]=cm
+    deployments=[x for x in docs if x and x.get('kind')=='Deployment' and x.get('metadata',{}).get('name')=='webclient']
+    if len(deployments)!=1:raise RuntimeError('Persistent Web deployment is not unique')
+    mount=next(v for v in deployments[0]['spec']['template']['spec']['volumes'] if v['name']=='fay-web-nginx')
+    if mount['configMap']['name']!=previous:raise RuntimeError('Unexpected persistent ConfigMap reference')
+    mount['configMap']['name']=name
+    return yaml.safe_dump_all(docs)
 def probe(base,path,expected,json_body=False):
     try:r=urllib.request.urlopen(base+path,timeout=15)
     except urllib.error.HTTPError as e:r=e
@@ -15,10 +25,20 @@ def probe(base,path,expected,json_body=False):
     return {'url':base+path,'status':r.status,'jsonObject':json_body}
 if socket.gethostname()!='k8s-master-ar':raise RuntimeError('FAY master only')
 d=get('deployment','webclient');volumes=d['spec']['template']['spec']['volumes'];i=next(i for i,v in enumerate(volumes) if v['name']=='fay-web-nginx');previous=volumes[i]['configMap']['name'];c=get('configmap',previous);text=c['data']['default.conf.template']
-if text.count('location /api/ {')!=1:raise RuntimeError('Expected exactly one unprotected API location')
+prefixes=('/api/','/api/inventory-handoff/','/api/integration-settings/')
+for prefix in prefixes:
+    if text.count('location '+prefix+' {')+text.count('location ^~ '+prefix+' {')!=1:raise RuntimeError('Expected exactly one API prefix location: '+prefix)
 if 'redacted-site-prefix.' in text:raise RuntimeError('Cross-site proxy target')
-text=text.replace('location /api/ {','location ^~ /api/ {')
-name='mes-web-imports-fay-api-priority-20261022';b=P('/root/k8s/backups')/('fay-api-priority-'+datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ'));b.mkdir(mode=0o700)
+updated=text
+for prefix in prefixes:updated=updated.replace('location '+prefix+' {','location ^~ '+prefix+' {')
+if '--persist-current' in sys.argv:
+    if updated!=text:raise RuntimeError('Fix live API prefixes before persisting')
+    file=P('/root/k8s/4-frontend-app.yaml');original=file.read_text();cm={'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':previous,'namespace':'staging'},'data':dict(c['data'])};result=persist(original,cm,previous,previous)
+    b=P('/root/k8s/backups')/('fay-web-manifest-'+datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ'));b.mkdir(mode=0o700);(b/file.name).write_text(original);file.write_text(result)
+    print(json.dumps({'site':'fay','persistentConfigMapAndReferenceMatchLive':True,'liveResourcesChanged':False,'backup':str(b)}));raise SystemExit(0)
+if updated==text:raise RuntimeError('API prefixes are already protected; no deployment required')
+text=updated
+name='mes-web-imports-fay-api-priority-20261022-02';b=P('/root/k8s/backups')/('fay-api-priority-'+datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ'));b.mkdir(mode=0o700)
 (b/'configmap-before.json').write_text(json.dumps(c));(b/'deployment-before.json').write_text(json.dumps(d));file=P('/root/k8s/4-frontend-app.yaml');original=file.read_text();(b/file.name).write_text(original)
 if previous not in original:raise RuntimeError('Persistent configuration reference missing')
 cm={'apiVersion':'v1','kind':'ConfigMap','metadata':{'name':name,'namespace':'staging'},'data':dict(c['data'])};cm['data']['default.conf.template']=text
@@ -38,8 +58,10 @@ try:
         checks.append(probe(base,'/',200))
         checks.append(probe(base,'/api/resource/assets/i18n/en-US.json',200,True))
         checks.append(probe(base,'/api/resource/assets/i18n/zh-CN.json',200,True))
+        checks.append(probe(base,'/api/inventory-handoff/__audit__.json',503,True))
+        checks.append(probe(base,'/api/integration-settings/__audit__.json',503,True))
         checks.append(probe(base,'/missing-ota-release-check.js',404))
-    file.write_text(original.replace(previous,name))
+    file.write_text(persist(original,cm,previous,name))
     result={'site':'fay','cause':'Static-file regex took precedence over API JSON routes','configMap':name,'imageUnchanged':old_spec['containers'][0]['image']==new_spec['containers'][0]['image'],'backup':str(b),'persistentManifestUpdated':True,'businessWritesForVerification':False,'checks':checks}
     (b/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 except BaseException:

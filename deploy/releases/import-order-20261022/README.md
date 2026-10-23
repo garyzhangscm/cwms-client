@@ -81,3 +81,11 @@ It retains the shared Web image and all site-specific upstreams. Run this script
 on the FAY master only. Both English and Chinese language files are now included
 in `verify_http.py`, alongside homepage, missing assets, PDF MIME, import guards
 and report-health probes. See `fay-api-route-verification.json` for live evidence.
+
+The follow-up compatibility audit also protects FAY's disabled inventory-handoff
+and integration-settings prefixes from the JSON regex. Their JSON subpaths now
+return the existing intentional 503 JSON response instead of a static 404; neither
+service is enabled. The persistent frontend manifest now embeds the exact active
+ConfigMap as well as its Deployment reference. `fix_fay_api_route.py --persist-current`
+can reconcile that manifest from the already-verified live configuration without
+changing or restarting live resources. See `post-release-compatibility-audit.json`.
