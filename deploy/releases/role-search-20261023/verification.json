@@ -22,5 +22,8 @@
   },
   "productionAngularBuild": "passed",
   "databaseOrPermissionsChanged": false,
-  "productionRollout": "authorized; pending"
+  "productionRollout": "verified at FAY and Colton; same image digest, ready, static and language resources HTTP 200, site configuration and Integration preserved",
+  "image": "brianwang1912/mes-web:v19.2-role-search-20261023-01@sha256:5ae7797d0734495a87eb8ef38125741949f425f35dd4b4db45004de499cfa2ab",
+  "frontendServiceRegressionCases": 25,
+  "coltonInitialAttempt": "Read-only HTTP route check failed; automatic rollback completed. Subsequent rollout and all checks passed."
 }

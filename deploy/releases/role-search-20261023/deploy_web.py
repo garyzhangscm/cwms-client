@@ -1,5 +1,5 @@
 """Backed-up image-only rollout; preserve all existing site routes and mounts."""
-import argparse,datetime,json,pathlib,socket,subprocess,urllib.request,urllib.error,yaml
+import argparse,datetime,json,pathlib,socket,subprocess,time,urllib.request,urllib.error,yaml
 P=pathlib.Path;K=['kubectl','-n','staging'];NAME='webclient'
 def run(args):
  p=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,universal_newlines=True)
@@ -22,9 +22,9 @@ def persist(file,image):
  content='\n---'.join(parts);list(yaml.safe_load_all(content));file.write_text(content)
 def main():
  p=argparse.ArgumentParser();p.add_argument('--site',choices=['fay','colton'],required=True);p.add_argument('--image',required=True);a=p.parse_args()
- expected='brianwang1912/mes-web:v19.2-role-search-20261023-01@sha256:cd7acc453b2778391df29485030dd424985ebefe6b5818a01ff49e69cd5d035e'
+ expected='brianwang1912/mes-web:v19.2-workorder-pick-scope-20261023-01@sha256:cd7acc453b2778391df29485030dd424985ebefe6b5818a01ff49e69cd5d035e'
  if socket.gethostname()!=('k8s-master-ar' if a.site=='fay' else 'k8s-master'):raise RuntimeError('Wrong site master')
- if not a.image.startswith('brianwang1912/mes-web:v19.2-role-search-20261023-01@sha256:'):raise RuntimeError('Unapproved Web image')
+ if a.image!='brianwang1912/mes-web:v19.2-role-search-20261023-01@sha256:5ae7797d0734495a87eb8ef38125741949f425f35dd4b4db45004de499cfa2ab':raise RuntimeError('Unapproved Web image')
  before=get('deployment',NAME);template=before['spec']['template'];spec=template['spec'];old=spec['containers'][0]['image']
  if old==a.image:print(json.dumps({'site':a.site,'alreadyCurrent':True}));return
  if old!=expected:raise RuntimeError('Unexpected Web image drift; stopped before rollout')
@@ -40,7 +40,13 @@ def main():
   run(K+['exec',pod['metadata']['name'],'--','nginx','-t'])
   service=get('service',NAME)['spec'];base='http://'+service['clusterIP'];checks=[]
   for path in ['/','/mes-public-config-20261023.js','/api/resource/assets/i18n/en-US.json','/api/resource/assets/i18n/zh-CN.json']:
-   response=urllib.request.urlopen(base+path,timeout=10);body=response.read();status=response.status
+   for attempt in range(5):
+    try:
+     response=urllib.request.urlopen(base+path,timeout=5);body=response.read();status=response.status
+     break
+    except (urllib.error.URLError,OSError):
+     if attempt==4:raise
+     time.sleep(2)
    if status!=200:raise RuntimeError('Web read-only check failed')
    if path=='/' and b'/mes-public-config-20261023.js' not in body:raise RuntimeError('Unexpected Web index')
    checks.append({'path':path,'status':status})

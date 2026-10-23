@@ -1,0 +1,8 @@
+{
+  "nginxConfigurationValid": true,
+  "staticHttpChecksPassed": true,
+  "publicConfigurationBootstrapPresent": true,
+  "existingPublicConfigurationPreserved": true,
+  "network": "disabled",
+  "businessWrites": false
+}
