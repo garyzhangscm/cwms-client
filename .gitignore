@@ -40,3 +40,27 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Private deployment material
+.env
+.env.*
+!.env.example
+*.local.env
+config/private/
+*.pem
+*.key
+*.p12
+*.pfx
+hs_err_pid*.log
+
+# Private deployment material
+.env
+.env.*
+!.env.example
+*.local.env
+config/private/
+*.pem
+*.key
+*.p12
+*.pfx
+hs_err_pid*.log
