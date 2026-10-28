@@ -24,8 +24,11 @@ export class ItemService {
     private companyService: CompanyService,
   ) {}
 
+  readonly isolatedTest = (globalThis as any).__MES_PUBLIC_CONFIG__?.masterDataTest === true;
+  private get itemEndpoint(): string { return this.isolatedTest ? 'master-data-test/items' : 'inventory/items'; }
+
   getItemsByIdList(itemIdList: string, loadDetails?: boolean): Observable<Item[]> {
-    let url = `inventory/items?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&itemIdList=${itemIdList}`;
+    let url = `${this.itemEndpoint}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&itemIdList=${itemIdList}`;
     
     if (loadDetails === undefined) {
       url = `${url}&loadDetails=true`
@@ -44,7 +47,7 @@ export class ItemService {
     barcode?: string): Observable<Item[]> { 
     let params = new HttpParams(); 
 
-    const url = `inventory/items`;
+    const url = this.itemEndpoint;
 
     params = params.append("companyId", this.companyService.getCurrentCompany()!.id);
      
@@ -80,20 +83,20 @@ export class ItemService {
     return this.http.get(url, params).pipe(map(res => res.data));
   }
   getItem(itemId: number): Observable<Item> {
-    return this.http.get(`inventory/items/${itemId}`).pipe(map(res => res.data));
+    return this.http.get(`${this.itemEndpoint}/${itemId}`).pipe(map(res => res.data));
   }
 
   addItem(item: Item): Observable<Item> {
-    return this.http.post('inventory/items', item).pipe(map(res => res.data));
+    return this.http.post(this.itemEndpoint, item).pipe(map(res => res.data));
   }
 
   changeItem(item: Item): Observable<Item> {
-    const url = `inventory/items/${  item.id}`;
+    const url = `${this.itemEndpoint}/${item.id}`;
     return this.http.put(url, item).pipe(map(res => res.data));
   }
 
   removeItem(item: Item): Observable<Item> {
-    const url = `inventory/items/${  item.id}`;
+    const url = `${this.itemEndpoint}/${item.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -105,7 +108,7 @@ export class ItemService {
     const params = {
       item_ids: itemIds.join(','),
     };
-    return this.http.delete('inventory/items', params).pipe(map(res => res.data));
+    return this.http.delete(this.itemEndpoint, params).pipe(map(res => res.data));
   }
 
   processItemOverride(itemId?: number): Observable<string> {

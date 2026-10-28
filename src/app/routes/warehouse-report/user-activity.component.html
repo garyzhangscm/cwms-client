@@ -1,0 +1,35 @@
+<header><h1>Warehouse User Activity</h1><p>Completed inventory activities by login user. Click a count to see the records behind it.</p></header>
+<section class="filters">
+ <form (ngSubmit)="run()">
+  <label>Start date &amp; time<input type="datetime-local" step="1" name="start" [(ngModel)]="start" (ngModelChange)="invalidate()" required /></label>
+  <label>End date &amp; time<input type="datetime-local" step="1" name="end" [(ngModel)]="end" (ngModelChange)="invalidate()" required /></label>
+  <button class="primary" type="submit" [disabled]="loading||busy||!timezone">{{busy?'Running…':'Run report'}}</button>
+  <button type="button" (click)="exportExcel()" [disabled]="!report||exporting||busy">{{exporting?'Exporting…':'Export Excel'}}</button>
+ </form>
+ <p class="muted">Warehouse time: {{timezone||'Loading…'}} · Start included, end excluded · Up to 31 days · WMEC only</p>
+</section>
+<p *ngIf="error" class="error" role="alert">{{error}}</p>
+<p *ngIf="busy" role="status">Reading completed activities…</p>
+<ng-container *ngIf="report as r">
+ <section>
+  <div class="heading"><div><h2>{{fmt(r.startTime)}} – {{fmt(r.endTime)}}</h2><p class="muted">Generated {{fmt(r.generatedAt)}} · {{timezone}}</p></div>
+   <label class="user-filter">Users <nz-select nzMode="multiple" nzShowSearch nzAllowClear nzPlaceHolder="All users" [(ngModel)]="selectedUsers" (ngModelChange)="close()" [nzMaxTagCount]="2"><nz-option *ngFor="let p of people" [nzValue]="p.key" [nzLabel]="p.username+' · '+p.group"></nz-option></nz-select></label>
+  </div>
+  <div class="metrics"><div *ngFor="let k of kinds"><span>{{labels[k]}}</span><strong>{{total(k)}}</strong></div></div>
+  <p class="muted">People totals include shared logins and exclude system / unknown accounts. A shared login cannot identify the individual driver.</p>
+  <div class="table-wrap"><table><thead><tr><th>User</th><th>Account</th><th *ngFor="let k of kinds">{{labels[k]}}</th></tr></thead><tbody>
+   <tr *ngFor="let p of people"><td>{{p.username}}</td><td>{{p.group==='shared'?'Shared login':'User'}}</td><td *ngFor="let k of kinds"><button class="count" [disabled]="!p[k]" (click)="open(p,k)">{{p[k]}}</button></td></tr>
+   <tr *ngIf="!people.length"><td colspan="6">No completed activities for the selected users and period.</td></tr>
+  </tbody></table></div>
+ </section>
+ <section class="notes"><h2>Counting rules</h2><ul><li *ngFor="let note of r.notes">{{note}}</li><li>Receiving and picking count their own persisted events. Placement and movement count terminal physical transfers; one activity belongs to one column.</li><li>Human intermediate / excluded activities are omitted from work totals and remain available in the Excel details.</li></ul></section>
+</ng-container>
+<nz-modal [nzVisible]="!!detailUser" (nzOnCancel)="close()" [nzTitle]="(detailUser?.username||'')+' · '+labels[detailKind]" [nzWidth]="1100" [nzFooter]="null">
+ <ng-container *nzModalContent>
+  <p class="muted">{{detailTotal}} activities · {{timezone}} · page {{page}} · 50 records per page</p><p *ngIf="detailBusy" role="status">Loading details…</p><p *ngIf="detailError" class="error" role="alert">{{detailError}}</p>
+  <div class="table-wrap"><table><thead><tr><th>Local time</th><th>LPN / item</th><th>Quantity</th><th>From → to</th><th>Document / RF</th><th>Note</th></tr></thead><tbody>
+   <tr *ngFor="let e of detailRows"><td>{{fmt(e.time)}}</td><td>{{e.lpn}}<small>{{e.product}}</small></td><td>{{e.quantity}}</td><td>{{e.source||'—'}} → {{e.destination||'—'}}</td><td>{{e.document||'—'}}<small>RF: {{e.rf||'Not recorded'}}</small></td><td>{{e.note}}</td></tr>
+  </tbody></table></div>
+  <div class="pager"><button [disabled]="detailBusy||page<=1" (click)="detailUser && open(detailUser,detailKind,page-1)">Previous</button><button [disabled]="detailBusy||page*50>=detailTotal" (click)="detailUser && open(detailUser,detailKind,page+1)">Next</button></div>
+ </ng-container>
+</nz-modal>

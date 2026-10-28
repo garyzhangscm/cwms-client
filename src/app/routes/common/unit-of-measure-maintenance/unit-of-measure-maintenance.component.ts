@@ -47,8 +47,9 @@ export class CommonUnitOfMeasureMaintenanceComponent implements OnInit {
     this.pageTitle = this.i18n.fanyi('page.unit-of-measure-maintenance.add.title');
   }
   goToConfirmPage(): void {
+    if (!this.currentUnitOfMeasure?.name?.trim() || !this.currentUnitOfMeasure.description?.trim() || !this.currentUnitOfMeasure.level) return;
     sessionStorage.setItem('unit-of-measure-maintenance.unit-of-measure', JSON.stringify(this.currentUnitOfMeasure));
-    const url = '/inventory/unit-of-measure/confirm';
+    const url = '/common/unit-of-measure/confirm';
     this.router.navigateByUrl(url);
   }
 }

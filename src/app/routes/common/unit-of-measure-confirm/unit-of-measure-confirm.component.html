@@ -42,6 +42,9 @@
         {{currentUnitOfMeasure?.description}}
       </nz-descriptions-item>
 
+      <nz-descriptions-item [nzTitle]="'uom.level' | i18n">
+        {{ ('uom.level.' + (currentUnitOfMeasure?.level || 'UNCLASSIFIED')) | i18n }}
+      </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>
 </ng-container>

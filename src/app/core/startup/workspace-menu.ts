@@ -3,7 +3,7 @@ import type { Menu } from '@delon/theme';
 const sections = [
   { text: 'Overview', i18n: 'workspace.section.overview', keys: ['menu.dashboard'] },
   { text: 'Production', i18n: 'workspace.section.production', keys: ['menu.main.work-order', 'menu.main.qc', 'qc-shift.reports-menu'] },
-  { text: 'Warehouse & Logistics', i18n: 'workspace.section.warehouse-logistics', keys: ['menu.main.inbound', 'menu.main.inventory', 'menu.main.outbound', 'menu.main.transport'] },
+  { text: 'Warehouse & Logistics', i18n: 'workspace.section.warehouse-logistics', keys: ['menu.main.inbound', 'menu.main.inventory', 'menu.main.outbound', 'menu.main.transport', 'warehouse-reports-menu'] },
   { text: 'Finance', i18n: 'workspace.section.finance', keys: ['menu.main.billing', 'menu.main.report', 'menu.main.alert'] },
   { text: 'Administration', i18n: 'workspace.section.administration', keys: ['menu.main.layout', 'menu.main.common', 'menu.main.integration', 'menu.main.work-task', 'menu.main.auth', 'menu.main.util'] }
 ];
@@ -109,6 +109,15 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
         icon: { type: 'icon', value: 'bar-chart', theme: 'outline' },
         children: [{ ...source, text: 'QC Shift Summary', i18n: 'qc-shift.title', link: '/qc/shift-report' }] });
     }
+  }
+
+  // Derive report access from the existing Inventory Activity permission; never add roles in the database.
+  const inventory = modules.find(m => m.i18n === 'menu.main.inventory');
+  const activity = inventory?.children?.find(m => m.link === '/inventory/inventory-activity' && !m.hide && !m.disabled);
+  if (inventory && activity && !modules.some(m => m.i18n === 'warehouse-reports-menu')) {
+    modules.push({...inventory, text: 'Warehouse report', i18n: 'warehouse-reports-menu', link: undefined,
+      icon: {type:'icon',value:'bar-chart',theme:'outline'},
+      children: [{...activity,text:'User Activity',i18n:'warehouse-user-activity',link:'/warehouse-report/user-activity'}]});
   }
 
   const used = new Set<Menu>();

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { startPageGuard } from '@core';
+import { aclCanActivate } from '@delon/acl';
 import { authSimpleCanActivate, authSimpleCanActivateChild } from '@delon/auth';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -23,6 +24,7 @@ export const routes: Routes = [
           { path: 'settings', loadComponent: () => import('./account/account.component').then(m => m.AccountSettingsComponent) }
         ]
       },
+      { path: 'warehouse-report/user-activity', loadComponent: () => import('./warehouse-report/user-activity.component').then(m => m.UserActivityComponent), canActivate: [aclCanActivate], data: {guard: {role: ['/inventory/inventory-activity','admin','system-admin']}, guard_url: '/exception/403'} },
       { path: 'warehouse-layout', loadChildren: () => import('./warehouse-layout/warehouse-layout.module').then((m) => m.WarehouseLayoutModule) },
       { path: 'util', loadChildren: () => import('./util/util.module').then((m) => m.UtilModule) },
       { path: 'auth', loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule) },

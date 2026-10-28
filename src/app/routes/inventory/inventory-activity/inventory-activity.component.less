@@ -1,37 +1,13 @@
-// CSS for form
-.ant-advanced-search-form {
-  padding: 10px;
-  background: #fbfbfb;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-}
+:host{display:block;min-width:0;color:var(--mes-ink,#1d2939)}
+.activity-heading{margin-bottom:20px}h1{font-size:24px;font-weight:650;margin:0 0 6px}h2{font-size:16px;font-weight:600;margin:0}.activity-heading p,.activity-table-hint{font-size:12px;line-height:1.6;color:var(--mes-muted,#667085);margin:0}
+.activity-filters,.activity-results{padding:22px 24px;background:var(--mes-surface,#fff);border:1px solid var(--mes-border,#e4e7ec);border-radius:12px;min-width:0}.activity-results{margin-top:18px}.activity-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.activity-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 20px}.activity-filter-grid[hidden]{display:none}.activity-date-range{grid-column:span 2}.activity-filter-grid nz-form-item{display:flex;flex-direction:column;margin:0;min-width:0}.activity-filter-grid nz-form-label{display:block;text-align:left;white-space:normal;overflow:visible;flex:none;padding:0 0 6px;height:auto;line-height:1.5}.activity-filter-grid nz-form-control{display:block;flex:none;min-width:0;width:100%}.activity-filter-grid nz-select,.activity-filter-grid nz-range-picker,.activity-filter-grid nz-date-picker{width:100%;min-width:0}.activity-search-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--mes-border,#eaecf0)}
+.activity-table-hint{margin-bottom:14px}.activity-table-scroll{width:100%;min-width:0;overflow-x:auto}.activity-result-summary{display:block;text-align:left;color:var(--mes-muted,#667085);font-size:12px;white-space:normal;overflow-wrap:anywhere}
+:host ::ng-deep .activity-results .ant-table-thead>tr>th{background:var(--mes-hover,#f1f5fa);font-size:12px;font-weight:600;line-height:1.5;white-space:normal;overflow:visible;overflow-wrap:anywhere;padding:12px 14px}
+:host ::ng-deep .activity-results .ant-table-tbody>tr>td{padding:12px 14px;font-size:13px;line-height:1.6;vertical-align:top;white-space:normal;overflow-wrap:anywhere;word-break:normal;text-overflow:clip}
+:host ::ng-deep .activity-results .ant-table-cell-ellipsis,:host ::ng-deep .activity-results .st__text{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+:host ::ng-deep .activity-results .ant-table-content{overflow-x:auto!important}:host ::ng-deep .activity-results .ant-pagination{flex-wrap:wrap;row-gap:8px}:host ::ng-deep .activity-filter-grid .ant-form-item-label>label{height:auto;white-space:normal;line-height:1.5}:host ::ng-deep .activity-filter-grid .ant-select-selector{min-height:34px}
+@media(max-width:1100px){.activity-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.activity-filters,.activity-results{padding:16px}.activity-filter-grid{grid-template-columns:minmax(0,1fr)}.activity-date-range{grid-column:auto}.activity-search-actions{justify-content:stretch}.activity-search-actions button{flex:1}}
 
-[nz-form-label] {
-  overflow: visible;
-}
-
-button {
-  margin-left: 8px;
-}
-
-.collapse {
-  margin-left: 8px;
-  font-size: 12px;
-}
-
-.search-area {
-  text-align: right;
-}
-
-
-// CSS for table to display the result
-
-.search-result-list {
-  min-height: 200px;
-  margin-top: 16px;
-  padding-top: 10px;
-  text-align: center;
-  background-color: #fafafa;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-}
+.activity-query-hint{margin:16px 0 0;padding:10px 12px;border-radius:6px;background:var(--mes-hover,#f1f5fa);color:var(--mes-muted,#667085);font-size:12px;line-height:1.6}

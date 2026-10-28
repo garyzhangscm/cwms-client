@@ -19,7 +19,7 @@ export interface Item {
   itemBarcodes?: ItemBarcode[];
   defaultItemPackageType? : ItemPackageType
   allowCartonization?: boolean;
-  unitCost?: number;
+  unitCost?: number | null;
   allowAllocationByLPN?: boolean;
   allocationRoundUpStrategyType?: AllocationRoundUpStrategyType;
 
@@ -28,7 +28,7 @@ export interface Item {
   trackingVolumeFlag?: boolean;
   trackingLotNumberFlag?: boolean;
   trackingManufactureDateFlag?: boolean;
-  shelfLifeDays?: number;
+  shelfLifeDays?: number | null;
   trackingExpirationDateFlag?: boolean;
 
   

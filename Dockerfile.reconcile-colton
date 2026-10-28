@@ -1,0 +1,3 @@
+FROM mes-web-complete-builder:20261028 AS assets
+FROM brianwang1912/mes-web:v19.2-colton-quantity-spinner-fix-20261027-05@sha256:89c1a64a092e38a7b9c145480928104143d3a080c793fa2bb5d02d585b18c361
+COPY --from=assets /app/dist/ng-alain-v19-without-ssr/browser/ /usr/share/nginx/html/

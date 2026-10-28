@@ -1,5 +1,5 @@
-import { InTransitShippingComponent } from './in-transit-shipping/in-transit-shipping.component';
 import { QuantityAllocationComponent } from './quantity-allocation/quantity-allocation.component';
+import { InTransitShippingComponent } from './in-transit-shipping/in-transit-shipping.component';
 import { OrderPdfImportComponent } from './order-pdf-import/order-pdf-import.component';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NgModule, Type } from '@angular/core'; 
@@ -95,6 +95,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 const COMPONENTS: Array<Type<void>> = [
+  QuantityAllocationComponent,
   OrderPdfImportComponent,
   OutboundOrderComponent,
   OutboundWaveComponent,
@@ -143,7 +144,6 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
     declarations: [
-        QuantityAllocationComponent,
         ...COMPONENTS,
         ...COMPONENTS_NOROUNT
     ],

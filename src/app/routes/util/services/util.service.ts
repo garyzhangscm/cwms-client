@@ -114,7 +114,7 @@ export class UtilService {
      }
    }
    
-   compareNullableNumber(a?: number, b?: number): number {
+   compareNullableNumber(a?: number | null, b?: number | null): number {
      if (a === undefined || a === null) {
        return -1;
      }

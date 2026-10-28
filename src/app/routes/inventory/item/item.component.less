@@ -1,42 +1,55 @@
-// CSS for form
-.ant-advanced-search-form {
-  padding: 10px;
-  background: #fbfbfb;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
+:host { display: block; min-width: 0; }
+.item-filters, .search-result-list {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgb(15 23 42 / 3%);
+}
+.search-result-list { margin-top: 20px; min-width: 0; }
+.search-area { padding-top: 16px; text-align: right; border-top: 1px solid #edf0f5; }
+button { margin: 4px; }
+:host ::ng-deep {
+  .item-filters .ant-form-item { margin-bottom: 20px; }
+  .item-filters .ant-form-item-label { text-align: left; padding-bottom: 8px; white-space: normal; }
+  .item-filters .ant-form-item-label > label { height: auto; white-space: normal; }
+  .item-filters nz-select { width: 100%; }
+  .search-result-list .ant-table th, .search-result-list .ant-table td {
+    white-space: normal; overflow-wrap: anywhere; vertical-align: top;
+  }
+  .search-result-list .ant-table th { background: #edf2f8; line-height: 1.5; }
+  .item-main-table table { table-layout: fixed !important; width: 100% !important; }
+  .item-main-table .ant-table-cell { min-width: 0; }
+  .item-footprint-table table, .item-footprint-table tbody { display: block; width: 100% !important; }
+  .item-footprint-table thead, .item-footprint-table colgroup { display: none; }
+  .item-footprint-table tbody > tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px; }
+  .item-footprint-table tbody > tr > td { display: block; min-width: 0; padding: 12px; }
+  .item-footprint-table tbody > tr > td::before { content: attr(data-label); display: block; color: #64748b; font-size: 12px; margin-bottom: 4px; }
+  .search-result-list .ant-table-wrapper, .search-result-list .ant-tabs { min-width: 0; max-width: 100%; }
+}
+@media (max-width: 767px) {
+  .item-filters, .search-result-list { padding: 16px; }
 }
 
-[nz-form-label] {
-  overflow: visible;
+.item-list-toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-bottom: 16px; }
+.item-column-options { max-height: 60vh; overflow-y: auto; }
+.item-name-button { border: 0; padding: 0; margin: 0; background: transparent; color: #2563eb; cursor: pointer; font: inherit; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+.item-name-button:hover { text-decoration: underline; }
+.item-status { color: #15803d; }
+.item-status-inactive { color: #64748b; }
+@media (max-width: 767px) {
+  :host ::ng-deep .item-footprint-table tbody > tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+:host ::ng-deep .item-main-table .ant-table-expanded-row > td { min-width: 0; }
+@media (max-width: 767px) {
+  :host ::ng-deep {
+    .item-main-table .ant-table-tbody > .ant-table-expanded-row,
+    .item-main-table .ant-table-tbody > .ant-table-expanded-row > td {
+      display: block; width: 100%; max-width: 100%; box-sizing: border-box;
+    }
+    .item-main-table .ant-table-tbody > .ant-table-expanded-row > td { padding: 8px; }
+    .item-main-table .ant-table-expanded-row .ant-tabs { width: 100%; min-width: 0; }
+  }
 }
 
-button {
-  margin-left: 8px;
-}
-
-.collapse {
-  margin-left: 8px;
-  font-size: 12px;
-}
-
-.search-area {
-  text-align: right;
-}
-
-
-// CSS for table to display the result
-
-.search-result-list {
-  min-height: 200px;
-  margin-top: 16px;
-  padding-top: 10px;
-  text-align: center;
-  background-color: #fafafa;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-}
-
-
-.expanded {
-  background-color: lightgray;
-}
+:host ::ng-deep .item-main-table .ant-btn { max-width: 100%; height: auto; white-space: normal; overflow-wrap: anywhere; }

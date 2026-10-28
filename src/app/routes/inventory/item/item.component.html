@@ -2,14 +2,14 @@
 
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
   <!-- Form to query the result  -->
-  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form item-filters">
     <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8" *ngIf="threePartyLogisticsFlag">
         <nz-form-item nzFlex>
-          <nz-form-label for="client" [nzSpan]="6">
+          <nz-form-label for="client" [nzSpan]="24">
             {{ 'client' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="24">
             <nz-select formControlName="clientId" nzAllowClear>
               <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
             </nz-select>
@@ -17,12 +17,12 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
         <nz-form-item nzFlex>
-          <nz-form-label for="item-family" [nzSpan]="6">
+          <nz-form-label for="item-family" [nzSpan]="24">
             {{ 'item-family' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="24">
             <nz-select nzMode="tags" formControlName="taggedItemFamilies">
               <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label"
                 [nzValue]="itemFamily.value">
@@ -31,25 +31,22 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-    </div>
-
-    <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="8">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6" nzFor="name">
+          <nz-form-label [nzSpan]="24" nzFor="name">
             {{ 'name' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="24">
             <input nz-input name="name" id="name" formControlName="itemName">
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6" nzFor="description">
+          <nz-form-label [nzSpan]="24" nzFor="description">
             {{ 'description' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="24">
             <input nz-input name="description" id="description" formControlName="itemDescription">
           </nz-form-control>
         </nz-form-item>
@@ -69,19 +66,29 @@
   
   <div class="search-result-list">
     
-    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
-      <!--
-      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
-      -->
+    <div class="item-list-toolbar">
+      <button nz-button nz-dropdown [nzDropdownMenu]="itemColumnsMenu">Change columns <i nz-icon nzType="down"></i></button>
+      <nz-dropdown-menu #itemColumnsMenu="nzDropdownMenu">
+        <ul nz-menu class="item-column-options">
+          <li nz-menu-item *ngFor="let column of customColumns" (click)="$event.stopPropagation()">
+            <label nz-checkbox [(ngModel)]="column.checked" (ngModelChange)="columnChoosingChanged()">{{ column.label }}</label>
+          </li>
+        </ul>
+      </nz-dropdown-menu>
       <button nz-button (click)="st.export(items, { filename: 'items.xlsx', sheetname: 'items' })">{{ 'web.literal.3664895579f0' | i18n }}</button>
     </div>
-  
-    
-    <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" 
-         expandAccordion   (change)="itemTableChanged($event)" resizable 
-          [widthMode]="{ type: 'strict' }" 
-        [scroll]="{ x: '3300px'}">
-      
+
+    <st #st class="item-main-table" [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand"
+        expandAccordion [responsive]="true" (change)="itemTableChanged($event)">
+        <ng-template st-row="itemNameColumn" let-item>
+          <button type="button" class="item-name-button" (click)="st._expandChange(item, !item.expand)"
+            [attr.aria-expanded]="!!item.expand">{{ item.name }}</button>
+        </ng-template>
+        <ng-template st-row="itemStatusColumn" let-item>
+          <span class="item-status" [class.item-status-inactive]="item.activeFlag === false">
+            {{ item.activeFlag === true ? 'Active' : item.activeFlag === false ? 'Inactive' : '—' }}
+          </span>
+        </ng-template>
         <ng-template st-row="thumbnailColumn" let-item let-index="index"> 
                  
           <img *ngIf="item.image" 
@@ -150,7 +157,7 @@
              {{ 'web.literal.bd603e6b4922' | i18n }}
           </nz-tab>
           <nz-tab *ngFor="let itemPackageType of item.itemPackageTypes" [nzTitle]="itemPackageType.name!">
-            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeTable
+            <nz-table class="item-footprint-table" #itemPackageTypeTable
               [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
               <thead>
                 <tr>
@@ -170,18 +177,18 @@
               </thead>
               <tbody>
                 <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeTable.data">
-                  <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-                  <td>{{ itemUnitOfMeasure.quantity }}</td>
-                  <td>{{ itemUnitOfMeasure.weight }} <strong>{{ itemUnitOfMeasure.weightUnit }}</strong> </td>
-                  <td>{{ itemUnitOfMeasure.length }} <strong>{{ itemUnitOfMeasure.lengthUnit }}</strong></td>
-                  <td>{{ itemUnitOfMeasure.width }} <strong>{{ itemUnitOfMeasure.widthUnit }}</strong></td>
-                  <td>{{ itemUnitOfMeasure.height }} <strong>{{ itemUnitOfMeasure.heightUnit }}</strong></td>
-                  <td>{{ itemUnitOfMeasure.defaultForInboundReceiving }}</td>
-                  <td>{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
-                  <td>{{ itemUnitOfMeasure.trackingLpn }}</td>
-                  <td>{{ itemUnitOfMeasure.defaultForDisplay }}</td>
-                  <td>{{ itemUnitOfMeasure.caseFlag }}</td>
-                  <td>{{ itemUnitOfMeasure.packFlag }}</td>
+                  <td [attr.data-label]="'unit-of-measure' | i18n">{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+                  <td [attr.data-label]="'quantity' | i18n">{{ itemUnitOfMeasure.quantity }}</td>
+                  <td [attr.data-label]="'weight' | i18n">{{ itemUnitOfMeasure.weight }} <strong>{{ itemUnitOfMeasure.weightUnit }}</strong> </td>
+                  <td [attr.data-label]="'length' | i18n">{{ itemUnitOfMeasure.length }} <strong>{{ itemUnitOfMeasure.lengthUnit }}</strong></td>
+                  <td [attr.data-label]="'width' | i18n">{{ itemUnitOfMeasure.width }} <strong>{{ itemUnitOfMeasure.widthUnit }}</strong></td>
+                  <td [attr.data-label]="'height' | i18n">{{ itemUnitOfMeasure.height }} <strong>{{ itemUnitOfMeasure.heightUnit }}</strong></td>
+                  <td [attr.data-label]="'unit-of-measure.default-for-inbound-receiving' | i18n">{{ itemUnitOfMeasure.defaultForInboundReceiving }}</td>
+                  <td [attr.data-label]="'unit-of-measure.default-for-workorder-receiving' | i18n">{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
+                  <td [attr.data-label]="'unit-of-measure.tracking_lpn' | i18n">{{ itemUnitOfMeasure.trackingLpn }}</td>
+                  <td [attr.data-label]="'unit-of-measure.defaultForDisplay' | i18n">{{ itemUnitOfMeasure.defaultForDisplay }}</td>
+                  <td [attr.data-label]="'unit-of-measure.caseFlag' | i18n">{{ itemUnitOfMeasure.caseFlag }}</td>
+                  <td [attr.data-label]="'unit-of-measure.packFlag' | i18n">{{ itemUnitOfMeasure.packFlag }}</td>
                 </tr>
               </tbody>
             </nz-table>
@@ -344,12 +351,12 @@
 <ng-template #tplAddItemBarcodeModalContent>
   <form nz-form [formGroup]="addItemBarcodeForm">
     <div nz-row [nzGutter]="24"  >
-      <div nz-col [nzSpan]="8">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="code">
+          <nz-form-label [nzSpan]="24" nzFor="code">
             {{ 'code' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control [nzSpan]="24">
             <nz-input-group nzSize="large">
               <input nz-input formControlName="code" />
             </nz-input-group>
@@ -358,12 +365,12 @@
       </div>  
     </div>  
     <div nz-row [nzGutter]="24"  >
-      <div nz-col [nzSpan]="8">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="type">
+          <nz-form-label [nzSpan]="24" nzFor="type">
             {{ 'type' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control [nzSpan]="24">
             <nz-input-group nzSize="large">
               <nz-select  formControlName="type">
                 <nz-option *ngFor="let itemBarcodeType of validItemBarcodeTypes" 

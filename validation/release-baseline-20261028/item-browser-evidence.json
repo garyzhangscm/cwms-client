@@ -1,0 +1,11 @@
+{
+  "itemEditBlankAndZeroDisabled": true,
+  "positiveDecimalAccepted": true,
+  "onlyWeightEdited": true,
+  "newItemLevelBlankAndZeroBlocked": true,
+  "nextAndFinalSaveWeightGuards": true,
+  "caseZeroStillAllowed": true,
+  "quantityAndFlagsUnchanged": true,
+  "pageErrors": [],
+  "liveBusinessWrites": 0
+}

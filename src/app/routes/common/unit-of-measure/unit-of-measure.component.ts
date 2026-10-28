@@ -1,3 +1,4 @@
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -47,6 +48,38 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
   displayOnly = false;
+  readonly isolatedTest = (globalThis as any).__MES_PUBLIC_CONFIG__?.masterDataTest === true;
+  levelDrafts = new Map<number, UnitOfMeasure['level']>();
+  savingLevelChanges = false;
+  readonly levelMessage = inject(NzMessageService);
+  draftLevel(unit: UnitOfMeasure): UnitOfMeasure['level'] {
+    return this.levelDrafts.has(unit.id!) ? this.levelDrafts.get(unit.id!) : (unit.level || null);
+  }
+  changeUnitLevel(unit: UnitOfMeasure, level: UnitOfMeasure['level']): void {
+    if (this.displayOnly || this.savingLevelChanges) return;
+    const value = level || null;
+    if (value === (unit.level || null)) this.levelDrafts.delete(unit.id!);
+    else this.levelDrafts.set(unit.id!, value);
+  }
+  saveUnitLevels(): void {
+    if (this.displayOnly || this.savingLevelChanges || !this.levelDrafts.size) return;
+    const updates = this.unitOfMeasures.filter(unit => this.levelDrafts.has(unit.id!)).map(unit => ({
+      id: unit.id!, level: this.levelDrafts.get(unit.id!) || null, _testRevision: unit._testRevision
+    }));
+    this.savingLevelChanges = true;
+    this.unitOfMeasureService.saveUnitLevels(updates).subscribe({
+      next: saved => {
+        for (const unit of saved) {
+          const row = this.unitOfMeasures.find(candidate => candidate.id === unit.id);
+          if (row) Object.assign(row, unit);
+          this.levelDrafts.delete(unit.id!);
+        }
+        this.savingLevelChanges = false;
+        this.levelMessage.success(this.i18n.fanyi('uom.levels-saved'));
+      },
+      error: () => { this.savingLevelChanges = false; }
+    });
+  }
   constructor(
     private unitOfMeasureService: UnitOfMeasureService, 
     private modalService: NzModalService,
@@ -59,6 +92,9 @@ export class CommonUnitOfMeasureComponent implements OnInit {
 
   search(refresh: boolean = false): void {
     this.unitOfMeasureService.loadUnitOfMeasures(refresh).subscribe(unitOfMeasureRes => {
+      this.levelDrafts.clear();
+      this.editId = -1;
+      this.editCol = '';
       this.unitOfMeasures = unitOfMeasureRes;
       this.listOfDisplayUnitOfMeasures = unitOfMeasureRes;
 
@@ -140,6 +176,7 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   }
 
   startEdit(id: number, col: string, event: MouseEvent): void {
+    if (this.displayOnly || this.savingLevelChanges) return;
     event.preventDefault();
     event.stopPropagation();
     this.editId = id;
@@ -149,7 +186,7 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   changeUnitOfMeasure(unitOfMeasure: UnitOfMeasure): void {
     this.unitOfMeasureService
       .changeUnitOfMeasure(unitOfMeasure)
-      .subscribe(res => console.log('unit of measure changed!'));
+      .subscribe({ next: res => { Object.assign(unitOfMeasure, res); this.editId = -1; this.editCol = ''; }, error: () => this.search(true) });
   }
 
   @HostListener('window:click', ['$event'])

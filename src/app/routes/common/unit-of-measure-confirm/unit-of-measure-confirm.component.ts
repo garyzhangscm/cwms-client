@@ -32,7 +32,7 @@ export class CommonUnitOfMeasureConfirmComponent implements OnInit {
   saveUnitOfMeasure(): void {
     this.unitOfMeasureService
       .addUnitOfMeasure(this.currentUnitOfMeasure!)
-      .subscribe(res => this.router.navigateByUrl('/common/unit-of-measure'));
+      .subscribe(res => { sessionStorage.removeItem('unit-of-measure-maintenance.unit-of-measure'); this.router.navigateByUrl('/common/unit-of-measure'); });
   }
   onStepIndexChange(event: number): void {
     this.router.navigateByUrl('/common/unit-of-measure');

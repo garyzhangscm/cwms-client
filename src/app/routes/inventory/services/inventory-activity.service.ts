@@ -106,7 +106,7 @@ export class InventoryActivityService {
       params = params.append('clients', this.utilService.encodeHttpParameter(clients.join(',')));
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = params.append('item_families', this.utilService.encodeHttpParameter(itemFamilies.join(',')));
+      params = params.append('itemFamilies', this.utilService.encodeHttpParameter(itemFamilies.join(',')));
     }
     if (location) {
       params = params.append('location', this.utilService.encodeHttpParameter(location.trim()));

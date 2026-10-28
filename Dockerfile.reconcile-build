@@ -1,0 +1,6 @@
+FROM mes-quantity-spinner-web-builder:20261027
+WORKDIR /app
+COPY src/ ./src/
+COPY validation/ ./validation/
+RUN node validation/release-baseline.check.cjs && node validation/unpick-feedback.check.cjs && node validation/uom-production-save.check.cjs
+RUN node --max_old_space_size=8000 node_modules/@angular/cli/bin/ng build --configuration production

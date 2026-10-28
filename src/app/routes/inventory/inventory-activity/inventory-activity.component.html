@@ -1,373 +1,87 @@
-<page-header title="{{'inventory-activity' |  i18n}}" > </page-header>
-
-<!-- Form to query the result  -->
+<header class="activity-heading">
+  <h1>{{ 'inventory-activity' | i18n }}</h1>
+  <p>{{ 'inventory-activity.layout-hint' | i18n }}</p>
+</header>
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
-
-  
-<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
-  <div nz-row [nzGutter]="24">
-    <!--
-
-    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
-          {{ 'client' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <nz-select nzMode="tags" formControlName="taggedClients">
-            <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    -->
-    
-    <div nz-col [nzSpan]="12" [hidden]="isCollapse" *ngIf="threePartyLogisticsFlag">
-      <nz-form-item nzFlex>
-        <nz-form-label for="client" [nzSpan]="6">
-          {{ 'client' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="18">
-          <nz-select formControlName="client" nzAllowClear>
-            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
-    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
-          {{ 'item-family' | i18n }}
-        </nz-form-label>
-
-        <nz-form-control [nzSpan]="14">
-          <nz-select nzMode="tags" formControlName="taggedItemFamilies">
-            <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label"
-              [nzValue]="itemFamily.value">
-            </nz-option>
-
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
+ <section class="activity-filters">
+  <div class="activity-section-heading"><h2>{{ 'inventory-activity.filters-title' | i18n }}</h2>
+   <button nz-button nzType="link" type="button" (click)="toggleCollapse()" [attr.aria-expanded]="!isCollapse">{{ (isCollapse ? 'inventory-activity.show-filters' : 'inventory-activity.hide-filters') | i18n }} <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i></button>
   </div>
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
-          {{ 'item' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-
-          <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
-            <input nz-input name="itemName" id="itemName" formControlName="itemName" />
-          </nz-input-group>
-          <ng-template #itemSuffixIconButton>
-            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
-            </app-inventory-item-query-popup>
-          </ng-template>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
-          {{ 'location' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-
-          <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
-            <input nz-input name="location" id="location" formControlName="location" />
-          </nz-input-group>
-          <ng-template #locationSuffixIconButton>
-            <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
-            </app-warehouse-layout-location-query-popup>
-          </ng-template>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="lpn">
-          {{ 'lpn' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="lpn" id="lpn" formControlName="lpn" />
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="username">
-          {{ 'username' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="username" id="username" formControlName="username" />
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="rfCode">
-          {{ 'rfCode' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="rfCode" id="rfCode" formControlName="rfCode" />
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="inventoryActivityType">
-          {{ 'inventory-activity.type' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-
-          <nz-select nzMode="tags" formControlName="type">
-            <nz-option *ngFor="let inventoryActivityType of inventoryActivityTypesKeys "
-              [nzLabel]="inventoryActivityType" [nzValue]="inventoryActivityType">
-            </nz-option>
-          </nz-select>
-
-
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDateTimeRanger">
-          {{ 'inventory-activity.date-time' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <!--
-
-          <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true, nzDefaultOpenValue:  }"
-            nzFormat="yyyy-MM-dd HH:mm:ss" formControlName="activityDateTimeRanger" name="activityDateTimeRanger">
-          </nz-range-picker>
-
-          -->
-          <nz-range-picker formControlName="activityDateTimeRanger"></nz-range-picker>
-
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
-    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDate">
-          {{ 'inventory-activity.date' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <nz-date-picker formControlName="activityDate" name="activityDate"></nz-date-picker>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
+  <form nz-form [formGroup]="searchForm" (ngSubmit)="search()">
+   <div class="activity-filter-grid" [hidden]="isCollapse">
+    <nz-form-item *ngIf="threePartyLogisticsFlag">
+     <nz-form-label nzFor="activity-client">{{ 'client' | i18n }}</nz-form-label>
+     <nz-form-control><nz-select id="activity-client" formControlName="client" nzAllowClear nzShowSearch><nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option></nz-select></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="activity-item-family">{{ 'item-family' | i18n }}</nz-form-label>
+     <nz-form-control><nz-select id="activity-item-family" nzMode="tags" nzShowSearch nzAllowClear formControlName="taggedItemFamilies"><nz-option *ngFor="let family of itemFamilies" [nzLabel]="family.label" [nzValue]="family.value"></nz-option></nz-select></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="itemName">{{ 'item' | i18n }}</nz-form-label>
+     <nz-form-control><nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton"><input nz-input id="itemName" name="itemName" formControlName="itemName" /></nz-input-group>
+      <ng-template #itemSuffixIconButton><app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)"></app-inventory-item-query-popup></ng-template>
+     </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="location">{{ 'location' | i18n }}</nz-form-label>
+     <nz-form-control><nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton"><input nz-input id="location" name="location" formControlName="location" /></nz-input-group>
+      <ng-template #locationSuffixIconButton><app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)"></app-warehouse-layout-location-query-popup></ng-template>
+     </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="lpn">{{ 'lpn' | i18n }}</nz-form-label>
+     <nz-form-control><input nz-input id="lpn" name="lpn" formControlName="lpn" /></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="username">{{ 'username' | i18n }}</nz-form-label>
+     <nz-form-control><input nz-input id="username" name="username" formControlName="username" /></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="rfCode">{{ 'rfCode' | i18n }}</nz-form-label>
+     <nz-form-control><input nz-input id="rfCode" name="rfCode" formControlName="rfCode" /></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="activity-type">{{ 'inventory-activity.type' | i18n }}</nz-form-label>
+     <nz-form-control><nz-select id="activity-type" nzMode="tags" nzShowSearch nzAllowClear formControlName="type"><nz-option *ngFor="let type of inventoryActivityTypesKeys" [nzLabel]="type" [nzValue]="type"></nz-option></nz-select></nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="activity-date-range">
+     <nz-form-label nzFor="activityDateTimeRanger">{{ 'inventory-activity.date-time' | i18n }}</nz-form-label>
+     <nz-form-control><nz-range-picker id="activityDateTimeRanger" name="activityDateTimeRanger" formControlName="activityDateTimeRanger"></nz-range-picker></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+     <nz-form-label nzFor="activityDate">{{ 'inventory-activity.date' | i18n }}</nz-form-label>
+     <nz-form-control><nz-date-picker id="activityDate" name="activityDate" formControlName="activityDate"></nz-date-picker></nz-form-control>
+    </nz-form-item>
+   </div>
+   <p *ngIf="!hasSearchCriteria" class="activity-query-hint" role="status">{{ 'inventory-activity.require-filter' | i18n }}</p>
+   <div class="activity-search-actions"><button nz-button nzType="primary" type="submit" [disabled]="!hasSearchCriteria || searching" [nzLoading]="searching">{{ 'search' | i18n }}</button><button nz-button type="button" (click)="resetForm()">{{ 'clear' | i18n }}</button></div>
+  </form>
+ </section>
+ <section class="activity-results">
+  <div class="activity-section-heading"><h2>{{ 'inventory-activity.results-title' | i18n }}</h2>
+   <app-util-table-column-selection [tableColumnsConfiguration]="tableConfigurations['inventoryActivityTable']" (tableColumnConfigurationChanged)="inventoryActivityTableColumnConfigurationChanged($event)"></app-util-table-column-selection>
   </div>
-  <div nz-row>
-    <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'search' | i18n }}
-      </button>
-      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
-      <a class="collapse" (click)="toggleCollapse()">
-        {{ 'collapse' | i18n }}
-
-        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
-      </a>
-    </div>
+  <p class="activity-table-hint">{{ 'inventory-activity.scroll-hint' | i18n }}</p>
+  <div class="activity-table-scroll" tabindex="0" [attr.aria-label]="'inventory-activity.results-title' | i18n">
+   <st #inventoryActivityTable [data]="listOfAllInventoryActivities" [columns]="inventoryActivityTableColumns" [page]="inventoryActivityTablePagination"
+       (change)="inventoryActivityTableChanged($event)" [footer]="tableFoot" [scroll]="{x:inventoryActivityTableScrollWidth}" [widthMode]="{type:'strict'}" resizable>
+    <ng-template st-row="itemColumn" let-activity><a nz-tooltip [nzTooltipTitle]="activity.item?.description">{{activity.item?.name || '—'}}</a></ng-template>
+    <ng-template st-row="itemPackageTypeColumn" let-activity>
+     <a nz-popover [nzPopoverTitle]="'itemPackageTypeDetails' | i18n" [nzPopoverContent]="packageDetails">{{activity.itemPackageType?.name || '—'}}</a>
+     <ng-template #packageDetails>
+      <nz-table #packageTable [nzData]="activity.itemPackageType?.itemUnitOfMeasures || []" nzSize="small" [nzShowPagination]="false" [nzScroll]="{x:'600px'}" nzBordered>
+       <thead><tr><th>{{'unitOfMeasure' | i18n}}</th><th>{{'quantity' | i18n}}</th><th>{{'weight' | i18n}}</th><th>{{'length' | i18n}}</th><th>{{'width' | i18n}}</th><th>{{'height' | i18n}}</th></tr></thead>
+       <tbody><tr *ngFor="let unit of packageTable.data"><td>{{unit.unitOfMeasure?.name}}</td><td>{{unit.quantity}}</td><td>{{unit.weight}}</td><td>{{unit.length}}</td><td>{{unit.width}}</td><td>{{unit.height}}</td></tr></tbody>
+      </nz-table>
+     </ng-template>
+    </ng-template>
+    <ng-template st-row="inventoryStatusColumn" let-activity><span nz-tooltip [nzTooltipTitle]="activity.inventoryStatus?.description">{{activity.inventoryStatus?.description || activity.inventoryStatus?.name || '—'}}</span></ng-template>
+    <ng-template st-row="typeColumn" let-activity>{{'INVENTORY-ACTIVITY-TYPE-'+activity.type | i18n}}</ng-template>
+    <ng-template st-row="activityDateTimeColumn" let-activity>{{activity.activityDateTime | date:'short'}}</ng-template>
+    <ng-template st-row="locationColumn" let-activity><nz-skeleton-element *ngIf="activity.locationId && !activity.location" nzType="input" [nzActive]="true" nzSize="small" style="width:75px"></nz-skeleton-element>{{activity.location?.name || activity.locationName || ''}}</ng-template>
+   </st>
   </div>
-</form>
-
-<!-- Table to Display the result  -->
-<div class="search-result-list">
-
-  
-  <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
-    <app-util-table-column-selection [tableColumnsConfiguration]="tableConfigurations['inventoryActivityTable']" 
-    (tableColumnConfigurationChanged)="inventoryActivityTableColumnConfigurationChanged($event)" >
-      
-    </app-util-table-column-selection>
-  
-  </div>
-
-  <st #inventoryActivityTable [data]="listOfAllInventoryActivities" [columns]="inventoryActivityTableColumns" 
-        [page]="inventoryActivityTablePagination"
-      (change)="inventoryActivityTableChanged($event)"
-        [footer]="tableFoot" [scroll]="{ x: '1615px' }"
-        [widthMode]="{ type: 'strict' }" resizable>
-
-        <ng-template st-row="clientColumn" let-inventoryActivity >  
-          <nz-skeleton-element 
-            *ngIf="inventoryActivity.clientId && inventoryActivity.client == null"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-          {{ inventoryActivity.client?.name }}
-        </ng-template>
-
-        <ng-template st-row="itemColumn" let-inventoryActivity >  
-          <a nz-tooltip nzTooltipTitle="{{ inventoryActivity.item.description }}">{{ inventoryActivity.item.name }}</a>
-        </ng-template>
-
-        <ng-template st-row="itemPackageTypeColumn" let-inventoryActivity >  
-          <a nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | i18n}}"
-            [nzPopoverContent]="itemPackageTypeDetails">{{ inventoryActivity.itemPackageType.name }}</a>
-            <ng-template #itemPackageTypeDetails>
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable
-                [nzData]="inventoryActivity.itemPackageType.itemUnitOfMeasures" nzSize="middle"
-                 [nzShowPagination]="false" nzBordered>
-                <thead>
-                  <tr>
-                    <th>{{ 'unitOfMeasure' | i18n}}</th>
-                    <th>{{ 'quantity' | i18n }}</th>
-                    <th>{{ 'weight' | i18n }}</th>
-                    <th>{{ 'length' | i18n }}</th>
-                    <th>{{ 'width' | i18n }}</th>
-                    <th>{{ 'height' | i18n }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
-                    <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-                    <td>{{ itemUnitOfMeasure.quantity }}</td>
-                    <td>{{ itemUnitOfMeasure.weight }}</td>
-                    <td>{{ itemUnitOfMeasure.length }}</td>
-                    <td>{{ itemUnitOfMeasure.width }}</td>
-                    <td>{{ itemUnitOfMeasure.height }}</td>
-                  </tr>
-                </tbody>
-              </nz-table>
-            </ng-template>
-        </ng-template>
-        
-        <ng-template st-row="inventoryStatusColumn" let-inventoryActivity >  
-          <a nz-tooltip [nzTooltipTitle]="inventoryActivity.inventoryStatus.description">{{
-             inventoryActivity.inventoryStatus.description}}</a>
-        </ng-template>
-        
-        <ng-template st-row="typeColumn" let-inventoryActivity >  
-          {{ 'INVENTORY-ACTIVITY-TYPE-' + inventoryActivity.type | i18n}}
-        </ng-template>
-        <ng-template st-row="activityDateTimeColumn" let-inventoryActivity >  
-          {{ inventoryActivity.activityDateTime | date:'short'}} 
-        </ng-template>
-        
-      <ng-template st-row="locationColumn" let-inventoryActivity>  
-        
-        @if(inventoryActivity.locationId && inventoryActivity.location == null) {
-        
-            <nz-skeleton-element  
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-        }
-        {{ inventoryActivity.location?.name }}
-      </ng-template>
-  
-  </st>
-<!--
-  
-  <nz-table [nzScroll]="{ x: '100vw' }" #rowSelectionTable nzShowSizeChanger nzShowPagination
-    [nzData]="listOfAllInventoryActivities" [nzFooter]="tableFoot">
-    <thead>
-      <tr>
-
-        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
-          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-          [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
-
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.transactionId }}</td>
-        <td>{{ data.transactionGroupId }}</td>
-        <td>            
-          <nz-skeleton-element 
-            *ngIf="data.clientId && data.client == null"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-          {{ data.client?.name }}</td> 
-        <td>{{ data.lpn }}</td>
-        <td>
-          <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>
-        </td>
-        <td>
-          <a nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | i18n}}"
-            [nzPopoverContent]="itemPackageTypeDetails">{{ data.itemPackageType.name }}</a>
-        </td>
-        <td>{{ data.location.name }}</td>
-        <td>{{ data.quantity }}</td>
-        <td>
-          <a nz-tooltip [nzTooltipTitle]="data.inventoryStatus.description">{{
-             data.inventoryStatus.description}}</a>
-        </td>
-        <td> {{ 'INVENTORY-ACTIVITY-TYPE-' + data.type | i18n}} </td>
-        <td> {{ data.activityDateTime | date:'short'}} 
-        </td>
-        <td> {{ data.username }} </td>
-        <td> {{ data.rfCode }} </td>
-        <td> {{ data.valueType }} </td>
-        <td> {{ data.fromValue }} </td>
-        <td> {{ data.toValue }} </td>
-        <td> {{ data.documentNumber }} </td>
-        <td> {{ data.comment }} </td>
-        <ng-template #itemPackageTypeDetails>
-          <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable
-            [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false" nzBordered>
-            <thead>
-              <tr>
-                <th>{{ 'unitOfMeasure' | i18n}}</th>
-                <th>{{ 'quantity' | i18n }}</th>
-                <th>{{ 'weight' | i18n }}</th>
-                <th>{{ 'length' | i18n }}</th>
-                <th>{{ 'width' | i18n }}</th>
-                <th>{{ 'height' | i18n }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
-                <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-                <td>{{ itemUnitOfMeasure.quantity }}</td>
-                <td>{{ itemUnitOfMeasure.weight }}</td>
-                <td>{{ itemUnitOfMeasure.length }}</td>
-                <td>{{ itemUnitOfMeasure.width }}</td>
-                <td>{{ itemUnitOfMeasure.height }}</td>
-              </tr>
-            </tbody>
-          </nz-table>
-        </ng-template>
-  </tr>
-  </tbody>
-  </nz-table>
--->
-</div>
-
-<ng-template #tableFoot>
-
-  @if(searchResult != '') {
-
-    <div nz-row nzType="flex" nzJustify="start">
-      {{searchResult}}
-    </div>
-  }
-</ng-template>
-
-
+ </section>
+ <ng-template #tableFoot><span *ngIf="searchResult" class="activity-result-summary" role="status">{{searchResult}}</span></ng-template>
 </nz-spin>

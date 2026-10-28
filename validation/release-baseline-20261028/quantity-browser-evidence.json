@@ -1,0 +1,31 @@
+{
+  "noPeriodicChangeDetection": true,
+  "outsideZoneHttpCompletionUnlocks": true,
+  "routeReuseLoadsNewOrder": true,
+  "staleCompletionCannotUnlockNewRequest": true,
+  "warehouseChangeReleasesLoadingMask": true,
+  "allocationEntry": {
+    "allocateOpensQuantityPage": true,
+    "existingWorkUsesClassic": true,
+    "unsupportedBlocksFallback": true,
+    "networkFailureBlocksWrite": true,
+    "disabledFeatureCompatible": true,
+    "warehouseSwitchBlocked": true
+  },
+  "actualComponentMethodsAndTemplate": true,
+  "partialReservation": 500,
+  "shortage": 500,
+  "lostResponseReusesSameRequestId": true,
+  "releaseConfirmation": true,
+  "knownRejectionIsRecoverable": true,
+  "invalidQuantityBlocked": true,
+  "crossWarehouseWriteBlocked": true,
+  "widths": [
+    1440,
+    1024,
+    768,
+    390
+  ],
+  "productionRequests": 0,
+  "pageErrors": []
+}

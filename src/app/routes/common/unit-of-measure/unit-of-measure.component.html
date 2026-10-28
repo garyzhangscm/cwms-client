@@ -1,9 +1,13 @@
 <page-header [title]="'page.unit-of-measure.header.title' | i18n">
 </page-header>
 
+<p *ngIf="isolatedTest">{{ 'uom.test-isolation' | i18n }}</p>
+<p *ngIf="!displayOnly">{{ 'uom.save-level-hint' | i18n }}
+  <span *ngIf="levelDrafts.size">{{ 'uom.unsaved-count' | i18n }} {{ levelDrafts.size }}</span>
+</p>
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger
+  <nz-table [nzScroll]="{ x: '950px' }" #rowSelectionTable nzShowSizeChanger
     [nzData]="listOfDisplayUnitOfMeasures" [nzFooter]="tableFoot">
     <thead nzSingleSort>
       <tr>
@@ -15,6 +19,7 @@
           {{'name' | i18n}}</th>
         <th nzShowFilter [nzFilters]="filtersByDescription" (nzFilterChange)="filter(selectedFiltersByName, $event)">
           {{'description' | i18n}}</th>
+        <th>{{ 'uom.level' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
@@ -50,6 +55,15 @@
 
             
           </td>
+          <td>
+            <nz-select style="min-width: 165px;" [ngModel]="draftLevel(data) || null" (ngModelChange)="changeUnitLevel(data, $event)"
+              nzAllowClear [nzDisabled]="displayOnly || savingLevelChanges" [nzPlaceHolder]="'uom.level.UNCLASSIFIED' | i18n">
+              <nz-option nzValue="ITEM" [nzLabel]="'uom.level.ITEM' | i18n"></nz-option>
+              <nz-option nzValue="CASE" [nzLabel]="'uom.level.CASE' | i18n"></nz-option>
+              <nz-option nzValue="PALLET" [nzLabel]="'uom.level.PALLET' | i18n"></nz-option>
+            </nz-select>
+          </td>
+
         </tr>
       }
     </tbody>
@@ -64,6 +78,10 @@
     </a>
     
     @if(!displayOnly) {
+      <button nz-button nzType="primary" type="button" (click)="saveUnitLevels()"
+        [nzLoading]="savingLevelChanges" [disabled]="!levelDrafts.size || savingLevelChanges || editId !== -1">
+        {{ 'uom.save-levels' | i18n }}
+      </button>
       <a nz-button nzType="primary" routerLink="/common/unit-of-measure-maintenance" routerLinkActive="active"
         (click)="clearSessionUnitOfMeasure()" >
         {{'add' | i18n}}

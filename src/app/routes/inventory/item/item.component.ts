@@ -87,7 +87,7 @@ export class InventoryItemComponent implements OnInit {
     this.columns = [
       { title: this.i18n.fanyi("thumbnail"),  render: 'thumbnailColumn', iif: () => this.isChoose('thumbnail'), 
       },
-      { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), 
+      { title: this.i18n.fanyi("name"), index: 'name', render: 'itemNameColumn', iif: () => this.isChoose('name'), 
         sort: {
           compare: (a, b) => this.utilService.compareNullableString(a.name, b.name),
         },
@@ -99,12 +99,12 @@ export class InventoryItemComponent implements OnInit {
       }, 
       { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.isChoose('client'), 
         sort: {
-          compare: (a, b) =>  this.utilService.compareNullableString(a.client.name, b.client.name),
+          compare: (a, b) =>  this.utilService.compareNullableString(a.client?.name, b.client?.name),
         },
       },
       { title: this.i18n.fanyi("item-family"), index: 'itemFamily.name', iif: () => this.isChoose('item-family'), 
         sort: {
-          compare: (a, b) =>  this.utilService.compareNullableString(a.itemFamily.name, b.itemFamily.name),
+          compare: (a, b) =>  this.utilService.compareNullableString(a.itemFamily?.name, b.itemFamily?.name),
         },
       },
       { title: this.i18n.fanyi("unit-cost"), index: 'unitCost', iif: () => this.isChoose('unit-cost'), 
@@ -114,12 +114,12 @@ export class InventoryItemComponent implements OnInit {
       },
       { title: this.i18n.fanyi("abc-category"), index: 'abcCategory.description', iif: () => this.isChoose('abcCategory'),
         sort: {
-          compare: (a, b) =>  this.utilService.compareNullableString(a.abcCategory.description, b.abcCategory.description),
+          compare: (a, b) =>  this.utilService.compareNullableString(a.abcCategory?.description, b.abcCategory?.description),
         },
       },
       { title: this.i18n.fanyi("velocity"), index: 'velocity.description', iif: () => this.isChoose('velocity'), 
         sort: {
-          compare: (a, b) =>  this.utilService.compareNullableString(a.velocity.description, b.velocity.description),
+          compare: (a, b) =>  this.utilService.compareNullableString(a.velocity?.description, b.velocity?.description),
         },
       },
       { title: this.i18n.fanyi("allowAllocationByLPN"), index: 'allowAllocationByLPN', iif: () => this.isChoose('allowAllocationByLPN'), 
@@ -190,6 +190,7 @@ export class InventoryItemComponent implements OnInit {
         iif: () => this.isChoose('handlingRateByUnit'), 
       },
   
+      { title: 'Status', index: 'activeFlag', render: 'itemStatusColumn', iif: () => this.isChoose('status') },
       {
         title: 'action',
         renderTitle: 'actionColumnTitle',
@@ -200,59 +201,65 @@ export class InventoryItemComponent implements OnInit {
     ];
     this.customColumns = [
   
-      { label: this.i18n.fanyi("thumbnail"), value: 'thumbnail', checked: true },
+      { label: this.i18n.fanyi("thumbnail"), value: 'thumbnail', checked: false },
       { label: this.i18n.fanyi("name"), value: 'name', checked: true },
       { label: this.i18n.fanyi("description"), value: 'description', checked: true },
-      { label: this.i18n.fanyi("client"), value: 'client', checked: true },
-      { label: this.i18n.fanyi("abc-category"), value: 'abcCategory', checked: true },
-      { label: this.i18n.fanyi("velocity"), value: 'velocity', checked: true },
+      { label: this.i18n.fanyi("client"), value: 'client', checked: false },
+      { label: this.i18n.fanyi("abc-category"), value: 'abcCategory', checked: false },
+      { label: this.i18n.fanyi("velocity"), value: 'velocity', checked: false },
       { label: this.i18n.fanyi("item-family"), value: 'item-family', checked: true },
-      { label: this.i18n.fanyi("unit-cost"), value: 'unit-cost', checked: true },
-      { label: this.i18n.fanyi("allowAllocationByLPN"), value: 'allowAllocationByLPN', checked: true },
-      { label: this.i18n.fanyi("allocationRoundUpStrategyType"), value: 'allocationRoundUpStrategyType', checked: true },
-      { label: this.i18n.fanyi("allocationRoundUpStrategyValue"), value: 'allocationRoundUpStrategyValue', checked: true },
-      { label: this.i18n.fanyi("trackingVolumeFlag"), value: 'trackingVolumeFlag', checked: true },
-      { label: this.i18n.fanyi("trackingLotNumberFlag"), value: 'trackingLotNumberFlag', checked: true },
-      { label: this.i18n.fanyi("trackingManufactureDateFlag"), value: 'trackingManufactureDateFlag', checked: true },
-      { label: this.i18n.fanyi("shelfLifeDays"), value: 'shelfLifeDays', checked: true },
-      { label: this.i18n.fanyi("trackingExpirationDateFlag"), value: 'trackingExpirationDateFlag', checked: true },
-      { label: this.i18n.fanyi("trackingColorFlag"), value: 'trackingColorFlag', checked: true },
-      { label: this.i18n.fanyi("defaultColor"), value: 'defaultColor', checked: true },
-      { label: this.i18n.fanyi("trackingProductSizeFlag"), value: 'trackingProductSizeFlag', checked: true },
-      { label: this.i18n.fanyi("defaultProductSize"), value: 'defaultProductSize', checked: true },
-      { label: this.i18n.fanyi("trackingStyleFlag"), value: 'trackingStyleFlag', checked: true },
-      { label: this.i18n.fanyi("defaultStyle"), value: 'defaultStyle', checked: true },
+      { label: this.i18n.fanyi("unit-cost"), value: 'unit-cost', checked: false },
+      { label: this.i18n.fanyi("allowAllocationByLPN"), value: 'allowAllocationByLPN', checked: false },
+      { label: this.i18n.fanyi("allocationRoundUpStrategyType"), value: 'allocationRoundUpStrategyType', checked: false },
+      { label: this.i18n.fanyi("allocationRoundUpStrategyValue"), value: 'allocationRoundUpStrategyValue', checked: false },
+      { label: this.i18n.fanyi("trackingVolumeFlag"), value: 'trackingVolumeFlag', checked: false },
+      { label: this.i18n.fanyi("trackingLotNumberFlag"), value: 'trackingLotNumberFlag', checked: false },
+      { label: this.i18n.fanyi("trackingManufactureDateFlag"), value: 'trackingManufactureDateFlag', checked: false },
+      { label: this.i18n.fanyi("shelfLifeDays"), value: 'shelfLifeDays', checked: false },
+      { label: this.i18n.fanyi("trackingExpirationDateFlag"), value: 'trackingExpirationDateFlag', checked: false },
+      { label: this.i18n.fanyi("trackingColorFlag"), value: 'trackingColorFlag', checked: false },
+      { label: this.i18n.fanyi("defaultColor"), value: 'defaultColor', checked: false },
+      { label: this.i18n.fanyi("trackingProductSizeFlag"), value: 'trackingProductSizeFlag', checked: false },
+      { label: this.i18n.fanyi("defaultProductSize"), value: 'defaultProductSize', checked: false },
+      { label: this.i18n.fanyi("trackingStyleFlag"), value: 'trackingStyleFlag', checked: false },
+      { label: this.i18n.fanyi("defaultStyle"), value: 'defaultStyle', checked: false },
       
-      { label: this.i18n.fanyi("trackingInventoryAttribute1Flag"), value: 'trackingInventoryAttribute1Flag', checked: true },
-      { label: this.i18n.fanyi("defaultInventoryAttribute1"), value: 'defaultInventoryAttribute1', checked: true },
-      { label: this.i18n.fanyi("trackingInventoryAttribute2Flag"), value: 'trackingInventoryAttribute2Flag', checked: true },
-      { label: this.i18n.fanyi("defaultInventoryAttribute2"), value: 'defaultInventoryAttribute2', checked: true },
-      { label: this.i18n.fanyi("trackingInventoryAttribute3Flag"), value: 'trackingInventoryAttribute3Flag', checked: true },
-      { label: this.i18n.fanyi("defaultInventoryAttribute3"), value: 'defaultInventoryAttribute3', checked: true },
-      { label: this.i18n.fanyi("trackingInventoryAttribute4Flag"), value: 'trackingInventoryAttribute4Flag', checked: true },
-      { label: this.i18n.fanyi("defaultInventoryAttribute4"), value: 'defaultInventoryAttribute4', checked: true },
-      { label: this.i18n.fanyi("trackingInventoryAttribute5Flag"), value: 'trackingInventoryAttribute5Flag', checked: true },
-      { label: this.i18n.fanyi("defaultInventoryAttribute5"), value: 'defaultInventoryAttribute5', checked: true },
+      { label: this.i18n.fanyi("trackingInventoryAttribute1Flag"), value: 'trackingInventoryAttribute1Flag', checked: false },
+      { label: this.i18n.fanyi("defaultInventoryAttribute1"), value: 'defaultInventoryAttribute1', checked: false },
+      { label: this.i18n.fanyi("trackingInventoryAttribute2Flag"), value: 'trackingInventoryAttribute2Flag', checked: false },
+      { label: this.i18n.fanyi("defaultInventoryAttribute2"), value: 'defaultInventoryAttribute2', checked: false },
+      { label: this.i18n.fanyi("trackingInventoryAttribute3Flag"), value: 'trackingInventoryAttribute3Flag', checked: false },
+      { label: this.i18n.fanyi("defaultInventoryAttribute3"), value: 'defaultInventoryAttribute3', checked: false },
+      { label: this.i18n.fanyi("trackingInventoryAttribute4Flag"), value: 'trackingInventoryAttribute4Flag', checked: false },
+      { label: this.i18n.fanyi("defaultInventoryAttribute4"), value: 'defaultInventoryAttribute4', checked: false },
+      { label: this.i18n.fanyi("trackingInventoryAttribute5Flag"), value: 'trackingInventoryAttribute5Flag', checked: false },
+      { label: this.i18n.fanyi("defaultInventoryAttribute5"), value: 'defaultInventoryAttribute5', checked: false },
   
-      { label: this.i18n.fanyi("receivingRateByUnit"), value: 'receivingRateByUnit', checked: true },
-      { label: this.i18n.fanyi("shippingRateByUnit"), value: 'shippingRateByUnit', checked: true },
-      { label: this.i18n.fanyi("handlingRateByUnit"), value: 'handlingRateByUnit', checked: true },
+      { label: this.i18n.fanyi("receivingRateByUnit"), value: 'receivingRateByUnit', checked: false },
+      { label: this.i18n.fanyi("shippingRateByUnit"), value: 'shippingRateByUnit', checked: false },
+      { label: this.i18n.fanyi("handlingRateByUnit"), value: 'handlingRateByUnit', checked: false },
+      { label: 'Status', value: 'status', checked: true },
     ];
+    this.fitItemColumns();
   }
 
   isChoose(key: string): boolean {
     return !!this.customColumns.find(w => w.value === key && w.checked);
   }
 
-  columnChoosingChanged(): void{
-    
-    if (this.st != null && this.st.columns != null) {
-      this.st.resetColumns({ emitReload: true });
-
-    }
+  fitItemColumns(): void {
+    const compact = this.columns.filter(column => !column.iif || column.iif(column)).length <= 5;
+    this.columns = this.columns.map(column => ({ ...column, fixed: undefined,
+      width: compact ? (column.index === 'name' ? '24%' : column.index === 'itemFamily.name' ? '18%' :
+        column.index === 'activeFlag' ? 96 : column.render === 'actionColumn' ? 116 : undefined) : undefined
+    }));
   }
 
-  
+  columnChoosingChanged(): void {
+    this.fitItemColumns();
+    this.st?.resetColumns({ emitReload: false });
+  }
+
   @ViewChild('kitInnerItemTable', { static: true })
   kitInnerItemTable!: STComponent;
   kitInnerItemTableColumn: STColumn[] = [    

@@ -56,13 +56,24 @@
       </div>
     </div>
 
+    <nz-form-item>
+      <nz-form-label nzRequired>{{ 'uom.level' | i18n }}</nz-form-label>
+      <nz-form-control>
+        <nz-select style="width: 240px;" [(ngModel)]="currentUnitOfMeasure!.level" name="level">
+          <nz-option nzValue="ITEM" [nzLabel]="'uom.level.ITEM' | i18n"></nz-option>
+          <nz-option nzValue="CASE" [nzLabel]="'uom.level.CASE' | i18n"></nz-option>
+          <nz-option nzValue="PALLET" [nzLabel]="'uom.level.PALLET' | i18n"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
   </form>
 
 </nz-card>
 
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="center">
-    <button nz-button nzType="primary" (click)="goToConfirmPage()">
+    <button nz-button nzType="primary" (click)="goToConfirmPage()" [disabled]="!currentUnitOfMeasure?.name?.trim() || !currentUnitOfMeasure?.description?.trim() || !currentUnitOfMeasure?.level">
       {{ 'steps.next' | i18n }} :
       {{ 'steps.confirm.title' | i18n }}
     </button>

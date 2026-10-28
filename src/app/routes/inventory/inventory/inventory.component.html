@@ -3,15 +3,15 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
   <!-- Form to query the result  -->
   <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
-    <div nz-row [nzGutter]="24" [hidden]="isCollapse" >
+    <div class="inventory-filter-grid" [hidden]="isCollapse" >
       
       @if(threePartyLogisticsFlag) {
-        <div nz-col [nzSpan]="6" >
+        <div class="inventory-filter-field" >
           <nz-form-item nzFlex>
-            <nz-form-label for="client" [nzSpan]="6">
+            <nz-form-label for="client">
               {{ 'client' | i18n }}
             </nz-form-label>
-            <nz-form-control [nzSpan]="18">
+            <nz-form-control>
               <nz-select formControlName="client">
                 <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
               </nz-select>
@@ -20,12 +20,12 @@
         </div>
       }
       
-      <div nz-col [nzSpan]="6"  >
+      <div class="inventory-filter-field"  >
         <nz-form-item nzFlex>
-          <nz-form-label for="location_group" [nzSpan]="6">
+          <nz-form-label for="location_group">
             {{ 'location-group' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control>
             <nz-select   formControlName="locationGroups" nzAllowClear >
               <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
                 [nzValue]="locationGroup.id"></nz-option>
@@ -34,13 +34,13 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="6"  >
+      <div class="inventory-filter-field"  >
         <nz-form-item nzFlex>
-          <nz-form-label for="item-family" [nzSpan]="6">
+          <nz-form-label for="item-family">
             {{ 'item-family' | i18n }}
           </nz-form-label>
 
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control>
             <nz-select nzMode="tags" formControlName="taggedItemFamilies">
               <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label"
                 [nzValue]="itemFamily.value">
@@ -49,12 +49,12 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="6"  >
+      <div class="inventory-filter-field"  >
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6" nzFor="name">
+          <nz-form-label nzFor="name">
             {{ 'item' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control>
 
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
               <input nz-input name="itemName" id="itemName" formControlName="itemName" />
@@ -67,13 +67,13 @@
         </nz-form-item>
       </div>
     </div>
-    <div nz-row [nzGutter]="24" [hidden]="isCollapse" >
-      <div nz-col [nzSpan]="6"  >
+    <div class="inventory-filter-grid" [hidden]="isCollapse" >
+      <div class="inventory-filter-field"  >
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6"  nzFor="location">
+          <nz-form-label  nzFor="location">
             {{ 'location' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18" >
+          <nz-form-control >
             <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
               <input nz-input formControlName="location" id="location" name="location" />
             </nz-input-group>
@@ -86,12 +86,12 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="6">
+      <div class="inventory-filter-field">
         <nz-form-item>
-          <nz-form-label [nzSpan]="8">
+          <nz-form-label>
             {{ 'inventory-status' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
 
               
               <nz-select formControlName="inventoryStatus" nzAllowClear >
@@ -107,47 +107,47 @@
         </nz-form-item>
       </div> 
 
-      <div nz-col [nzSpan]="6">
+      <div class="inventory-filter-field">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6"  nzFor="lpn">
+          <nz-form-label  nzFor="lpn">
             {{ 'lpn' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control>
             <input barcode variable="lpn" nz-input name="lpn" id="lpn" formControlName="lpn" />
           </nz-form-control>
         </nz-form-item>
       </div>
       
       
-      <div nz-col [nzSpan]="6">
+      <div class="inventory-filter-field">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6" nzFor="color">
+          <nz-form-label nzFor="color">
             {{ 'color' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control>
             <input nz-input name="color" id="color" formControlName="color" />
           </nz-form-control>
         </nz-form-item>
       </div>
     </div>
-    <div nz-row [nzGutter]="24" [hidden]="isCollapse">     
+    <div class="inventory-filter-grid" [hidden]="isCollapse">     
         
-      <div nz-col [nzSpan]="6">
+      <div class="inventory-filter-field">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="6" nzFor="style">
+          <nz-form-label nzFor="style">
             {{ 'style' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control>
             <input nz-input name="style" id="style" formControlName="style" />
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="6">
+      <div class="inventory-filter-field">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="receiptNumber">
+          <nz-form-label nzFor="receiptNumber">
             {{ 'receipt.number' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <input nz-input name="receiptNumber" id="receiptNumber" formControlName="receiptNumber" />
           </nz-form-control>
         </nz-form-item>
@@ -157,10 +157,10 @@
 
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="searchFromFirstPage()" [nzLoading]="searching">
+        <button nz-button [nzType]="'primary'" type="button" (click)="searchFromFirstPage()" [nzLoading]="searching">
           {{ 'search' | i18n }}
         </button>
-        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        <button nz-button type="button" (click)="resetForm()">{{ 'clear' | i18n }}</button>
         <a class="collapse" (click)="toggleCollapse()">
           {{ 'collapse' | i18n }}
 
@@ -171,9 +171,9 @@
   </form>
 
   <!-- Table to Display the result  -->
-  <div class="search-result-list">
+  <div class="search-result-list inventory-results">
     
-    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;text-align: left">
+    <div class="inventory-toolbar">
        
       <app-util-table-column-selection [tableColumnsConfiguration]="tableConfigurations['inventoryTable']" 
           (tableColumnConfigurationChanged)="inventoryTableColumnConfigurationChanged($event)">
@@ -183,7 +183,7 @@
 
       <button nz-button (click)="exportResult()">{{'export' | i18n}}</button> 
       <nz-divider nzType="vertical"></nz-divider>
-      <span style="padding-left: 15px; padding-right:15px"> {{'inventory-display-options' | i18n}}:</span> 
+      <span class="inventory-display-label"> {{'inventory-display-options' | i18n}}:</span> 
       <nz-select nzAllowClear  [(ngModel)]="inventoryDisplayOption"  
           (ngModelChange)="inventoryDisplayOptionChanged()" style="width: 200px;"  >
           <nz-option *ngFor="let option of inventoryDisplayOptionsKeys"
@@ -212,9 +212,10 @@
       </div>
     }
     <!--[data]="listOfDisplayInventories" -->
+    <div class="inventory-table-scroll" tabindex="0" [attr.aria-label]="'menu.main.inventory.inventory' | i18n">
     <st #inventoryTable 
     [data]="listOfDisplayInventories"  
-    [columns]="inventoryTableColumns" [footer]="tableFoot" [scroll]="{ x: '2650px' }"
+    [columns]="inventoryTableColumns" [footer]="tableFoot" [scroll]="{x: inventoryTableScrollWidth}"
       [body]="bodyTpl" [page]="invetoryTablePagination"
       
       (change)="inventoryTableChanged($event)"
@@ -510,7 +511,7 @@
 
               @for(inventoryTableColumn of inventoryTableColumns ; track inventoryTableColumn) {
                 @if (inventoryTableColumn.key == "quantity") {
-                  {{ s.quantity?.text }}
+                  <td class="inventory-summary-quantity">{{ s.quantity?.text }}</td>
                 }
                 @else {
                   
@@ -536,6 +537,7 @@
         
       </ng-template>
     </st>
+    </div>
     @if(inventoryTable.total > 0) {
       <div class="inventory-pagination">
         <nz-pagination [nzPageIndex]="inventoryTable.pi" [nzPageSize]="inventoryTable.ps"

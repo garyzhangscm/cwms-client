@@ -289,66 +289,46 @@ export class InventoryInventoryComponent implements OnInit, OnDestroy {
     ];
   }
 
-  refreshInventoryTableColumns() {
-    
-      if (this.tableConfigurations["inventoryTable"] == null) {
-        return;
-      }
-      
-      this.inventoryTableColumns = [
-        { title: '', index: 'number', type: 'checkbox' },
-      ];
+  inventoryTableScrollWidth = '4500px';
+  private appliedInventoryColumnConfiguration = '';
+  private readonly inventoryColumnMinimumWidths: Record<string,number> = {
+    client:180,lpn:230,item:210,itemPackageType:180,location:210,quantity:170,
+    inventoryStatus:170,fifoDate:180,inWarehouseDatetime:200,receipt:200,
+    color:140,productSize:150,style:150,attribute1:210,attribute2:180,attribute3:180,
+    attribute4:180,attribute5:180,lockedForAdjust:190,pick:190,allocateByPick:210,movementPath:240
+  };
 
-      // loop through the table column configuration and add
-      // the column if the display flag is checked, and by sequence
-      let inventoryTableConfiguration = this.tableConfigurations["inventoryTable"].filter(
-        column => column.displayFlag
-      );
-
-      inventoryTableConfiguration.sort((a, b) => a.columnSequence - b.columnSequence);
-
-      let defaultInventoryTableColumns = this.getDefaultInventoryTableConlums();
-
-      inventoryTableConfiguration.forEach(
-        columnConfig => {
-          defaultInventoryTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
-          defaultInventoryTableColumns[columnConfig.columnName].width = columnConfig.columnWidth;
-
-          this.inventoryTableColumns = [...this.inventoryTableColumns, 
-            defaultInventoryTableColumns[columnConfig.columnName]
-          ]
-        }
-      )
-
-      this.inventoryTableColumns = [...this.inventoryTableColumns,  
-        {
-          title: this.i18n.fanyi("action"), fixed: 'right', width: 250, 
-          render: 'actionColumn',
-          iif: () => !this.displayOnly
-        }, 
-      ];
-
-      // console.log(`wave table columns: ${this.waveTableColumns.length}`);
-      // this.waveTableColumns.forEach(
-      //   column =>  console.log(`${JSON.stringify(column)}`) 
-      // )
-
-      if (this.inventoryTable != null) {
-
-        this.inventoryTable.resetColumns({ emitReload: true });
-      }
-/**
- * 
-      this.waveTable.resetColumns();
-      this.waveTable.reset();
-      this.waveTable.reload();
- * 
- */
-      
-
-
+  private inventoryColumnConfigurationKey(columns: WebPageTableColumnConfiguration[]): string {
+    return JSON.stringify(columns.map(column => [column.columnName,column.columnDisplayText,
+      column.columnWidth,column.columnSequence,column.displayFlag]));
   }
 
+  refreshInventoryTableColumns(): void {
+    const source = this.tableConfigurations['inventoryTable'];
+    if (!source) return;
+    const defaults = this.getDefaultInventoryTableConlums();
+    const seen = new Set<string>();
+    const configuration = this.ensureInventoryItemColumn(source).filter(column => {
+      if (!Object.prototype.hasOwnProperty.call(defaults,column.columnName) || seen.has(column.columnName)) return false;
+      seen.add(column.columnName); return true;
+    }).map(column => {
+      const minimum = this.inventoryColumnMinimumWidths[column.columnName] || 150;
+      const width = Number(column.columnWidth);
+      return {...column,columnWidth:Number.isFinite(width) ? Math.max(minimum,Math.min(1000,width)) : minimum};
+    });
+    // Ignore the shared picker's Input echo, while still applying same-array user edits.
+    this.appliedInventoryColumnConfiguration = this.inventoryColumnConfigurationKey(configuration);
+    this.tableConfigurations['inventoryTable'] = configuration;
+    this.inventoryTableColumns = [
+      {title:'',index:'number',type:'checkbox',width:48},
+      ...configuration.filter(column => column.displayFlag).sort((a,b) => a.columnSequence-b.columnSequence)
+        .map(column => ({...defaults[column.columnName],width:column.columnWidth,
+          title:column.columnDisplayText || defaults[column.columnName].title})),
+      {title:this.i18n.fanyi('action'),width:300,render:'actionColumn',iif:() => !this.displayOnly}
+    ];
+    this.inventoryTableScrollWidth = `${Math.max(900,this.inventoryTableColumns.reduce((sum,column) => sum+Number(column.width),0))}px`;
+    // ST updates from [columns]; an explicit reset/reload here can start a render loop.
+  }
 
   getDefaultInventoryTableConlums(): {[key: string]: STColumn } {
     return {
@@ -779,12 +759,12 @@ export class InventoryInventoryComponent implements OnInit, OnDestroy {
     ]);
   } 
 
-  inventoryTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]){
-    
-      this.tableConfigurations["inventoryTable"] = tableColumnConfigurationList;
-      this.refreshInventoryTableColumns();
+  inventoryTableColumnConfigurationChanged(columns: WebPageTableColumnConfiguration[]): void {
+    if (!Array.isArray(columns) || this.inventoryColumnConfigurationKey(columns) === this.appliedInventoryColumnConfiguration) return;
+    this.tableConfigurations['inventoryTable'] = columns;
+    this.refreshInventoryTableColumns();
   }
-  
+
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
     this.initSearchForm();

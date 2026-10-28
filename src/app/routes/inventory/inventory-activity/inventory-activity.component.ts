@@ -1,4 +1,5 @@
 import { formatDate } from '@angular/common';
+import { timeout } from 'rxjs';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
@@ -26,217 +27,11 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryInventoryActivityComponent implements OnInit {
 
-  inventoryActivityTablePI = 10;
-  inventoryActivityTablePS = 1;
+  inventoryActivityTablePI = 1;
+  inventoryActivityTablePS = 10;
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "inventory-activity";
   tableConfigurations: { [key: string]: WebPageTableColumnConfiguration[] } = {};
-  /**
-   * 
-   * 
-    listOfColumns: Array<ColumnItem<InventoryActivity>> = [
-      {
-        name: 'inventory-activity.transaction-id',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.transactionId, b.transactionId),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      }, {
-        name: 'inventory-activity.transaction-group-id',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.transactionGroupId, b.transactionGroupId),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'client',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableNumber(a.clientId, b.clientId),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'lpn',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.lpn, b.lpn),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'item',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'item.package-type',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'location',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'quantity',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory.status',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.type',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.type.toLocaleString(), b.type.toLocaleString()),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.date-time',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareDateTime(a.activityDateTime, b.activityDateTime),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.username',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.username, b.username),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'rfCode',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.rfCode, b.rfCode),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.value-type',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.valueType, b.valueType),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.from-value',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.fromValue, b.fromValue),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.to-value',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.toValue, b.toValue),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.document-number',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.documentNumber, b.documentNumber),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-      {
-        name: 'inventory-activity.comment',
-        showSort: true,
-        sortOrder: null,
-        sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.comment, b.comment),
-        sortDirections: ['ascend', 'descend'],
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        showFilter: false
-      },
-    ];
-  
-   */
-
-
   @ViewChild('inventoryActivityTable', { static: false })
   inventoryActivityTable!: STComponent;
   inventoryActivityTablePagination = {
@@ -249,7 +44,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
 
     "transactionId": {
       title: this.i18n.fanyi("inventory-activity.transaction-id"),
-      index: 'transactionId', width: 150,
+      index: 'transactionId', width: 190,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.transactionId, b.transactionId),
       },
@@ -259,22 +54,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
         multiple: true
       }
     },
-    "transactionGroupId": {
-      title: this.i18n.fanyi("inventory-activity.transaction-group-id"),
-      index: 'transactionGroupId', width: 150,
-      sort: {
-        compare: (a, b) => this.utilService.compareNullableString(a.transactionGroupId, b.transactionGroupId),
-      },
-    },
-    "client": {
-      title: this.i18n.fanyi("client"), render: 'clientColumn', width: 150,
-      sort: {
-        compare: (a, b) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
-      },
-    },
     "lpn": {
       title: this.i18n.fanyi("lpn"),
-      index: 'lpn', width: 150,
+      index: 'lpn', width: 220,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.lpn, b.lpn),
       },
@@ -286,7 +68,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "item": {
       title: this.i18n.fanyi("item"),
-      render: 'itemColumn', width: 150,
+      render: 'itemColumn', width: 200,
       sort: {
         compare: (a, b) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
       },
@@ -298,7 +80,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "itemPackageType": {
       title: this.i18n.fanyi("item.package-type"),
-      render: 'itemPackageTypeColumn', width: 150,
+      render: 'itemPackageTypeColumn', width: 170,
       sort: {
         compare: (a, b) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
       },
@@ -308,21 +90,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
         multiple: true
       }
     },
-    "color": {
-      title: this.i18n.fanyi("color"),
-      index: 'color', width: 150,
-      sort: {
-        compare: (a, b) => this.utilService.compareNullableString(a.color, b.color),
-      },
-      filter: {
-        menus: [],
-        fn: (filter, record) => record.color === filter.value,
-        multiple: true
-      }
-    },
     "location": {
       title: this.i18n.fanyi("location"),
-      index: 'location.name', width: 150,
+      render: 'locationColumn', width: 170,
       sort: {
         compare: (a, b) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
       },
@@ -334,14 +104,14 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "quantity": {
       title: this.i18n.fanyi("quantity"),
-      index: 'quantity', width: 150,
+      index: 'quantity', width: 100,
       sort: {
         compare: (a, b) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
       },
     },
     "inventoryStatus": {
       title: this.i18n.fanyi("inventory.status"),
-      render: 'inventoryStatusColumn', width: 150,
+      render: 'inventoryStatusColumn', width: 160,
       sort: {
         compare: (a, b) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
       },
@@ -353,7 +123,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "type": {
       title: this.i18n.fanyi("inventory-activity.type"),
-      render: 'typeColumn', width: 150,
+      render: 'typeColumn', width: 210,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.type.toLocaleString(), b.type.toLocaleString()),
       },
@@ -365,14 +135,14 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "activityDateTime": {
       title: this.i18n.fanyi("inventory-activity.date-time"),
-      render: 'activityDateTimeColumn', width: 150,
+      render: 'activityDateTimeColumn', width: 195,
       sort: {
         compare: (a, b) => this.utilService.compareDateTime(a.activityDateTime, b.activityDateTime),
       },
     },
     "username": {
       title: this.i18n.fanyi("inventory-activity.username"),
-      index: 'username', width: 150,
+      index: 'username', width: 160,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.username, b.username),
       },
@@ -384,7 +154,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "rfCode": {
       title: this.i18n.fanyi("rfCode"),
-      index: 'rfCode', width: 150,
+      index: 'rfCode', width: 120,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.rfCode, b.rfCode),
       },
@@ -408,7 +178,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "fromValue": {
       title: this.i18n.fanyi("inventory-activity.from-value"),
-      index: 'fromValue', width: 150,
+      index: 'fromValue', width: 210,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.fromValue, b.fromValue),
       },
@@ -420,7 +190,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "toValue": {
       title: this.i18n.fanyi("inventory-activity.to-value"),
-      index: 'toValue', width: 150,
+      index: 'toValue', width: 210,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.toValue, b.toValue),
       },
@@ -432,7 +202,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "documentNumber": {
       title: this.i18n.fanyi("inventory-activity.document-number"),
-      index: 'documentNumber', width: 150,
+      index: 'documentNumber', width: 210,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.documentNumber, b.documentNumber),
       },
@@ -444,7 +214,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     },
     "comment": {
       title: this.i18n.fanyi("inventory-activity.comment"),
-      index: 'comment', width: 150,
+      index: 'comment', width: 320,
       sort: {
         compare: (a, b) => this.utilService.compareNullableString(a.comment, b.comment),
       },
@@ -535,46 +305,44 @@ export class InventoryInventoryActivityComponent implements OnInit {
       })
   }
 
-  refreshInventoryActivityTableColumns() {
+  inventoryActivityTableScrollWidth = '2800px';
+  private appliedColumnConfiguration = '';
 
-    if (this.tableConfigurations["inventoryActivityTable"] == null) {
-      return;
-    }
-
-    this.inventoryActivityTableColumns = [
-    ];
-
-    // loop through the table column configuration and add
-    // the column if the display flag is checked, and by sequence
-    let inventoryActivityTableConfiguration = this.tableConfigurations["inventoryActivityTable"].filter(
-      column => column.displayFlag
-    );
-
-    inventoryActivityTableConfiguration.sort((a, b) => a.columnSequence - b.columnSequence);
-
-    inventoryActivityTableConfiguration.forEach(
-      columnConfig => {
-        this.defaultInventoryActivityTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
-
-        this.inventoryActivityTableColumns = [...this.inventoryActivityTableColumns,
-        this.defaultInventoryActivityTableColumns[columnConfig.columnName]
-        ]
-      }
-    )
-
-
-
-    if (this.inventoryActivityTable != null) {
-
-      this.inventoryActivityTable.resetColumns({ emitReload: true });
-    }
-
+  private columnConfigurationKey(columns: WebPageTableColumnConfiguration[]): string {
+    return JSON.stringify(columns.map(column => [column.columnName, column.columnDisplayText,
+      column.columnWidth, column.columnSequence, column.displayFlag]));
   }
 
+  refreshInventoryActivityTableColumns(): void {
+    const source = this.tableConfigurations['inventoryActivityTable'];
+    if (!source) return;
+    // Saved preferences may contain removed or obsolete columns. Filter in memory only.
+    const seen = new Set<string>();
+    const configuration = source.filter(column => {
+      if (!Object.prototype.hasOwnProperty.call(this.defaultInventoryActivityTableColumns, column.columnName) || seen.has(column.columnName)) return false;
+      seen.add(column.columnName); return true;
+    }).map(column => {
+      const minimum = Number(this.defaultInventoryActivityTableColumns[column.columnName].width) || 150;
+      const width = Number(column.columnWidth);
+      return {...column, columnWidth: Number.isFinite(width) ? Math.max(minimum, Math.min(1000, width)) : minimum};
+    });
+    // The shared picker echoes every @Input assignment. Record the applied layout
+    // before assigning it so that echo cannot start another render/reset cycle.
+    this.appliedColumnConfiguration = this.columnConfigurationKey(configuration);
+    this.tableConfigurations['inventoryActivityTable'] = configuration;
+    this.inventoryActivityTableColumns = configuration.filter(column => column.displayFlag)
+      .sort((a,b) => a.columnSequence-b.columnSequence)
+      .map(column => ({...this.defaultInventoryActivityTableColumns[column.columnName],
+        title: column.columnDisplayText || this.defaultInventoryActivityTableColumns[column.columnName].title,
+        width: column.columnWidth}));
+    const width = this.inventoryActivityTableColumns.reduce((sum,column) => sum + Number(column.width),0);
+    this.inventoryActivityTableScrollWidth = `${Math.max(width, 900)}px`;
+    // ST responds to its [columns] input; do not force a second data reload here.
+  }
 
   getDefaultInventoryActivityTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
 
-    return [
+    const configuration: WebPageTableColumnConfiguration[] = [
       {
         companyId: this.companyService.getCurrentCompany()!.id,
         webPageName: this.pageName,
@@ -585,26 +353,8 @@ export class InventoryInventoryActivityComponent implements OnInit {
         columnSequence: 1,
         displayFlag: true
       },
-      {
-        companyId: this.companyService.getCurrentCompany()!.id,
-        webPageName: this.pageName,
-        tableName: "inventoryActivityTable",
-        columnName: "transactionGroupId",
-        columnDisplayText: this.i18n.fanyi("inventory-activity.transaction-group-id"),
-        columnWidth: 150,
-        columnSequence: 2,
-        displayFlag: true
-      },
-      {
-        companyId: this.companyService.getCurrentCompany()!.id,
-        webPageName: this.pageName,
-        tableName: "inventoryActivityTable",
-        columnName: "client",
-        columnDisplayText: this.i18n.fanyi("client"),
-        columnWidth: 150,
-        columnSequence: 3,
-        displayFlag: true
-      },
+
+
       {
         companyId: this.companyService.getCurrentCompany()!.id,
         webPageName: this.pageName,
@@ -635,16 +385,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
         columnSequence: 6,
         displayFlag: true
       },
-      {
-        companyId: this.companyService.getCurrentCompany()!.id,
-        webPageName: this.pageName,
-        tableName: "inventoryActivityTable",
-        columnName: "color",
-        columnDisplayText: this.i18n.fanyi("color"),
-        columnWidth: 150,
-        columnSequence: 7,
-        displayFlag: true
-      },
+
       {
         companyId: this.companyService.getCurrentCompany()!.id,
         webPageName: this.pageName,
@@ -765,17 +506,18 @@ export class InventoryInventoryActivityComponent implements OnInit {
         columnSequence: 19,
         displayFlag: true
       },
-    ]
+    ];
+    const order = ['activityDateTime','username','type','lpn','item','quantity','location',
+      'fromValue','toValue','documentNumber','rfCode','inventoryStatus','itemPackageType','valueType','transactionId','comment'];
+    return configuration.sort((a,b) => order.indexOf(a.columnName)-order.indexOf(b.columnName))
+      .map((column,index) => ({...column,columnSequence:index+1,
+        columnWidth:Number(this.defaultInventoryActivityTableColumns[column.columnName].width)}));
   }
 
-  inventoryActivityTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]) {
-    // console.log(`new wave table column configuration list ${tableColumnConfigurationList.length}`)
-    // tableColumnConfigurationList.forEach(
-    //   column => {
-    //     console.log(`${JSON.stringify(column)}`)
-    //   }
-    // )
-    this.tableConfigurations["inventoryActivity"] = tableColumnConfigurationList;
+  inventoryActivityTableColumnConfigurationChanged(columns: WebPageTableColumnConfiguration[]): void {
+    if (!Array.isArray(columns) || this.columnConfigurationKey(columns) === this.appliedColumnConfiguration) return;
+    // Real picker edits may mutate the same array. Compare values, not references.
+    this.tableConfigurations['inventoryActivityTable'] = columns;
     this.refreshInventoryActivityTableColumns();
   }
 
@@ -817,7 +559,29 @@ export class InventoryInventoryActivityComponent implements OnInit {
     this.listOfAllInventoryActivities = [];
 
   }
+  get hasSearchCriteria(): boolean {
+    const value = this.searchForm?.value;
+    if (!value) return false;
+    if (['itemName','location','lpn','username','rfCode'].some(key =>
+      typeof value[key] === 'string' && value[key].trim().length > 0)) return true;
+    const identifiers = [value.client,...(Array.isArray(value.taggedItemFamilies) ? value.taggedItemFamilies : [])];
+    if (identifiers.some(id => /^[1-9][0-9]*$/.test(String(id?.id ?? id ?? '')))) return true;
+    const types: unknown[] = Array.isArray(value.type) ? value.type : [value.type];
+    if (types.some(type => typeof type === 'string' && type.trim().length > 0)) return true;
+    const validDate = (date: unknown): boolean => date instanceof Date && Number.isFinite(date.getTime());
+    return validDate(value.activityDate) || (Array.isArray(value.activityDateTimeRanger) &&
+      value.activityDateTimeRanger.length === 2 && value.activityDateTimeRanger.every(validDate));
+  }
+
   search(): void {
+    // Guard every entry point, including Enter and table pagination events.
+    if (!this.hasSearchCriteria) {
+      this.searching = false; this.isSpinning = false;
+      return;
+    }
+    // Record the requested page before ST reports a render/reload event.
+    this.inventoryActivityTablePI = this.inventoryActivityTable.pi;
+    this.inventoryActivityTablePS = this.inventoryActivityTable.ps;
     this.searching = true;
     this.isSpinning = true;
     this.searchResult = '';
@@ -931,7 +695,8 @@ export class InventoryInventoryActivityComponent implements OnInit {
     }
 
 
-    this.inventoryActivityTable.reload();
+    // Updating the array refreshes hydrated cells without emitting another page request.
+    this.listOfAllInventoryActivities = [...inventoryActivities];
 
   }
 
@@ -941,7 +706,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
 
   async loadDetail(inventoryActivity: InventoryActivity) {
 
-    this.loadClients(inventoryActivity);
+    // Client is not a displayed column; do not fetch unused client metadata.
 
     this.loadLocation(inventoryActivity);
 
@@ -962,13 +727,13 @@ export class InventoryInventoryActivityComponent implements OnInit {
 
     if (inventoryActivity.locationId && inventoryActivity.location == null) {
       this.loadingDetailsRequest++;
-      this.localCacheService.getLocation(inventoryActivity.locationId!)
+      this.localCacheService.getLocation(inventoryActivity.locationId!).pipe(timeout(15000))
         .subscribe({
           next: (locationRes) => {
             inventoryActivity.location = locationRes;
             this.loadingDetailsRequest--;
-
-          }
+          },
+          error: () => { this.loadingDetailsRequest--; }
         });
     }
 
@@ -1002,9 +767,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
   }
 
   processLocationQueryResult(selectedLocationName: any): void {
-    this.searchForm.value.location.setValue(selectedLocationName);
+    this.searchForm.get('location')?.setValue(selectedLocationName);
   }
   processItemQueryResult(selectedItemName: any): void {
-    this.searchForm.value.itemName.setValue(selectedItemName);
+    this.searchForm.get('itemName')?.setValue(selectedItemName);
   }
 }

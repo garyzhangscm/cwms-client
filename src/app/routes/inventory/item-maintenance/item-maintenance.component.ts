@@ -40,6 +40,87 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
+  basicRequiredAttempted = false;
+  shelfRequiredAttempted = false;
+  get isNewItemDraft(): boolean { return this.currentItem?.id == null || this.currentItem.id === 0; }
+  requiredItemFieldInvalid(field: 'name' | 'description' | 'itemFamily' | 'unitCost' | 'shelfLifeDays'): boolean {
+    if (!this.currentItem) return true;
+    if (!this.isNewItemDraft) return false;
+    if (field === 'name' || field === 'description') return !this.currentItem[field]?.trim();
+    if (field === 'itemFamily') {
+      const id = this.currentItem.itemFamily?.id;
+      return typeof id !== 'number' || !Number.isInteger(id) || id <= 0;
+    }
+    const value = this.currentItem[field];
+    return typeof value !== 'number' || !Number.isFinite(value) || value < 0 ||
+      (field === 'shelfLifeDays' && !Number.isInteger(value));
+  }
+  validateRequiredItemFields(includeShelf: boolean): boolean {
+    if (!this.currentItem) return false;
+    if (!this.isNewItemDraft) return true;
+    this.basicRequiredAttempted = true;
+    const basic = ['name', 'description', 'itemFamily', 'unitCost'] as const;
+    if (basic.some(field => this.requiredItemFieldInvalid(field))) {
+      this.stepIndex = 0;
+      this.messageService.error(this.i18n.fanyi('item.required-basic-hint'));
+      return false;
+    }
+    if (includeShelf) {
+      this.shelfRequiredAttempted = true;
+      if (this.requiredItemFieldInvalid('shelfLifeDays')) {
+        this.stepIndex = 1;
+        this.messageService.error(this.i18n.fanyi('item.required-shelf-hint'));
+        return false;
+      }
+    }
+    return true;
+  }
+  readonly isolatedMasterDataTest = (globalThis as any).__MES_PUBLIC_CONFIG__?.masterDataTest === true;
+  getFootprintLevel(footprint: ItemUnitOfMeasure): string {
+    const id = footprint.unitOfMeasureId ?? footprint.unitOfMeasure?.id;
+    const unit = this.availableUnitOfMeasures.find(candidate => candidate.id === id);
+    return unit ? (unit.level || 'UNCLASSIFIED') : (footprint.unitOfMeasure?.level || 'UNCLASSIFIED');
+  }
+  get selectedUnitLevel(): string {
+    const name = this.itemUOMForm?.get('unitOfMeasure')?.value;
+    return this.availableUnitOfMeasuresForAdding.find(unit => unit.name === name)?.level || 'UNCLASSIFIED';
+  }
+  isUnitLevelUsed(packageType: ItemPackageType, unit: UnitOfMeasure): boolean {
+    return !!unit.level && packageType.itemUnitOfMeasures.some(footprint => this.getFootprintLevel(footprint) === unit.level);
+  }
+  checkDuplicateFootprintLevels(): boolean {
+    for (const packageType of this.currentItem.itemPackageTypes) {
+      const seen = new Set<string>();
+      for (const footprint of packageType.itemUnitOfMeasures) {
+        const level = this.getFootprintLevel(footprint);
+        if (level === 'UNCLASSIFIED') continue;
+        if (seen.has(level)) {
+          this.messageService.error(this.i18n.fanyi('uom.duplicate-level', {
+            package: packageType.name, level: this.i18n.fanyi('uom.level.' + level)
+          }));
+          return true;
+        }
+        seen.add(level);
+      }
+    }
+    return false;
+  }
+  positiveItemWeight(value: unknown): boolean {
+    return typeof value === 'number' && Number.isFinite(value) && value > 0;
+  }
+  get editingItemLevelWeight(): boolean {
+    return !!this.editingFootprintWeight && this.getFootprintLevel(this.editingFootprintWeight) === 'ITEM';
+  }
+  checkItemLevelWeights(): boolean {
+    for (const packageType of this.currentItem.itemPackageTypes) {
+      if (packageType.itemUnitOfMeasures.some(footprint => this.getFootprintLevel(footprint) === 'ITEM' && !this.positiveItemWeight(footprint.weight))) {
+        this.stepIndex = 2;
+        this.messageService.error(this.i18n.fanyi('item.footprint.positive-item-weight'));
+        return true;
+      }
+    }
+    return false;
+  }
   currentItem!: Item;
   newItem = true;
   
@@ -70,6 +151,10 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   itemUOMForm!: UntypedFormGroup;
   itemUOMModal!: NzModalRef;
   creatingItemUOMInProcess = false;
+  itemWeightForm!: UntypedFormGroup;
+  itemWeightModal?: NzModalRef;
+  editingFootprintWeight?: ItemUnitOfMeasure;
+  editingFootprintPackage?: ItemPackageType;
   // global variable. Setup when we are adding
   // UOM for the package type
   currentItemPackageType!: ItemPackageType;
@@ -273,7 +358,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
        */
       itemFamily: undefined,
       itemPackageTypes: [],
-      unitCost: 0,
+      unitCost: null,
       allowCartonization: false,
       allowAllocationByLPN: false,
       allocationRoundUpStrategyType: undefined,
@@ -283,7 +368,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       trackingVolumeFlag: false,
       trackingLotNumberFlag: false,
       trackingManufactureDateFlag: false,
-      shelfLifeDays: 0,
+      shelfLifeDays: null,
       trackingExpirationDateFlag: false,
     };
   }
@@ -292,9 +377,13 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     this.stepIndex -= 1;
   }
   nextStep(): void {
+    if (!this.validateRequiredItemFields(this.stepIndex >= 1)) return;
+    if (this.stepIndex === 2 && (this.checkDuplicateFootprintLevels() || this.checkItemLevelWeights())) return;
     this.stepIndex += 1;
   }
   confirmItem(): void {
+    if (!this.validateRequiredItemFields(true)) return;
+    if (this.checkDuplicateFootprintLevels() || this.checkItemLevelWeights()) return;
     // console.log(`start to save item \n ${JSON.stringify(this.currentItem)}`);
     // console.log(`warehouse specific item \n ${JSON.stringify(this.warehouseSpecificItem)}`);
     // console.log(`company item \n ${JSON.stringify(this.companyItem)}`);
@@ -331,10 +420,9 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     }
   }
 
-  itemFamilySelected(selectedItemFamilyId: number): void {
-    console.log(`item family ${selectedItemFamilyId} selected`);
-    this.validItemFamilies.filter(itemFamily => itemFamily.id === selectedItemFamilyId)
-        .forEach(itemFamily => this.currentItem.itemFamily = itemFamily);
+  itemFamilySelected(selectedItemFamilyId: number | null | undefined): void {
+    this.currentItem.itemFamily = selectedItemFamilyId == null ? undefined :
+      this.validItemFamilies.find(family => family.id === selectedItemFamilyId);
   }
   allocationRoundUpStrategyTypeChanged(selectedAllocationRoundUpStrategyType: AllocationRoundUpStrategyType): void {
     console.log(`AllocationRoundUpStrategyType: ${selectedAllocationRoundUpStrategyType} selected`);
@@ -345,7 +433,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
 
       unitOfMeasure: [null, Validators.required],
       quantity: [null, [Validators.required, newItemUOMQuantityValidator(this.currentItemPackageType)]],
-      weight: [0, Validators.required],
+      weight: [0, [Validators.required, (control: AbstractControl) =>
+        this.selectedUnitLevel !== 'ITEM' || this.positiveItemWeight(control.value) ? null : { positiveItemWeight: true }]],
       length: [0, Validators.required],
       width: [0, Validators.required],
       height: [0, Validators.required],
@@ -354,6 +443,9 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       trackingLpnUOM: [false, Validators.required],
       defaultForDisplay: [false, Validators.required],
       caseFlag: [false, Validators.required],
+    });
+    this.itemUOMForm.get('unitOfMeasure')?.valueChanges.subscribe(() => {
+      this.itemUOMForm.get('weight')?.updateValueAndValidity({ emitEvent: false });
     });
   }
   openAddingItemUnitOfMeasureModal(
@@ -389,6 +481,62 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     });
   }
 
+  openEditingFootprintWeightModal(
+    itemPackageType: ItemPackageType,
+    itemUnitOfMeasure: ItemUnitOfMeasure,
+    content: TemplateRef<{}>,
+    footer: TemplateRef<{}>,
+  ): void {
+    this.editingFootprintPackage = itemPackageType;
+    this.editingFootprintWeight = itemUnitOfMeasure;
+    this.itemWeightForm = this.fb.group({
+      weight: [itemUnitOfMeasure.weight ?? null, [
+        Validators.required,
+        Validators.min(0),
+        (control: AbstractControl) => !this.editingItemLevelWeight || this.positiveItemWeight(control.value) ? null : { positiveItemWeight: true },
+        (control: AbstractControl) => control.value == null ||
+          (typeof control.value === 'number' && Number.isFinite(control.value)) ? null : { invalidWeight: true },
+      ]],
+    });
+    this.itemWeightModal = this.modalService.create({
+      nzTitle: this.i18n.fanyi('item.footprint.edit-weight'),
+      nzContent: content,
+      nzFooter: footer,
+      nzWidth: 520,
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.editingFootprintWeight = undefined;
+        this.editingFootprintPackage = undefined;
+      },
+    });
+  }
+
+  closeFootprintWeightModal(): void {
+    this.itemWeightModal?.destroy();
+    this.itemWeightModal = undefined;
+    this.editingFootprintWeight = undefined;
+    this.editingFootprintPackage = undefined;
+  }
+
+  applyFootprintWeight(): void {
+    this.itemWeightForm?.get('weight')?.updateValueAndValidity();
+    if (!this.itemWeightForm?.valid) {
+      if (this.itemWeightForm) this.displayFormError(this.itemWeightForm);
+      return;
+    }
+    const footprint = this.editingFootprintWeight;
+    const packageType = this.editingFootprintPackage;
+    if (!footprint || !packageType || !this.currentItem.itemPackageTypes.includes(packageType) ||
+        !packageType.itemUnitOfMeasures.includes(footprint)) {
+      this.closeFootprintWeightModal();
+      return;
+    }
+    // Update the original footprint in place, preserving its ID and every other field.
+    // Persist through the existing final Item Confirm action, never from this dialog.
+    footprint.weight = this.itemWeightForm.value.weight;
+    this.closeFootprintWeightModal();
+  }
+
   weightUnitSelected(unit: Unit) { 
     this.newUnitOfMeasureWeightUnit = unit;
   } 
@@ -407,7 +555,15 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     this.itemUOMModal.destroy();
   }
   confirmItemUOM(): void {
+    this.itemUOMForm.get('weight')?.updateValueAndValidity();
     this.creatingItemUOMInProcess = false;
+    const unit = this.availableUnitOfMeasuresForAdding.find(candidate => candidate.name === this.itemUOMForm.value.unitOfMeasure);
+    if (unit && this.isUnitLevelUsed(this.currentItemPackageType, unit)) {
+      this.messageService.error(this.i18n.fanyi('uom.duplicate-level', {
+        package: this.currentItemPackageType.name, level: this.i18n.fanyi('uom.level.' + unit.level)
+      }));
+      return;
+    }
 
     if (this.itemUOMForm.valid) {
       this.addItemUnitOfMeasure(
@@ -493,13 +649,14 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   }
 
   addItemPackageType(): void {
+    const hasMain = this.currentItem.itemPackageTypes.some(packageType => packageType.name?.trim().toLowerCase() === 'main');
     this.currentItem.itemPackageTypes = [
       ...this.currentItem.itemPackageTypes,
       {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
         companyId: this.companyService.getCurrentCompany()!.id,
-        name: undefined,
+        name: hasMain ? undefined : 'Main',
         description: undefined,
         itemUnitOfMeasures: [],
       },
