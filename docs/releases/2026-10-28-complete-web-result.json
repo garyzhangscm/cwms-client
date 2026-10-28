@@ -1,0 +1,67 @@
+{
+  "webSourceCommit": "83b1155",
+  "sourceGuard": {
+    "files": 2001,
+    "unchanged": 1999,
+    "changed": [
+      "outbound/order/order.component.ts",
+      "outbound/order/order.component.html"
+    ]
+  },
+  "colton": {
+    "site": "colton",
+    "image": "brianwang1912/mes-web:v19.2-colton-complete-20261028-03@sha256:a5d57a5bb8179d30c0ebaaf5e184780cc53542ddd67672e6cb2d04b699bcc014",
+    "ready": true,
+    "indexSha256": "c202093d73169bcb3a38f59268f9f09b6cbe6ee655270163299b6e04933f1971",
+    "configPreserved": true,
+    "scriptsVerified": true,
+    "backup": "/root/k8s/backups/complete-web-20261028T212155Z"
+  },
+  "fay": {
+    "site": "fay",
+    "image": "brianwang1912/mes-web:v19.2-fay-complete-20261028-03@sha256:447d36decc88f4c5bcdb32c2f8a832746a740785bc17f189f60e0e797d478ff7",
+    "ready": true,
+    "indexSha256": "baf2b162d7e2bd9e1319017bb18f3ebfd1bcec4eb6a1d415ac85913eb1750c38",
+    "configPreserved": true,
+    "scriptsVerified": true,
+    "backup": "/root/k8s/backups/complete-web-20261028T212303Z"
+  },
+  "cleanup": {
+    "backup": "/root/k8s/backups/test-scale-zero-final-20261028T212453Z",
+    "scaledToZero": [
+      "master-data-test",
+      "qc-shift-report-release-test",
+      "warehouse-user-activity-test",
+      "webclient-release-test"
+    ],
+    "nonTargetDeploymentSpecsUnchanged": true,
+    "health": {
+      "/": 200,
+      "/api/user-activity/health": 200,
+      "/api/qc-shift-report/health": 200
+    },
+    "dataDeleted": false
+  },
+  "testDataBackup": {
+    "backup": "/root/k8s/backups/master-data-test-20261028T212239Z",
+    "sqliteIntegrity": "ok",
+    "originalDataPreserved": true
+  },
+  "test4200": {
+    "beforeAndAfterIdentical": true,
+    "responses": {
+      "/": {
+        "status": 200,
+        "sha256": "edbc83b623a6cbd5e6308f4a503a06088075299a770874891b09a6063ee2a5aa"
+      },
+      "/api/user-activity/health": {
+        "status": 200,
+        "sha256": "4da1cd8186437e86c1e62023be2492e5e27edbfc02cc92f3752ea3a8eeaab189"
+      },
+      "/api/qc-shift-report/health": {
+        "status": 200,
+        "sha256": "9fdf4cf2a65ae559135da5b7deb0450d6f86d8d0639dfe2d49d5802e16651824"
+      }
+    }
+  }
+}
