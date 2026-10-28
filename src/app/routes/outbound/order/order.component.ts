@@ -61,7 +61,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 
 
 import * as XLSX from 'xlsx';
-import { Observable, Subscription, TimeoutError, finalize, take, tap, throwIfEmpty, timeout } from 'rxjs';
+import { Observable, firstValueFrom, Subscription, TimeoutError, finalize, take, tap, throwIfEmpty, timeout } from 'rxjs';
 import { DateTimeService } from '../../util/services/date-time.service';
 
 
@@ -870,7 +870,34 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   
    */
 
-  allocateOrder(order: Order): void {
+  private allocationHttp=inject(_HttpClient);
+  private allocationEntries=new Set<number>();
+  async allocateOrder(order: Order): Promise<void> {
+    const warehouseId=this.warehouseService.getCurrentWarehouse()?.id;
+    if(!warehouseId||!order.id||this.allocationEntries.has(order.id))return;
+    this.allocationEntries.add(order.id);
+    try {
+      const capability=await firstValueFrom(this.allocationHttp.get('outbound/quantity-allocation/capabilities',{warehouseId}).pipe(timeout(15000)));
+      if(this.warehouseService.getCurrentWarehouse()?.id!==warehouseId)return;
+      if(capability.data?.enabled){
+        const response=await firstValueFrom(this.allocationHttp.post(`outbound/orders/${order.id}/quantity-allocation/entry?warehouseId=${warehouseId}`,{}).pipe(timeout(30000)));
+        if(this.warehouseService.getCurrentWarehouse()?.id!==warehouseId)return;
+        if(response.data?.mode==='ITEM_QUANTITY'){
+          await this.router.navigate(['/outbound/quantity-allocation'],{queryParams:{id:order.id}});return;
+        }
+        if(response.data?.mode!=='CLASSIC')throw new Error('Unrecognized allocation mode');
+      }
+      this.allocateClassicOrder(order);
+    } catch(error:any) {
+      // Missing capability on an older site is the only compatibility fallback; network failures never trigger allocation.
+      if(error?.status===404)this.messageService.error('Allocation service version could not be confirmed. Refresh or contact an administrator.');
+      else this.messageService.error(error?.statusText||error?.message||'Could not confirm allocation mode. Retry Allocate to reopen the same order; no reservation quantity was saved.');
+    } finally {this.allocationEntries.delete(order.id);}
+  }
+  allocationEntryAvailable(order: Order): boolean {
+    return order.category!==OrderCategory.OUTSOURCING_ORDER&&(order.status===OrderStatus.OPEN||order.status===OrderStatus.INPROCESS)&&!this.allocationEntries.has(order.id!)&&!this.allocationBusy(order);
+  }
+  private allocateClassicOrder(order: Order): void {
     const previous = this.allocationProgress.get(order.id!);
     if (previous?.state === 'UNKNOWN' || previous?.requiresReview) {
       this.lastAllocationProgress = previous;
@@ -1232,18 +1259,30 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
       this.search(1);
     });
   }
+  openingUnpickId: number | null = null;
+  private unpickInFlight = false;
+
   openUnpickModal(
     order: Order,
     inventory: Inventory,
     tplUnpickModalTitle: TemplateRef<{}>,
     tplUnpickModalContent: TemplateRef<{}>,
   ): void {
+    if (this.openingUnpickId !== null || this.unpickInFlight) return;
+    if (inventory.id == null) {
+      this.messageService.error('Inventory details are unavailable. Refresh and try again.');
+      return;
+    }
+    this.openingUnpickId = inventory.id;
+    // Let the pressed/loading state paint before mounting the modal's form and selectors.
+    setTimeout(() => {
+    try {
     this.unpickForm = this.fb.group({
       lpn: new UntypedFormControl({ value: inventory.lpn, disabled: true }),
-      itemNumber: new UntypedFormControl({ value: inventory.item!.name, disabled: true }),
-      itemDescription: new UntypedFormControl({ value: inventory.item!.description, disabled: true }),
-      inventoryStatus: new UntypedFormControl({ value: inventory.inventoryStatus!.name, disabled: true }),
-      itemPackageType: new UntypedFormControl({ value: inventory.itemPackageType!.name, disabled: true }),
+      itemNumber: new UntypedFormControl({ value: inventory.item?.name || "—", disabled: true }),
+      itemDescription: new UntypedFormControl({ value: inventory.item?.description || "—", disabled: true }),
+      inventoryStatus: new UntypedFormControl({ value: inventory.inventoryStatus?.name || "—", disabled: true }),
+      itemPackageType: new UntypedFormControl({ value: inventory.itemPackageType?.name || "—", disabled: true }),
       quantity: new UntypedFormControl({ value: inventory.quantity, disabled: true }),
       locationName: new UntypedFormControl({ value: inventory.locationName, disabled: true }),
       destinationLocation: [null],
@@ -1262,7 +1301,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
         // this.refreshReceiptResults();
       },
       nzOnOk: () => {
-        this.unpickInventory(
+        return this.unpickInventory(
           order,
           inventory,
           this.unpickForm.value.destinationLocation,
@@ -1271,17 +1310,37 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
       },
       nzWidth: 1000,
     });
+    } catch (_) {
+      this.messageService.error('Unable to open Unpick. Refresh the picked inventory and try again.');
+    } finally {
+      this.openingUnpickId = null;
+    }
+    }, 0);
   }
 
-  unpickInventory(order: Order, inventory: Inventory, destinationLocation: string, immediateMove: boolean): void {
-    console.log(
-      `Start to unpick ${JSON.stringify(inventory)} to ${destinationLocation}, immediateMove: ${immediateMove}`,
-    );
-    this.inventoryService.unpick(inventory, destinationLocation, immediateMove).subscribe(res => {
-      console.log(`unpick is done`);
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      // refresh the picked inventory
-      this.search(2);
+  unpickInventory(order: Order, inventory: Inventory, destinationLocation: string, immediateMove: boolean): Promise<boolean> {
+    if (this.unpickInFlight) return Promise.resolve(false);
+    if (!destinationLocation?.trim()) {
+      this.messageService.warning('Select a return location before confirming Unpick.');
+      return Promise.resolve(false);
+    }
+    this.unpickInFlight = true;
+    this.unpickModal.updateConfig({ nzClosable: false, nzCancelDisabled: true });
+    return new Promise<boolean>(resolve => {
+      this.inventoryService.unpick(inventory, destinationLocation.trim(), !!immediateMove).subscribe({
+        next: () => {
+          this.unpickInFlight = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          resolve(true);
+          this.search(2);
+        },
+        error: () => {
+          this.unpickInFlight = false;
+          this.unpickModal.updateConfig({ nzClosable: true, nzCancelDisabled: false });
+          this.messageService.error('Unpick could not be confirmed. Check the inventory result before retrying.');
+          resolve(false);
+        },
+      });
     });
   }
 

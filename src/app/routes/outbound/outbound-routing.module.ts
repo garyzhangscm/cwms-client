@@ -1,3 +1,4 @@
+import { QuantityAllocationComponent } from './quantity-allocation/quantity-allocation.component';
 import { OrderPdfImportComponent } from './order-pdf-import/order-pdf-import.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -50,6 +51,7 @@ import { OutboundSortationByShipmentComponent } from './sortation-by-shipment/so
 const routes: Routes = [
   { path: 'order-import-pdf', component: OrderPdfImportComponent, canActivate: [aclCanActivate],
     data: {guard: {role: ['/outbound/order', 'admin', 'system-admin']} as ACLGuardType, guard_url: '/exception/403'} },
+  { path: 'quantity-allocation', component: QuantityAllocationComponent, canActivate: [aclCanActivate], data: {guard: {role: ['/outbound/order','admin','system-admin']} as ACLGuardType, guard_url:'/exception/403'} },
   { path: 'order', component: OutboundOrderComponent, 
     canActivate: [aclCanActivate], 
     data: { 

@@ -1,0 +1,28 @@
+<page-header title="Quantity Allocation"></page-header>
+<div class="qa-page">
+  <header class="qa-header">
+    <div><span class="qa-eyebrow">SALES ORDER</span><h2>{{ snapshot?.orderNumber || 'Quantity Allocation' }}</h2><p>Reserve the quantity now. Choose the pallet when picking.</p></div>
+    <a nz-button routerLink="/outbound/order" [queryParams]="{number:snapshot?.orderNumber}">Return to orders</a>
+  </header>
+  <div *ngIf="error" class="qa-message qa-error" role="alert">{{ error }}</div>
+  <div *ngIf="notice" class="qa-message" role="status">{{ notice }}</div>
+  <div *ngIf="uncertain" class="qa-recovery"><button nz-button nzType="primary" [disabled]="busy" (click)="sendPending()">Check / resume the same request</button></div>
+  <nz-spin [nzSpinning]="busy">
+    <section *ngIf="snapshot?.mode==='CLASSIC'" class="qa-card qa-intro">
+      <span class="qa-eyebrow">ALLOCATION MODE</span><h3>Item &amp; quantity</h3>
+      <p>Allocation reserves eligible stock for this order without assigning a source location or LPN.</p>
+      <div class="qa-steps"><div><b>1</b><strong>Reserve quantity</strong><span>Other orders cannot use the promised quantity.</span></div><div><b>2</b><strong>Scan an LPN</strong><span>Manual Pick checks the item, owner, inventory status and available stock.</span></div><div><b>3</b><strong>Confirm the pick</strong><span>The actual LPN and source location are recorded when the Pick is prepared.</span></div></div>
+      <p class="qa-muted">Available for fresh, open Sales Orders with one line per item and no receipt or inventory-attribute restrictions. Existing shipment work stays on its current flow.</p>
+      <button nz-button nzType="primary" [disabled]="busy" (click)="enable()">Allocate</button>
+    </section>
+    <ng-container *ngIf="snapshot?.mode==='ITEM_QUANTITY'">
+      <div class="qa-summary"><div><span>Reserved, awaiting scan</span><strong>{{ totalHeld | number }}</strong></div><div><span>Converted to actual Picks</span><strong>{{ totalCommitted | number }}</strong></div><div class="qa-summary-note">No LPN or source location is assigned to the remaining reservation.</div></div>
+      <section class="qa-card">
+        <div class="qa-toolbar"><div><h3>Reserved quantities</h3><p>Use base inventory units. If stock is insufficient, only the available quantity is reserved.</p></div><button nz-button [disabled]="busy || !!pending" (click)="reserveRemaining()">Fill remaining demand</button></div>
+        <div class="qa-table-scroll"><table><thead><tr><th>Item</th><th>Order quantity</th><th>Converted to Picks</th><th>Reserved</th><th>Unreserved demand</th><th>Target reservation</th></tr></thead><tbody><tr *ngFor="let line of snapshot!.lines"><td><strong>{{ line.itemName }}</strong><small>Line {{ line.number }}</small></td><td>{{ line.demand | number }}</td><td>{{ line.committed | number }}</td><td>{{ line.held | number }}</td><td><span [class.qa-shortage]="line.shortage>0">{{ line.shortage | number }}</span></td><td><nz-input-number [(ngModel)]="line.target" [nzMin]="0" [nzMax]="line.demand-line.committed" [nzStep]="1" [nzDisabled]="busy || !!pending" [attr.aria-label]="'Target reservation for '+line.itemName"></nz-input-number></td></tr></tbody></table></div>
+        <footer class="qa-footer"><button nz-button nzDanger [disabled]="busy || !!pending || totalHeld===0" (click)="releaseRemaining()">Release remaining reservation</button><div><button nz-button [disabled]="busy || !!pending" (click)="load()">Refresh</button><button nz-button nzType="primary" [disabled]="busy || !!pending || !valid()" (click)="save()">Save reservation</button></div></footer>
+      </section>
+      <div class="qa-picking"><strong>Ready to pick?</strong><p>Open Manual Pick on the mobile App, select this order and scan any eligible LPN. You can pick across different pallets and locations. The reservation is reduced as actual Picks are created.</p><p class="qa-muted">A Pick that is still awaiting inventory movement remains a real stock allocation. Resume that operation instead of scanning again.</p></div>
+    </ng-container>
+  </nz-spin>
+</div>

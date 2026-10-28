@@ -683,7 +683,8 @@
                   <td class="order-compact-number"><strong class="order-line-quantity-value">{{ inventory.quantity }}</strong></td>
                   <td *ngIf="!displayOnly">
                     <button nz-button nzSize="small" (click)="openUnpickModal(order, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
-                      [disabled]="order.status === orderStatusEnum.COMPLETE"
+                      [nzLoading]="openingUnpickId === inventory.id"
+                      [disabled]="order.status === orderStatusEnum.COMPLETE || openingUnpickId !== null"
                       *ngIf="!userPermissionMap.has('unpick') || userPermissionMap.get('unpick')">
                       {{ 'unpick' | i18n }}
                     </button>
@@ -903,8 +904,8 @@
                     [queryParams]="{id : order.id}">
                     {{ 'modify' | i18n }}</a> 
                 </li>
-                <li nz-menu-item *ngIf="isOrderAllocatable(order) && (!userPermissionMap.has('allocate-order') || userPermissionMap.get('allocate-order'))">
-                  <a  (click)="allocateOrder(order)">{{ 'allocate' | i18n }}</a>
+                <li nz-menu-item *ngIf="allocationEntryAvailable(order) && (!userPermissionMap.has('allocate-order') || userPermissionMap.get('allocate-order'))">
+                  <a (click)="allocateOrder(order)">{{ 'allocate' | i18n }}</a>
                 </li>
                 <li nz-menu-item *ngIf="canReassignStageLocation(order) && (!userPermissionMap.has('reassign-stage-location') || userPermissionMap.get('reassign-stage-location'))">
                   <a  (click)="openReassignStageLocationModel(order, tplOrderReassignShippingStageLocationModalTitle, tplOrderReassignShippingStageLocationModalContent)">
