@@ -49,9 +49,9 @@ import { OutboundSortationComponent } from './sortation/sortation.component';
 import { OutboundSortationByShipmentComponent } from './sortation-by-shipment/sortation-by-shipment.component';
 
 const routes: Routes = [
+  {path:'quantity-allocation',component:QuantityAllocationComponent,canActivate:[aclCanActivate],data:{guard:{role:['/outbound/order','admin','system-admin']} as ACLGuardType,guard_url:'/exception/403'}},
   { path: 'order-import-pdf', component: OrderPdfImportComponent, canActivate: [aclCanActivate],
     data: {guard: {role: ['/outbound/order', 'admin', 'system-admin']} as ACLGuardType, guard_url: '/exception/403'} },
-  { path: 'quantity-allocation', component: QuantityAllocationComponent, canActivate: [aclCanActivate], data: {guard: {role: ['/outbound/order','admin','system-admin']} as ACLGuardType, guard_url:'/exception/403'} },
   { path: 'order', component: OutboundOrderComponent, 
     canActivate: [aclCanActivate], 
     data: { 

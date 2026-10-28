@@ -37,10 +37,6 @@ export class CommonCustomerAddressMaintenanceComponent implements OnInit {
     this.router.navigateByUrl(url);
   }
   onStepIndexChange(event: number): void {
-    // Keep manually edited fields when moving backwards or using the step header.
-    if (this.currentCustomer) {
-      sessionStorage.setItem('customer-maintenance.customer', JSON.stringify(this.currentCustomer));
-    }
     switch (event) {
       case 0:
         this.router.navigateByUrl('/common/customer-maintenance');
@@ -54,5 +50,44 @@ export class CommonCustomerAddressMaintenanceComponent implements OnInit {
     }
   }
 
+  handleNewCustomerAddressChange(address: google.maps.places.PlaceResult) {  
+    // this.warehouseAddress = address;
+    address.address_components!.forEach(
+      addressComponent => {
+         
+        if (addressComponent.types[0] === 'street_number') {
+          // street number
+          // address line 1 = street number + street name
+          this.currentCustomer!.addressLine1 = `${addressComponent.long_name  } ${  this.currentCustomer!.addressLine1}`;
+        }
+        else if (addressComponent.types[0] === 'route') {
+          // street name
+          // address line 1 = street number + street name
+          this.currentCustomer!.addressLine1 = `${this.currentCustomer!.addressLine1  } ${  addressComponent.long_name}`;
+        } 
+        else if (addressComponent.types[0] === 'locality') {
+          // city
+          this.currentCustomer!.addressCity = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_2') {
+          // county
+          this.currentCustomer!.addressCounty = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_1') {
+          // city
+          this.currentCustomer!.addressState = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'country') {
+          // city
+          this.currentCustomer!.addressCountry = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'postal_code') {
+          // city
+          this.currentCustomer!.addressPostcode = addressComponent.long_name;
+        } 
+      }
+
+    )
+  }
 
 }

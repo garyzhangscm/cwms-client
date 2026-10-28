@@ -95,7 +95,6 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 const COMPONENTS: Array<Type<void>> = [
-  QuantityAllocationComponent,
   OrderPdfImportComponent,
   OutboundOrderComponent,
   OutboundWaveComponent,
@@ -144,6 +143,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
     declarations: [
+        QuantityAllocationComponent,
         ...COMPONENTS,
         ...COMPONENTS_NOROUNT
     ],

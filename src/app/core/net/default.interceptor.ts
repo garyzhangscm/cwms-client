@@ -8,7 +8,7 @@ import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin, goTo, COD
 import { tryRefreshToken } from './refresh-token';
 
 function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
-  if (!req.url.includes('/integration-settings/') && !req.url.includes('/inventory-handoff/')) checkStatus(injector, ev);
+  if (!req.url.includes('/integration-settings/') && !(req.url.includes('/inventory-handoff/') || req.url.includes('/line-clearance/'))) checkStatus(injector, ev);
   // 业务处理：一些通用操作
   switch (ev.status) {
     case 200:
@@ -56,7 +56,7 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
         }
         break;
     case 401:
-      if (req.url.includes('/integration-settings/') || req.url.includes('/inventory-handoff/')) break;
+      if (req.url.includes('/integration-settings/') || (req.url.includes('/inventory-handoff/') || req.url.includes('/line-clearance/'))) break;
       if (environment.api.refreshTokenEnabled && environment.api.refreshTokenType === 're-request') {
         return tryRefreshToken(injector, ev, req, next);
       }
@@ -69,7 +69,7 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
     case 403:
     case 404:
     case 500:
-      if (req.url.includes('/integration-settings/') || req.url.includes('/inventory-handoff/')) break;
+      if (req.url.includes('/integration-settings/') || (req.url.includes('/inventory-handoff/') || req.url.includes('/line-clearance/'))) break;
       console.log(`get error http ${ev.status} `);
       
       // goTo(injector, `/exception/${ev.status}?url=${req.urlWithParams}`);

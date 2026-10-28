@@ -17,6 +17,7 @@ import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-main
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
 
 const routes: Routes = [
+
   { path: 'shift-report', component: QcShiftReportComponent,
     canActivate: [aclCanActivate],
     data: { guard: { role: ['/qc/result', 'admin', 'system-admin'] } as ACLGuardType, guard_url: '/exception/403' }

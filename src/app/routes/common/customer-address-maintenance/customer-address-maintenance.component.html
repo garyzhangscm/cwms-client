@@ -36,89 +36,138 @@
 
 
 
-<nz-card *ngIf="currentCustomer as customer" [nzActions]="[cardFoot]">
-  <form nz-form nzLayout="vertical" autocomplete="on" (ngSubmit)="goToConfirmPage()">
-    <div nz-row [nzGutter]="24">
-      <div nz-col [nzXs]="24" [nzMd]="24">
-        <nz-form-item>
-          <nz-form-label nzFor="addressLine1">{{ 'address.line1' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressLine1"
-              id="addressLine1" name="addressLine1" autocomplete="address-line1" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzXs]="24" [nzMd]="24">
-        <nz-form-item>
-          <nz-form-label nzFor="addressLine2">{{ 'address.line2' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressLine2"
-              id="addressLine2" name="addressLine2" autocomplete="address-line2" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzXs]="24" [nzMd]="12">
-        <nz-form-item>
-          <nz-form-label nzFor="addressCity">{{ 'city' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressCity"
-              id="addressCity" name="addressCity" autocomplete="address-level2" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzXs]="24" [nzMd]="12">
-        <nz-form-item>
-          <nz-form-label nzFor="addressState">{{ 'state' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressState"
-              id="addressState" name="addressState" autocomplete="address-level1" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzXs]="24" [nzMd]="12">
-        <nz-form-item>
-          <nz-form-label nzFor="addressPostcode">{{ 'postcode' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressPostcode"
-              id="addressPostcode" name="addressPostcode" autocomplete="postal-code" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzXs]="24" [nzMd]="12">
-        <nz-form-item>
-          <nz-form-label nzFor="addressCountry">{{ 'country' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressCountry"
-              id="addressCountry" name="addressCountry" autocomplete="country-name" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzXs]="24" [nzMd]="12">
-        <nz-form-item>
-          <nz-form-label nzFor="addressCounty">{{ 'county' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressCounty"
-              id="addressCounty" name="addressCounty" autocomplete="off" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzXs]="24" [nzMd]="12">
-        <nz-form-item>
-          <nz-form-label nzFor="addressDistrict">{{ 'district' | i18n }}</nz-form-label>
-          <nz-form-control>
-            <input nz-input type="text" [(ngModel)]="customer.addressDistrict"
-              id="addressDistrict" name="addressDistrict" autocomplete="address-level3" />
+<nz-card [nzActions]="[cardFoot]">
+  <form nz-form>
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="24">            
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="1">
+            {{ 'address' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <!--
+              
+            <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleNewCustomerAddressChange($event)" />
+            -->
+            <input #ngxPlaces="ngx-places"
+                nz-input 
+                class="input"
+                type="text"
+                ngx-gp-autocomplete
+                style="width: 500px"
+                (onAddressChange)="handleNewCustomerAddressChange($event)" />
           </nz-form-control>
         </nz-form-item>
       </div>
     </div>
+    
+    <!--
+      
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressCountry">
+            {{ 'country' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressCountry" id="addressCountry" name="addressCountry"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressState">
+            {{ 'state' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressState" id="addressState" name="addressState"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressCounty">
+            {{ 'county' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressCounty" id="addressCounty" name="addressCounty"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressCity">
+            {{ 'city' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressCity" id="addressCity" name="addressCity" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressDistrict">
+            {{ 'district' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressDistrict" id="addressDistrict" name="addressDistrict"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressLine1">
+            {{ 'address.line1' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressLine1" id="addressLine1" name="addressLine1"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressLine2">
+            {{ 'address.line2' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressLine2" id="addressLine2" name="addressLine2"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="addressPostcode">
+            {{ 'postcode' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentCustomer!.addressPostcode" id="addressPostcode" name="addressPostcode"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    
+    -->
   </form>
 </nz-card>
 
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="center">
     <button nz-button nzType="primary" (click)="goToConfirmPage()">
-      {{ 'steps.next' | i18n }} : {{ 'steps.customer-maintenance.confirm.title' | i18n }}
+      {{ 'steps.next' | i18n }} :
+      {{ 'steps.customer-maintenance.confirm.title' | i18n }}
     </button>
   </div>
 </ng-template>
