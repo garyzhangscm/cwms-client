@@ -8,7 +8,8 @@
   <nz-input-number [(ngModel)]="count" [nzMin]="1" [nzMax]="100" [nzDisabled]="busy || lpns.length > 0"></nz-input-number>
   <button nz-button nzType="primary" [nzLoading]="busy" (click)="generate()">{{ 'inventory.preprinted.generate' | i18n }}</button>
  </section>
- <section *ngIf="selected" class="panel"><h2>{{ batchName(selected) }}</h2>
+ <section *ngIf="selected" #printPanel class="panel print-panel" tabindex="-1" aria-label="Selected label batch"><h2>{{ batchName(selected) }}</h2>
+  <nz-alert nzType="success" nzShowIcon [nzMessage]="'Batch selected. Choose the label range, then use Print to select a printer.' | i18n"></nz-alert>
   <p>{{ 'inventory.preprinted.from' | i18n }} <nz-input-number [(ngModel)]="fromLabel" [nzMin]="1" [nzMax]="labelCount" [nzDisabled]="busy"></nz-input-number>
    {{ 'inventory.preprinted.to' | i18n }} <nz-input-number [(ngModel)]="toLabel" [nzMin]="fromLabel" [nzMax]="labelCount" [nzDisabled]="busy"></nz-input-number></p>
   <p>{{ 'inventory.preprinted.warning' | i18n }}</p>
@@ -21,7 +22,7 @@
   <nz-table #table [nzData]="histories" [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="historyLoading">
    <thead><tr><th>{{ 'inventory.preprinted.batch' | i18n }}</th><th>{{ 'inventory.preprinted.count' | i18n }}</th><th>{{ 'inventory.preprinted.created' | i18n }}</th><th>{{ 'inventory.preprinted.user' | i18n }}</th><th></th></tr></thead>
    <tbody><tr *ngFor="let row of table.data"><td>{{ batchName(row) }}</td><td>{{ batchCount(row) }}</td><td>{{ row.printedDate | date:'medium' }}</td><td>{{ row.printedUsername }}</td>
-    <td><button nz-button [disabled]="busy" (click)="select(row)">{{ 'inventory.preprinted.reprint' | i18n }}</button></td></tr></tbody>
+    <td><button nz-button [disabled]="busy" [nzLoading]="selectingId === row.id" (click)="select(row)">{{ 'inventory.preprinted.reprint' | i18n }}</button></td></tr></tbody>
   </nz-table>
   <button *ngIf="hasMore" nz-button [nzLoading]="historyLoading" [disabled]="busy" (click)="refreshHistory(true)">{{ 'inventory.preprinted.more' | i18n }}</button>
  </section>

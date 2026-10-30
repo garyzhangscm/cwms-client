@@ -1,5 +1,5 @@
 import { I18NService } from '@core';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { firstValueFrom } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -12,6 +12,8 @@ import { ReportType } from '../../report/models/report-type.enum';
 @Component({selector: 'app-preprinted-lpns', standalone: false,
   templateUrl: './preprinted-lpns.component.html', styleUrls: ['./preprinted-lpns.component.less']})
 export class PreprintedLpnsComponent implements OnInit {
+  @ViewChild('printPanel') printPanel?: ElementRef<HTMLElement>;
+  selectingId?: number;
   count = 20;
   busy = false;
   error = '';
@@ -30,7 +32,7 @@ export class PreprintedLpnsComponent implements OnInit {
   private warehouseId = 0;
   private storageKey = '';
   constructor(private http: _HttpClient, private warehouse: WarehouseService,
-    private user: UserService, private printing: PrintingService, private message: NzMessageService, private i18n: I18NService) {}
+    private user: UserService, private printing: PrintingService, private message: NzMessageService, private i18n: I18NService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.warehouseId = this.warehouse.getCurrentWarehouse().id;
@@ -117,12 +119,21 @@ export class PreprintedLpnsComponent implements OnInit {
   async select(history: ReportHistory): Promise<void> {
     if (this.busy) return;
     const version = ++this.selectionVersion;
-    this.selected = history; this.labelCount = 0; this.error = '';
+    this.selectingId = history.id; this.selected = undefined; this.labelCount = 0; this.error = '';
     try {
       const result = await firstValueFrom(this.http.get(`resource/preprinted-lpns/${history.id}/details`, {warehouseId: this.warehouseId}));
       if (version !== this.selectionVersion) return;
+      if (!Number.isInteger(result.data?.count) || result.data.count < 1) throw new Error('INVALID_BATCH');
+      this.selected = history;
       this.labelCount = result.data.count; this.fromLabel = 1; this.toLabel = this.labelCount;
-    } catch { if (version === this.selectionVersion) this.error = 'Could not read this label batch. Please select it again.'; }
+      this.cdr.detectChanges();
+      this.printPanel?.nativeElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      this.printPanel?.nativeElement.focus({preventScroll: true});
+      this.message.success(this.i18n.fanyi('Batch selected. Choose the label range, then use Print to select a printer.'));
+    } catch { if (version === this.selectionVersion) {
+      this.error = 'Could not read this label batch. Please select it again.';
+      this.message.error(this.i18n.fanyi(this.error));
+    } } finally { if (version === this.selectionVersion) this.selectingId = undefined; }
   }
   async print(event: {printerIndex: number; printerName: string; physicalCopyCount: number; collated: boolean}): Promise<void> {
     if (!this.selected || this.busy || !this.validRange) return;
