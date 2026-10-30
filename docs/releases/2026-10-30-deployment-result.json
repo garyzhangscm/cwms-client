@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "ed10a9b",
+  "colton": {
+    "site": "colton",
+    "image": "brianwang1912/mes-web:v19.2-colton-complete-20261030-01@sha256:bf0ddc57a812ecfb90208d660de2fe2ce6ab036e2124c763024e1a13605bd5df",
+    "ready": true,
+    "indexSha256": "bb9f6b62f3463613c1cc66afc5523b479c41912365509533d8ea244343b4ded4",
+    "configPreserved": true,
+    "scriptsVerified": true,
+    "backup": "/root/k8s/backups/complete-web-20261030-20261030T164058Z"
+  },
+  "fay": {
+    "site": "fay",
+    "image": "brianwang1912/mes-web:v19.2-fay-complete-20261030-01@sha256:ed58b4dd48b94cfaebaaa95bd34da6b6042be3d9a25e66f35432013e9ee98004",
+    "ready": true,
+    "indexSha256": "bb6698300671124652ee2f0f1f2fab4acf60f68fb0e4ea02eb43bf3b78b9a1b3",
+    "configPreserved": true,
+    "scriptsVerified": true,
+    "backup": "/root/k8s/backups/complete-web-20261030-20261030T164221Z"
+  },
+  "preservationManifest": "2026-10-30-source-preservation.json",
+  "componentChecks": 55,
+  "databaseChangesRequired": false,
+  "backendChanged": false
+}

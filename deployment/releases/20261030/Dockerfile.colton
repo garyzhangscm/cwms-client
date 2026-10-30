@@ -1,0 +1,3 @@
+FROM mes-web-complete-builder:20261030 AS assets
+FROM brianwang1912/mes-web:v19.2-colton-complete-20261029-01@sha256:6e7be1d17aa1c7e3ccaa80995ed22dba299d2b08de281c116af88fa12ac48255
+COPY --from=assets /app/dist/ng-alain-v19-without-ssr/browser/ /usr/share/nginx/html/

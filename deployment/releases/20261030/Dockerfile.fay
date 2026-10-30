@@ -1,0 +1,4 @@
+FROM mes-web-complete-builder:20261030 AS assets
+FROM brianwang1912/mes-web:v19.2-fay-complete-20261029-01@sha256:b69ce404bb230b0963f05e84b02771357cb941e7c0c41d8e3d31b7ba3db04a14
+COPY --from=assets /app/dist/ng-alain-v19-without-ssr/browser/ /usr/share/nginx/html/
+RUN sed -i 's@<head>@<head><script src="/mes-public-config-20261023.js"></script>@' /usr/share/nginx/html/index.html
