@@ -1,0 +1,19 @@
+{
+  "source": "10.0.202.70:4200 source test environment",
+  "status": "test-only snapshot; not production approved",
+  "preserved": [
+    "QC line clearance configuration, report and entry pages",
+    "test navigation and request handling",
+    "test validation scripts"
+  ],
+  "validation": {
+    "angularNoEmit": "passed on test server",
+    "preprintedLpnRegression": "passed",
+    "http4200": 200
+  },
+  "excluded": [
+    "APK installation package",
+    "temporary HTML backups",
+    "credentials and runtime configuration"
+  ]
+}

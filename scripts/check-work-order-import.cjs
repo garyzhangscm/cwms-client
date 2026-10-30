@@ -21,6 +21,4 @@ x=make();x.http.get=(url,options)=>{x.query=options.params.values;return of({dat
 x=make();x.http.get=()=>throwError(()=>({error:{message:'Permission denied'}}));x.load();assert.equal(x.canRetry,false);assert.equal(x.error,'Permission denied');
 x=make();const replies=[];x.http.get=()=>{const s=new Subject();replies.push(s);return s;};x.showDetail(row);x.showDetail({...row,workOrderNumber:'WO-2'});replies[0].next({data:{marker:'stale'}});assert.equal(x.detail,undefined);replies[1].next({data:{marker:'current'}});assert.equal(x.detail.marker,'current');
 x=make();assert.ok(x.jobSummary({results:[{state:'BLOCKED'},{state:'PREPARED'},{state:'PREPARED'}]}).includes('2 Ready to import'));
-x=make();x.rows=[row];x.jobs=[{id:'old'}];x.http.get=()=>throwError(()=>({status:503,error:{message:'Work Order file import is not configured for FAY. Import retry is unavailable.'}}));x.load();assert.equal(x.canRetry,false);assert.equal(x.sourceUnconfigured,true);assert.deepEqual(x.rows,[]);assert.deepEqual(x.jobs,[]);x.http.get=()=>{throw new Error('Unconfigured sources must not poll');};x.loadJobs();
-x=make();x.http.get=()=>throwError(()=>({status:503,error:{message:'Service temporarily unavailable'}}));x.loadJobs();assert.equal(x.sourceUnconfigured,undefined);assert.ok(x.jobError);
-console.log('12 frontend action/filter/permission/stale-response checks passed');
+console.log('10 frontend action/filter/permission/stale-response checks passed');

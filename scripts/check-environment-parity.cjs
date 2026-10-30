@@ -24,6 +24,6 @@ for (const production of [false,true]) {
  }
 }
 const proxy=require('../proxy.conf.js');
-assert.ok(['http:', 'https:'].includes(new URL(proxy['/api/**'].target).protocol), 'shared backend gateway must be configured');
+assert.equal(proxy['/api/**'].target,'http://10.0.10.159:31252');
 assert.ok(!Object.keys(proxy).some(key=>/password-reset-test|completion-test|deletion-test/.test(key)));
 console.log('PASS: test and production share reset, completion and guarded deletion routes; no legacy preview proxy. All HTTP calls mocked.');

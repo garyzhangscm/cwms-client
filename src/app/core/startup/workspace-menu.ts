@@ -120,6 +120,19 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
       children: [{...activity,text:'User Activity',i18n:'warehouse-user-activity',link:'/warehouse-report/user-activity'}]});
   }
 
+  // Test-only Line Clearance navigation. Server enforces every capability.
+  for (const entry of modules) {
+    if (entry.i18n === 'menu.main.qc' && entry.children) {
+      const source = entry.children.find(child => child.link === '/qc/rules') ?? entry.children.find(child => child.link === '/qc/result');
+      if (source && !entry.children.some(child => child.link === '/qc/line-clearance-configuration')) entry.children.push({...source, text:'Line Clearance Configuration', i18n:undefined, link:'/qc/line-clearance-configuration', children:undefined});
+    }
+    if (entry.i18n === 'qc-shift.reports-menu' && entry.children) {
+      const source = entry.children[0];
+      if (source && !entry.children.some(child => child.link === '/qc/line-clearance-report')) entry.children.push({...source,text:'Line Clearance',i18n:undefined,link:'/qc/line-clearance-report',children:undefined});
+      if (source && !entry.children.some(child => child.link === '/qc/line-clearance-entry')) entry.children.push({...source,text:'Line Clearance Entry (Test)',i18n:undefined,link:'/qc/line-clearance-entry',children:undefined});
+    }
+  }
+
   const used = new Set<Menu>();
   const result: Menu[] = [];
   for (const section of sections) {

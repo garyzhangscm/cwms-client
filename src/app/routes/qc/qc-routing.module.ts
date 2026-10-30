@@ -1,3 +1,4 @@
+import { LineClearanceComponent } from './line-clearance/line-clearance.component';
 import { QcDefectiveLabelsComponent } from './defective-labels/defective-labels.component';
 import { QcShiftReportComponent } from './shift-report/shift-report.component';
 import { NgModule } from '@angular/core';
@@ -17,6 +18,10 @@ import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-main
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
 
 const routes: Routes = [
+  {path:'line-clearance-configuration',component:LineClearanceComponent,canActivate:[aclCanActivate],data:{lcMode:'configure',guard:{role:['admin','system-admin']} as ACLGuardType,guard_url:'/exception/403'}},
+  {path:'line-clearance-report',component:LineClearanceComponent,canActivate:[aclCanActivate],data:{lcMode:'report',guard:{role:['/qc/result','admin','system-admin']} as ACLGuardType,guard_url:'/exception/403'}},
+  {path:'line-clearance-entry',component:LineClearanceComponent,data:{lcMode:'entry'}},
+
   { path: 'shift-report', component: QcShiftReportComponent,
     canActivate: [aclCanActivate],
     data: { guard: { role: ['/qc/result', 'admin', 'system-admin'] } as ACLGuardType, guard_url: '/exception/403' }
