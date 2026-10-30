@@ -98,10 +98,11 @@ export class OrderService {
       return exactQuery;
     }
     return exactQuery.pipe(switchMap(orders => {
-      if (orders.length) return of(orders);
+      if (orders.length || searchNumber.length < 3 || /[%_]/.test(searchNumber)) return of(orders);
       // Legacy numbers can contain NBSP or invisible characters at either edge.
-      // Keep all other filters and narrow candidates back to the complete number.
-      return this.http.get(url, params.delete('number')).pipe(
+      // Keep the number filter as a bounded substring search; never fetch the whole warehouse.
+      // Then normalize edges and require the complete number to match.
+      return this.http.get(url, params.set('number', `*${searchNumber}*`)).pipe(
         map(res => (res.data as Order[]).filter(order =>
           this.normalizeOrderSearchNumber(order.number).toUpperCase() === searchNumber.toUpperCase()))
       );

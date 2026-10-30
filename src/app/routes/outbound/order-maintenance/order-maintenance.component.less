@@ -1,0 +1,27 @@
+.order-review { display: grid; gap: 20px; padding-top: 24px; color: var(--mes-ink); }
+.review-card { background: var(--mes-surface, #fff); border: 1px solid var(--mes-line, #dce3ed); border-radius: 16px; padding: 24px 28px; min-width: 0; }
+.review-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid var(--mes-line); }
+.review-eyebrow, .review-fields dt, .review-party h3, .review-address-label { color: var(--mes-muted); font-size: 13px; font-weight: 500; }
+.review-header h2 { margin: 5px 0 0; font-size: 24px; line-height: 1.3; font-weight: 600; color: var(--mes-ink); overflow-wrap: anywhere; }
+.review-category { border-radius: 7px; background: var(--mes-blue-soft); color: var(--mes-blue); padding: 6px 12px; font-size: 13px; }
+.review-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px 32px; margin: 0; }
+.review-fields-two { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.review-fields dd { margin: 7px 0 0; font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+.review-parties { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 28px; }
+.review-party + .review-party { border-left: 1px solid var(--mes-line); padding-left: 28px; }
+.review-party h3 { margin: 0 0 10px; }
+.review-party-name { font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+.review-secondary { margin: 5px 0 0; color: var(--mes-muted); }
+.review-address-label { margin: 18px 0 6px; }
+.review-party address { margin: 0; font-style: normal; line-height: 1.65; overflow-wrap: anywhere; }
+.review-lines { min-width: 0; margin: 0; }
+@media (max-width: 700px) {
+ .review-card { padding: 20px; }
+ .review-header { align-items: flex-start; flex-direction: column; gap: 12px; }
+ .review-fields, .review-fields-two, .review-parties { grid-template-columns: 1fr; }
+ .review-party + .review-party { border-left: 0; border-top: 1px solid var(--mes-line); padding: 22px 0 0; }
+}
+
+.order-item-autocomplete { width: 100%; min-width: 220px; }
+.order-item-option-number { font-weight: 600; line-height: 22px; }
+.order-item-option-description { color: #6b7280; font-size: 12px; line-height: 18px; white-space: normal; overflow-wrap: anywhere; }

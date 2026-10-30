@@ -11,24 +11,24 @@
 </section>
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
   <!-- Form to query the result  -->
-  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <form nz-form nzLayout="vertical" [formGroup]="searchForm" class="ant-advanced-search-form order-search-form">
     <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="6">
-        <nz-form-item nzFlex>
-          <nz-form-label for="number" [nzSpan]="8">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6">
+        <nz-form-item>
+          <nz-form-label for="number">
             {{ 'order.number' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <input nz-input name="number" id="number" formControlName="number" />
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="6">
-        <nz-form-item nzFlex>
-          <nz-form-label for="orderStatus" [nzSpan]="8">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6">
+        <nz-form-item>
+          <nz-form-label for="orderStatus">
             {{ 'status' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <nz-select formControlName="orderStatus">
               <nz-option
                 *ngFor="let orderStatus of orderStatusesKeys"
@@ -40,12 +40,12 @@
         </nz-form-item>
       </div>
       
-      <div nz-col [nzSpan]="6">
-        <nz-form-item nzFlex>
-          <nz-form-label for="orderCategory" [nzSpan]="8">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6">
+        <nz-form-item>
+          <nz-form-label for="orderCategory">
             {{ 'order.category' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <nz-select formControlName="orderCategory">
               <nz-option
                 *ngFor="let orderCategory of orderCategoriesKeys"
@@ -56,12 +56,12 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="6" >
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="customers">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6" >
+        <nz-form-item>
+          <nz-form-label nzFor="customers">
             {{ 'customer' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <nz-select nzShowSearch nzAllowClear  formControlName="customer">
               <nz-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.id"></nz-option> 
             </nz-select>
@@ -73,12 +73,12 @@
     <div nz-row [nzGutter]="24">
       
 
-      <div nz-col [nzSpan]="6" >
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="completeTimeRanger">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8" >
+        <nz-form-item>
+          <nz-form-label nzFor="completeTimeRanger">
             {{ 'complete-time' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
               formControlName="completeTimeRanger" name="completeTimeRanger">
             </nz-range-picker>
@@ -86,23 +86,23 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="6"  >
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="completeDate">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="4"  >
+        <nz-form-item>
+          <nz-form-label nzFor="completeDate">
             {{ 'complete-date' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <nz-date-picker formControlName="completeDate" name="completeDate"></nz-date-picker>
           </nz-form-control>
         </nz-form-item>
       </div>
       
-      <div nz-col [nzSpan]="6" >
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="createdTimeRanger">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8" >
+        <nz-form-item>
+          <nz-form-label nzFor="createdTimeRanger">
             {{ 'created-time' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
               formControlName="createdTimeRanger" name="createdTimeRanger">
             </nz-range-picker>
@@ -110,12 +110,12 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="6"  >
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="createdDate">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="4"  >
+        <nz-form-item>
+          <nz-form-label nzFor="createdDate">
             {{ 'created-date' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             <nz-date-picker formControlName="createdDate" name="createdDate"></nz-date-picker>
           </nz-form-control>
         </nz-form-item>
@@ -127,23 +127,23 @@
 
       
 
-      <div nz-col [nzSpan]="6"  >
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="8" nzFor="poNumber">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6"  >
+        <nz-form-item>
+          <nz-form-label nzFor="poNumber">
             {{ 'poNumber' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="16">
+          <nz-form-control>
             
             <input nz-input name="poNumber" id="poNumber" formControlName="poNumber" /> 
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="6" *ngIf="threePartyLogisticsFlag">
-        <nz-form-item nzFlex>
-          <nz-form-label for="client" [nzSpan]="6">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6" *ngIf="threePartyLogisticsFlag">
+        <nz-form-item>
+          <nz-form-label for="client">
             {{ 'client' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control>
             <nz-select formControlName="client" nzAllowClear>
               <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
             </nz-select>
@@ -197,7 +197,7 @@
     </div>
     
     <st #st class="order-list-table" size="small" [trackBy]="trackOrderById" [loading]="searching" [data]="listOfAllOrders"  [columns]="orderTableColumns" [expand]="expand"  expandAccordion
-    (change)="orderTableChanged($event)" resizable [scroll]="{ x: '1040px' }" [widthMode]="{ type: 'strict' }" >
+    (change)="orderTableChanged($event)" resizable [scroll]="{ x: '1120px' }" [widthMode]="{ type: 'strict' }" >
     
       <ng-template st-row="completedTimeColumn" let-order let-index="index">
             {{order.completeTime | date:'MM/dd/yyyy' }}
@@ -314,12 +314,16 @@
       </ng-template>
 
       <ng-template st-row="orderNumberColumn" let-order let-index="index">
-        <a nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ order.number }}</a>
+        <a [routerLink]="['/outbound/order']" [queryParams]="{ number: order.number, orderId: order.id }"
+          (click)="reopenLinkedOrder(order, $event)" nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ order.number }}</a>
         <ng-template #orderNumberTemplate>{{ order.number }}</ng-template>
       </ng-template>
 
       <ng-template st-row="poNumberColumn" let-order>
         <span class="order-po-number">{{ order.poNumber || '—' }}</span>
+      </ng-template>
+      <ng-template st-row="orderPickedQuantityColumn" let-order>
+        {{ order.totalPickedQuantity ?? '—' }}
       </ng-template>
       <ng-template st-row="orderStatusColumn" let-order>
         <span class="order-status" [class.order-status--complete]="order.status === orderStatusEnum.COMPLETE">
@@ -336,12 +340,12 @@
       <ng-template #expand let-order let-index="index" >
         <div class="order-details-toggle">
           <button nz-button (click)="toggleOrderDetails(order)"
-            [attr.aria-expanded]="orderDetailsOrder === order" [attr.aria-controls]="'order-details-' + order.id">
-            {{ (orderDetailsOrder === order ? 'outbound.order.details.hide' : 'outbound.order.details.title') | i18n }}
-            <i nz-icon [nzType]="orderDetailsOrder === order ? 'up' : 'down'"></i>
+            [attr.aria-expanded]="orderDetailsOrder?.id === order.id" [attr.aria-controls]="'order-details-' + order.id">
+            {{ (orderDetailsOrder?.id === order.id ? 'outbound.order.details.hide' : 'outbound.order.details.title') | i18n }}
+            <i nz-icon [nzType]="orderDetailsOrder?.id === order.id ? 'up' : 'down'"></i>
           </button>
         </div>
-        <section *ngIf="orderDetailsOrder === order" class="order-detail-summary" [id]="'order-details-' + order.id">
+        <section *ngIf="orderDetailsOrder?.id === order.id" class="order-detail-summary" [id]="'order-details-' + order.id">
           <h3>{{ 'outbound.order.details.title' | i18n }}</h3>
           <div class="order-detail-grid">
             <section class="order-detail-section">
@@ -949,8 +953,7 @@
                 
               </ul>
             </nz-dropdown-menu>
-          <button nz-button nz-popover nzPopoverTrigger="click" nzPopoverPlacement="bottomRight"
-            (nzPopoverVisibleChange)="loadPrintPolicy(order, $event)" [nzPopoverContent]="orderPrintOptions" [attr.aria-label]="'print' | i18n">
+          <button nz-button (click)="openOrderPrintDialog(order, orderPrintOptions)" [attr.aria-label]="'print' | i18n">
             <i nz-icon nzType="printer"></i> {{ 'print' | i18n }}
           </button>
           <ng-template #orderPrintOptions>
@@ -986,7 +989,7 @@
                     } @else { <span class="text-grey">No pending picking</span> }
                   </div>
                 }
-              } @else { <p>Unable to check printing availability. Close and reopen to retry.</p> }
+              } @else { <p>Unable to check printing availability.</p><button nz-button (click)="loadPrintPolicy(order, true)">Retry</button> }
             </div>
           </ng-template>
         </div>

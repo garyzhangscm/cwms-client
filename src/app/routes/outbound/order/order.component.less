@@ -274,3 +274,24 @@ button {
   &--error { border-left: 4px solid #d58b27; }
 }
 .allocation-row-state { display: block; margin-top: 5px; font-size: 11px; line-height: 1.4; }
+
+// Labels stay above controls so long translations cannot overlap inputs.
+.order-search-form {
+  padding: 16px 20px;
+}
+:host ::ng-deep .order-search-form {
+  .ant-form-item-label {
+    padding: 0 0 6px;
+    overflow: visible;
+    text-align: left;
+    white-space: normal;
+  }
+  .ant-form-item-label > label {
+    height: auto;
+    min-height: 20px;
+    line-height: 1.5;
+    white-space: normal;
+  }
+  .ant-form-item-control { min-width: 0; width: 100%; }
+  nz-select, nz-date-picker, nz-range-picker { width: 100%; min-width: 0; }
+}

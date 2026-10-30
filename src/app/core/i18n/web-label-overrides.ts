@@ -3,6 +3,8 @@ import { QC_SHIFT_LABELS } from './qc-shift-labels';
 /** New Web labels must remain available while the resource server dictionary is older. */
 export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
   'es-ES': {
+    "shipment.search-failed": "No se pudieron cargar los envíos. Inténtelo de nuevo. Es posible que aún se muestren resultados anteriores.",
+    "outbound.order.column.picked": "Cant. preparada",
     'item.footprint.positive-item-weight': "El peso del nivel de artículo es obligatorio y debe ser mayor que 0.",
     "item.required-basic-hint": "Complete el nombre, la descripción, la familia y un costo unitario válido antes de continuar.",
     "item.required-cost-hint": "Ingrese un costo unitario igual o mayor que 0.",
@@ -103,6 +105,8 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     "outbound.order.no": "No",
   },
   'en-US': {
+    "shipment.search-failed": "Unable to load shipments. Please try again. Previous results may still be shown.",
+    "outbound.order.column.picked": "Picked Qty",
     'item.footprint.positive-item-weight': "Item level Weight is required and must be greater than 0.",
     "item.required-basic-hint": "Enter Item Name, Description, Item Family and a valid Unit Cost before continuing.",
     "item.required-cost-hint": "Enter a unit cost of 0 or more.",
@@ -372,6 +376,8 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': 'The work order could not be deleted. Please refresh and try again.'
   },
   'zh-CN': {
+    "shipment.search-failed": "出货单查询失败，请重试。页面可能仍显示上次的查询结果。",
+    "outbound.order.column.picked": "已拣数量",
     'item.footprint.positive-item-weight': "Item 层级的重量必须填写，并且大于 0。",
     "item.required-basic-hint": "请填写 Item Name、Description、Item Family 和有效的 Unit Cost 后再继续。",
     "item.required-cost-hint": "请输入大于或等于 0 的单价。",
@@ -638,6 +644,7 @@ export const WEB_LABEL_OVERRIDES: Record<string, Record<string, string>> = {
     'work-order.delete-failed': '工单删除失败，请刷新后重试。'
   },
   'zh-TW': {
+    "shipment.search-failed": "出貨單查詢失敗，請重試。頁面可能仍顯示上次的查詢結果。",
     'item.footprint.positive-item-weight': "Item 層級的重量必須填寫，並且大於 0。",
     "item.required-basic-hint": "請填寫 Item Name、Description、Item Family 和有效的 Unit Cost 後再繼續。",
     "item.required-cost-hint": "請輸入大於或等於 0 的單價。",

@@ -2,7 +2,7 @@
 
 <ng-template #returnLink>
     <a routerLink="/outbound/order" routerLinkActive="active"
-        [queryParams]="{number: currentOrder?.number}">{{
+        [queryParams]="!newOrder && currentOrder?.id ? {number: currentOrder?.number, orderId: currentOrder?.id} : {}">{{
         'return' | i18n }}</a>
 </ng-template>
 <ng-template #breadcrumb>
@@ -518,20 +518,28 @@
                 <tbody>
                     <tr *ngFor="let orderLine of orderLineTable.data; let i = index"> 
                         <td>
-                            <div *ngIf="orderLine.id === undefined">
-                                <div class="row">
-                                    <input   type="text" [(ngModel)]="orderLine.number"/>
-                                </div>
-                            </div>
-                            <span *ngIf="orderLine.id">
-                                {{ orderLine.number }}
-                            </span>
+                            <span>{{ orderLine.number }}</span>
                         </td>
                         <td>
                             <div *ngIf="orderLine.id === undefined">
                                 <div class="row">
-                                    <input  type="text" [ngModel]="orderLine.item!.name"
-                                        (blur)="itemChanged($event, orderLine)"  />
+                                    <input nz-input class="order-item-autocomplete" type="text" autocomplete="off"
+                                      placeholder="Type at least 2 characters"
+                                      [ngModel]="orderLine.item?.name" (ngModelChange)="itemNameChanged($event, orderLine)"
+                                      [nzAutocomplete]="itemAuto" (blur)="itemChanged($event, orderLine)" />
+                                    <nz-autocomplete #itemAuto [nzBackfill]="false" [nzDefaultActiveFirstOption]="false"
+                                      [nzWidth]="440" (selectionChange)="selectSuggestedItem($event.nzValue, orderLine)">
+                                      <nz-auto-option *ngFor="let item of itemSuggestions.get(orderLine)?.items" [nzValue]="item.name" [nzLabel]="item.name">
+                                        <div class="order-item-option-number">{{ item.name }}</div>
+                                        <div class="order-item-option-description">{{ item.description }}</div>
+                                      </nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.get(orderLine)?.loading" [nzDisabled]="true" nzValue="">Searching items…</nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.get(orderLine)?.error" [nzDisabled]="true" nzValue="">{{ itemSuggestions.get(orderLine)?.error }}</nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.has(orderLine) && !itemSuggestions.get(orderLine)?.loading && !itemSuggestions.get(orderLine)?.error && !itemSuggestions.get(orderLine)?.items?.length && (orderLine.item?.name?.trim()?.length || 0) >= 2" [nzDisabled]="true" nzValue="">No matching items.</nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.get(orderLine)?.more" [nzDisabled]="true" nzValue="">Showing 20 items. Keep typing to narrow the results.</nz-auto-option>
+                                    </nz-autocomplete>
+                                    <div *ngIf="lineItemLookups.get(orderLine)?.loading" role="status">Checking item…</div>
+                                    <div *ngIf="lineItemLookups.get(orderLine)?.error" role="alert" style="color: #cf1322; margin-top: 4px;">{{ lineItemLookups.get(orderLine)?.error }}</div>
                                 </div>
                             </div> 
                             <span *ngIf="orderLine.id">
@@ -667,94 +675,51 @@
         </ng-template>
     </div>
 
-    <!-- Let the user confirm the result -->
-    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
-
-        <nz-descriptions nzTitle="{{ 'order' | i18n}} - {{  currentOrder?.number }}" nzBordered>
-            <nz-descriptions-item nzTitle="{{ 'order.category' | i18n}}" nzSpan="3"> 
-                {{ 'ORDER-CATEGORY-' + currentOrder?.category |i18n}}
-            </nz-descriptions-item> 
-            
-            <nz-descriptions-item nzTitle="{{ 'poNumber' | i18n}}"> 
-              {{  currentOrder?.poNumber }}
-            </nz-descriptions-item> 
-            <nz-descriptions-item nzTitle="{{ 'carrier' | i18n}}"> 
-              {{  currentOrder?.carrier?.name }}
-            </nz-descriptions-item> 
-            <nz-descriptions-item nzTitle="{{ 'service' | i18n}}"> 
-              {{  currentOrder?.carrierServiceLevel?.name }}
-            </nz-descriptions-item> 
-        </nz-descriptions>
-        
-        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
-            *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER" nzBordered> 
-            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptWarehouseId' | i18n}}"> 
-
-                {{ currentOrder?.transferReceiptWarehouse?.name}}
-            </nz-descriptions-item>
-            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptNumber' | i18n}}"> 
-
-                {{ currentOrder?.transferReceiptNumber}}
-            </nz-descriptions-item>
-        </nz-descriptions>
-
-        
-        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-SALES_ORDER' | i18n}}" 
-            *ngIf="currentOrder!.category === orderCategories.SALES_ORDER || currentOrder!.category === orderCategories.OUTSOURCING_ORDER" nzBordered> 
-             
-            <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}"> 
-              {{ currentOrder?.supplier?.name}} - {{currentOrder?.supplier?.description}}
-              </nz-descriptions-item>
-            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}" nzSpan="2">  
-                  <address>  
-                    {{currentOrder?.supplier?.addressLine1}} <br>
-                    {{currentOrder?.supplier?.addressLine2}} <br>
-                    {{currentOrder?.supplier?.addressCity}},  {{currentOrder?.supplier?.addressState}} <br>
-                    {{currentOrder?.supplier?.addressPostcode}} <br>
-                  </address> 
-            </nz-descriptions-item>
-            <nz-descriptions-item nzTitle="{{ 'shipToCustomer' | i18n}}"> 
-
-              <!--Get data from the existing customer, which should already being assigned
-                  to the order
-              -->
-              <span *ngIf="existingCustomer==='true'">
-
-                {{ currentOrder?.shipToCustomer?.name}}
-              </span>
-              <!-- New Customer -->
-              <span *ngIf="existingCustomer==='false'">
-                {{ newCustomer?.name }}
-
-              </span>
-            </nz-descriptions-item>
-            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}"  nzSpan="2"> 
-              <div *ngIf="existingCustomer==='true'">
-                <address>  
-                  {{currentOrder?.shipToCustomer?.addressLine1}} <br>
-                  {{currentOrder?.shipToCustomer?.addressLine2}} <br>
-                  {{currentOrder?.shipToCustomer?.addressCity}},  {{currentOrder?.shipToCustomer?.addressState}} <br>
-                  {{currentOrder?.shipToCustomer?.addressPostcode}} <br>
-                  </address>
-              </div>
-              <!-- New Customer -->
-              <div *ngIf="existingCustomer==='false'">
-                <address>
-                
-                  {{newCustomer?.addressLine1}} <br>
-                  {{newCustomer?.addressLine2}} <br>
-                  {{newCustomer?.addressCity}},  {{newCustomer?.addressState}} <br>
-                  {{newCustomer?.addressPostcode}} <br>
-                </address>
-
-              </div>
-            </nz-descriptions-item>
-        </nz-descriptions>
-
-
+    <!-- Review only: original save and allocation behavior is unchanged. -->
+    <div class="order-review" *ngIf="stepIndex === 2">
+      <section class="review-card">
+        <header class="review-header">
+          <div><div class="review-eyebrow">{{ 'order' | i18n }}</div><h2>{{ currentOrder?.number }}</h2></div>
+          <span class="review-category">{{ 'ORDER-CATEGORY-' + currentOrder?.category | i18n }}</span>
+        </header>
+        <dl class="review-fields">
+          <div><dt>{{ 'poNumber' | i18n }}</dt><dd>{{ currentOrder?.poNumber || '—' }}</dd></div>
+          <div><dt>{{ 'carrier' | i18n }}</dt><dd>{{ currentOrder?.carrier?.name || '—' }}</dd></div>
+          <div><dt>{{ 'service' | i18n }}</dt><dd>{{ currentOrder?.carrierServiceLevel?.name || '—' }}</dd></div>
+        </dl>
+      </section>
+      <section class="review-card" *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER">
+        <dl class="review-fields review-fields-two">
+          <div><dt>{{ 'order.transferReceiptWarehouseId' | i18n }}</dt><dd>{{ currentOrder?.transferReceiptWarehouse?.name || '—' }}</dd></div>
+          <div><dt>{{ 'order.transferReceiptNumber' | i18n }}</dt><dd>{{ currentOrder?.transferReceiptNumber || '—' }}</dd></div>
+        </dl>
+      </section>
+      <section class="review-card review-parties" *ngIf="currentOrder!.category === orderCategories.SALES_ORDER || currentOrder!.category === orderCategories.OUTSOURCING_ORDER">
+        <div class="review-party">
+          <h3>{{ 'supplier' | i18n }}</h3>
+          <div class="review-party-name">{{ currentOrder?.supplier?.name || '—' }}</div>
+          <p class="review-secondary" *ngIf="currentOrder?.supplier?.description">{{ currentOrder?.supplier?.description }}</p>
+          <ng-container *ngTemplateOutlet="reviewAddress; context: { $implicit: currentOrder?.supplier }"></ng-container>
+        </div>
+        <div class="review-party">
+          <h3>{{ 'shipToCustomer' | i18n }}</h3>
+          <div class="review-party-name">{{ (existingCustomer === 'true' ? currentOrder?.shipToCustomer?.name : newCustomer?.name) || '—' }}</div>
+          <ng-container *ngTemplateOutlet="reviewAddress; context: { $implicit: existingCustomer === 'true' ? currentOrder?.shipToCustomer : newCustomer }"></ng-container>
+        </div>
+      </section>
+      <ng-template #reviewAddress let-party>
+        <div class="review-address-label">{{ 'address' | i18n }}</div>
+        <address>
+          <div *ngIf="party?.addressLine1">{{ party.addressLine1 }}</div>
+          <div *ngIf="party?.addressLine2">{{ party.addressLine2 }}</div>
+          <div *ngIf="party?.addressCity || party?.addressState">{{ party?.addressCity }}<span *ngIf="party?.addressCity && party?.addressState">, </span>{{ party?.addressState }}</div>
+          <div *ngIf="party?.addressPostcode">{{ party.addressPostcode }}</div>
+          <span *ngIf="!party?.addressLine1 && !party?.addressLine2 && !party?.addressCity && !party?.addressState && !party?.addressPostcode">—</span>
+        </address>
+      </ng-template>
         <!-- Table to show order line  -->
 
-        <div class="search-result-list"> 
+        <div class="search-result-list review-lines"> 
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentOrder!.orderLines"
                 #displayOrderLineTable>
                 <thead>
@@ -801,11 +766,11 @@
             <span>{{ 'steps.previous' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
-        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+        <button nz-button nzType="default" (click)="nextStep()" [disabled]="itemLookupLoading || isSpinning" *ngIf="stepIndex < 2">
             <span>{{ 'steps.next' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical"></nz-divider>
-        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+        <button nz-button nzType="primary" (click)="confirm()" [nzLoading]="isSpinning" [disabled]="itemLookupLoading || isSpinning" *ngIf="stepIndex === 2">
             <span> {{ 'confirm' | i18n }}</span>
         </button>
     </div>

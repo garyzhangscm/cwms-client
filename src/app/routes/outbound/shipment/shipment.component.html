@@ -29,10 +29,10 @@
     </div>
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="search()">
+        <button type="button" nz-button [nzType]="'primary'" [nzLoading]="searching" (click)="search()">
           {{ 'search' | i18n }}
         </button>
-        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        <button type="button" nz-button [disabled]="searching" (click)="resetForm()">{{ 'clear' | i18n }}</button>
       </div>
     </div>
   </form>

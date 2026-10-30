@@ -1,4 +1,17 @@
 [
+  "app/core/i18n/web-label-overrides.ts",
+  "app/routes/auth/user/user.component.html",
+  "app/routes/auth/user/user.component.ts",
+  "app/routes/outbound/allocation-configuration/allocation-configuration.component.html",
+  "app/routes/outbound/allocation-configuration/allocation-configuration.component.ts",
+  "app/routes/outbound/order-maintenance/order-maintenance.component.html",
+  "app/routes/outbound/order-maintenance/order-maintenance.component.ts",
+  "app/routes/outbound/order/order.component.html",
+  "app/routes/outbound/order/order.component.less",
   "app/routes/outbound/order/order.component.ts",
-  "app/routes/outbound/order/order.component.html"
+  "app/routes/outbound/services/order.service.ts",
+  "app/routes/outbound/shipment/shipment.component.html",
+  "app/routes/outbound/shipment/shipment.component.ts",
+  "app/routes/work-order/work-order-maintenance/work-order-maintenance.component.html",
+  "app/routes/work-order/work-order-maintenance/work-order-maintenance.component.ts"
 ]

@@ -1,5 +1,21 @@
 <page-header title="{{'allocation-configuration' |  i18n}}" > </page-header>
 
+<nz-card nzTitle="Sales Order Allocation Mode" style="margin-bottom: 24px">
+  <p>Choose the default for orders that have not started allocation. Existing orders keep their selected mode, including after Unpick.</p>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+    <nz-select aria-label="Sales order allocation mode" style="width:280px;max-width:100%"
+      [(ngModel)]="allocationMode" [nzDisabled]="modeLoading || modeSaving || savedAllocationMode === null || displayOnly">
+      <nz-option nzValue="ITEM_QUANTITY" nzLabel="Quantity Reservation (default)"></nz-option>
+      <nz-option nzValue="CLASSIC" nzLabel="Classic Allocation"></nz-option>
+    </nz-select>
+    <button nz-button nzType="primary" type="button" (click)="saveAllocationMode()" [nzLoading]="modeSaving"
+      [disabled]="modeLoading || savedAllocationMode === null || displayOnly || allocationMode === savedAllocationMode">Save mode</button>
+    <button nz-button type="button" (click)="loadAllocationMode()" [nzLoading]="modeLoading" [disabled]="modeSaving">Reload</button>
+  </div>
+  <p style="margin-top:12px;margin-bottom:0;color:#62748b">Quantity Reservation reserves item quantities; the pallet is selected when scanning. Classic Allocation assigns stock using the rules below. Changing this setting does not release existing reservations.</p>
+  <p *ngIf="modeError" role="alert" style="margin-top:12px;color:#ad4e00">{{ modeError }}</p>
+</nz-card>
+<h3>Allocation Rules</h3>
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 
 <!-- Form to query the result  -->

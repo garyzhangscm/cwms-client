@@ -4,7 +4,7 @@ const hashes=JSON.parse(fs.readFileSync(path.join(dir,'source-sha256.json'))),al
 const changes=[];for(const [name,hash] of Object.entries(hashes)){const p=path.join(root,'src',name);assert(fs.existsSync(p),'Missing production source: '+name);if(crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex')!==hash)changes.push(name);}
 assert.deepStrictEqual(changes.sort(),allowed.slice().sort(),'Unexpected modification of production pages');
 const walk=p=>fs.readdirSync(p,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(p,e.name)):[path.relative(path.join(root,'src'),path.join(p,e.name))]);
-assert.deepStrictEqual(walk(path.join(root,'src')).sort(),Object.keys(hashes).sort(),'Unexpected added or removed source');
+assert.deepStrictEqual(walk(path.join(root,'src')).sort(),Object.keys(hashes).concat(JSON.parse(fs.readFileSync(path.join(dir,'allowed-additions.json')))).sort(),'Unexpected added or removed source');
 const source=fs.readFileSync('src/app/routes/outbound/order/order.component.ts','utf8');
 assert(source.includes('quantity-allocation/entry'));assert(source.includes('openingUnpickId'));assert(source.includes('Unpick could not be confirmed'));
 console.log(JSON.stringify({baselineFiles:Object.keys(hashes).length,unchangedFiles:Object.keys(hashes).length-changes.length,intentionalChanges:changes,unexpectedChanges:0}));

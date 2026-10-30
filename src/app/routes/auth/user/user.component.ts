@@ -6,7 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, timeout, finalize, map } from 'rxjs';
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -239,27 +239,45 @@ export class AuthUserComponent implements OnInit {
     this.listOfDisplayUsers = [];
   }
 
+  private matchesUsername(username: string, query: string): boolean {
+    const term = query.trim().toLowerCase();
+    const value = (username || '').toLowerCase();
+    if (!term) return true;
+    if (!/[%*]/.test(term)) return value.includes(term);
+    const pattern = term.split(/[%*]/).map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*');
+    return new RegExp(`^${pattern}$`).test(value);
+  }
+
   search(): void {
+    if (this.searching) return;
+    const query = this.searchForm.value.username || '';
     this.searching = true;
     this.searchResult = '';
-    this.userService.getUsers(this.searchForm.value.username ? this.searchForm.value.username : undefined)
-    .subscribe(
-      userRes => {
-        //      console.log(`user:\n${JSON.stringify(userRes)}`);
-        this.listOfAllUsers = userRes;
-        this.listOfDisplayUsers = userRes;
-
-        this.searching = false;
+    // This screen already supports listing all users in the current company.
+    // Filter that authorized list here; shared exact user lookups remain unchanged.
+    this.userService.getUsers().pipe(
+      timeout(20000),
+      map(users => {
+        if (!Array.isArray(users)) throw new Error('Invalid user list response');
+        return users.filter(user => this.matchesUsername(user.username, query));
+      }),
+      finalize(() => this.searching = false),
+    ).subscribe({
+      next: users => {
+        this.listOfAllUsers = users;
+        this.listOfDisplayUsers = users;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-          rowCount: userRes.length,
+          rowCount: users.length,
         });
       },
-      () => {
-        this.searching = false;
+      error: () => {
+        this.listOfAllUsers = [];
+        this.listOfDisplayUsers = [];
         this.searchResult = '';
+        this.messageService.error('Unable to load users. Please try searching again.');
       },
-    );
+    });
   }
 
   sort(sort: { key: string; value: string }): void {

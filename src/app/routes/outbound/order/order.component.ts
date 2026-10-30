@@ -75,6 +75,23 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   printPolicies = new Map<number, any>();
   printPolicyLoading = new Set<number>();
   printShipmentIds = new Map<number, number>();
+  private orderPrintDialog?: NzModalRef;
+  openOrderPrintDialog(order: Order, content: TemplateRef<{}>): void {
+    if (this.orderPrintDialog) return;
+    const dialog = this.modalService.create({
+      nzTitle: `${this.i18n.fanyi('print')} · ${order.number}`,
+      nzContent: content,
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzWidth: 560,
+    });
+    this.orderPrintDialog = dialog;
+    dialog.afterClose.subscribe(() => {
+      if (this.orderPrintDialog === dialog) this.orderPrintDialog = undefined;
+    });
+    this.loadPrintPolicy(order, true);
+  }
+
   loadPrintPolicy(order: Order, visible: boolean): void {
     if (!visible || order.id == null) return;
     this.printPolicies.delete(order.id); this.printPolicyLoading.add(order.id);
@@ -250,6 +267,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   searchError = '';
   detailWarning = '';
   orderDetailsOrder?: Order;
+  private linkedOrderId?: number;
   removingOrderIds = new Set<number>();
   private searchSubscription?: Subscription;
   private detailSubscriptions = new Subscription();
@@ -309,9 +327,13 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm.controls.number.setValue(params['number']);
-        // Links to a specific order must also find completed and cancelled orders.
+        // A direct order link must not inherit unrelated list filters.
+        this.searchForm.reset();
+        // nonNullable reset restores OPEN; direct links must explicitly clear it.
         this.searchForm.controls.orderStatus.setValue(undefined);
+        this.searchForm.controls.number.setValue(params['number']);
+        const id = Number(params['orderId']);
+        this.linkedOrderId = Number.isSafeInteger(id) && id > 0 ? id : undefined;
         this.search();
       }
     });
@@ -356,6 +378,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
  
   ngOnDestroy(): void {
+    this.orderPrintDialog?.destroy();
     this.searchSubscription?.unsubscribe();
     this.allocationLatestSubscription?.unsubscribe();
     this.allocationSubscriptions.forEach(subscription => subscription.unsubscribe());
@@ -398,6 +421,8 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   }
 
   search(tabSelectedIndex?: number): void {
+    const linkedOrderId = this.linkedOrderId;
+    this.linkedOrderId = undefined;
     this.searchSubscription?.unsubscribe();
     this.cancelDetailLoading();
     this.searchError = '';
@@ -433,10 +458,15 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
       this.searchForm.value.client, 
       this.searchForm.value.poNumber, true).pipe(
         timeout(60000),
+        take(1),
         finalize(() => this.searching = false)
       ).subscribe({
 
         next: (orderRes) => {
+          if (linkedOrderId !== undefined) {
+            orderRes = orderRes.filter(order => order.id === linkedOrderId);
+            this.st.pi = 1;
+          }
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: orderRes.length,
@@ -445,6 +475,13 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
           this.listOfAllOrders = this.calculateQuantities(orderRes);
           void this.refreshDetailInformations(orderRes);
           this.restoreAllocationResults(orderRes);
+          if (linkedOrderId !== undefined && orderRes.length === 1) {
+            const order = orderRes[0];
+            (order as STData).expand = true;
+            this.tabSelectedIndex = 0;
+            this.orderDetailsOrder = undefined;
+            this.showOrderDetails(order);
+          }
           if (tabSelectedIndex != null) {
             this.tabSelectedIndex = tabSelectedIndex;
           }
@@ -763,7 +800,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
     order.totalInprocessQuantity = 0;
     order.totalShippedQuantity = 0;
     order.totalPendingAllocationQuantity = 0;
-    order.totalPickedQuantity = 0;
+    order.totalPickedQuantity = undefined;
     order.totalOpenPickQuantity = 0;
 
     (order.orderLines ?? []).forEach(
@@ -786,7 +823,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
       });
     this.trackOrderDetail(this.pickService.getPicksByOrder(order.id!), (pickRes) => {
         
-        order.totalPickedQuantity = pickRes.map(pick => pick.pickedQuantity).reduce((sum, current) => sum + current, 0);
+        order.totalPickedQuantity = pickRes.reduce((sum, pick) => sum + (pick.pickedQuantity ?? 0), 0);
           order.totalOpenPickQuantity = pickRes.map(pick => (pick.quantity - pick.pickedQuantity)).reduce((sum, current) => sum + current, 0);
 
       })
@@ -1513,6 +1550,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
     { title: this.i18n.fanyi('outbound.order.column.quantity'), index: 'totalExpectedQuantity', width: 70, className: 'order-quantity-cell' },
     { title: this.i18n.fanyi('outbound.order.column.shipped'), index: 'totalShippedQuantity', width: 70, className: 'order-quantity-cell' },
     { title: this.i18n.fanyi('outbound.order.column.open'), index: 'totalOpenQuantity', width: 70, className: 'order-quantity-cell' },
+    { title: this.i18n.fanyi('outbound.order.column.picked'), render: 'orderPickedQuantityColumn', width: 75, className: 'order-quantity-cell' },
     { title: this.i18n.fanyi('action'), render: 'actionColumn', fixed: 'right', width: 185, iif: () => !this.displayOnly }
   ];
   customColumns = [
@@ -1591,8 +1629,17 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
             iif: () => !this.displayOnly },
   ];
 
+  reopenLinkedOrder(order: Order, event: MouseEvent): void {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
+        this.activatedRoute.snapshot.queryParamMap.get('orderId') !== String(order.id)) return;
+    this.st.setRow(order, { expand: true });
+    this.tabSelectedIndex = 0;
+    this.orderDetailsOrder = undefined;
+    this.showOrderDetails(order);
+  }
+
   toggleOrderDetails(order: Order): void {
-    this.orderDetailsOrder = this.orderDetailsOrder === order ? undefined : order;
+    this.orderDetailsOrder = this.orderDetailsOrder?.id === order.id ? undefined : order;
   }
 
   orderTableChanged(event: STChange) : void {

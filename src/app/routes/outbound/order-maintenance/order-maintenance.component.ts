@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { take, timeout } from 'rxjs/operators';
+import { Subscription, timer } from 'rxjs';
+import { finalize, switchMap, take, timeout } from 'rxjs/operators';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
@@ -15,6 +16,7 @@ import { SupplierService } from '../../common/services/supplier.service';
 import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
+import { Item } from '../../inventory/models/item';
 import { ItemService } from '../../inventory/services/item.service';
 import { Carrier } from '../../transportation/models/carrier';
 import { CarrierServiceLevel } from '../../transportation/models/carrier-service-level';
@@ -38,9 +40,10 @@ import { OrderService } from '../services/order.service';
 @Component({
     selector: 'app-outbound-order-maintenance',
     templateUrl: './order-maintenance.component.html',
+    styleUrls: ['./order-maintenance.component.less'],
     standalone: false
 })
-export class OutboundOrderMaintenanceComponent implements OnInit {
+export class OutboundOrderMaintenanceComponent implements OnInit, OnDestroy {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   orderCategories = OrderCategory;
@@ -85,6 +88,73 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   availableClients: Client[] = [];
   avaiableServiceLevel: CarrierServiceLevel[] = [];
 
+  itemSuggestions = new Map<OrderLine, { items: Item[]; loading: boolean; error: string; more: boolean; subscription?: Subscription }>();
+  private queueItemSuggestions(value: string, line: OrderLine): void {
+    const previous = this.itemSuggestions.get(line);
+    previous?.subscription?.unsubscribe();
+    const state = { items: previous?.items || [], loading: false, error: '', more: false, subscription: undefined as Subscription | undefined };
+    this.itemSuggestions.set(line, state);
+    const prefix = value.trim();
+    if (prefix.length < 2) { state.items = []; return; }
+    state.loading = true;
+    state.subscription = timer(300).pipe(
+      switchMap(() => this.itemService.getItems(prefix + '*')),
+      timeout(15000), take(1), finalize(() => state.loading = false),
+    ).subscribe({
+      next: items => {
+        if (this.itemSuggestions.get(line) !== state) return;
+        const matches = items.filter(item => item.id && item.name?.toLowerCase().startsWith(prefix.toLowerCase()));
+        state.more = matches.length > 20;
+        state.items = matches.slice(0, 20);
+      },
+      error: () => {
+        if (this.itemSuggestions.get(line) !== state) return;
+        state.items = [];
+        state.error = 'Suggestions could not be loaded. Enter the full item number to verify it.';
+      },
+    });
+  }
+  selectSuggestedItem(name: string, line: OrderLine): void {
+    const state = this.itemSuggestions.get(line);
+    const item = state?.items.find(option => option.name === name);
+    if (!item) return;
+    state?.subscription?.unsubscribe();
+    this.itemSuggestions.delete(line);
+    this.lineItemLookups.get(line)?.subscription?.unsubscribe();
+    this.lineItemLookups.set(line, { loading: false, error: '' });
+    line.item = item;
+    line.itemId = item.id;
+    this.recalculateTrackingInventoryAttributeFlags();
+  }
+  lineItemLookups = new Map<OrderLine, { loading: boolean; error: string; subscription?: Subscription }>();
+  get itemLookupLoading(): boolean {
+    return this.currentOrder?.orderLines.some(line => this.lineItemLookups.get(line)?.loading) || false;
+  }
+  ngOnDestroy(): void {
+    this.itemSuggestions.forEach(state => state.subscription?.unsubscribe());
+    this.itemSuggestions.clear();
+    this.lineItemLookups.forEach(state => state.subscription?.unsubscribe());
+    this.lineItemLookups.clear();
+  }
+  private validateOrderLines(requireLine = true): boolean {
+    const lines = this.currentOrder?.orderLines || [];
+    if (requireLine && !lines.length) {
+      this.messageService.warning('Add at least one order line before continuing.');
+      this.stepIndex = 1;
+      return false;
+    }
+    for (const line of lines) {
+      const state = this.lineItemLookups.get(line);
+      if (state?.loading || state?.error || !line.itemId) {
+        const error = state?.loading ? 'Checking item. Please wait before continuing.'
+          : state?.error || 'Select a valid item before continuing.';
+        this.messageService.warning(`Line ${line.number}: ${error}`);
+        this.stepIndex = 1;
+        return false;
+      }
+    }
+    return true;
+  }
   stepIndex = 0; 
   isSpinning = false;
   saveNewCustomer = false; 
@@ -276,25 +346,46 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     console.log(`orderLine's number is changed to ${orderLine.number}`);
 
   }
-  itemChanged(event: Event, orderLine: OrderLine) {
-    
-    console.log(`item name is changed to ${(event.target as HTMLInputElement).value}`);
-    const itemName: string = (event.target as HTMLInputElement).value.trim();
-    if (itemName.length === 0) {
+  itemNameChanged(name: string, line: OrderLine): void {
+    this.lineItemLookups.get(line)?.subscription?.unsubscribe();
+    this.lineItemLookups.set(line, { loading: false, error: '' });
+    line.itemId = undefined;
+    line.item = { ...this.getEmptyOrderLine().item!, name: name || '' };
+    this.recalculateTrackingInventoryAttributeFlags();
+    this.queueItemSuggestions(name, line);
+  }
+  itemChanged(event: Event, line: OrderLine): void {
+    const name = (event.target as HTMLInputElement).value.trim();
+    if (line.itemId && line.item?.name === name && !this.lineItemLookups.get(line)?.error) return;
+    this.itemNameChanged(name, line);
+    const state = this.lineItemLookups.get(line)!;
+    if (!name) {
+      state.error = 'Select an item before continuing.';
       return;
     }
-    this.itemService.getItems(itemName).subscribe(
-      itemRes => {
-        if (itemRes.length === 1) {
-          // we should only get one item by the name
-          orderLine.item = itemRes[0];
-          orderLine.itemId = itemRes[0].id;
-          this.recalculateTrackingInventoryAttributeFlags();
+    state.loading = true;
+    state.subscription = this.itemService.getItems(name).pipe(
+      timeout(15000), take(1), finalize(() => state.loading = false),
+    ).subscribe({
+      next: items => {
+        if (this.lineItemLookups.get(line) !== state) return;
+        const matches = items.filter(item => item.id && item.name?.toLowerCase() === name.toLowerCase());
+        if (matches.length !== 1) {
+          state.error = matches.length > 1
+            ? 'More than one item matches. Please verify the item master data.'
+            : 'Item not found. Check the item number before continuing.';
+          return;
         }
-      }
-    )
-
-
+        line.item = matches[0];
+        line.itemId = matches[0].id;
+        state.error = '';
+        this.recalculateTrackingInventoryAttributeFlags();
+      },
+      error: () => {
+        if (this.lineItemLookups.get(line) === state)
+          state.error = 'Unable to verify the item. Enter the item number again to retry.';
+      },
+    });
   }
 
   inventoryStatusChanged(orderLine: OrderLine) {
@@ -318,6 +409,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
  
   
   addExtraOrderLine(): void {
+    if (this.isSpinning || !this.validateOrderLines(false)) return;
     this.currentOrder!.orderLines = [...this.currentOrder!.orderLines, this.getEmptyOrderLine()];
 
   }
@@ -465,6 +557,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     this.stepIndex--;
   }
   nextStep() {
+    if (this.isSpinning || (this.stepIndex >= 1 && !this.validateOrderLines())) return;
     if (this.passValidation()) {
 
       this.stepIndex++;
@@ -484,6 +577,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   }
 
   confirm() {
+    if (this.isSpinning || !this.validateOrderLines()) return;
     if (!this.validateOrderNumberInput() || this.orderNumberValidateStatus !== 'success') {
       this.stepIndex = 0;
       this.messageService.error(this.i18n.fanyi('outbound.order.number.checkBeforeSave'));
@@ -638,6 +732,11 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   }
 
   removeOrderLine(index: number) {
+    const line = this.currentOrder!.orderLines[index];
+    this.itemSuggestions.get(line)?.subscription?.unsubscribe();
+    this.itemSuggestions.delete(line);
+    this.lineItemLookups.get(line)?.subscription?.unsubscribe();
+    this.lineItemLookups.delete(line);
 
     console.log(`remove index: ${index}`);
     this.currentOrder!.orderLines.splice(index, 1);

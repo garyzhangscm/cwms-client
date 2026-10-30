@@ -18,7 +18,7 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
   <nz-step nzTitle="{{ 'steps.work-order.maintenance.info' | i18n }}"> </nz-step>
-  <nz-step nzTitle="{{ 'steps.work-order.maintenance.line' | i18n }}"> </nz-step>
+  <nz-step nzTitle="Required Materials"> </nz-step>
   <nz-step nzTitle="{{ 'steps.work-order.maintenance.work-instruction' | i18n }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.work-order.maintenance.by-product' | i18n }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
@@ -62,8 +62,10 @@
         <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="width: 100%;">
-                <input nz-input [(ngModel)]="currentWorkOrder.item!.name" (blur)="itemNameOnBlur($event)" [disabled]="!newWorkOrder"/>
+                <input nz-input [ngModel]="currentWorkOrder.item?.name" (ngModelChange)="workOrderItemNameChanged($event)" (blur)="itemNameOnBlur($event)" [disabled]="!newWorkOrder"/>
               </nz-input-group>
+              <div *ngIf="itemLookupLoading" role="status">Checking item…</div>
+              <div *ngIf="itemLookupError" role="alert" style="color: #cf1322; margin-top: 4px;">{{ itemLookupError }}</div>
               <ng-template #suffixIconButton>
                 <app-inventory-item-query-popup (recordSelected)="processWorkOrderItemQueryResult($event)">
                 </app-inventory-item-query-popup>
@@ -125,8 +127,10 @@
 
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" 
                 nzCompact *ngIf="workOrderLine.id === undefined || workOrderLine.id === null">
-                <input nz-input [(ngModel)]="workOrderLine.item!.name" (blur)="workOrderLineItemNameOnBlur($event, workOrderLine)"/>
+                <input nz-input [ngModel]="workOrderLine.item?.name" (ngModelChange)="workOrderLineItemNameChanged($event, workOrderLine)" (blur)="workOrderLineItemNameOnBlur($event, workOrderLine)"/>
               </nz-input-group>
+              <div *ngIf="lineItemLookups.get(workOrderLine)?.loading" role="status">Checking item…</div>
+              <div *ngIf="lineItemLookups.get(workOrderLine)?.error" role="alert" style="color: #cf1322; margin-top: 4px;">{{ lineItemLookups.get(workOrderLine)?.error }}</div>
               <ng-template #suffixIconButton>
                 <app-inventory-item-query-popup (recordSelected)="processWorkOrderLineItemQueryResult($event, workOrderLine)">
                 </app-inventory-item-query-popup>
@@ -306,7 +310,7 @@
   </nz-card>
 
   <!-- Work Order Line Information -->
-  <nz-card nzTitle="{{ 'work-order.line' | i18n }}">
+  <nz-card nzTitle="Required Materials">
     <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder.workOrderLines" nzSize="middle"
       [nzShowPagination]="false">
       <thead>
@@ -411,11 +415,11 @@
     <span>{{ 'steps.previous' | i18n }}</span>
   </button>
   <nz-divider nzType="vertical" *ngIf="stepIndex < 4"></nz-divider>
-  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 4">
+  <button nz-button nzType="default" (click)="nextStep()" [disabled]="itemLookupLoading || lineItemLookupLoading || isSpinning" *ngIf="stepIndex < 4">
     <span>{{ 'steps.next' | i18n }}</span>
   </button>
   <nz-divider nzType="vertical"></nz-divider>
-  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 4">
+  <button nz-button nzType="primary" (click)="confirm()" [nzLoading]="isSpinning" [disabled]="itemLookupLoading || lineItemLookupLoading || isSpinning" *ngIf="stepIndex === 4">
     <span> {{ 'confirm' | i18n }}</span>
   </button>
 </div>

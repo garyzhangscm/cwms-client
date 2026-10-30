@@ -1,3 +1,5 @@
+import { finalize, map, timeout } from 'rxjs';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { formatDate } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
@@ -25,6 +27,67 @@ import { AllocationConfigurationService } from '../services/allocation-configura
 export class OutboundAllocationConfigurationComponent implements OnInit {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly modeHttp = inject(_HttpClient);
+  private readonly modeWarehouse = inject(WarehouseService);
+  allocationMode: 'ITEM_QUANTITY' | 'CLASSIC' = 'ITEM_QUANTITY';
+  savedAllocationMode: 'ITEM_QUANTITY' | 'CLASSIC' | null = null;
+  modeRevision = 0;
+  modeLoading = false;
+  modeSaving = false;
+  modeError = '';
+  private modeWarehouseId?: number;
+
+  private unwrapAllocationMode(response: any): any {
+    if (!response || response.result !== 0 || !response.data) {
+      throw new Error('Allocation mode response could not be verified');
+    }
+    return response.data;
+  }
+
+  loadAllocationMode(): void {
+    if (this.modeLoading || this.modeSaving) return;
+    this.modeLoading = true;
+    this.modeError = '';
+    this.savedAllocationMode = null;
+    const warehouseId = this.modeWarehouse.getCurrentWarehouse().id;
+    this.modeWarehouseId = warehouseId;
+    this.modeHttp.get('outbound/outbound-configuration/allocation-mode', { warehouseId })
+      .pipe(timeout(15000), map(response => this.unwrapAllocationMode(response)), finalize(() => this.modeLoading = false))
+      .subscribe({
+        next: (result: any) => {
+          if (this.modeWarehouse.getCurrentWarehouse().id !== warehouseId) { this.modeError = 'Warehouse changed. Reload the allocation mode.'; return; }
+          if (!result || !['ITEM_QUANTITY', 'CLASSIC'].includes(result.mode) || !Number.isSafeInteger(result.revision)) {
+            this.modeError = 'The allocation mode could not be verified. Reload before saving.'; return;
+          }
+          this.allocationMode = this.savedAllocationMode = result.mode;
+          this.modeRevision = result.revision;
+        },
+        error: () => this.modeError = 'Allocation mode settings are unavailable. Administrator access and the updated backend are required. Existing allocation rules remain available.'
+      });
+  }
+
+  saveAllocationMode(): void {
+    if (this.modeLoading || this.modeSaving || this.savedAllocationMode === null || this.displayOnly || this.allocationMode === this.savedAllocationMode) return;
+    if (this.modeWarehouse.getCurrentWarehouse().id !== this.modeWarehouseId) { this.savedAllocationMode = null; this.modeError = 'Warehouse changed. Reload before saving.'; return; }
+    const warehouseId = this.modeWarehouseId;
+    this.modeSaving = true;
+    this.modeError = '';
+    this.modeHttp.put('outbound/outbound-configuration/allocation-mode?warehouseId=' + warehouseId,
+      { mode: this.allocationMode, revision: this.modeRevision })
+      .pipe(timeout(15000), map(response => this.unwrapAllocationMode(response)), finalize(() => this.modeSaving = false))
+      .subscribe({
+        next: (result: any) => {
+          if (this.modeWarehouse.getCurrentWarehouse().id !== warehouseId || !result || !['ITEM_QUANTITY', 'CLASSIC'].includes(result.mode) || !Number.isSafeInteger(result.revision)) {
+            this.savedAllocationMode = null; this.modeError = 'Reload to verify the saved allocation mode.'; return;
+          }
+          this.allocationMode = this.savedAllocationMode = result.mode;
+          this.modeRevision = result.revision;
+          this.messageService.success('Allocation mode saved. Existing orders keep their selected mode.');
+        },
+        error: () => { this.savedAllocationMode = null; this.modeError = 'The save could not be confirmed. Reload to check the current mode before trying again.'; }
+      });
+  }
+
   listOfColumns: Array<ColumnItem<AllocationConfiguration>> = [
     {
       name: 'sequence',
@@ -193,6 +256,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.loadAllocationMode();
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.allocation-configuration'));
     this.initSearchForm();
 
