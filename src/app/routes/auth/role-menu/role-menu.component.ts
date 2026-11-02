@@ -1,3 +1,4 @@
+import { firstValueFrom } from 'rxjs';
 import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -146,59 +147,40 @@ export class AuthRoleMenuComponent implements OnInit {
     console.log('nzChange', ret);
   }
 
-  assignMenu(): void {
-    // Let's see if we assign / deassign some menu items
-
-    // Get the final result from right side of the transfer control
-    // Please note
-    // menuList.item.key: String
-    // this.accessibleMenuIds: arrays of number
-    // when compare the 2 array, we may need to conver the string to number before the comparasion.
+  async assignMenu(): Promise<void> {
+    if (this.processingMenu || !this.currentRole || !this.allMenus) return;
     this.processingMenu = true;
-    const currentAssignedMenuIds = [...this.webMenuList.filter(item => item.direction === 'right').map(item => item['key']), 
-       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item['key'])]; 
-
-       
-   //  const newlyAssignedFullyFunctionalMenuIds = currentAssignedMenuIds.filter(
-   //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id) 
-   //  );
-   const newlyAssignedFullyFunctionalWebMenuIds = 
-      [...this.webMenuList.filter(item => item.direction === 'right' && !item['displayOnly']).map(item => item['key'])]; 
-   
-    //  const newlyAssignedDisplayOnlyMenuIds = currentAssignedMenuIds.filter(
-    //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),
-    //  );
-   const newlyAssignedDisplayOnlyWebMenuIds = 
-       [...this.webMenuList.filter(item => item.direction === 'right' && item['displayOnly']).map(item => item['key'])]; 
-
-    const newlyDeassignedMenuIds = 
-    [...this.fullyAccessibleMenuIds.filter(
-      accessibleMenuId => !currentAssignedMenuIds.some(id => accessibleMenuId === +id),
-      ),
-      ...this.displayOnlyAccessibleMenuIds.filter(
-        accessibleMenuId => !currentAssignedMenuIds.some(id => accessibleMenuId === +id),
-      ), 
-    ];
-
-    console.log(`start to assign menu with`);
-    console.log(`========    newlyAssignedFullyFunctionalWebMenuIds   ========== `);
-    console.log(`${JSON.stringify(newlyAssignedFullyFunctionalWebMenuIds)}`);
-    console.log(`========    newlyAssignedDisplayOnlyWebMenuIds   ========== `);
-    console.log(`${JSON.stringify(newlyAssignedDisplayOnlyWebMenuIds)}`);  
-    this.roleService.processMenus(this.currentRole!.id, newlyAssignedFullyFunctionalWebMenuIds, 
-      newlyAssignedDisplayOnlyWebMenuIds, newlyDeassignedMenuIds).subscribe(
-      {
-        next: () => {
-          
-          this.processingMenu = false;
-          this.message.success(this.i18n.fanyi('message.action.success'));
-          
-          setTimeout(() => {
-            this.return();
-          }, 500);
-        }, 
-        error: () =>  this.processingMenu = false
-    }); 
+    const roleId = this.currentRole.id;
+    const full = new Set<number>();
+    const display = new Set<number>();
+    const visible = new Set([...this.webMenuList, ...this.mobileMenuList].map(item => Number(item['key'])));
+    for (const item of this.webMenuList.filter(item => item.direction === 'right')) {
+      (item['displayOnly'] ? display : full).add(Number(item['key']));
+    }
+    // Mobile menus have no display-only mode.
+    for (const item of this.mobileMenuList.filter(item => item.direction === 'right')) full.add(Number(item['key']));
+    // Preserve existing permissions that are not present in this page's catalog.
+    for (const entry of this.currentRole.roleMenus) {
+      if (!visible.has(Number(entry.menu.id))) (entry.displayOnlyFlag ? display : full).add(Number(entry.menu.id));
+    }
+    const assigned = new Set([...full, ...display]);
+    const removed = [...new Set(this.currentRole.roleMenus.map(entry => Number(entry.menu.id)))].filter(id => !assigned.has(id));
+    try {
+      await firstValueFrom(this.roleService.processMenus(roleId, [...full], [...display], removed));
+      const saved = await firstValueFrom(this.roleService.getRole(roleId));
+      const actual = new Map(saved.roleMenus.map(entry => [Number(entry.menu.id), !!entry.displayOnlyFlag]));
+      if (actual.size !== assigned.size || [...full].some(id => actual.get(id) !== false) || [...display].some(id => actual.get(id) !== true)) {
+        this.message.error('The saved menu permissions do not match your selection. Reload this page to check before saving again.');
+        return;
+      }
+      this.currentRole = saved;
+      this.fullyAccessibleMenuIds = [...full];
+      this.displayOnlyAccessibleMenuIds = [...display];
+      this.message.success(this.i18n.fanyi('message.action.success'));
+      this.return();
+    } catch {
+      this.message.error('Could not verify the saved menu permissions. Reload this page to check before trying again.');
+    } finally { this.processingMenu = false; }
   }
 
   /***

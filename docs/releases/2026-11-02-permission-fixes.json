@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-02",
+  "scope": [
+    "Allocate permission URL encoding",
+    "Mobile role-menu persistence"
+  ],
+  "webBaselineSourceCommit": "ed10a9b",
+  "sourcePreservation": {
+    "baselineFiles": 2002,
+    "changedFiles": [
+      "app/routes/auth/role-menu/role-menu.component.ts",
+      "app/routes/auth/role-menu/role-menu.component.html"
+    ],
+    "otherSourcePreserved": true
+  },
+  "web": {
+    "colton": {
+      "site": "colton",
+      "image": "brianwang1912/mes-web:v19.2-colton-role-menu-20261102-01@sha256:43ea0667b5c3cec93fa60aa7f2c080d50ae1abf1e3f1557fc83f0f1ea8cc6f6c",
+      "ready": true,
+      "indexSha256": "5c5b368b3bd76d0051cff1d91c1d6e181885a732811774b9449aa79162eab6cd",
+      "configPreserved": true,
+      "scriptsVerified": true,
+      "backup": "/root/k8s/backups/role-menu-web-20261102-20261102T180027Z"
+    },
+    "fay": {
+      "site": "fay",
+      "image": "brianwang1912/mes-web:v19.2-fay-role-menu-20261102-01@sha256:6ccd9fa89f9e9f559a6d98d826843a5d56e8f94cbe941111855651d693a22b2c",
+      "ready": true,
+      "indexSha256": "947d07d8f0637dbad2feac80c8467b577c5639fca592243482b16b92e6a2db43",
+      "configPreserved": true,
+      "scriptsVerified": true,
+      "backup": "/root/k8s/backups/role-menu-web-20261102-20261102T175845Z"
+    }
+  },
+  "backend": {
+    "colton": {
+      "site": "colton",
+      "ready": true,
+      "image": "brianwang1912/cwms-outboundserver:v1.62-allocation-permission-20261102-01@sha256:406b3f1f895a38a62c0de0cdb8ee2a8f38006ac152b3c307a1f7e571b770c3d7",
+      "jarSha256": "8b24e4ac779cdb21d6728681d4da42ec60149b83e6bf52f851c9eec10ee8989e",
+      "requiredFeatureClassesVerified": 10,
+      "siteEnvironmentPreserved": true,
+      "endpointsReady": true,
+      "backup": "/root/k8s/backups/allocation-permission-colton-20261102T175650Z"
+    },
+    "fay": {
+      "site": "fay",
+      "ready": true,
+      "image": "brianwang1912/cwms-outboundserver:v1.62-allocation-permission-20261102-01@sha256:406b3f1f895a38a62c0de0cdb8ee2a8f38006ac152b3c307a1f7e571b770c3d7",
+      "jarSha256": "8b24e4ac779cdb21d6728681d4da42ec60149b83e6bf52f851c9eec10ee8989e",
+      "requiredFeatureClassesVerified": 10,
+      "siteEnvironmentPreserved": true,
+      "endpointsReady": true,
+      "backup": "/root/k8s/backups/allocation-permission-fay-20261102T175601Z"
+    }
+  },
+  "backendPreservation": {
+    "changedEntries": [
+      "BOOT-INF/classes/com/garyzhangscm/cwms/outbound/quantity/QuantityAllocationService.class"
+    ],
+    "preservedEntries": 782,
+    "sourceMatchesLiveBytecode": true,
+    "baselineHash": "8fd8b3c1ad855c81644b205f40a6ee57131b9f5afdc62cd25639e53ececc4e63",
+    "outbound": "8b24e4ac779cdb21d6728681d4da42ec60149b83e6bf52f851c9eec10ee8989e"
+  },
+  "tests": [
+    "13 permission assertions, original failure reproduced",
+    "role-menu actual component regression passed",
+    "Angular production build passed",
+    "both sites HTTP 200, report health and feature assets verified"
+  ],
+  "notReleased": [
+    "RF test UI",
+    "QC line-clearance test pages",
+    "other test-only changes"
+  ],
+  "note": "Test snapshot branch contains additional test-only source. Published Web was built from verified production source plus ONLY the two role-menu files listed in sourcePreservation."
+}

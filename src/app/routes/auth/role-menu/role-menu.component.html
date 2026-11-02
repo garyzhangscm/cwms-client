@@ -49,7 +49,7 @@
   <nz-card nzTitle="{{ 'web' | i18n}}">
     <div nz-row style="padding: 10px">
       <div nz-col nzSpan="12" nzOffset="6">
-        <nz-transfer [nzDataSource]="webMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+        <nz-transfer [nzDisabled]="processingMenu" [nzDataSource]="webMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
           (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
           (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
           [nzTitles]="[ unassignedMenuText, assignedMenuText]" [nzRender]="render">
@@ -60,7 +60,7 @@
             @if(menu.direction == 'right') {
 
               <nz-switch style="padding-left: 10px"
-                  [(ngModel)]="menu.displayOnly"
+                  [nzDisabled]="processingMenu" [(ngModel)]="menu.displayOnly"
                   nzCheckedChildren="{{'displayOnly'|i18n}}" nzUnCheckedChildren="{{'displayOnly'|i18n}}">
               </nz-switch>
             }
@@ -74,7 +74,7 @@
   <nz-card nzTitle="{{ 'mobile' | i18n}}">
       <div nz-row style="padding: 10px">
         <div nz-col nzSpan="12" nzOffset="6">
-          <nz-transfer [nzDataSource]="mobileMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+          <nz-transfer [nzDisabled]="processingMenu" [nzDataSource]="mobileMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
             (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
             (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
             [nzTitles]="[ unassignedMenuText, assignedMenuText]">
@@ -93,7 +93,7 @@
   @if(!newRole) {
 
     <div nz-row nzType="flex" nzJustify="center" >
-      <button nz-button nzType="primary" (click)="assignMenu()" [nzLoading]="processingMenu">
+      <button nz-button nzType="primary" (click)="assignMenu()" [nzLoading]="processingMenu" [disabled]="!currentRole || !allMenus || processingMenu">
         {{ 'confirm' | i18n }}
       </button>
     </div>
