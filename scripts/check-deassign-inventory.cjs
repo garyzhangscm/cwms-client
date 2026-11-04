@@ -1,0 +1,14 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),ts=require('typescript');
+const file='src/app/routes/work-order/deassign-production-line/deassign-production-line.component.ts';
+const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,experimentalDecorators:true}}).outputText;
+const out={};vm.runInNewContext(code,{exports:out,require:()=>({Component:()=>v=>v,inject:()=>({fanyi:s=>s})}),console,setTimeout});
+let materials=[],picks=[],writes=0;const obs=q=>({subscribe(o){q.push(o)}});
+const c=new out.WorkOrderDeassignProductionLineComponent(null,null,{getDeliveredInventory:()=>obs(materials),deassignProductionLine:()=>{writes++;return obs([])}},null,null,null,{},null,{getPicksByWorkOrderAndProductionLine:()=>obs(picks)});
+c.currentWorkOrder={id:2583,productionLineAssignments:[{productionLine:{id:11}},{productionLine:{id:6}}]};
+c.selectedProductionLineId=11;c.selectedProductionLineChanged();c.nextStep();assert.equal(picks.length,0);
+c.selectedProductionLineId=6;c.selectedProductionLineChanged();materials[0].next([{id:5,quantity:4}]);assert.equal(c.materialsReady,false);
+materials[1].error();c.confirm();assert.equal(writes,0);assert.ok(c.loadError);
+c.selectedProductionLineChanged();materials[2].next([{id:9,quantity:14}]);c.listOfReturnableMaterial[0].quantity=10;c.nextStep();
+assert.equal(c.inventoryResults[0].originalQuantity,14);assert.equal(c.inventoryResults[0].newQuantity,10);
+picks[0].error();c.confirm();assert.equal(writes,0);c.nextStep();picks[1].next([]);c.confirm();c.confirm();assert.equal(writes,1);
+console.log('PASS: failed and stale loads blocked, retry works, original quantity retained, no duplicate submission');

@@ -42,6 +42,10 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
   stepIndex = 0;
   validInventoryStatuses: InventoryStatus[] = [];
   isSpinning = false;
+  materialsReady = false;
+  picksReady = false;
+  loadError = '';
+  private selectionVersion = 0;
 
   constructor(private http: _HttpClient,
 
@@ -67,7 +71,7 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
             this.currentWorkOrder = workOrderRes
             this.isSpinning = false;
           },
-          error: () => { },
+          error: () => { this.isSpinning = false; this.messageService.error("Could not load the work order. Reload to retry."); },
         });
 
       }
@@ -84,55 +88,65 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
   }
 
   selectedProductionLineChanged() {
-    console.log(`selectedProductionLineChanged: ${this.selectedProductionLineId}`);
-    this.isSpinning = true;
-    this.currentWorkOrder?.productionLineAssignments?.filter(
-      productionLineAssignment =>
-        productionLineAssignment.productionLine.id == this.selectedProductionLineId
-    ).forEach(
-      productionLineAssignment =>
-        this.selectedProductionLine = productionLineAssignment.productionLine
-
-    );
-
-    console.log(`this.selectedProductionLine: ${JSON.stringify(this.selectedProductionLine)}`);
-    // load the material that is not consumed yet
-    this.loadReturnableMaterials();
-    this.isSpinning = false;
-  }
-
-  loadReturnableMaterials() {
-
-    this.workOrderService.getDeliveredInventory(this.currentWorkOrder!, this.selectedProductionLine)
-      .subscribe({
-        // all delivered inventory that still exists is available for return
-        next: (deliveredInventoryRes) => {
-          this.listOfReturnableMaterial = deliveredInventoryRes;
-          this.deliveredInventory = deliveredInventoryRes;
-        },
-        error: () => { },
-
-      });
+    const version = ++this.selectionVersion;
+    this.materialsReady = this.picksReady = false;
+    this.loadError = '';
+    this.stepIndex = 0;
+    this.deliveredInventory = [];
+    this.listOfReturnableMaterial = [];
+    this.picksToBeCancelled = [];
+    this.selectedProductionLine = this.currentWorkOrder?.productionLineAssignments?.find(
+      a => a.productionLine.id == this.selectedProductionLineId
+    )?.productionLine;
+    this.isSpinning = !!this.selectedProductionLine;
+    if (!this.selectedProductionLine || !this.currentWorkOrder) return;
+    const failed = () => {
+      if (version !== this.selectionVersion) return;
+      this.loadError = 'Could not load returnable inventory. Retry before continuing.';
+      this.isSpinning = false;
+    };
+    this.workOrderService.getDeliveredInventory(this.currentWorkOrder, this.selectedProductionLine).subscribe({
+      next: rows => {
+        if (version !== this.selectionVersion) return;
+        if (!Array.isArray(rows)) { failed(); return; }
+        this.deliveredInventory = rows;
+        this.listOfReturnableMaterial = rows.map(row => ({ ...row }));
+        this.materialsReady = true;
+        this.isSpinning = false;
+      }, error: failed
+    });
   }
 
   previousStep(): void {
-    this.stepIndex -= 1;
-  }
-  nextStep(): void {
-    this.stepIndex += 1;
-    if (this.stepIndex === 1) {
-      // display the result of inventory and picks
-      // for confirmation
-      this.displayResult();
-    }
+    if (this.isSpinning) return;
+    this.picksReady = false;
+    this.stepIndex = 0;
   }
 
-  displayResult() {
+  nextStep(): void {
+    if (!this.materialsReady || this.isSpinning || this.stepIndex !== 0) return;
     this.isSpinning = true;
+    this.picksReady = false;
+    this.loadError = '';
     this.displayInventoryResult();
-    this.displayPicksToBeCancelled();
-    this.isSpinning = false;
+    const version = this.selectionVersion;
+    const failed = () => {
+      if (version !== this.selectionVersion) return;
+      this.isSpinning = false;
+      this.loadError = 'Could not load picks to cancel. Retry before continuing.';
+    };
+    this.pickService.getPicksByWorkOrderAndProductionLine(this.currentWorkOrder!, this.selectedProductionLine!).subscribe({
+      next: rows => {
+        if (version !== this.selectionVersion) return;
+        if (!Array.isArray(rows)) { failed(); return; }
+        this.picksToBeCancelled = rows;
+        this.picksReady = true;
+        this.stepIndex = 1;
+        this.isSpinning = false;
+      }, error: failed
+    });
   }
+
   displayInventoryResult() {
 
     this.inventoryResults = [];
@@ -184,15 +198,8 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
 
 
   }
-  displayPicksToBeCancelled() {
-    this.pickService.getPicksByWorkOrderAndProductionLine(this.currentWorkOrder!, this.selectedProductionLine!)
-      .subscribe({
-
-        next: (pickRes) => this.picksToBeCancelled = pickRes,
-      });
-  }
-
   confirm() {
+    if (this.stepIndex !== 1 || !this.materialsReady || !this.picksReady || this.isSpinning) return;
     this.isSpinning = true;
     this.workOrderService.deassignProductionLine(
       this.currentWorkOrder!.id!, this.selectedProductionLine!, this.listOfReturnableMaterial

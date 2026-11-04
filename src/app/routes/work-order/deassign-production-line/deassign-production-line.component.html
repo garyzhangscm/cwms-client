@@ -128,7 +128,7 @@
 
         <ng-template #inventoryTableFoot>
             <div nz-row nzType="flex" nzJustify="start">
-                <button nz-button nzType="primary" (click)="addExtraInventory()">
+                <button nz-button nzType="primary" [disabled]="!materialsReady || isSpinning" (click)="addExtraInventory()">
                     {{ 'add' | i18n }}
                 </button>
             </div>
@@ -232,16 +232,19 @@
 
 
 
+    <div *ngIf="loadError" role="alert">{{ loadError }}
+        <button nz-button (click)="materialsReady ? nextStep() : selectedProductionLineChanged()">Retry</button>
+    </div>
     <div class="steps-action">
         <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
             <span>{{ 'steps.previous' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
-        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+        <button nz-button nzType="default" [disabled]="!materialsReady || isSpinning" (click)="nextStep()" *ngIf="stepIndex < 1">
             <span>{{ 'steps.next' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical"></nz-divider>
-        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+        <button nz-button nzType="primary" [disabled]="!picksReady || !materialsReady || isSpinning" (click)="confirm()" *ngIf="stepIndex === 1">
             <span> {{ 'confirm' | i18n }}</span>
         </button>
     </div>
