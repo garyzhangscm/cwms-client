@@ -1,0 +1,92 @@
+@import '@delon/theme/index';
+
+:host {
+  display: block;
+  width: min(400px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 30px 30px 8px;
+  border: 1px solid #e5e9ef;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgb(25 47 82 / 8%);
+
+  .login-warehouse-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #66758d;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+
+  .login-warehouse-select {
+    display: block;
+    width: 100%;
+  }
+
+  ::ng-deep {
+    .ant-tabs .ant-tabs-bar {
+      margin-bottom: 24px;
+      text-align: center;
+      border-bottom: 0;
+    }
+
+    .ant-tabs-tab {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    .ant-input-affix-wrapper,
+    .ant-select-selector {
+      border-radius: 9px;
+    }
+
+    .ant-btn-primary {
+      border-radius: 9px;
+      font-weight: 600;
+    }
+
+    .ant-input-affix-wrapper .ant-input:not(:first-child) {
+      padding-left: 4px;
+    }
+
+    .icon {
+      cursor: pointer;
+      margin-left: 16px;
+      font-size: 24px;
+      color: rgb(0 0 0 / 20%);
+      vertical-align: middle;
+      transition: color 0.3s;
+
+      &:hover {
+        color: @primary-color;
+      }
+    }
+
+    .other {
+      margin-top: 24px;
+      line-height: 22px;
+      text-align: left;
+
+      nz-tooltip {
+        vertical-align: middle;
+      }
+
+      .register {
+        float: right;
+      }
+    }
+  }
+}
+
+[data-theme='dark'] {
+  :host ::ng-deep {
+    .icon {
+      color: rgb(255 255 255 / 20%);
+
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+}

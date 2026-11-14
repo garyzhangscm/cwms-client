@@ -1,0 +1,244 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/inventory" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/inventory" routerLinkActive="active">{{
+        'breadcrumb.inventory' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <ng-container>
+    <nz-card [nzActions]="[actionConfirm]">
+      <nz-descriptions nzBordered>
+
+        <nz-descriptions-item nzTitle="{{'lpn' | i18n}}">
+          {{currentInventory.lpn}}
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="{{'location' | i18n}}" nzSpan="2">
+          {{currentInventory.locationName}}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'item' | i18n}}">
+          {{currentInventory.item?.name}}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'item.description' | i18n}}" nzSpan="2">
+          {{currentInventory.item?.description}}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'item.package-type' | i18n}}" nzSpan="3">
+          <div *ngIf="currentInventory.itemPackageType?.name !== originalInventoryItemPackageTypeName">
+            <span>{{ 'originalValue' | i18n}} :
+              {{ originalInventoryItemPackageTypeName }}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span>{{ 'newValue' | i18n}} :
+              {{ currentInventory.itemPackageType?.name }}</span>
+          </div>
+          <nz-card [nzTitle]="currentInventory.itemPackageType?.name">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable
+              [nzData]="currentInventory.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
+              nzBordered>
+              <thead>
+                <tr>
+                  <th>{{ 'unitOfMeasure' | i18n}}</th>
+                  <th>{{ 'quantity' | i18n }}</th>
+                  <th>{{ 'weight' | i18n }}</th>
+                  <th>{{ 'length' | i18n }}</th>
+                  <th>{{ 'width' | i18n }}</th>
+                  <th>{{ 'height' | i18n }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+                  <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+                  <td>{{ itemUnitOfMeasure.quantity }}</td>
+                  <td>{{ itemUnitOfMeasure.weight }}</td>
+                  <td>{{ itemUnitOfMeasure.length }}</td>
+                  <td>{{ itemUnitOfMeasure.width }}</td>
+                  <td>{{ itemUnitOfMeasure.height }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-card>
+
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'inventory.status' | i18n}}">
+
+          <div
+            *ngIf="currentInventory !== undefined && currentInventory.inventoryStatus?.name !== originalInventoryStatusName else inventoryStatusTpl">
+            <span>{{ 'originalValue' | i18n}} :
+              {{  originalInventoryStatusName  }}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span>{{ 'newValue' | i18n}} :
+              {{  currentInventory.inventoryStatus!.name!  }}</span>
+          </div>
+          
+
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
+          {{currentInventory.quantity}}
+
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="{{'color' | i18n}}">
+          
+          <div
+            *ngIf="currentInventory !== undefined && currentInventory.color !== originalInventoryColor else noColorChangeTpl">
+            <span>{{ 'originalValue' | i18n}} :
+              {{  originalInventoryColor  }}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span>{{ 'newValue' | i18n}} :
+              {{  currentInventory.color }}</span>
+          </div>
+          <ng-template #noColorChangeTpl>
+            {{currentInventory.color}}</ng-template>
+
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'style' | i18n}}">
+          <div
+            *ngIf="currentInventory !== undefined && currentInventory.style !== originalInventoryStyle else noStyleChangeTpl">
+            <span>{{ 'originalValue' | i18n}} :
+              {{  originalInventoryStyle  }}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span>{{ 'newValue' | i18n}} :
+              {{  currentInventory.style }}</span>
+          </div>
+          <ng-template #noStyleChangeTpl>
+            {{currentInventory.style}}</ng-template>
+
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'productSize' | i18n}}">
+          <div
+            *ngIf="currentInventory !== undefined && currentInventory.productSize !== originalInventoryProductSize else noProductSizeChangeTpl">
+            <span>{{ 'originalValue' | i18n}} :
+              {{  originalInventoryProductSize  }}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span>{{ 'newValue' | i18n}} :
+              {{  currentInventory.productSize }}</span>
+          </div>
+          <ng-template #noProductSizeChangeTpl>
+            {{currentInventory.productSize}}</ng-template>
+
+        </nz-descriptions-item>
+        
+        <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute1Enabled"
+            nzTitle="{{inventoryConfiguration.inventoryAttribute1DisplayName == null ? 
+              ('inventoryAttribute1' | i18n) : inventoryConfiguration.inventoryAttribute1DisplayName }}">
+              
+            <div
+            *ngIf="currentInventory !== undefined && currentInventory.attribute1 !== originalInventoryAttribute1 else noAttribute1ChangeTpl">
+              <span>{{ 'originalValue' | i18n}} :
+                {{  originalInventoryAttribute1  }}</span>
+              <nz-divider nzType="vertical"></nz-divider>
+              <span>{{ 'newValue' | i18n}} :
+                {{  currentInventory.attribute1 }}</span>
+            </div>
+            <ng-template #noAttribute1ChangeTpl>
+              {{currentInventory.attribute1}}</ng-template>
+
+        </nz-descriptions-item>
+        
+        <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute2Enabled"
+            nzTitle="{{inventoryConfiguration.inventoryAttribute2DisplayName == null ? 
+              ('inventoryAttribute2' | i18n) : inventoryConfiguration.inventoryAttribute2DisplayName }}">
+
+              <div
+              *ngIf="currentInventory !== undefined && currentInventory.attribute2 !== originalInventoryAttribute2 else noAttribute2ChangeTpl">
+                <span>{{ 'originalValue' | i18n}} :
+                  {{  originalInventoryAttribute2  }}</span>
+                <nz-divider nzType="vertical"></nz-divider>
+                <span>{{ 'newValue' | i18n}} :
+                  {{  currentInventory.attribute2 }}</span>
+              </div>
+              <ng-template #noAttribute2ChangeTpl>
+                {{currentInventory.attribute2}}</ng-template>
+
+        </nz-descriptions-item>
+        <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute3Enabled"
+            nzTitle="{{inventoryConfiguration.inventoryAttribute3DisplayName == null ? 
+              ('inventoryAttribute3' | i18n) : inventoryConfiguration.inventoryAttribute3DisplayName }}">
+              
+              <div
+              *ngIf="currentInventory !== undefined && currentInventory.attribute3 !== originalInventoryAttribute3 else noAttribute3ChangeTpl">
+                <span>{{ 'originalValue' | i18n}} :
+                  {{  originalInventoryAttribute3  }}</span>
+                <nz-divider nzType="vertical"></nz-divider>
+                <span>{{ 'newValue' | i18n}} :
+                  {{  currentInventory.attribute3 }}</span>
+              </div>
+              <ng-template #noAttribute3ChangeTpl>
+                {{currentInventory.attribute3}}</ng-template>
+
+        </nz-descriptions-item>
+        <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute4Enabled"
+            nzTitle="{{inventoryConfiguration.inventoryAttribute4DisplayName == null ? 
+              ('inventoryAttribute4' | i18n) : inventoryConfiguration.inventoryAttribute4DisplayName }}">
+              
+              <div
+              *ngIf="currentInventory !== undefined && currentInventory.attribute4 !== originalInventoryAttribute4 else noAttribute4ChangeTpl">
+                <span>{{ 'originalValue' | i18n}} :
+                  {{  originalInventoryAttribute4  }}</span>
+                <nz-divider nzType="vertical"></nz-divider>
+                <span>{{ 'newValue' | i18n}} :
+                  {{  currentInventory.attribute4 }}</span>
+              </div>
+              <ng-template #noAttribute4ChangeTpl>
+                {{currentInventory.attribute4}}</ng-template>
+
+        </nz-descriptions-item>
+        <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute5Enabled"
+            nzTitle="{{inventoryConfiguration.inventoryAttribute5DisplayName == null ? 
+              ('inventoryAttribute5' | i18n) : inventoryConfiguration.inventoryAttribute5DisplayName }}">
+              
+              
+              <div
+              *ngIf="currentInventory !== undefined && currentInventory.attribute5 !== originalInventoryAttribute5 else noAttribute5ChangeTpl">
+                <span>{{ 'originalValue' | i18n}} :
+                  {{  originalInventoryAttribute5  }}</span>
+                <nz-divider nzType="vertical"></nz-divider>
+                <span>{{ 'newValue' | i18n}} :
+                  {{  currentInventory.attribute5 }}</span>
+              </div>
+              <ng-template #noAttribute5ChangeTpl>
+                {{currentInventory.attribute5}}</ng-template>
+
+        </nz-descriptions-item>
+        
+        <nz-descriptions-item nzTitle="{{'inWarehouseDate' | i18n}}">
+          <div
+            *ngIf="currentInventory !== undefined && currentInventory.inWarehouseDatetime !== originalInWarehouseDatetime else noInWarehouseDatetimeChangeTpl">
+            <span>{{ 'originalValue' | i18n}} :
+              {{  originalInWarehouseDatetime  | date:'MM/dd/yyyy'}}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span>{{ 'newValue' | i18n}} :
+              {{  currentInventory.inWarehouseDatetime | date:'MM/dd/yyyy'}}</span>
+          </div>
+          <ng-template #noInWarehouseDatetimeChangeTpl>
+            {{currentInventory.inWarehouseDatetime}}</ng-template>
+
+        </nz-descriptions-item>
+
+
+
+        <ng-template #inventoryStatusTpl>
+          {{currentInventory.inventoryStatus?.name}}</ng-template>
+
+      </nz-descriptions>
+    </nz-card>
+  </ng-container>
+</nz-spin>
+
+<ng-template #actionConfirm>
+  <a nz-button nzType="primary" (click)="saveCurrentInventory()">
+
+    {{ 'steps.confirm.title' | i18n }}</a>
+</ng-template>

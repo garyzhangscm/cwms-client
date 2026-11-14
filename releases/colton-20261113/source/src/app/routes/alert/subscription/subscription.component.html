@@ -1,0 +1,113 @@
+<page-header title="{{'alert-subscription' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+
+  <div class="search-result-list"> 
+    
+    
+  <nz-table #alertSubscriptionTable   nzShowPagination [nzData]="enumKeys(alertTypes)">
+  <thead>
+    <tr>
+      <th  ></th>
+      
+      @for (alertDeliveryChannel of alertDeliveryChannelsKeys; track alertDeliveryChannel) {
+      
+        <th>
+          {{ 'ALERT-DELIVERY-CHANNEL-' + alertDeliveryChannel.toString() | i18n }}
+        </th> 
+      }
+
+    </tr>
+  </thead>
+  <tbody>
+    
+    @for (alertType of alertSubscriptionTable.data; track alertType) {
+      
+      <tr>
+        <td >
+          {{ 'ALERT-TYPE-' + alertType.toString() | i18n }}</td>
+          
+        @for (alertDeliveryChannel of enumKeys(alertDeliveryChannels); track alertDeliveryChannel) {
+        
+          <td>
+            <nz-switch [ngModel]="userAlertSubscriptionMap.has(alertType.toString() + '-' + alertDeliveryChannel.toString())"
+              (ngModelChange)="toggleSubscription($event, alertTypes[alertType], alertDeliveryChannels[alertDeliveryChannel])"
+            >
+  
+  
+            </nz-switch> 
+            <br />
+            <!--show keywords list or allow the user to add key word filter if the user subscribe to this alert-->
+            @if(userAlertSubscriptionMap.has(alertType.toString() + '-' + alertDeliveryChannel.toString())) {
+
+              <div>
+  
+                <span>{{'alert.filter_by_keywords' | i18n }}: </span>
+                <a (click)="openKeyWordsFilterModal(alertTypes[alertType], alertDeliveryChannels[alertDeliveryChannel], 
+                           tplKeyWordsFilterModalTitle, tplKeyWordsFilterModalContent)"> 
+                  @if(userAlertSubscriptionMap.get(alertType.toString() + '-' + alertDeliveryChannel.toString())!.keyWords!.length === 0) {
+
+                    <span >                 
+                      <em>{{ 'web.literal.ff91715baeab' | i18n }}</em>
+                    </span>
+                  }
+                  @else {
+                    
+                    <span> 
+                      {{ userAlertSubscriptionMap.get(alertType.toString() + '-' + alertDeliveryChannel.toString())!.keyWordsList }}              
+                    </span>
+                  }
+                  
+                </a> 
+              </div>
+            }
+          </td>
+        }
+
+        
+      </tr> 
+    }
+
+    </tbody>
+    </nz-table>
+  </div>
+</nz-spin>
+
+
+<!-- Modal for adding temporary user-->
+<ng-template #tplKeyWordsFilterModalTitle>
+  <span>{{ 'alert.filter_by_keywords' | i18n}}</span>
+</ng-template>
+<ng-template #tplKeyWordsFilterModalContent> 
+  <form nz-form [formGroup]="keyWordsFilterForm">
+    
+    @for (item of [].constructor(lastKeyWordControllerIndex); track item; let i = $index) {
+      
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="8" nzFor="keyWords">
+                {{ 'keyWords' | i18n }} - {{i}}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <nz-input-group nzSize="large">
+                  <input nz-input [formControlName]="i" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>  
+    }
+
+  </form>
+  @if(!displayOnly) {
+
+    <div nz-row nzType="flex" nzJustify="start">
+      <button nz-button nzType="primary" (click)="addKeyWord()">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  }
+</ng-template>

@@ -1,0 +1,81 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/common/client" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.common' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/common/client" routerLinkActive="active">{{
+        'breadcrumb.client' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.client-maintenance.basic-info.title' | i18n }}"
+        nzDescription="{{ 'steps.client-maintenance.basic-info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.client-maintenance.address.title' | i18n }}"
+        nzDescription="{{ 'steps.client-maintenance.address.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.client-maintenance.confirm.title' | i18n }}"
+        nzDescription="{{ 'steps.client-maintenance.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<ng-container>
+  <nz-card nzTitle="{{ currentClient?.name }}" [nzActions]="[actionSave]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'name' | i18n}}">{{currentClient?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
+        {{currentClient?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'contactor.firstname' | i18n}}">
+        {{currentClient?.contactorFirstname}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'contactor.lastname' | i18n}}" nzSpan="2">
+        {{currentClient?.contactorLastname}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
+        {{ currentClient?.addressCountry }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'state' | i18n }}">
+        {{ currentClient?.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'county' | i18n }}">
+        {{ currentClient?.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'city' | i18n }}">
+        {{ currentClient?.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'postcode' | i18n }}" nzSpan="2">
+        {{ currentClient?.addressPostcode }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'address.line1' | i18n }}" nzSpan="2">
+        {{ currentClient?.addressLine1 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'address.line2' | i18n }}">
+        {{ currentClient?.addressLine2 }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionSave>
+  <button nz-button nzType="primary" (click)="saveClient()">{{ 'confirm' | i18n}}</button>
+</ng-template>

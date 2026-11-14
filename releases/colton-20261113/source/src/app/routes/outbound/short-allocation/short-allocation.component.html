@@ -1,0 +1,120 @@
+<page-header title="{{'short-allocation' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="orderNumber" [nzSpan]="6">
+          {{ 'order.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="itemNumber" [nzSpan]="6">
+          {{ 'item' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
+            <input nz-input name="itemNumber" id="itemNumber" formControlName="itemNumber"  />
+          </nz-input-group>
+
+          <ng-template #itemSuffixIconButton>
+            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)" >
+            </app-inventory-item-query-popup>
+          </ng-template> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllShortAllocations" [nzFooter]="tableFoot" #shortAllocationTable>
+    <thead>
+      <tr>
+
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+        <th *ngIf="!displayOnly">
+          {{ 'action' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let shortAllocation of shortAllocationTable.data">
+        <td [nzChecked]="setOfCheckedId.has(shortAllocation.id)"
+          (nzCheckedChange)="onItemChecked(shortAllocation.id, $event)"></td>
+
+        <td>{{ shortAllocation.orderNumber }}</td>
+        <td>{{ shortAllocation.orderNumber }}</td>
+        <td>{{ shortAllocation.item.name }}</td>
+        <td>{{ shortAllocation.item.description }}</td>
+        <td>{{ shortAllocation.quantity }}</td>
+        <td>{{ shortAllocation.openQuantity }}</td>
+        <td><a routerLink="/outbound/pick" routerLinkActive="active"
+            [queryParams]="{shortAllocationId : shortAllocation.id}">
+            {{ shortAllocation.inprocessQuantity }}
+          </a></td>
+        <td>{{ shortAllocation.deliveredQuantity }}</td>
+        <td>{{ 'SHORT-ALLOCATION-STATUS-' +shortAllocation.status | i18n}}</td>
+        <td>{{ shortAllocation.allocationCount }}</td>
+
+        <td>
+          <span *ngIf="shortAllocation.lastAllocationDatetime">
+            {{ shortAllocation.lastAllocationDatetime | date:'short'}}
+          </span>
+        </td>
+        <td *ngIf="!displayOnly">
+          <button nz-button (click)="cancelShortAllocation(shortAllocation)"
+            [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING">
+            {{ 'cancel' | i18n }}
+          </button>
+
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button (click)="allocateShortAllocation(shortAllocation)"
+            [disabled]="!isShortAllocationAllocatable(shortAllocation)">
+            {{ 'allocate' | i18n }}
+          </button>
+
+        </td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+</div>
+</nz-spin>
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start"  *ngIf="!displayOnly">
+    <button nz-button nzDanger (click)="cancelSelectedShortAllocations()">
+      {{ 'delete' | i18n }}
+    </button>
+  </div>
+</ng-template>

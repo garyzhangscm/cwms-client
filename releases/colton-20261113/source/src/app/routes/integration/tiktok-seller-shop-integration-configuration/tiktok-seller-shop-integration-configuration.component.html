@@ -1,0 +1,78 @@
+<page-header title="{{'tiktok-configuration' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <div *ngIf="!threePartyLogisticsFlag">
+    
+        <nz-card *ngIf="tiktokSellerShopIntegrationConfigurationList.length == 0">
+            <div *ngIf="tiktokSellerShopIntegrationAuthUrlByCompany != ''">
+                {{ 'web.literal.d3bb4d79f0b8' | i18n }}
+                <a [href]="tiktokSellerShopIntegrationAuthUrlByCompany" target="_blank" rel="noopener noreferrer">
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.253904a08722' | i18n }}
+            </div>
+        </nz-card>
+        <nz-card *ngIf="tiktokSellerShopIntegrationConfigurationList.length > 0"> 
+            <span>{{ 'web.literal.88ac8466d96b' | i18n }} </span>
+        </nz-card>
+    </div>
+    <div *ngIf="threePartyLogisticsFlag">
+        <nz-card>
+            <p>
+
+                <span>{{ 'web.literal.d2f0c47b1805' | i18n }} </span>
+            
+                <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
+                    
+                    @for (client of availableClients; track client) {
+                    
+                        <nz-option [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    
+                    }  
+                </nz-select>
+            </p>
+            <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length == 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
+                {{ 'web.literal.d3bb4d79f0b8' | i18n }}
+                <a [href]="tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.1ba4e6946bee' | i18n }}
+            </div>
+            @for (tiktokSellerShopIntegrationConfiguration of tiktokSellerShopIntegrationConfigurationList; track tiktokSellerShopIntegrationConfiguration) {
+            
+                <nz-card nzType="inner"  
+                    nzTitle="{{'shop' | i18n}}: {{tiktokSellerShopIntegrationConfiguration.sellerName}}" 
+                    [nzExtra]="removeConfigurationTemplate">  
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex>
+                        <nz-form-label [nzSpan]="6">
+                                {{ 'autoRefreshOrderTimeWindowInMinute' | i18n }}
+                        </nz-form-label>
+                    <nz-form-control [nzSpan]="12">                
+                        <nz-input-number [(ngModel)]="tiktokSellerShopIntegrationConfiguration.autoRefreshOrderTimeWindowInMinute"  
+                            [nzMin]="0" [nzMax]="65524" [nzStep]="1">
+                        </nz-input-number> 
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+                
+                  <button nz-button (click)="saveTiktokSellerShopIntegrationConfiguration(tiktokSellerShopIntegrationConfiguration)">
+                    {{'save' | i18n}}</button>
+                </div>
+                <ng-template #removeConfigurationTemplate>
+                    <a (click)="removeTiktokSellerShopIntegrationConfiguration(tiktokSellerShopIntegrationConfiguration)">
+                        {{'remove' | i18n}}</a>
+                  </ng-template>
+            </nz-card>
+            
+            }  
+            <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length > 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
+                {{ 'web.literal.95ba4ed9329f' | i18n }}
+                <a [href]="tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.1405ddeda562' | i18n }}
+            </div>
+        </nz-card> 
+    </div>
+
+</nz-spin>

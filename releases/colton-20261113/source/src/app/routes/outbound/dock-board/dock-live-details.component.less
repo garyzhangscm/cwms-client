@@ -1,0 +1,349 @@
+.native-panel input:not([type=checkbox]),
+.native-panel select,
+.native-check select {
+  min-height: 34px;
+  border: 1px solid #dce3ef;
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+.native-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+.native-panel table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+.native-panel td,
+.native-panel th {
+  padding: 10px;
+  border-bottom: 1px solid #e6ebf2;
+}
+.native-panel button {
+  margin-right: 8px;
+}
+.native-notice {
+  background: #eaf7ef;
+  padding: 12px;
+  color: #176541;
+  border-radius: 6px;
+}
+.can-drag {
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.can-drag:active {
+  cursor: grabbing;
+}
+.assigned-dock {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+}
+.yard-toolbar,
+.yard-meta,
+.yard-identity,
+.yard-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.yard-toolbar {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.yard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 205px), 1fr));
+  gap: 6px;
+  padding: 2px;
+}
+.yard-card {
+  min-width: 0;
+  background: var(--mes-surface);
+  border: 1px solid #dce4ef;
+  border-radius: 10px;
+  padding: 6px 9px;
+  box-shadow: 0 1px 3px #142f5010;
+}
+.yard-card[draggable=true] {
+  cursor: grab;
+}
+.yard-card[draggable=true]:active {
+  cursor: grabbing;
+}
+.yard-identity strong {
+  overflow-wrap: anywhere;
+}
+.yard-identity .truck-icon {
+  width: 28px;
+  flex: 0 0 28px;
+}
+.grip {
+  margin-left: auto;
+  color: #93a3b9;
+}
+.yard-meta {
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+  color: #687c96;
+  margin-top: 2px;
+}
+.yard-meta span {
+  overflow-wrap: anywhere;
+}
+.yard-meta > :last-child {
+  text-align: right;
+}
+.yard-actions {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.yard-actions button {
+  font: inherit;
+  font-size: 12px;
+}
+.yard-dock-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  min-width: 0;
+}
+.yard-dock-content > .truck-icon {
+  width: 40px;
+  flex: 0 0 40px;
+}
+.yard-dock-content .muted {
+  font-size: 12px;
+}
+.yard-dock-progress {
+  margin-left: auto;
+  min-width: 145px;
+  font-size: 12px;
+}
+.yard-dock-content .yard-actions {
+  margin-left: auto;
+}
+.yard-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #15223855;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.yard-modal {
+  width: 640px;
+  max-width: 100%;
+  max-height: 85vh;
+  overflow: auto;
+  padding: 24px;
+  background: var(--component-background, #fff);
+  color: var(--text-color, #24344d);
+  border-radius: 14px;
+  box-shadow: 0 16px 50px #15223830;
+}
+.yard-modal header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.yard-modal h2 {
+  margin: 0;
+}
+.yard-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.yard-form label,
+.yard-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+.yard-form .wide {
+  grid-column: 1/-1;
+}
+.yard-modal input:not([type=checkbox]),
+.yard-modal select,
+.yard-modal textarea {
+  font: inherit;
+  border: 1px solid #d6dfed;
+  border-radius: 7px;
+  padding: 7px 9px;
+  min-width: 0;
+  background: transparent;
+  color: inherit;
+}
+.yard-field {
+  margin-bottom: 18px;
+}
+.visit-history {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  border-bottom: 1px solid #e1e7f0;
+}
+.yard-modal .native-check {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.yard-modal .native-check input {
+  margin-top: 5px;
+}
+@media (max-width: 1100px) {
+  .yard-dock-content {
+    flex-wrap: wrap;
+  }
+  .yard-dock-content .yard-actions {
+    margin-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  .yard-form {
+    grid-template-columns: 1fr;
+  }
+  .yard-cards {
+    grid-template-columns: 1fr;
+  }
+  .yard-modal {
+    padding: 16px;
+  }
+}
+.shipment-picker-list {
+  max-height: min(50vh, 440px);
+  overflow: auto;
+}
+.shipment-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--mes-line);
+}
+.shipment-choice small {
+  display: block;
+}
+.shipment-choice input {
+  margin-top: 4px;
+}
+.sales-order-picker-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sales-order-picker-search input {
+  flex: 1;
+  min-width: 0;
+}
+.sales-order-picker-pages {
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.yard-section-title,
+.yard-count,
+.yard-icon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.yard-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 7px;
+  color: var(--mes-blue);
+  background: color-mix(in srgb, var(--mes-blue) 10%, var(--mes-surface));
+}
+.yard-section-door {
+  padding: 5px;
+  box-sizing: border-box;
+}
+.yard-count strong {
+  color: var(--mes-ink);
+}
+.yard-count > [nz-icon],
+.empty-dock [nz-icon] {
+  color: var(--mes-blue);
+}
+.yard-waiting > [nz-icon] {
+  color: var(--mes-muted);
+}
+.yard-at-dock > [nz-icon],
+.empty-dock .yard-at-dock > [nz-icon] {
+  color: #258461;
+}
+.empty-dock .yard-icon-label {
+  min-width: 0;
+}
+.dock-load-number {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.dock-shipment-link {
+  padding: 0;
+  height: auto;
+  font-size: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+}
+.shipment-view-table {
+  max-height: 55vh;
+  overflow: auto;
+}
+.shipment-view-table td {
+  overflow-wrap: anywhere;
+}
+.dock-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 6px 10px;
+}
+.dock-more {
+  color: var(--mes-muted);
+  font-size: 19px;
+  min-width: 28px;
+}
+.dock-restore {
+  padding: 0;
+}
+.dock-unavailable {
+  border-left: 3px solid #d6a65d;
+  background: var(--mes-surface-soft);
+}
+.dock-unavailable > header {
+  background: transparent;
+}
+.dock-unavailable .empty-dock,
+.dock-maintenance-note {
+  color: #8d5b15;
+}
+.dock-maintenance-note {
+  font-size: 12px;
+}
+.dock-unavailable .empty-dock {
+  overflow-wrap: anywhere;
+}

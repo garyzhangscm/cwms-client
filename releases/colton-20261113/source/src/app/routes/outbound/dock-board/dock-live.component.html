@@ -1,0 +1,433 @@
+@if (view === 'loads') {
+  <page-header [title]="loadsHeader"></page-header>
+  <ng-template #loadsHeader>
+    <div class="outbound-header">
+      <span>Loads</span>
+      <div class="yard-toolbar">
+        @if (updated) {
+          <span class="outbound-header-context">Updated {{updated | date:'shortTime'}}</span>
+        }
+        <button nz-button [nzLoading]="loading" (click)="refresh()">Refresh</button>
+        <a nz-button routerLink="/outbound/dock-board" [queryParams]="{view: 'live'}">Open Yard and Dock Management</a>
+      </div>
+    </div>
+  </ng-template>
+} @else {
+  <page-header [title]="yardHeader"></page-header>
+  <ng-template #yardHeader>
+    <div class="outbound-header">
+      <div class="yard-header-title">
+        <span>Yard and Dock Management</span>
+        <div class="yard-summary">
+          <span class="yard-count"><i nz-icon nzType="inbox" aria-hidden="true"></i><strong>{{visits.length}}</strong> In yard</span>
+          <span class="yard-count yard-waiting"><i nz-icon nzType="clock-circle" aria-hidden="true"></i><strong>{{waitingVisits().length}}</strong> Waiting</span>
+          <span class="yard-count yard-at-dock"><i nz-icon nzType="check-circle" aria-hidden="true"></i><strong>{{atDockCount()}}</strong> At dock</span>
+        </div>
+      </div>
+      <div class="yard-toolbar">
+        @if (updated) {
+          <span class="outbound-header-context">Updated {{updated | date:'shortTime'}}</span>
+        }
+        <button nz-button [nzLoading]="loading" (click)="refresh()">@if (!loading) { <i nz-icon nzType="reload" aria-hidden="true"></i> } Refresh</button>
+        <a nz-button routerLink="/outbound/load"><i nz-icon nzType="container" aria-hidden="true"></i> Loads</a>
+        <button nz-button [disabled]="busy" (click)="yardDialog='directory'"><i nz-icon nzType="unordered-list" aria-hidden="true"></i> Trailer Directory</button>
+        <button nz-button [disabled]="busy" (click)="openHistory()"><i nz-icon nzType="history" aria-hidden="true"></i> Visit history</button>
+        <button nz-button nzType="primary" [disabled]="busy || loading || !yardReady" (click)="openCheckin()"><i nz-icon nzType="login" aria-hidden="true"></i> Trailer Check-in</button>
+      </div>
+    </div>
+  </ng-template>
+}
+@if (view === 'loads') {
+  <form class="load-search" (ngSubmit)="applyLoadFilters()">
+    <input nz-input name="loadQuery" aria-label="Search loads" [(ngModel)]="loadQuery" placeholder="Search loads" />
+    <div class="load-status-filter">
+      <label for="load-status">Status</label>
+      <nz-select nzId="load-status" name="loadStatus" [(ngModel)]="loadStatus">
+        <nz-option [nzValue]="defaultLoadStatus" nzLabel="Incomplete"></nz-option>
+        <nz-option nzValue="" nzLabel="All statuses"></nz-option>
+        @for (status of loadStatuses; track status) {
+          <nz-option [nzValue]="status" [nzLabel]="status | lowercase | titlecase"></nz-option>
+        }
+      </nz-select>
+    </div>
+    <button nz-button nzType="primary" type="submit">Search</button>
+    <button nz-button type="button" (click)="clearLoadFilters()">Clear</button>
+  </form>
+}
+@if (notice || view === 'loads') {
+  <p class="workflow-note" role="status">{{notice || 'Create a Load, group its Shipments and assign a checked-in Trailer.'}}</p>
+}
+@if (!loadingReviewContext) {
+  @for (error of errors; track error) { <p class="load-error" role="alert">{{error}}</p> }
+}
+@if (view === 'loads') {
+@if (createOpen) {<section class="native-panel"><h3>Create Load</h3><div class="native-form">
+<label>Load number<input [(ngModel)]="newLoadNumber" maxlength="100" [disabled]="busy" /></label>
+<label>Trailer (optional)<select [(ngModel)]="newTrailerId" [disabled]="busy"><option value="">Assign Trailer later</option>
+@for (t of trailers; track t.id) {<option [value]="t.id" [disabled]="t.enabled === false || !!t.appointmentId">{{t.number}}{{t.appointmentId ? ' · already assigned' : ''}}</option>}</select></label>
+<button nz-button nzType="primary" [disabled]="busy || !newLoadNumber.trim()" (click)="createLoad()">Create Load</button><button nz-button [disabled]="busy" (click)="createOpen = false">Cancel</button></div></section>}
+}
+<div class="board">
+@if (view === 'loads') {
+<section class="shipment-panel">
+  <div class="load-heading"><h2>Loads <small>{{loading ? 'Loading…' : matchingLoads.length + ' results · ' + loads.length + ' Colton loads'}}</small></h2>
+    <button nz-button nzType="primary" [disabled]="busy || loading" (click)="createOpen = !createOpen">Create Load</button>
+  </div>
+  <div class="live-table">
+    <table><thead><tr><th>Load</th><th>Sales Orders</th><th>Pallets</th><th>Planned departure</th><th>Trailer / Dock</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    @for (l of visibleLoads; track l.id) {
+      <tr>
+        <td><button nz-button nzType="link" (click)="selectedLoadId = selectedLoadId === l.id.toString() ? '' : l.id.toString()">{{l.number}}</button></td>
+        <td>@for (number of loadOrderNumbers(l); track number) {<div>{{number}}</div>} @empty {—}</td>
+        <td>{{palletCounts[l.id] ?? (loadShipments(l).length ? 'Unavailable' : '—')}}</td>
+        <td>—</td>
+        <td>{{loadTrailer(l)}} @if (loadDock(l); as dock) {<div class="muted">{{dock}}</div>}</td>
+        <td><span class="badge">{{l.status}}</span></td>
+        <td><div class="yard-actions">
+          @if (l.status === 'PLANNED') {
+            <button nz-button nzSize="small" [disabled]="busy || loading" (click)="openShipmentPicker(l)">
+              Assign Sales Orders
+            </button>
+          }
+          @if (l.status === 'PLANNED') {<a nz-button nzSize="small" routerLink="/outbound/dock-board" [queryParams]="{view: 'live'}">Assign Trailer</a>}
+          <button nz-button nzSize="small" [disabled]="busy || loading" (click)="preview(l)">Review / Confirm Loaded</button>
+        </div></td>
+      </tr>
+      @if (selectedLoadId === l.id.toString()) {
+        <tr><td colspan="7">
+          @for (number of loadOrderNumbers(l); track number) {<div>{{number}}</div>}
+          @empty {<span>No linked Sales Orders.</span>}
+        </td></tr>
+      }
+    } @empty {<tr><td colspan="7">{{loading ? 'Loading…' : 'No matching Loads.'}}</td></tr>}
+    </tbody></table>
+  </div>
+  <div class="load-pagination">
+    <span>{{matchingLoads.length}} results · Page {{loadPage}} of {{loadPageCount}}</span>
+    <button nz-button [disabled]="loadPage <= 1" (click)="loadPage = loadPage - 1">Previous</button>
+    <button nz-button [disabled]="loadPage >= loadPageCount" (click)="loadPage = loadPage + 1">Next</button>
+    <select aria-label="Loads per page" [(ngModel)]="loadPageSize" (ngModelChange)="loadPage = 1"><option [ngValue]="10">10 / page</option><option [ngValue]="25">25 / page</option></select>
+  </div>
+</section>
+}
+@if (view === 'docks') {
+<div class="yard-layout">
+<section class="yard-docks" aria-labelledby="yard-docks-title"><h2 id="yard-docks-title" class="yard-section-title"><span class="yard-section-icon yard-section-door"><ng-container *ngTemplateOutlet="doorIcon" /></span> Outbound Docks <small>{{doors.length}}</small></h2><div class="dock-grid">@for (door of doors;track door.id) {
+<section class="dock" [class.dock-drop-target]="hoveredDockId === door.id" [class.dock-unavailable]="door.maintenanceUnavailable"
+  (dragover)="dragOver($event, door)" (dragleave)="dragLeave($event, door)" (drop)="drop($event, door)">
+  <header>
+    <span class="door-mini"><ng-container *ngTemplateOutlet="doorIcon" /></span>
+    <h3 class="door-title">{{door.label}}</h3>
+  </header>
+@if (visitAt(door); as v) {
+  <div class="yard-dock-content">
+    <span class="truck-icon"><ng-container *ngTemplateOutlet="truckIcon" /></span>
+    <div>
+      <strong class="dock-load-number">Load {{v.load_number || 'not assigned'}}</strong>
+      <div class="muted">Trailer {{v.trailer_number}} ·
+        <button nz-button nzType="link" nzSize="small" class="dock-shipment-link"
+          [disabled]="loading || !yardReady" (click)="shipmentVisit = v"
+          [attr.aria-label]="'View shipments for Load ' + (v.load_number || 'not assigned')">{{visitShipments(v).length}} shipments</button>
+      </div>
+    </div>
+    <div class="yard-dock-progress">
+      @if (door.maintenanceUnavailable) {<div class="dock-maintenance-note">Out of service · {{door.maintenanceReason || 'Temporarily unavailable'}}</div>}
+      <span class="yard-icon-label" [class.yard-at-dock]="v.state === 'AT_DOCK'" [class.yard-waiting]="v.state !== 'AT_DOCK'">
+        <i nz-icon [nzType]="v.state === 'AT_DOCK' ? 'check-circle' : 'clock-circle'" aria-hidden="true"></i>
+        {{v.state === 'AT_DOCK' ? 'At dock' : 'Awaiting arrival'}}
+      </span>
+      <div class="muted">{{v.load_status === 'COMPLETED' ? 'Shipped · Awaiting departure' : v.load_status === 'LOADED' ? 'Loaded · Awaiting dispatch' : v.load_status === 'DISPATCHING' ? 'Dispatch in progress · Retry if needed' : 'Loading not confirmed'}}</div>
+      <progress [value]="['LOADED', 'DISPATCHING', 'COMPLETED'].includes(v.load_status) ? 1 : 0" max="1" aria-label="Loading confirmation"></progress>
+    </div>
+    <div class="yard-actions">
+      @if (v.state === 'ASSIGNED') {
+        <button nz-button nzSize="small" nzType="primary" [disabled]="busy || !yardReady"
+          (click)="changeVisit(v,'arrive')"><i nz-icon nzType="check-circle" aria-hidden="true"></i> Confirm arrival</button>
+      }
+      @if (canReviewDockLoad(v)) {
+        <button nz-button nzSize="small" nzType="primary" [disabled]="busy || !yardReady"
+          (click)="reviewDockLoad(v, door)"><i nz-icon nzType="file-search" aria-hidden="true"></i> Review / Confirm Loaded</button>
+      }
+      @if (v.load_status === 'PLANNED' || !v.load_id) {
+        <button nz-button nzSize="small" [nzType]="v.state === 'AT_DOCK' && !v.load_id ? 'primary' : 'default'"
+          [disabled]="busy || !yardReady" (click)="openVisit(v,'load')"><i nz-icon nzType="link" aria-hidden="true"></i> Assign Load</button>
+      }
+      <button nz-button nzSize="small" [disabled]="busy || !yardReady || ['LOADED', 'DISPATCHING'].includes(v.load_status)"
+        (click)="changeVisit(v,'return')"><i nz-icon nzType="rollback" aria-hidden="true"></i> Return to waiting</button>
+      <button nz-button nzSize="small" [nzType]="['LOADED', 'DISPATCHING', 'COMPLETED'].includes(v.load_status) ? 'primary' : 'default'"
+        [disabled]="busy || !yardReady || (!!v.load_id && !['LOADED', 'DISPATCHING', 'COMPLETED'].includes(v.load_status))"
+        [title]="v.load_id && !['LOADED', 'DISPATCHING', 'COMPLETED'].includes(v.load_status) ? 'Confirm Loaded before dispatching.' : ''"
+        (click)="openVisit(v,'dispatch')"><i nz-icon nzType="logout" aria-hidden="true"></i> Dispatch Trailer</button>
+    </div>
+  </div>
+}
+@else if(assignment(door)){<div class="assigned-dock"><strong>{{trailerForDoor(door)?.number || assignment(door).trailerId}}</strong><span>Load {{trailerForDoor(door)?.appointmentNumber || assignment(door).loadId}}</span><span class="muted">Existing assignment · Release before Yard check-in</span>@if (door.maintenanceUnavailable) {<span class="dock-maintenance-note">Out of service · {{door.maintenanceReason || 'Temporarily unavailable'}}</span>}<button nz-button nzSize="small" [disabled]="busy || !canDrag(trailerForDoor(door) || {})" (click)="assignDoor(trailerForDoor(door),null)"><i nz-icon nzType="rollback" aria-hidden="true"></i> Release Dock</button></div>}
+@else{<div class="empty-dock"><span class="yard-icon-label">
+  <i nz-icon [nzType]="door.maintenanceUnavailable ? 'stop' : !door.enabled ? 'stop' : door.locked ? 'lock' : door.reservedCode ? 'clock-circle' : 'aim'" aria-hidden="true"></i>
+  {{door.maintenanceUnavailable ? 'Out of service' + (door.maintenanceReason ? ' · ' + door.maintenanceReason : '') : !door.enabled ? 'Disabled' : door.locked ? 'Locked' : door.reservedCode ? 'Reserved' : 'Drop a Trailer here'}}
+</span>
+@if (door.enabled && !door.locked && !door.reservedCode) {
+  <small class="yard-icon-label yard-at-dock"><i nz-icon nzType="check-circle" aria-hidden="true"></i> Available</small>
+}</div>}
+<div class="dock-controls">
+  @if (door.maintenanceUnavailable) {
+    <button nz-button nzType="link" nzSize="small" class="dock-restore"
+      [disabled]="busy || loading || !yardReady" (click)="openDockAvailability(door)"
+      [attr.aria-label]="'Restore ' + door.label">Restore Dock</button>
+  } @else {
+    <button nz-button nzType="text" nzSize="small" nz-dropdown nzTrigger="click" nzPlacement="bottomRight"
+      [nzDropdownMenu]="dockMenu" [nzDisabled]="busy || loading || !yardReady"
+      [disabled]="busy || loading || !yardReady" class="dock-more"
+      [attr.aria-label]="'More actions for ' + door.label" title="Dock actions">
+      <i nz-icon nzType="ellipsis" aria-hidden="true"></i>
+    </button>
+    <nz-dropdown-menu #dockMenu="nzDropdownMenu">
+      <ul nz-menu role="menu">
+        <li nz-menu-item role="menuitem" tabindex="0"
+          [nzDisabled]="busy || loading || !yardReady" (click)="openDockAvailability(door)"
+          (keydown.enter)="openDockAvailability(door)" (keydown.space)="$event.preventDefault(); openDockAvailability(door)">Mark out of service</li>
+      </ul>
+    </nz-dropdown-menu>
+  }
+</div>
+</section>} @empty {<p class="muted">No shipping Docks loaded.</p>}</div></section>
+<section class="yard-waiting-panel" aria-labelledby="yard-waiting-title">
+  @let waitingTrailers = waitingVisits();
+  <h2 id="yard-waiting-title" class="yard-section-title">Waiting Trailers <small>{{waitingTrailers.length}}</small></h2>
+  <div class="yard-cards" role="group" aria-labelledby="yard-waiting-title"
+    [attr.tabindex]="waitingTrailers.length ? 0 : null">
+    @for (v of waitingTrailers; track v.visit_id) {
+      <article class="yard-card" [attr.draggable]="yardReady && !busy && !loading"
+        (dragstart)="yardDrag($event,v)" (dragend)="endDrag()">
+        <span class="yard-identity">
+          <span class="truck-icon"><ng-container *ngTemplateOutlet="truckIcon" /></span>
+          <strong>{{v.trailer_number}}</strong>
+          <i nz-icon nzType="drag" aria-hidden="true" class="grip"></i>
+        </span>
+        <span class="yard-meta">
+          <span class="badge">{{ownershipName(v.ownership)}}</span>
+          <span class="yard-icon-label"><i nz-icon nzType="clock-circle" aria-hidden="true"></i> {{v.checked_in_at | date:'shortTime'}}</span>
+        </span>
+        <span class="yard-meta">
+          <span>{{purposeName(v.purpose)}}</span>
+          <span>{{v.load_number || 'No Load'}} · {{visitShipments(v).length}} shipments</span>
+        </span>
+      </article>
+    } @empty {
+      <p class="muted">{{loading ? 'Loading Yard…' : yardReady ? 'No waiting Trailers. Check in a Trailer when it arrives at the gate.' : 'Yard status is unavailable.'}}</p>
+    }
+  </div>
+</section>
+</div>
+}
+@if(yardDialog){<div class="yard-backdrop"><section class="yard-modal" role="dialog" aria-modal="true" aria-labelledby="yard-title"><header><h2 id="yard-title">{{yardDialog==='checkin'?'Trailer Check-in':yardDialog==='load'?'Assign Load':yardDialog==='dispatch'?'Dispatch Trailer':yardDialog==='history'?'Visit history':'Trailer Directory'}}</h2><button nz-button [disabled]="busy" (click)="yardDialog=null"><i nz-icon nzType="close" aria-hidden="true"></i> Close</button></header>
+@for(error of errors;track error){<p class="load-error" role="alert">{{error}}</p>}
+@if(yardDialog==='checkin'){<div class="yard-form"><label>Ownership<select [(ngModel)]="checkin.ownership" [disabled]="busy"><option value="OWN">Own fleet</option><option value="PARTNER">Partner carrier</option><option value="EXTERNAL">External</option></select></label><label>Visit purpose<select [(ngModel)]="checkin.purpose" [disabled]="busy"><option value="PICKUP">Pickup</option><option value="DELIVERY">Delivery</option><option value="EMPTY_DROP_OFF">Empty drop-off</option><option value="EMPTY_COLLECTION">Empty collection</option></select></label>
+@if(checkin.ownership==='OWN'){<label>Registered Trailer<select [(ngModel)]="checkin.trailerId" [disabled]="busy || loading || !yardReady">
+  <option value="">{{registeredTrailersForCheckin.length || loading || !yardReady ? 'Select Trailer' : 'No trailers available for check-in'}}</option>
+  @for (t of registeredTrailersForCheckin; track t.id) {
+    <option [value]="t.id">{{t.number}}</option>
+  }
+</select></label>}@else{<label>Trailer / Container number<input [(ngModel)]="checkin.number" maxlength="50" [disabled]="busy" /></label>}
+<label>Carrier<input [(ngModel)]="checkin.carrier" maxlength="200" [disabled]="busy" /></label><label>Driver name<input [(ngModel)]="checkin.driverName" maxlength="100" [disabled]="busy" /></label><label>Tractor number<input [(ngModel)]="checkin.tractorNumber" maxlength="100" [disabled]="busy" /></label><label class="wide">Notes<textarea [(ngModel)]="checkin.notes" maxlength="2000" [disabled]="busy"></textarea></label></div><button nz-button nzType="primary" [nzLoading]="busy" [disabled]="!canSubmitCheckin" (click)="submitCheckin()"><i nz-icon nzType="login" aria-hidden="true"></i> Check in</button>}
+@if(yardDialog==='load'){<p>Trailer {{currentVisit.trailer_number}}</p><label class="yard-field">Load<select [(ngModel)]="visitLoadId" [disabled]="busy"><option value="">No Load / Remove association</option>@for(l of availableLoads();track l.id){<option [value]="l.id">{{l.number}} · {{loadShipments(l).length}} shipments</option>}</select></label><button nz-button nzType="primary" [disabled]="busy || !yardReady" (click)="changeVisit(currentVisit,'assign-load',{loadId:visitLoadId ? +visitLoadId : null})"><i nz-icon nzType="link" aria-hidden="true"></i> Save association</button>}
+@if(yardDialog==='dispatch'){<p>Dispatch Trailer <strong>{{currentVisit.trailer_number}}</strong>?</p><p>Dispatch completes shipping for the confirmed Load, releases the Dock and records the Trailer’s departure.</p><label class="native-check"><input type="checkbox" [(ngModel)]="departed" [disabled]="busy" /> I confirm the Trailer is leaving the yard and authorize shipping the Load.</label><button nz-button nzType="primary" [disabled]="busy || !yardReady || !departed" (click)="changeVisit(currentVisit,'dispatch',{physicallyDeparted:true})"><i nz-icon nzType="logout" aria-hidden="true"></i> Dispatch Trailer</button>}
+@if(yardDialog==='directory'){<p class="muted">Registered vehicles are not counted as present until checked in.</p>@for(t of trailers;track t.id){<p><strong>{{t.number}}</strong> · {{t.description}}</p>}}
+@if(yardDialog==='history'){<p class="muted">Latest 200 departed visits</p>@for(v of history;track v.visit_id){<div class="visit-history"><strong>{{v.trailer_number}}</strong><span>{{v.load_number || 'No Load'}}</span><span>{{v.checked_in_at | date:'short'}} → {{v.dispatched_at | date:'short'}}</span></div>}@empty{<p>No departed visits.</p>}}
+</section></div>}
+</div>
+<ng-template #loadingReview>
+  @if (review) {
+    <div class="live-table">
+      <table>
+        <thead><tr><th>Sales Order</th><th>Ordered</th><th>Loaded quantity</th><th>Close as short</th></tr></thead>
+        <tbody>
+          @for (line of review.lines; track line.orderLineId) {
+            <tr><td>{{line.orderNumber}}</td>
+              <td>{{line.ordered}}</td><td>{{line.toShip}}</td><td>{{line.shortQuantity}}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    @if (review.pendingOrders?.length) {
+      <p role="status">Awaiting Pick + Deposit: @for (order of review.pendingOrders; track order.orderId; let last = $last) {
+        {{order.orderNumber || 'Order #' + order.orderId}}{{last ? '' : ', '}}
+      }</p>
+    } @else if (review.status === 'COMPLETED') {
+      <p>This Load is complete.</p>
+    } @else if (!review.lines.length) {
+      <p>Link a Shipment before confirming.</p>
+    } @else if (review.status === 'PLANNED' || review.status === 'LOADED') {
+      <label class="native-check">
+        <input type="checkbox" [(ngModel)]="physical" [disabled]="busy" />
+        The goods listed above are physically loaded.
+      </label>
+      @if (hasShort()) {
+        <label class="native-check">
+          <input type="checkbox" [(ngModel)]="shortAccepted" [disabled]="busy" />
+          Close the remaining quantity as short shipped at dispatch. Only the loaded quantity will ship when the Trailer is dispatched.
+        </label>
+      }
+    }
+  }
+</ng-template>
+<nz-modal [nzVisible]="!!loadingReviewContext"
+  [nzTitle]="'Review loading · ' + (loadingReviewContext?.loadNumber || '')"
+  [nzWidth]="760" nzCentered [nzMaskClosable]="false" [nzClosable]="!busy" [nzKeyboard]="!busy"
+  (nzOnCancel)="closeLoadingReview()">
+  <ng-container *nzModalContent>
+    @if (loadingReviewContext?.dock; as dock) {
+      <p class="muted">{{dock.name}} · Trailer {{dock.trailerNumber}}</p>
+    }
+    @if (busy && !review) {<p role="status">Loading shipment quantities…</p>}
+    @for (error of errors; track error) {<p class="load-error" role="alert">{{error}}</p>}
+    <ng-container *ngTemplateOutlet="loadingReview"></ng-container>
+  </ng-container>
+  <ng-container *nzModalFooter>
+    <button nz-button [disabled]="busy" (click)="closeLoadingReview()">Close</button>
+    @if (['PLANNED', 'LOADED'].includes(review?.status) && review.lines.length) {
+      <button nz-button nzType="primary" [nzLoading]="busy" [disabled]="busy || !canConfirmLoaded"
+        (click)="confirmLoaded()">Confirm Loaded</button>
+    }
+  </ng-container>
+</nz-modal>
+<nz-modal [nzVisible]="!!shipmentPicker"
+  [nzTitle]="'Assign Sales Orders · ' + (shipmentPicker?.number || '')"
+  [nzWidth]="760" [nzMaskClosable]="false" [nzClosable]="!busy" [nzKeyboard]="!busy"
+  nzOkText="Save Sales Orders" [nzOkLoading]="busy" [nzCancelDisabled]="busy"
+  [nzOkDisabled]="!shipmentPickerReady || openOrdersLoading || !!openOrdersError || !salesOrderSelectionChanged || selectedOrderCount > 500"
+  (nzOnCancel)="closeSalesOrderPicker()" (nzOnOk)="saveSalesOrders()">
+  <ng-container *nzModalContent>
+    @if (shipmentPickerError) {
+      <p class="load-error" role="alert">{{shipmentPickerError}}</p>
+      @if (shipmentPicker && !busy && !shipmentPickerReady) {
+        <button nz-button (click)="openShipmentPicker(shipmentPicker)">Reload Sales Orders</button>
+      }
+    }
+    @if (orderPickerSaveError) {<p class="load-error" role="alert">{{orderPickerSaveError}}</p>}
+    @if (busy && !shipmentPickerReady) {<p role="status">Loading Sales Orders…</p>}
+    @if (shipmentPickerReady) {
+      <form class="sales-order-picker-search" (ngSubmit)="loadOpenOrders()">
+        <input nz-input name="salesOrderFilter" aria-label="Sales Order Number" placeholder="Search by Sales Order number"
+          [(ngModel)]="shipmentFilter" [disabled]="busy" />
+        @if (orderPlanningAvailable) {
+          <button nz-button type="submit" [nzLoading]="openOrdersLoading" [disabled]="busy">Search</button>
+        }
+      </form>
+      @if (openOrdersError) {<p class="load-error" role="alert">{{openOrdersError}}</p>}
+      <p class="muted">{{selectedOrderCount}} selected</p>
+      <p class="muted">Orders can be assigned before picking is complete. Pick and deposit must be completed before confirming loading.</p>
+      @if (selectedOrderCount > 500) {<p role="alert">Select at most 500 Sales Orders.</p>}
+      <div class="shipment-picker-list">
+        @for (order of salesOrderChoices; track order.kind + ':' + order.id) {
+          <label class="shipment-choice">
+            <input type="checkbox" [checked]="isOrderSelected(order)" [disabled]="busy"
+              (change)="selectSalesOrder(order, $any($event.target).checked)" />
+            <span>
+              <strong>{{order.number}}</strong>
+              <small class="muted">
+                @if (order.quantity) {
+                  {{order.quantity}} ready to ship
+                  @if (order.shortQuantity) { · {{order.shortQuantity}} short }
+                } @else if (order.kind === 'open' && order.orderStatus === 'OPEN') {
+                  Open · Awaiting Pick + Deposit
+                } @else {
+                  Awaiting Pick + Deposit
+                }
+              </small>
+            </span>
+          </label>
+        } @empty {
+          @if (!openOrdersLoading && !openOrdersError) {<p>No matching Sales Orders.</p>}
+        }
+        @if (openOrdersLoading) {<p role="status">Loading Sales Orders…</p>}
+      </div>
+      @if (orderPlanningAvailable) {
+        @if (openOrdersPages > 1) {
+          <div class="yard-actions sales-order-picker-pages">
+            <button nz-button nzSize="small" [disabled]="openOrdersLoading || busy || openOrdersPage <= 1"
+              (click)="loadOpenOrders(openOrdersPage - 1)">Previous</button>
+            <span class="muted">Page {{openOrdersPage}}</span>
+            <button nz-button nzSize="small"
+              [disabled]="openOrdersLoading || busy || openOrdersPage >= openOrdersPages"
+              (click)="loadOpenOrders(openOrdersPage + 1)">Next</button>
+          </div>
+        }
+      }
+    }
+  </ng-container>
+</nz-modal>
+<ng-template #truckIcon>
+  <svg viewBox="0 0 100 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <rect x="4" y="8" width="57" height="32" rx="4" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M61 20h17l13 14v12H61V20Z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M69 25h7l8 9H69v-9Z" fill="currentColor"/>
+    <path d="M5 46h86M14 16v16M22 16v16M30 16v16M38 16v16M46 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+    <circle cx="20" cy="46" r="6" fill="currentColor"/><circle cx="49" cy="46" r="6" fill="currentColor"/><circle cx="79" cy="46" r="6" fill="currentColor"/>
+    <circle cx="20" cy="46" r="2" fill="white"/><circle cx="49" cy="46" r="2" fill="white"/><circle cx="79" cy="46" r="2" fill="white"/>
+  </svg>
+</ng-template>
+<ng-template #doorIcon>
+  <svg viewBox="0 0 100 84" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <path d="M12 77V9h76v68" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M22 77V20h56v57" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="2"/>
+    <path d="M23 29h54M23 39h54M23 49h54M23 59h54M43 68h14M5 78h90" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M11 62v13M89 62v13" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+  </svg>
+</ng-template>
+
+<nz-modal [nzVisible]="!!shipmentVisit" [nzTitle]="'Shipments · Load ' + (shipmentVisit?.load_number || 'not assigned')"
+  [nzWidth]="720" nzCentered (nzOnCancel)="shipmentVisit = null">
+  <ng-container *nzModalContent>
+    @if (shipmentVisit; as visit) {
+      <p class="muted">Trailer {{visit.trailer_number}}</p>
+      @if (loading) {
+        <p role="status">Refreshing shipments…</p>
+      } @else if (errors.length) {
+        <p role="alert">Shipment data could not be verified. Close this window and refresh the board.</p>
+      } @else {
+        <div class="live-table shipment-view-table">
+          <table>
+            <thead><tr><th>Shipment</th><th>Sales Orders</th><th>Customer</th><th>Status</th></tr></thead>
+            <tbody>
+              @for (shipment of visitShipments(visit); track shipment.id) {
+                <tr>
+                  <td>{{shipment.number || shipment.id}}</td>
+                  <td>@for (number of shipment.orderNumbers || []; track number) {<div>{{number}}</div>} @empty {—}</td>
+                  <td>{{shipment.shipToCustomer?.name || '—'}}</td>
+                  <td>{{shipment.status || '—'}}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4">No shipments linked to this Load.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </ng-container>
+  <ng-container *nzModalFooter>
+    <button nz-button (click)="shipmentVisit = null">Close</button>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [nzVisible]="!!maintenanceDock"
+  [nzTitle]="(maintenanceDock?.maintenanceUnavailable ? 'Restore ' : 'Mark out of service · ') + (maintenanceDock?.label || 'Dock')"
+  [nzWidth]="440" nzCentered [nzMaskClosable]="!busy" [nzClosable]="!busy" [nzKeyboard]="!busy"
+  (nzOnCancel)="maintenanceDock = null">
+  <ng-container *nzModalContent>
+    @for (error of errors; track error) {<p class="load-error" role="alert">{{error}}</p>}
+    @if (maintenanceDock?.maintenanceUnavailable) {
+      <p>Make this Dock available for Trailer assignment again?</p>
+    } @else {
+      <p>New Trailer assignments will be blocked until you restore this Dock.</p>
+      <label for="dock-maintenance-reason">Reason (optional)</label>
+      <input nz-input id="dock-maintenance-reason" [(ngModel)]="maintenanceReason" maxlength="200" [disabled]="busy" placeholder="Maintenance" />
+    }
+  </ng-container>
+  <ng-container *nzModalFooter>
+    <button nz-button [disabled]="busy" (click)="maintenanceDock = null">Cancel</button>
+    <button nz-button nzType="primary" [nzLoading]="busy" [disabled]="busy || loading || !yardReady"
+      (click)="saveDockAvailability()">{{maintenanceDock?.maintenanceUnavailable ? 'Restore Dock' : 'Mark out of service'}}</button>
+  </ng-container>
+</nz-modal>

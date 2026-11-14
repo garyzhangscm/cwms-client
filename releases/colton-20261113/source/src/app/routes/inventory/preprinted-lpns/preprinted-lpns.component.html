@@ -1,0 +1,28 @@
+<div class="page">
+ <h1>{{ 'inventory.preprinted.title' | i18n }}</h1>
+ <p>{{ 'inventory.preprinted.intro' | i18n }}</p>
+ <nz-alert *ngIf="error" nzType="error" [nzMessage]="error | i18n" nzShowIcon></nz-alert>
+ <nz-alert *ngIf="notice" nzType="warning" [nzMessage]="notice | i18n" nzShowIcon></nz-alert>
+ <section class="panel"><h2>{{ 'inventory.preprinted.new' | i18n }}</h2>
+  <p>{{ 'inventory.preprinted.no-stock' | i18n }}</p>
+  <nz-input-number [(ngModel)]="count" [nzMin]="1" [nzMax]="100" [nzDisabled]="busy || lpns.length > 0"></nz-input-number>
+  <button nz-button nzType="primary" [nzLoading]="busy" (click)="generate()">{{ 'inventory.preprinted.generate' | i18n }}</button>
+ </section>
+ <section *ngIf="selected" class="panel"><h2>{{ batchName(selected) }}</h2>
+  <p>{{ 'inventory.preprinted.from' | i18n }} <nz-input-number [(ngModel)]="fromLabel" [nzMin]="1" [nzMax]="labelCount" [nzDisabled]="busy"></nz-input-number>
+   {{ 'inventory.preprinted.to' | i18n }} <nz-input-number [(ngModel)]="toLabel" [nzMin]="fromLabel" [nzMax]="labelCount" [nzDisabled]="busy"></nz-input-number></p>
+  <p>{{ 'inventory.preprinted.warning' | i18n }}</p>
+  <cwms-common-print-button [allowPreview]="false" [printButtonDisabled]="busy || !validRange" (print)="print($event)"></cwms-common-print-button>
+ </section>
+ <section class="panel"><h2>{{ 'inventory.preprinted.history' | i18n }}</h2>
+  <p>{{ 'inventory.preprinted.latest' | i18n }}</p>
+  <input nz-input [(ngModel)]="batchSearch" [placeholder]="'inventory.preprinted.batch' | i18n" (keyup.enter)="refreshHistory()" />
+  <button nz-button [nzLoading]="historyLoading" [disabled]="busy" (click)="refreshHistory()">{{ 'inventory.preprinted.search' | i18n }}</button>
+  <nz-table #table [nzData]="histories" [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="historyLoading">
+   <thead><tr><th>{{ 'inventory.preprinted.batch' | i18n }}</th><th>{{ 'inventory.preprinted.count' | i18n }}</th><th>{{ 'inventory.preprinted.created' | i18n }}</th><th>{{ 'inventory.preprinted.user' | i18n }}</th><th></th></tr></thead>
+   <tbody><tr *ngFor="let row of table.data"><td>{{ batchName(row) }}</td><td>{{ batchCount(row) }}</td><td>{{ row.printedDate | date:'medium' }}</td><td>{{ row.printedUsername }}</td>
+    <td><button nz-button [disabled]="busy" (click)="select(row)">{{ 'inventory.preprinted.reprint' | i18n }}</button></td></tr></tbody>
+  </nz-table>
+  <button *ngIf="hasMore" nz-button [nzLoading]="historyLoading" [disabled]="busy" (click)="refreshHistory(true)">{{ 'inventory.preprinted.more' | i18n }}</button>
+ </section>
+</div>

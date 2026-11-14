@@ -1,0 +1,91 @@
+<page-header title="{{'cartonization-configuration' |  i18n}}" ></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
+          {{ 'client' | i18n }}
+        </nz-form-label>
+        <nz-select nzMode="tags" formControlName="taggedClients">
+          <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
+        </nz-select>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="pickType" [nzSm]="3" [nzXs]="3">
+          {{'pick.type' | i18n}}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="pickType" id="pickType" formControlName="pickType" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <label nz-checkbox formControlName="enabled" [nzIndeterminate]="searchByEnabledIndeterminate">
+          <span>
+            {{'enabled' | i18n}}</span>
+        </label>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">{{'search' | i18n}}</button>
+      <button nz-button (click)="resetForm()">{{'clear' | i18n}}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger
+    [nzData]="listOfAllCartonizationConfiguration" [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+        <th>
+          {{'action' | i18n}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td>{{ data.sequence }}</td>
+        <td>{{ data.client?.name }}</td>
+        <td>{{ 'PICK-TYPE-' + data.pickType | i18n }}</td>
+        <td>{{ data.groupRules }}</td>
+        <td>{{ data.enabled + '' | i18n}}</td>
+        <td>
+
+          <button nz-button (click)="change(data)">{{'modify' | i18n}}</button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
+    <a nz-button nzType="primary" routerLink="/outbound/cartonization-configuration/maintenance"
+      routerLinkActive="active">
+      {{'add' | i18n}}
+    </a>
+
+  </div>
+</ng-template>

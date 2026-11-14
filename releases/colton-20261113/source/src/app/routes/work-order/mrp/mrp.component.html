@@ -1,0 +1,151 @@
+<page-header [title]="'MRP' | i18n"> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning"> 
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                    <nz-form-label for="number" [nzSpan]="8">
+                    {{ 'number' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16">
+                    <input nz-input name="number" id="number" formControlName="number" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                    <nz-form-label for="description" [nzSpan]="8">
+                    {{ 'description' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16">
+                    <input nz-input name="description" id="description" formControlName="description" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                    <nz-form-label for="mpsNumber" [nzSpan]="8">
+                    {{ 'mps' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16">
+                    <input nz-input name="mpsNumber" id="mpsNumber" formControlName="mpsNumber" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div nz-row>
+            <div nz-col [nzSpan]="24" class="search-area">
+            <button nz-button [nzType]="'primary'" (click)="search()">
+                {{ 'search' | i18n }}
+            </button>
+            <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+            </div>
+        </div>
+    </form>
+
+    
+
+  <div class="search-result-list">
+    <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    -->
+    
+    <st #st [data]="listOfAllMRPs"  [columns]="columns" [expand]="expand"   expandAccordion
+    (change)="mpsTableChanged($event)" [scroll]="{ x: '1500px' }">
+    
+        <ng-template st-row="cutoffDateColumn" let-item let-index="index">
+            
+            <span *ngIf="item.cutoffDate">
+
+                {{ item.cutoffDate  | date:'short'}} 
+            </span>
+
+        </ng-template> 
+        <ng-template st-row="itemNameColumn" let-item let-index="index">
+          <nz-skeleton-element 
+              *ngIf="item.itemId && item.item == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            {{ item.item?.name }} 
+        </ng-template>
+        <ng-template st-row="itemDescriptionColumn" let-item let-index="index">
+          <nz-skeleton-element 
+              *ngIf="item.itemId && item.item == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            {{ item.item?.description }} 
+        </ng-template>
+        
+        <ng-template st-row="actionColumn" let-item let-index="index"> 
+          
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu> 
+
+              <li nz-menu-item >
+                <a routerLink="/work-order/mrp-maintenance" routerLinkActive="active"
+                    [queryParams]="{id : item.id!}">{{ 'modify' | i18n }}</a>
+              </li> 
+              
+            </ul>
+          </nz-dropdown-menu>
+        </ng-template>
+
+        
+        <!--   MRP details  -->
+        <ng-template #expand let-item let-index="index" >
+          
+          <nz-tabset>
+            <nz-tab nzTitle=" {{ 'MRP.line' | i18n }}">
+              <nz-table [nzScroll]="{ x: '100vw' }" #innerTable [nzData]="item.materialRequirementsPlanningLines" nzSize="middle"
+                [nzShowPagination]="false" #mrpLineTable>
+                <thead>
+                  <th>
+                      {{ 'item' | i18n }}</th>
+                  <th>
+                      {{ 'item.description' | i18n }}</th>
+                  <th>
+                      {{ 'required-quantity' | i18n }}</th>
+                  <th>
+                      {{ 'total-required-quantity' | i18n }}</th>
+                  <th>
+                      {{ 'on-hand-quantity' | i18n }}</th>
+                  <th>
+                      {{ 'bill-of-material' | i18n }}</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let mrpLine of mrpLineTable.data">
+                        <td>{{ mrpLine.item?.name }}</td> 
+                        <td>{{ mrpLine.item?.description }}</td>
+                        <td>{{ mrpLine.requiredQuantity }}</td>
+                        <td>{{ mrpLine.totalRequiredQuantity }}</td>
+                        <td>{{ mrpLine.expectedInventoryOnHand }}</td>
+                        <td>{{ mrpLine.billOfMaterial?.number }}</td>
+                    </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab>
+            
+          </nz-tabset>
+        </ng-template>
+    </st>
+  
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+    <button nz-button nzType="primary" routerLink="/work-order/mrp-maintenance" routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</nz-spin>

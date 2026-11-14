@@ -1,0 +1,28 @@
+const assert=require('node:assert/strict');
+const {chromium}=require('/tmp/colton-web-phase1/browser/node_modules/playwright-core');
+(async()=>{const b=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--no-sandbox']});try{
+ const p=await b.newPage();p.setDefaultTimeout(10000);const writes=[],errors=[];
+ p.on('pageerror',e=>errors.push(e.message));
+ await p.route('**/*',r=>{const q=r.request();if(!q.url().startsWith('http://127.0.0.1:4305/'))return r.abort();if(q.method()==='POST')writes.push({url:q.url(),body:q.postDataJSON()});return r.continue();});
+ await p.goto('http://127.0.0.1:4305/#/outbound/load');
+ await p.getByRole('row').filter({hasText:'TEST-LOAD'}).getByRole('button',{name:'Assign Sales Orders',exact:true}).click();
+ const dialog=p.locator('.ant-modal-content');
+ await dialog.getByText('TEST-PENDING-01',{exact:true}).waitFor();
+ assert.equal(await dialog.getByText('TEST-PENDING-02',{exact:true}).count(),0);
+ assert.equal(await dialog.getByText('TEST-PENDING-03',{exact:true}).count(),0);
+ await dialog.getByRole('button',{name:'Next',exact:true}).click();
+ await dialog.getByText('TEST-PENDING-23',{exact:true}).waitFor();
+ assert.equal(await dialog.getByRole('button',{name:'Next',exact:true}).isDisabled(),true);
+ await dialog.getByPlaceholder('Search by Sales Order number').fill('TEST-PENDING-23');
+ await dialog.getByRole('button',{name:'Search',exact:true}).click();
+ await dialog.getByText('TEST-PENDING-23',{exact:true}).waitFor();
+ await dialog.locator('label').filter({hasText:'TEST-PENDING-23'}).getByRole('checkbox').check();
+ await dialog.getByRole('button',{name:'Save Sales Orders',exact:true}).click();
+ await p.getByText('Sales Order selection saved.',{exact:true}).waitFor();
+ assert.equal(writes.length,1);assert(writes[0].url.includes('/shipping/order-plans'));assert.deepEqual(writes[0].body,{orderNumber:'TEST-PENDING-23'});
+ await p.getByRole('row').filter({hasText:'TEST-LOAD'}).getByRole('button',{name:'Assign Sales Orders',exact:true}).click();
+ await dialog.getByText('TEST-PENDING-23',{exact:true}).waitFor();
+ assert.equal(await dialog.locator('label').filter({hasText:'TEST-PENDING-23'}).getByRole('checkbox').isChecked(),true);
+ assert.deepEqual(errors,[]);
+ console.log('PASS: Pending orders searchable and selectable, other Load excluded, asymmetric pagination, plan-only save, reload preserves selection. No pick/load/dispatch requests.');
+}finally{await b.close();}})().catch(e=>{console.error(e);process.exit(1)});

@@ -1,0 +1,135 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/common/customer" routerLinkActive="active">{{
+    'link.return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.common' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/common/customer" routerLinkActive="active">{{
+        'breadcrumb.customer' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+        nzDescription="{{ 'steps.customer-maintenance.basic-info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.customer-maintenance.address.title' | i18n }}"
+        nzDescription="{{ 'steps.customer-maintenance.address.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<ng-container>
+  <nz-card nzTitle="{{ currentCustomer?.name }}" [nzActions]="[actionSave]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'name' | i18n}}">{{currentCustomer?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
+        {{currentCustomer?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'listPickEnabledFlag' | i18n}}" nzSpan="3">
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.listPickEnabledFlag"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.listPickEnabledFlag"></span> 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'contactor.firstname' | i18n}}">
+        {{currentCustomer?.contactorFirstname}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'contactor.lastname' | i18n}}" nzSpan="2">
+        {{currentCustomer?.contactorLastname}}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'address.line1' | i18n }}" nzSpan="2">
+        {{ currentCustomer?.addressLine1 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'address.line2' | i18n }}">
+        {{ currentCustomer?.addressLine2 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'city' | i18n }}">
+        {{ currentCustomer?.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'county' | i18n }}">
+        {{ currentCustomer?.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'state' | i18n }}">
+        {{ currentCustomer?.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
+        {{ currentCustomer?.addressCountry }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'postcode' | i18n }}" nzSpan="2">
+        {{ currentCustomer?.addressPostcode }}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'customer.isTarget' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.customerIsTarget"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.customerIsTarget"></span> 
+ 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'customer.isWalmart' | i18n }}" nzSpan="2">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.customerIsWalmart"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.customerIsWalmart"></span>  
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'allowPrintShippingCartonLabel' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.allowPrintShippingCartonLabel"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.allowPrintShippingCartonLabel"></span>  
+ 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'allowPrintShippingCartonLabelWithPalletLabel' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.allowPrintShippingCartonLabelWithPalletLabel"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.allowPrintShippingCartonLabelWithPalletLabel"></span>  
+ 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'allowPrintShippingCartonLabelWithPalletLabelWhenShort' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.allowPrintShippingCartonLabelWithPalletLabelWhenShort"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.allowPrintShippingCartonLabelWithPalletLabelWhenShort"></span>   
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'maxPalletSize' | i18n }}">
+        {{ currentCustomer?.maxPalletSize }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'maxPalletHeight' | i18n }}">
+        {{ currentCustomer?.maxPalletHeight }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+</nz-spin>
+
+<ng-template #actionSave>
+  <button nz-button nzType="primary" (click)="save()">{{ 'confirm' | i18n}}</button>
+</ng-template>

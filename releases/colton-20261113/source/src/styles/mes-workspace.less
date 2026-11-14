@@ -1,0 +1,586 @@
+// A quiet workspace shell that keeps dense MES tables easy to scan.
+:root {
+  --mes-ink: #182235;
+  --mes-muted: #657286;
+  --mes-line: #dce3ed;
+  --mes-line-strong: #cbd5e2;
+  --mes-blue: #2867dc;
+  --mes-blue-soft: #e2edff;
+  --mes-canvas: #f0f3f8;
+  --mes-surface: #fff;
+  --mes-surface-soft: #f7f9fc;
+  --mes-field: #fff;
+  --mes-hover: #edf2f8;
+  --mes-nav-bg: #f8fafc;
+  --mes-nav-text: #455268;
+  --mes-nav-heading: #718096;
+  --mes-nav-hover: #edf2f8;
+  --mes-nav-active: #e7effb;
+  --mes-nav-active-text: #245eb6;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--mes-ink);
+  background: var(--mes-canvas);
+}
+
+body[data-theme='dark'] {
+  --mes-ink: #e7edf7;
+  --mes-muted: #a8b4c5;
+  --mes-line: #343e4d;
+  --mes-line-strong: #465264;
+  --mes-blue: #75a7ff;
+  --mes-blue-soft: #20385f;
+  --mes-canvas: #171c24;
+  --mes-surface: #202733;
+  --mes-surface-soft: #252e3b;
+  --mes-field: #171e28;
+  --mes-hover: #2b3543;
+  --mes-nav-bg: #192230;
+  --mes-nav-text: #c5cfdd;
+  --mes-nav-heading: #94a3b8;
+  --mes-nav-hover: #253246;
+  --mes-nav-active: #29496f;
+  --mes-nav-active-text: #fff;
+  color: var(--mes-ink);
+  background: var(--mes-canvas);
+}
+
+.alain-default__header {
+  border-bottom: 1px solid var(--mes-line);
+  background: var(--mes-surface);
+}
+
+.alain-default__header-logo {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.mes-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--mes-ink);
+  font-size: 15px;
+  font-weight: 650;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--mes-ink);
+  }
+
+  &__mark {
+    display: grid;
+    flex: 0 0 34px;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    color: #fff;
+    background: linear-gradient(145deg, #65a1ff, #3478f6 70%);
+    box-shadow: 0 3px 8px rgb(52 120 246 / 17%);
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  &__name {
+    overflow: hidden;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.mes-warehouse {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &__label {
+    color: var(--mes-muted);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .ant-select {
+    min-width: 150px;
+    max-width: 230px;
+  }
+}
+
+.alain-default__nav-item {
+  border-radius: 9px;
+  color: var(--mes-muted);
+
+  &:hover {
+    color: var(--mes-ink);
+    background: var(--mes-hover);
+  }
+}
+
+.mes-theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 4px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--mes-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+
+  &:hover {
+    border-color: var(--mes-line);
+    color: var(--mes-blue);
+    background: var(--mes-hover);
+  }
+
+  nz-icon {
+    font-size: 17px;
+  }
+}
+
+.alain-default__search {
+  max-width: 360px;
+  margin: 0 20px;
+
+  .ant-input-affix-wrapper,
+  .ant-input-group-addon,
+  .ant-input {
+    color: var(--mes-ink);
+    background: var(--mes-surface-soft);
+
+    &::placeholder {
+      color: var(--mes-muted);
+    }
+  }
+
+  .ant-input-affix-wrapper {
+    border: 1px solid transparent;
+    border-radius: 10px;
+  }
+
+  .ant-input-group-addon i,
+  .ant-input-affix-wrapper i {
+    color: var(--mes-muted);
+  }
+}
+
+.alain-default__aside {
+  border-right: 1px solid var(--mes-line);
+  background: var(--mes-nav-bg);
+
+  &::after {
+    display: none;
+  }
+}
+
+.alain-default__aside-user {
+  justify-content: flex-start;
+  margin: 16px 12px 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fff;
+
+  &-info strong {
+    color: var(--mes-ink);
+  }
+
+  &-info p {
+    color: var(--mes-muted);
+    font-size: 12px;
+  }
+}
+
+.sidebar-nav {
+  padding: 8px 12px 24px;
+
+  &__item {
+    border-left: 0;
+  }
+
+  &__item-link {
+    margin: 2px 0;
+    padding: 12px 28px 12px 12px;
+    border-radius: 7px;
+    color: var(--mes-nav-text);
+    font-weight: 500;
+    line-height: 20px;
+    transition: background-color 160ms ease, color 160ms ease;
+
+    &:hover {
+      color: var(--mes-ink);
+      background: var(--mes-nav-hover);
+    }
+  }
+
+  &__depth1 > .sidebar-nav__item > .sidebar-nav__item-link {
+    padding-right: 8px;
+    padding-left: 18px;
+    font-size: 13px;
+  }
+
+  &__depth1 .sidebar-nav__item-icon:empty {
+    display: none;
+  }
+
+  &__depth2 > .sidebar-nav__item > .sidebar-nav__item-link {
+    padding-right: 8px;
+    padding-left: 30px;
+    font-size: 13px;
+  }
+
+  &__group-title {
+    margin: 24px 0 6px;
+    padding: 0 12px 6px;
+    border: 0;
+    color: var(--mes-nav-heading);
+    background: transparent;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    letter-spacing: 0.035em;
+    text-align: left;
+    text-transform: none;
+
+    &:first-child {
+      margin-top: 12px;
+    }
+  }
+
+  &__sub-arrow {
+    &::before,
+    &::after {
+      background: currentColor;
+      background-image: none;
+    }
+  }
+
+  &__selected {
+    border-left: 0;
+    background: transparent;
+
+    > .sidebar-nav__item-link {
+      color: var(--mes-nav-active-text);
+      background: var(--mes-nav-active);
+      box-shadow: none;
+      font-weight: 600;
+    }
+  }
+
+  &__floating {
+    padding: 6px;
+    border: 1px solid var(--mes-line);
+    border-radius: 8px;
+    background: var(--mes-nav-bg);
+    box-shadow: 0 14px 36px rgb(0 0 0 / 20%);
+  }
+}
+
+.alain-default__content {
+  color: var(--mes-ink);
+  background: var(--mes-canvas);
+
+  .page-header {
+    border-bottom: 0;
+    background: transparent;
+
+    h1,
+    h2 {
+      color: var(--mes-ink);
+      font-weight: 650;
+    }
+  }
+
+  .ant-card {
+    border: 1px solid var(--mes-line);
+    border-radius: 14px;
+    background: var(--mes-surface);
+    box-shadow: 0 3px 12px rgb(24 34 53 / 5%);
+  }
+
+  .ant-table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ant-table-thead > tr > th {
+    color: var(--mes-muted);
+    background: var(--mes-surface-soft);
+    font-weight: 600;
+    border-bottom-color: var(--mes-line-strong);
+  }
+}
+
+body[data-theme='dark'] {
+  .alain-default__header,
+  .alain-default__header-logo,
+  .alain-default__content,
+  .alain-default__content-body,
+  .alain-default__aside {
+    color: var(--mes-ink);
+    background: var(--mes-canvas);
+  }
+
+  .alain-default__header,
+  .alain-default__aside {
+    border-color: var(--mes-line);
+  }
+
+  .alain-default__aside-user,
+  .alain-default__content .ant-card,
+  .ant-card-head,
+  .alain-default__content .ant-form,
+  .alain-default__content .search-result-list,
+  .alain-default__content .ant-table-footer,
+  .mes-account__intro,
+  .mes-account__card {
+    color: var(--mes-ink);
+    border-color: var(--mes-line);
+    background: var(--mes-surface);
+    box-shadow: 0 3px 14px rgb(0 0 0 / 16%);
+  }
+
+  .alain-default__aside-user-info strong,
+  .alain-default__content .page-header h1,
+  .alain-default__content .page-header h2,
+  .mes-brand,
+  .mes-brand:hover,
+  .mes-account__intro h2,
+  .mes-account__card h3,
+  .mes-account__card dd {
+    color: var(--mes-ink);
+  }
+
+  .sidebar-nav__item-link {
+    color: var(--mes-nav-text);
+
+    &:hover {
+      color: var(--mes-ink);
+      background: var(--mes-nav-hover);
+    }
+  }
+
+  .mes-warehouse__label,
+  .alain-default__aside-user-info p,
+  .mes-dashboard__empty {
+    color: var(--mes-muted);
+  }
+
+  .sidebar-nav__selected > .sidebar-nav__item-link {
+    color: var(--mes-nav-active-text);
+    background: var(--mes-nav-active);
+    box-shadow: none;
+  }
+
+  .alain-default__content .ant-table,
+  .alain-default__content .ant-table-container,
+  .alain-default__content .ant-table-content,
+  .alain-default__content .ant-table-tbody > tr > td {
+    color: var(--mes-ink);
+    background: var(--mes-surface);
+    border-color: var(--mes-line);
+  }
+
+  .alain-default__content .ant-table-thead > tr > th {
+    color: var(--mes-ink);
+    background: var(--mes-surface-soft);
+    border-color: var(--mes-line-strong);
+  }
+
+  .alain-default__content .ant-table-tbody > tr:hover > td {
+    background: var(--mes-hover);
+  }
+
+  .mes-dashboard__progress {
+    background: #343f4d;
+  }
+
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-group-addon,
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+  .ant-picker,
+  .ant-input-number,
+  .ant-mentions,
+  .ant-picker-range-separator {
+    color: var(--mes-ink);
+    border-color: var(--mes-line-strong);
+    background: var(--mes-field);
+  }
+
+  .ant-input::placeholder,
+  .ant-select-selection-placeholder,
+  .ant-picker-input > input::placeholder {
+    color: #8794a7;
+  }
+
+  .ant-select-dropdown,
+  .ant-dropdown-menu,
+  .ant-picker-panel-container,
+  .ant-modal-content,
+  .ant-modal-header,
+  .ant-modal-footer,
+  .ant-drawer-content,
+  .ant-popover-inner,
+  .ant-tooltip-inner {
+    color: var(--mes-ink);
+    border-color: var(--mes-line);
+    background: var(--mes-surface);
+  }
+
+  .ant-dropdown-menu-item,
+  .ant-select-item,
+  .ant-picker-cell,
+  .ant-pagination-item a,
+  .ant-pagination-item-link {
+    color: var(--mes-ink);
+  }
+
+  .ant-dropdown-menu-item:hover,
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+  .ant-picker-cell:hover .ant-picker-cell-inner {
+    background: var(--mes-hover);
+  }
+
+  .ant-modal-title,
+  .ant-drawer-title,
+  .ant-empty-description,
+  .ant-breadcrumb,
+  .ant-breadcrumb a,
+  .ant-form-item-label > label,
+  .ant-pagination,
+  .mes-account__card dt,
+  .mes-account__intro p,
+  .mes-account__card p {
+    color: var(--mes-muted);
+  }
+
+  .ant-btn:not(.ant-btn-primary) {
+    color: var(--mes-ink);
+    border-color: var(--mes-line-strong);
+    background: var(--mes-surface-soft);
+  }
+
+  .mes-account__card dl > div {
+    border-color: var(--mes-line);
+  }
+
+  .mes-account__control {
+    color: var(--mes-ink);
+    background: var(--mes-surface-soft);
+  }
+}
+
+.ant-btn,
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector {
+  border-radius: 8px;
+}
+
+.ant-btn-primary {
+  border-color: var(--mes-blue);
+  background: var(--mes-blue);
+  box-shadow: 0 2px 5px rgb(40 103 220 / 17%);
+}
+
+:where(a, button, input, .ant-select-selector):focus-visible {
+  outline: 2px solid var(--mes-blue);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .mes-warehouse__label {
+    display: none;
+  }
+
+  .mes-warehouse .ant-select {
+    min-width: 110px;
+    max-width: 150px;
+  }
+
+  .alain-default__search {
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.mes-brand__icon {
+  object-fit: contain;
+  background: transparent;
+  box-shadow: none;
+}
+
+.login-warehouse-dropdown .ant-select-dropdown {
+  padding: 6px;
+  border: 1px solid var(--mes-line, #e1e7f0);
+  border-radius: 12px;
+  background: var(--mes-surface, #fff);
+  box-shadow: 0 10px 28px rgba(25, 47, 82, .15);
+
+  .ant-select-item-option {
+    min-height: 40px;
+    padding: 10px 12px;
+    border-radius: 7px;
+    line-height: 20px;
+  }
+
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    color: var(--mes-blue, #2864dd);
+    background: var(--mes-blue-soft, #edf3ff);
+  }
+}
+
+.alain-default__aside-user-info .mes-user-full-name {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-transform: none;
+}
+
+// Keep shell geometry independent of the dynamically loaded theme stylesheet.
+.mes-shell .alain-default__aside {
+  width: 320px;
+}
+
+@media (min-width: 768px) {
+  .mes-shell .alain-default__header-logo {
+    width: 320px;
+  }
+
+  .mes-shell .alain-default__content {
+    margin-left: 344px;
+  }
+
+  .mes-shell.alain-default__collapsed .alain-default__aside,
+  .mes-shell.alain-default__collapsed .alain-default__header-logo {
+    width: 64px;
+  }
+
+  .mes-shell.alain-default__collapsed .alain-default__content {
+    margin-left: 88px;
+  }
+}
+
+body.mes-kanban-kiosk {
+  overflow: hidden;
+
+  .mes-shell .alain-default__header,
+  .mes-shell .alain-default__aside,
+  .mes-shell .alain-default__aside-backdrop { display: none; }
+
+  .mes-shell .alain-default__content {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    margin: 0 !important;
+    padding: 0;
+    overflow: auto;
+    background: var(--mes-canvas);
+  }
+}

@@ -1,0 +1,38 @@
+<div class="integration-settings">
+  <h2>{{ 'web.literal.0dd1cce680c5' | i18n }}</h2>
+  <p>{{ 'web.literal.c6bb8c1ea611' | i18n }}</p>
+
+  <nz-card [nzTitle]="'web.literal.998d03757ded' | i18n">
+    <nz-spin [nzSpinning]="loading">
+      <nz-table [nzData]="rows" [nzShowPagination]="false" nzSize="middle">
+        <thead>
+          <tr>
+            <th>{{ 'web.literal.9a92ebbaf8c2' | i18n }}</th>
+            <th>{{ 'web.literal.b0a7d97b06a9' | i18n }}</th>
+            <th>{{ 'web.literal.64cff1319d2f' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows; let index = index">
+            <td>
+              <input nz-input [(ngModel)]="row.code" maxlength="20" [placeholder]="'web.literal.b27f4eff4372' | i18n" [disabled]="saving" />
+            </td>
+            <td>
+              <nz-select [(ngModel)]="row.family" [nzPlaceHolder]="'web.literal.1820ca721212' | i18n" [nzDisabled]="saving">
+                <nz-option *ngFor="let family of families" [nzValue]="family" [nzLabel]="family"></nz-option>
+              </nz-select>
+            </td>
+            <td>
+              <button nz-button nzDanger nzType="default" (click)="removeRow(index)" [disabled]="saving">{{ 'web.literal.c3812fc4acb8' | i18n }}</button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <div class="actions">
+        <button nz-button nzType="default" (click)="addRow()" [disabled]="loading || saving">{{ 'web.literal.2bc86d557dcf' | i18n }}</button>
+        <button nz-button nzType="primary" (click)="save()" [nzLoading]="saving" [disabled]="loading">{{ 'web.literal.1509f561f241' | i18n }}</button>
+        <button nz-button nzType="default" (click)="load()" [disabled]="loading || saving">{{ 'web.literal.bdc090ec61e3' | i18n }}</button>
+      </div>
+    </nz-spin>
+  </nz-card>
+</div>

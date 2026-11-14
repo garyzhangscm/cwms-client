@@ -1,0 +1,204 @@
+<page-header title="{{'rate' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <nz-card>
+        
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                    {{ 'choose-a-client' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" >
+
+                        <nz-select [(ngModel)]="selectedClient" (ngModelChange)="selectedClientChanged()"
+                          [nzDisabled]="this.companySpecificFlag == true">
+                          @for (client of availableClients; track client) {
+                          
+                            <nz-option  [nzValue]="client" [nzLabel]="client.name"></nz-option>
+                          }
+                          
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="12">
+                {{ 'or-company-specific' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12">
+                    <label nz-checkbox [(ngModel)]="companySpecificFlag" (ngModelChange)="companySpecificFlagChanged()"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+            </div>
+
+        </div>
+
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                    {{ 'warehouse' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" >
+
+                        <nz-select [(ngModel)]="selectedWarehouse" (ngModelChange)="selectedWarehouseChanged()">
+                            @for (warehouse of availableWarehouses; track warehouse) {
+                            
+                                <nz-option  [nzValue]="warehouse" [nzLabel]="warehouse.name"></nz-option>
+                            }
+                            
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div> 
+
+        </div>
+    </nz-card>
+    <nz-tabset
+        [(nzSelectedIndex)]="selectedBillingRateGroup"
+        nzType="editable-card"
+        (nzAdd)="openNewBillingRateByInventoryAgeModal(tplNewBillingRateByInventoryAgeModalTitle, tplNewBillingRateByInventoryAgeModalContent)"
+        (nzClose)="removeBillingRateGroup($event)"
+    >
+    
+        @for (billingRateByInventoryAge of billingRateByInventoryAges; track billingRateByInventoryAge) {
+        
+          <nz-tab 
+            nzClosable nzTitle="{{billingRateByInventoryAge.startInventoryAge}} - {{billingRateByInventoryAge.endInventoryAge}} days">
+            
+            <div nz-row [nzGutter]="24"> 
+                <div nz-col [nzSpan]="3">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="12">{{'enabled' | i18n}}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12">
+                        <label nz-checkbox [(ngModel)]="billingRateByInventoryAge.enabled"></label>
+
+                    </nz-form-control>
+                </nz-form-item>
+                </div>
+
+            </div> 
+            <!-- Display billing rates -->
+            <nz-card *ngIf="billingRateByInventoryAge.billingRates.length > 0" >
+
+                <nz-list class="demo-loadmore-list" >
+                  
+                    @for (billingRate of billingRateByInventoryAge.billingRates; track billingRate) {
+                    
+                      <nz-list-item>
+                        <ng-container >
+                            <nz-list-item-meta
+                            >
+                            <nz-list-item-meta-title>
+                                {{'BILLABLE-CATEGORY-' + billingRate.billableCategory | i18n}}
+                            </nz-list-item-meta-title>
+                            </nz-list-item-meta>
+                            
+                            <ul nz-list-item-actions>
+                                <nz-list-item-action>
+                                    
+                                    <nz-input-number [(ngModel)]="billingRate.rate" [nzMin]="0" 
+                                        [nzFormatter]="formatterDollar"
+                                        [nzParser]="parserDollar"
+                                        ></nz-input-number>
+                                    /
+                                    <nz-select *ngIf="!billingRate.rateByQuantity"
+                                        [ngModel]="billingRate.rateUnit" style="width: 180px;" (ngModelChange)="billingRateUnitChanged(billingRate, $event)">
+                                        
+                                      @for (unit of volumeUnits; track unit) {
+                                      
+                                        <nz-option 
+                                          [nzValue]="unit"
+                                          nzLabel="{{unit.description}}" ></nz-option>
+                                      }
+                                    </nz-select> 
+                                    <span style="width: 180px;" *ngIf="billingRate.rateByQuantity"> {{ 'web.literal.4e545960f1bf' | i18n }} </span>
+                                </nz-list-item-action>
+                                <nz-list-item-action>
+  
+                                    <nz-select [(ngModel)]="billingRate.billingCycle">
+                                      @for (billingCycle of billingCyclesKeys; track billingCycle) {
+                                      
+                                        <nz-option 
+                                            [nzValue]="billingCycle"
+                                            nzLabel="{{ 'BILLING-CYCLE-' + billingCycle | i18n }}" ></nz-option>
+                                      }
+                                    </nz-select> 
+                                </nz-list-item-action>
+                                <nz-list-item-action>
+                                    <label nz-checkbox [(ngModel)]="billingRate.enabled">
+                                    <span>{{'enabled' | i18n}}</span>
+                                    </label>
+                                </nz-list-item-action>
+                            </ul>
+  
+                        </ng-container>
+                      </nz-list-item>
+                    }
+      
+
+                </nz-list>
+            </nz-card>
+        
+          </nz-tab>
+        }
+    
+    </nz-tabset>
+    
+    <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+        <button nz-button nzType="primary" (click)="confirm()" >
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+    
+
+
+</nz-spin>
+
+
+<!-- Modal for add new billing rate by inventory age group-->
+<ng-template #tplNewBillingRateByInventoryAgeModalTitle>
+    <span>{{ 'billingRateByInventoryAge' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplNewBillingRateByInventoryAgeModalContent>
+    <form nz-form [formGroup]="newBillingRateByInventoryAgeForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="12" nzFor="startInventoryAge">
+              {{ 'startInventoryAge' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" >
+              <nz-input-group nzSize="large">
+                
+                <nz-input-number formControlName="startInventoryAge" [nzMin]="0" 
+                    [nzMax]="36500" [nzStep]="1"
+                    ></nz-input-number>  {{'days' | i18n}}
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+      </div>
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="12"  nzFor="endInventoryAge">
+              {{ 'endInventoryAge' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" >
+              <nz-input-group nzSize="large">
+                
+                <nz-input-number formControlName="endInventoryAge" [nzMin]="0" 
+                    [nzMax]="36500" [nzStep]="1"
+                    ></nz-input-number> {{'days' | i18n}}
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+      </div>
+    </form>
+  </ng-template>

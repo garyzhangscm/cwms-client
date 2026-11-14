@@ -1,0 +1,104 @@
+<page-header title="{{'inventory-adjustment-threshold' |  i18n}}" > </page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div class="threshold-search-grid" [class.threshold-search-grid--collapsed]="isCollapse">
+    <div class="threshold-search-field threshold-search-field--wide">
+      <label class="threshold-search-label" for="inventoryQuantityChangeType">
+        {{ 'inventory-quantity-change-type' | i18n }}
+      </label>
+      <nz-select id="inventoryQuantityChangeType" nzMode="tags" formControlName="inventoryQuantityChangeType">
+        <nz-option *ngFor="let inventoryQuantityChangeType of inventoryQuantityChangeTypes | keyvalue"
+          [nzLabel]="inventoryQuantityChangeType.value" [nzValue]="inventoryQuantityChangeType.key"></nz-option>
+      </nz-select>
+    </div>
+
+    <div class="threshold-search-field threshold-search-field--wide">
+      <label class="threshold-search-label" for="taggedClients">{{ 'client' | i18n }}</label>
+      <nz-select id="taggedClients" nzMode="tags" formControlName="taggedClients">
+        <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
+      </nz-select>
+    </div>
+
+    <div class="threshold-search-field threshold-search-field--wide">
+      <label class="threshold-search-label" for="taggedItemFamilies">{{ 'item-family' | i18n }}</label>
+      <nz-select id="taggedItemFamilies" nzMode="tags" formControlName="taggedItemFamilies">
+        <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label"
+          [nzValue]="itemFamily.value"></nz-option>
+      </nz-select>
+    </div>
+
+    <div class="threshold-search-field">
+      <label class="threshold-search-label" for="itemName">{{ 'item' | i18n }}</label>
+      <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+    </div>
+
+    <div class="threshold-search-field">
+      <label class="threshold-search-label" for="username">{{ 'username' | i18n }}</label>
+      <input nz-input name="username" id="username" formControlName="username" />
+    </div>
+
+    <div class="threshold-search-field">
+      <label class="threshold-search-label" for="roleName">{{ 'role.name' | i18n }}</label>
+      <input nz-input name="roleName" id="roleName" formControlName="roleName" />
+    </div>
+
+    <label nz-checkbox class="threshold-search-checkbox" formControlName="enabled">
+      {{ 'enabled' | i18n }}
+    </label>
+  </div>
+
+
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | i18n }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllInventoryAdjustmentThresholds">
+    <thead>
+      <tr>
+
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td>{{ data.item.name }}</td>
+        <td>{{ data.itemFamily.name }}</td>
+        <td>{{ data.client.name }}</td>
+        <td>{{ data.type }}</td>
+        <td>{{ data.user.username }}</td>
+        <td>{{ data.role.name }}</td>
+        <td>{{ data.quantityThreshold }}</td>
+        <td>{{ data.costThreshold }}</td>
+        <td>{{ data.enabled + ''| i18n}}</td>
+
+        <td *ngIf="!displayOnly">
+
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

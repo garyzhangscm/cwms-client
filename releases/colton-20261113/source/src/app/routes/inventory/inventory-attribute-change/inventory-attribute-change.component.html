@@ -1,0 +1,155 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/inventory" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/inventory" routerLinkActive="active">{{
+        'breadcrumb.inventory' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<ng-container>
+  <nz-card [nzActions]="[actionConfirm]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'lpn' | i18n}}">
+        {{currentInventory.lpn}}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{'location' | i18n}}" nzSpan="2">
+        {{currentInventory.locationName}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item' | i18n}}">
+        {{currentInventory.item?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.description' | i18n}}" nzSpan="2">
+        {{currentInventory.item?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.package-type' | i18n}}" nzSpan="3">
+        <nz-card *ngIf='currentInventory !== undefined' [nzTitle]="inventoryPackageTypes">
+          <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable
+            [nzData]="currentInventory.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
+            nzBordered>
+            <thead>
+              <tr>
+                <th>{{ 'unitOfMeasure' | i18n}}</th>
+                <th>{{ 'quantity' | i18n }}</th>
+                <th>{{ 'weight' | i18n }}</th>
+                <th>{{ 'length' | i18n }}</th>
+                <th>{{ 'width' | i18n }}</th>
+                <th>{{ 'height' | i18n }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+                <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+                <td>{{ itemUnitOfMeasure.quantity }}</td>
+                <td>{{ itemUnitOfMeasure.weight }}</td>
+                <td>{{ itemUnitOfMeasure.length }}</td>
+                <td>{{ itemUnitOfMeasure.width }}</td>
+                <td>{{ itemUnitOfMeasure.height }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </nz-card>
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'inventory.status' | i18n}}">
+
+        <nz-select *ngIf='currentInventory !== undefined' nz-input [ngModel]="currentInventory.inventoryStatus!.name!"
+          (ngModelChange)="inventoryStatusChange($event)" style="width: 250px">
+          <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+            [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
+          </nz-option>
+        </nz-select>
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
+        {{currentInventory.quantity}}
+
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{'color' | i18n}}">
+        <input nz-input [(ngModel)]="currentInventory.color" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'style' | i18n}}">
+        <input nz-input [(ngModel)]="currentInventory.style" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'productSize' | i18n}}">
+        <input nz-input [(ngModel)]="currentInventory.productSize" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute1Enabled"
+           nzTitle="{{inventoryConfiguration.inventoryAttribute1DisplayName == null ? 
+            ('inventoryAttribute1' | i18n) : inventoryConfiguration.inventoryAttribute1DisplayName }}">
+        <input nz-input [(ngModel)]="currentInventory.attribute1" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute2Enabled"
+           nzTitle="{{inventoryConfiguration.inventoryAttribute2DisplayName == null ? 
+            ('inventoryAttribute2' | i18n) : inventoryConfiguration.inventoryAttribute2DisplayName }}">
+        <input nz-input [(ngModel)]="currentInventory.attribute2" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute3Enabled"
+           nzTitle="{{inventoryConfiguration.inventoryAttribute3DisplayName == null ? 
+            ('inventoryAttribute3' | i18n) : inventoryConfiguration.inventoryAttribute3DisplayName }}">
+        <input nz-input [(ngModel)]="currentInventory.attribute3" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute4Enabled"
+           nzTitle="{{inventoryConfiguration.inventoryAttribute4DisplayName == null ? 
+            ('inventoryAttribute4' | i18n) : inventoryConfiguration.inventoryAttribute4DisplayName }}">
+        <input nz-input [(ngModel)]="currentInventory.attribute4" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      <nz-descriptions-item *ngIf="inventoryConfiguration && inventoryConfiguration.inventoryAttribute5Enabled"
+           nzTitle="{{inventoryConfiguration.inventoryAttribute5DisplayName == null ? 
+            ('inventoryAttribute5' | i18n) : inventoryConfiguration.inventoryAttribute5DisplayName }}">
+        <input nz-input [(ngModel)]="currentInventory.attribute5" style="width: 250px;" />
+
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{'inWarehouseDate' | i18n}}">
+        <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm:ss"
+            [(ngModel)]="currentInventory.inWarehouseDatetime"  
+          ></nz-date-picker> 
+
+      </nz-descriptions-item>
+
+
+      <ng-template #inventoryPackageTypes>
+
+        <nz-select nz-input [ngModel]="currentInventory.itemPackageType!.name!"
+          (ngModelChange)="itemPackageTypeChange($event)" style="width: 250px">
+          <nz-option *ngFor="let availableItemPackageType of currentInventory.item!.itemPackageTypes!"
+            [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.name!">
+          </nz-option>
+        </nz-select>
+      </ng-template>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionConfirm>
+  <a nz-button nzType="primary" routerLink="/inventory/inventory-attribute-change/confirm" routerLinkActive="active"
+    (click)="saveCurrentInventory()">
+    {{ 'steps.next' | i18n }} :
+    {{ 'steps.confirm.title' | i18n }}</a>
+</ng-template>

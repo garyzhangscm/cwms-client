@@ -1,0 +1,76 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a (click)="returnToPreviousPage()" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.outbound' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/outbound/wave" routerLinkActive="active">{{
+        'breadcrumb.wave' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  
+  <nz-card  [nzTitle]="waveInfo" *ngIf="currentWave!= null" [nzActions]="[completeWaveTpl]">   
+    
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'status' | i18n }}">
+
+        {{ currentWave.status  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'wave.totalOrderCount' | i18n }}" >{{ currentWave.totalOrderCount | number }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'wave.totalItemCount' | i18n }}" >{{ currentWave.totalItemCount | number }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'wave.totalQuantity' | i18n }}" >{{ currentWave.totalQuantity | number }}
+      </nz-descriptions-item>
+      
+    </nz-descriptions> 
+    <ng-template #completeWaveTpl>
+        <div style="background-color: red;" *ngIf="currentWave.status != waveStatusList.COMPLETED && currentWave.status != waveStatusList.CANCELLED">
+          <a (click)="completeWave()">
+          <span style ="color: white;">{{ 'complete' | i18n }}</span>
+        </a>  </div>
+    </ng-template>
+    <ng-template #waveInfo>
+      {{'current-wave' | i18n }}: 
+      <a routerLink="/outbound/wave" routerLinkActive="active"
+      [queryParams]="{number: currentWave.number}">{{currentWave.number}}</a>
+      
+      
+    </ng-template>
+  </nz-card> 
+  <nz-card nzTitle="{{'shipment-complete-staged' | i18n}}">
+
+    <div class="search-result-list">
+      <st #completelyStagedShipmentLineTable [data]="completelyStagedShipmentLines" 
+      [columns]="shipmentLineTableColumns"   [scroll]="{ x: '1615px' }"
+      [widthMode]="{ type: 'strict' }" resizable
+           >
+      </st>
+    </div>
+  </nz-card>
+  <nz-card nzTitle="{{'shipment-not-complete-staged' | i18n}}">
+
+    <div class="search-result-list">
+      <st #uncompletelyStagedShipmentLineTable
+       [data]="uncompletelyStagedShipmentLines" [columns]="shipmentLineTableColumns" 
+       [scroll]="{ x: '1615px' }"
+       [widthMode]="{ type: 'strict' }" resizable  
+          >
+      </st>
+    </div>
+  </nz-card>
+</nz-spin>

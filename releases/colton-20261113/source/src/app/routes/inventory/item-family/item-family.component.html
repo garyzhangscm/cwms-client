@@ -1,0 +1,64 @@
+<page-header [title]="'page.item-family.header.title' | i18n">
+</page-header>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger
+    [nzData]="listOfDisplayItemFamilies" [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id!|| editCol != 'name'; else editNameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'name', $event)">
+              {{ data.name }}
+            </div>
+          </div>
+          <ng-template #editNameTpl>
+            <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeItemFamily(data)" />
+          </ng-template>
+        </td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'description'; else editDescTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'description', $event)">
+              {{ data.description }}
+            </div>
+          </div>
+          <ng-template #editDescTpl>
+            <input type="text" nz-input [(ngModel)]="data.description" (blur)="changeItemFamily(data)" />
+          </ng-template>
+        </td>
+        <td>{{ data.totalItemCount}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <a nz-button nzType="primary" (click)="refresh()">
+      {{'fresh' | i18n}}
+    </a>
+    <a nz-button nzType="primary" routerLink="/inventory/item-family-maintenance" routerLinkActive="active"
+      (click)="clearSessionItemFamily()"  *ngIf="!displayOnly">
+      {{'add' | i18n}}
+    </a>
+
+    <button nz-button nzDanger (click)="removeSelectedItemFamilies()" *ngIf="!displayOnly">{{'delete' | i18n}}</button>
+  </div>
+</ng-template>

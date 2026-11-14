@@ -1,0 +1,78 @@
+ 
+
+
+<page-header title="{{'shopify-integration' |  i18n}}" ></page-header>
+<!--
+
+<a href="https://admin.shopify.com/oauth/install_custom_app?client_id=7e0b33dd596b5e74e611d86e50c3d5bd&no_redirect=true&signature=eyJfcmFpbHMiOnsibWVzc2FnZSI6ImV5SmxlSEJwY21WelgyRjBJam94TnpFM09UazBPVEUzTENKd1pYSnRZVzVsYm5SZlpHOXRZV2x1SWpvaWNYVnBZMnR6ZEdGeWRDMHdPVE16Wm1NM01DNXRlWE5vYjNCcFpua3VZMjl0SWl3aVkyeHBaVzUwWDJsa0lqb2lOMlV3WWpNelpHUTFPVFppTldVM05HVTJNVEZrT0RabE5UQmpNMlExWW1RaUxDSndkWEp3YjNObElqb2lZM1Z6ZEc5dFgyRndjQ0lzSW0xbGNtTm9ZVzUwWDI5eVoyRnVhWHBoZEdsdmJsOXBaQ0k2TVRJeU1qY3lOelF3ZlE9PSIsImV4cCI6IjIwMjQtMDYtMTdUMDQ6NDg6MzcuNjQ4WiIsInB1ciI6bnVsbH19--9bc1977c099f4f029b0aa02c2e0a3a125694e613">
+    shopify
+</a>
+
+-->
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <div *ngIf="!threePartyLogisticsFlag">
+    
+        <nz-card *ngIf="shopifyIntegrationConfigurationList.length == 0">
+            <div *ngIf="shopifyOAuthUrlByCompany != ''">
+                {{ 'web.literal.5e5e678290b2' | i18n }}
+                <a [href]="shopifyOAuthUrlByCompany" target="_blank" rel="noopener noreferrer">
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.c3bd7e3836ab' | i18n }}
+            </div>
+        </nz-card>
+        <nz-card *ngIf="shopifyIntegrationConfigurationList.length > 0"> 
+            <span>{{ 'web.literal.7a6fd7ea6ec3' | i18n }} </span>
+        </nz-card>
+    </div>
+    <div *ngIf="threePartyLogisticsFlag">
+        <nz-card>
+            <p>
+
+                <span>{{ 'web.literal.d2f0c47b1805' | i18n }} </span>
+            
+                <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
+                    
+                    @for (client of availableClients; track client) {
+                    
+                        <nz-option  [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    
+                    }  
+                </nz-select>
+            </p>
+            
+            <nz-result *ngIf="selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) == null"
+                nzStatus="error" [nzTitle]="'web.literal.32495a3c1720' | i18n">
+                 
+            </nz-result> 
+            <div *ngIf="shopifyIntegrationConfigurationList.length == 0 && selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) != null">
+                {{ 'web.literal.5e5e678290b2' | i18n }}
+                <a [href]="shopifyOAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.289bc2c8c227' | i18n }}
+            </div>
+            
+            @for (shopifyIntegrationConfiguration of shopifyIntegrationConfigurationList; track shopifyIntegrationConfiguration) {
+            
+                <nz-card nzType="inner"  
+                    nzTitle="{{'shop' | i18n}}: {{shopifyIntegrationConfiguration.shop}}" 
+                    [nzExtra]="removeConfigurationTemplate">  
+                    <div>{{shopifyIntegrationConfiguration.access_token}}</div>
+                    <ng-template #removeConfigurationTemplate>
+                        <a (click)="removeShopIntegrationConfiguration(shopifyIntegrationConfiguration)">
+                            {{'remove' | i18n}}</a>
+                    </ng-template>
+                </nz-card>
+            
+            }  
+
+            <div *ngIf="shopifyIntegrationConfigurationList.length > 0 && selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) != null">
+                {{ 'web.literal.95ba4ed9329f' | i18n }}
+                <a [href]="shopifyOAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    {{ 'web.literal.38600672b6ed' | i18n }}</a>
+                    {{ 'web.literal.ff51e1a890a3' | i18n }}
+            </div>
+        </nz-card> 
+    </div>
+
+</nz-spin>

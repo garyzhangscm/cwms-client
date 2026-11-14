@@ -1,0 +1,2257 @@
+import { formatDate } from '@angular/common'; 
+import { Component,  inject, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+// import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+// import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { I18NService } from '@core';
+import { STComponent, STColumn, STData, STChange } from '@delon/abc/st';
+import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
+import { XlsxService } from '@delon/abc/xlsx';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { lastValueFrom, Observable, timeout } from 'rxjs';
+
+import { UserService } from '../../auth/services/user.service';
+import { Client } from '../../common/models/client';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
+import { ClientService } from '../../common/services/client.service';
+import { PrintingService } from '../../common/services/printing.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum'; 
+import { LocalCacheService } from '../../util/services/local-cache.service';
+import { UtilService } from '../../util/services/util.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WorkOrderService } from '../../work-order/services/work-order.service';
+import { Inventory } from '../models/inventory';
+import { InventoryConfiguration } from '../models/inventory-configuration';
+import { InventoryDisplayOption } from '../models/inventory-display-option.enum';
+import { InventoryMovement } from '../models/inventory-movement';
+import { InventoryStatus } from '../models/inventory-status';
+import { ItemFamily } from '../models/item-family';
+import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
+import { InventoryConfigurationService } from '../services/inventory-configuration.service';
+import { InventoryStatusService } from '../services/inventory-status.service';
+import { InventoryService } from '../services/inventory.service';
+import { ItemFamilyService } from '../services/item-family.service';   
+import { DatePipe } from '@angular/common';
+import * as XLSX from 'xlsx';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { WebPageTableColumnConfigurationService } from '../../util/services/web-page-table-column-configuration.service';
+
+@Component({
+    selector: 'app-inventory-inventory',
+    templateUrl: './inventory.component.html',
+    styleUrls: ['./inventory.component.less'],
+    standalone: false
+})
+export class InventoryInventoryComponent implements OnInit, OnDestroy {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly warehouseService = inject(WarehouseService);
+  pageName = "inventory";
+  tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
+
+  
+  inventoryTablePI = 1;
+  inventoryTablePS = 10;
+
+  @ViewChild('inventoryTable', { static: false })
+  inventoryTable!: STComponent;
+  invetoryTablePagination = {
+    show: false,
+    front: false,
+  };
+  inventoryConfiguration?: InventoryConfiguration;
+
+  inventoryTableRecordPerPages: number[] = [5, 10, 25, 50, 100]
+
+  inventoryTableColumns: STColumn[] = [];
+  
+  customColumns: { label: string, value: string; checked: boolean; }[] = [];
+
+  
+
+  isChoose(key: string): boolean {
+    return !!this.customColumns.find(w => w.value === key && w.checked);
+  } 
+
+  // Select control for clients and item families 
+  availableClients: Client[] = [];
+  itemFamilies: Array<{ label: string; value: string }> = [];
+  // Form related data and functions 
+  inventoryMovementForm!: UntypedFormGroup;
+
+  searching = false;
+  detailsLoading = false;
+  private inventorySearchVersion = 0;
+  private inventoryDetailVersion = 0;
+  searchResult = '';
+
+  // Table data for display
+  inventories: Inventory[] = [];
+  listOfDisplayInventories: Inventory[] = [];
+  locationGroups: LocationGroup[] = [];
+
+
+  inventoryToBeRemoved!: Inventory;
+  inventoryRemovalModal!: NzModalRef;
+
+  documentNumber = '';
+  comment = '';
+
+  isCollapse = false;
+  isSpinning = false;
+  validInventoryStatuses: InventoryStatus[] = [];
+
+  inventoryMoveModal!: NzModalRef;
+
+  mapOfInprocessInventoryId: { [key: string]: boolean } = {};
+
+  // whether we are move inventory in a batch
+  batchMovement = false;
+  inventoryDisplayOptions = InventoryDisplayOption;
+  inventoryDisplayOptionsKeys = Object.keys(this.inventoryDisplayOptions);
+  inventoryDisplayOption?: InventoryDisplayOption;
+  
+  loadingDetailsRequest = 0;
+  isSubmittingRemoval = false;
+  isMonitoringRemoval = false;
+  removalNeedsReview = false;
+  pendingRemovalIds = new Set<number>();
+  private removalMonitorVersion = 0;
+  private removalWarehouseId?: number;
+  private readonly removalPollLimit = 20;
+  threePartyLogisticsFlag = false;
+
+
+/** 
+ * 
+ * 
+  listOfSelection = [
+    {
+      text: this.i18n.fanyi(`select-all-rows`),
+      onSelect: () => {
+        this.onAllChecked(true);
+      }
+    },
+  ];
+  setOfCheckedId = new Set<number>();
+  checked = false;
+  indeterminate = false;
+*/
+
+  toggleCollapse(): void {
+    this.isCollapse = !this.isCollapse;
+  }
+
+  displayOnly = false;
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
+    ['adjust-inventory-quantity', false],
+    ['change-inventory-attribute', false],
+    ['move-inventory', false],
+    ['remove-inventory', false],
+    ['remove-inventory-in-batch', false],
+    ['move-inventory-in-batch', false],
+    ['upload-inventory', false],
+    ['reverse-inventory', false],
+  ]);
+  
+  private readonly fb = inject(FormBuilder);
+  
+  searchForm = this.fb.nonNullable.group({
+    client: this.fb.control<Client | undefined>(undefined, { nonNullable: true, validators: []}),
+    locationGroups: this.fb.control<number | undefined>(undefined, { nonNullable: true, validators: []}),
+    taggedItemFamilies: this.fb.control<ItemFamily[] | undefined>(undefined, { nonNullable: true, validators: []}),
+    itemName: this.fb.control('', { nonNullable: true, validators: []}),
+    location: this.fb.control('', { nonNullable: true, validators: []}),
+    lpn: this.fb.control<string | undefined>(undefined, { nonNullable: true, validators: []}),
+    inventoryStatus: this.fb.control<number | undefined>(undefined,{ nonNullable: true, validators:  []}),
+    color: this.fb.control('', { nonNullable: true, validators: []}),
+    style: this.fb.control('', { nonNullable: true, validators: []}),
+    receiptNumber: this.fb.control<string | undefined>(undefined, { nonNullable: true, validators: []}),
+  });
+ 
+  
+   
+  
+  constructor( 
+    private inventoryService: InventoryService,
+    private clientService: ClientService,
+    private itemFamilyService: ItemFamilyService, 
+    private modalService: NzModalService,
+    private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
+    private locationService: LocationService,
+    private locationGroupService: LocationGroupService,
+    private messageService: NzMessageService,
+    private utilService: UtilService,
+    private datePipe: DatePipe,
+    private printingService: PrintingService,
+    private router: Router,
+    private localCacheService: LocalCacheService,
+    private userService: UserService,
+    private inventoryStatusService: InventoryStatusService,
+    private workOrderService: WorkOrderService,
+    private xlsx: XlsxService,
+    private companyService: CompanyService,
+    private inventoryConfigurationService: InventoryConfigurationService,
+    private webPageTableColumnConfigurationService: WebPageTableColumnConfigurationService,
+  ) { 
+    userService.isCurrentPageDisplayOnly("/inventory/inventory").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );      
+    userService.getUserPermissionByWebPage("/inventory/inventory").subscribe({
+      next: (userPermissionRes) => {
+        userPermissionRes.forEach(
+          userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
+        )
+      }
+    }); 
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        } 
+        this.initWebPageTableColumnConfiguration();
+      } , 
+      error: () =>  this.initWebPageTableColumnConfiguration()
+    });
+
+    /**
+     * 
+     * 
+    this.inventoryService.graphqlGetInventoryById(37537).subscribe({
+      next: (inventoryRes) => {
+         console.log(`get inventory by graphql: \n ${JSON.stringify(inventoryRes)}`);
+      }
+    })
+     */
+    
+    
+  }
+  
+  initWebPageTableColumnConfiguration() {
+    this.initInventoryTableColumnConfiguration();
+  }
+  
+  initInventoryTableColumnConfiguration() {
+    
+    console.log(`start to get web page table column configuration for ${this.pageName} inventory table`)
+    this.localCacheService.getWebPageTableColumnConfiguration(this.pageName, "inventoryTable")
+    .subscribe({
+      next: (webPageTableColumnConfigurationRes) => {
+        
+        if (webPageTableColumnConfigurationRes && webPageTableColumnConfigurationRes.length > 0){
+
+          this.tableConfigurations["inventoryTable"] = this.ensureInventoryItemColumn(webPageTableColumnConfigurationRes);
+          this.refreshInventoryTableColumns();
+
+        }
+        else {
+          this.tableConfigurations["inventoryTable"] = this.getDefaultInventoryTableColumnsConfiguration();
+          this.refreshInventoryTableColumns();
+        }
+      }, 
+      error: () => {
+        
+        this.tableConfigurations["inventoryTable"] = this.getDefaultInventoryTableColumnsConfiguration();
+        this.refreshInventoryTableColumns();
+      }
+    })
+  }
+
+  private ensureInventoryItemColumn(columns: WebPageTableColumnConfiguration[]): WebPageTableColumnConfiguration[] {
+    // Older defaults omitted Item entirely. Preserve an explicitly configured Item column.
+    if (columns.some(column => column.columnName === 'item')) return columns;
+    const lpn = columns.find(column => column.columnName === 'lpn');
+    const sequence = lpn ? lpn.columnSequence + 1 : 1;
+    return [
+      ...columns.map(column => ({
+        ...column,
+        columnSequence: column.columnSequence >= sequence ? column.columnSequence + 1 : column.columnSequence,
+      })),
+      {
+        companyId: this.companyService.getCurrentCompany()!.id,
+        webPageName: this.pageName,
+        tableName: 'inventoryTable',
+        columnName: 'item',
+        columnDisplayText: this.i18n.fanyi('item'),
+        columnWidth: 200,
+        columnSequence: sequence,
+        displayFlag: true,
+      },
+    ];
+  }
+
+  refreshInventoryTableColumns() {
+    
+      if (this.tableConfigurations["inventoryTable"] == null) {
+        return;
+      }
+      
+      this.inventoryTableColumns = [
+        { title: '', index: 'number', type: 'checkbox' },
+      ];
+
+      // loop through the table column configuration and add
+      // the column if the display flag is checked, and by sequence
+      let inventoryTableConfiguration = this.tableConfigurations["inventoryTable"].filter(
+        column => column.displayFlag
+      );
+
+      inventoryTableConfiguration.sort((a, b) => a.columnSequence - b.columnSequence);
+
+      let defaultInventoryTableColumns = this.getDefaultInventoryTableConlums();
+
+      inventoryTableConfiguration.forEach(
+        columnConfig => {
+          defaultInventoryTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
+          defaultInventoryTableColumns[columnConfig.columnName].width = columnConfig.columnWidth;
+
+          this.inventoryTableColumns = [...this.inventoryTableColumns, 
+            defaultInventoryTableColumns[columnConfig.columnName]
+          ]
+        }
+      )
+
+      this.inventoryTableColumns = [...this.inventoryTableColumns,  
+        {
+          title: this.i18n.fanyi("action"), fixed: 'right', width: 250, 
+          render: 'actionColumn',
+          iif: () => !this.displayOnly
+        }, 
+      ];
+
+      // console.log(`wave table columns: ${this.waveTableColumns.length}`);
+      // this.waveTableColumns.forEach(
+      //   column =>  console.log(`${JSON.stringify(column)}`) 
+      // )
+
+      if (this.inventoryTable != null) {
+
+        this.inventoryTable.resetColumns({ emitReload: true });
+      }
+/**
+ * 
+      this.waveTable.resetColumns();
+      this.waveTable.reset();
+      this.waveTable.reload();
+ * 
+ */
+      
+
+
+  }
+
+
+  getDefaultInventoryTableConlums(): {[key: string]: STColumn } {
+    return {
+
+      "client" : { key: "client", 
+        title: this.i18n.fanyi("client"), index: 'client.name' , width: 100, 
+        sort: {
+          compare: (a, b) => a.client.name.localeCompare(b.client.name)
+        },
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.client.name === filter.value,
+          multiple: true
+        }
+      },   
+      "lpn" : {  key: "lpn", 
+        title: this.i18n.fanyi("lpn"), index: 'lpn', render: 'lpnColumn', width: 150,
+        sort: {
+          compare: (a, b) => a.lpn.localeCompare(b.lpn)
+        }, 
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.lpn === filter.value,
+          multiple: true
+        }
+      },  
+      "item" : {  key: "item", 
+        title: this.i18n.fanyi("item"), render: 'itemColumn', width: 150,  
+        sort: {
+          compare: (a, b) => (a.item?.name ?? '').localeCompare(b.item?.name ?? '')
+        },
+        filter: {
+          menus:  [ 
+          ] ,
+          fn: (filter, record) => record.item?.name === filter.value,
+          multiple: true
+        }
+      },   
+      "itemPackageType" : {   key: "itemPackageType", 
+        title: this.i18n.fanyi("item.package-type"), render: 'itemPackageTypeColumn', width: 150, 
+        sort: {
+          compare: (a, b) => a.itemPackageType.name.localeCompare(b.itemPackageType.name)
+        },
+      },  
+      "location" : {   key: "location", 
+        title: this.i18n.fanyi("location"), render: 'locationColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.location.name.localeCompare(b.location.name)
+        },
+        filter: {
+          menus:  [ 
+          ] ,
+          fn: (filter, record) => record.location.name === filter.value,
+          multiple: true
+        }
+      },  
+      "quantity" : {   key: "quantity", 
+        title: this.i18n.fanyi("quantity"), render: 'quantityColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.quantity - b.quantity
+        },
+        index: 'quantity',
+        statistical: 'sum', 
+      },  
+      // { title: this.i18n.fanyi("assign"), render: 'assignColumn'  },  
+      // { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
+      "inventoryStatus" : {   key: "inventoryStatus", 
+        title: this.i18n.fanyi("inventory.status"),  render: 'inventoryStatusColumn' ,width: 150 , 
+        sort: {
+          compare: (a, b) => a.inventoryStatus.name.localeCompare(b.inventoryStatus.name)
+        },
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.inventoryStatus.name ===  filter.value,
+          multiple: true
+        },
+      },  
+      "fifoDate" : {    key: "fifoDate", 
+        title: this.i18n.fanyi("fifoDate"), render: 'fifoDateColumn' ,width: 150 , 
+        sort: {
+          compare: (a, b) => a.fifoDate.localeCompare(b.fifoDate)
+        },
+      },  
+      "inWarehouseDatetime" : {    key: "clieinWarehouseDatetiment", 
+        title: this.i18n.fanyi("inWarehouseDatetime"), render: 'inWarehouseDatetimeColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.inWarehouseDatetime.localeCompare(b.inWarehouseDatetime)
+        },
+      },  
+      "receipt" : {    key: "receipt", 
+        title: this.i18n.fanyi("receipt"), render: 'receiptColumn' , width: 150, 
+        sort: {
+          compare: (a, b) => a.receipt.name.localeCompare(b.receipt.name)
+        },
+        filter: {
+          menus:  [] ,
+          fn: (filter, record) => record.receipt.name ===  filter.value,
+          multiple: true
+        },
+      },  
+      "color": {    key: "color", 
+        title: this.i18n.fanyi("color"),  index: 'color' ,  width: 150, 
+          sort: {
+            compare: (a, b) => a.color.localeCompare(b.color)
+          },
+          filter: {
+            menus:  [] ,
+            fn: (filter, record) => record.color ===  filter.value,
+            multiple: true
+          },
+      }, 
+      "productSize": {    key: "productSize", 
+        title: this.i18n.fanyi("productSize"),  index: 'productSize' ,  width: 150, 
+          sort: {
+            compare: (a, b) => a.productSize.localeCompare(b.productSize)
+          },
+          filter: {
+            menus:  [] ,
+            fn: (filter, record) => record.productSize ===  filter.value,
+            multiple: true
+          },
+      }, 
+      "style":    {    key: "style", 
+        title: this.i18n.fanyi("style"),  index: 'style' , width: 150, 
+          sort: {
+            compare: (a, b) => a.style.localeCompare(b.style)
+          },
+          filter: {
+            menus:  [] ,
+            fn: (filter, record) => record.style ===  filter.value,
+            multiple: true
+          },
+      },  
+      "attribute1":    {    key: "attribute1", 
+        title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
+            index: 'attribute1' ,  width: 150, 
+            sort: {
+              compare: (a, b) => a.attribute1.localeCompare(b.attribute1)
+            },
+            filter: {
+              menus:  [] ,
+              fn: (filter, record) => record.attribute1 ===  filter.value,
+              multiple: true
+            }, 
+      }, 
+      "attribute2": {    key: "attribute2", 
+        title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+               this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,    
+               index: 'attribute2' , width: 150, 
+               sort: {
+                 compare: (a, b) => a.attribute2.localeCompare(b.attribute2)
+               },
+               filter: {
+                 menus:  [] ,
+                 fn: (filter, record) => record.attribute2 ===  filter.value,
+                 multiple: true
+               }, 
+      }, 
+      "attribute3": {    key: "attribute3", 
+        title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,    
+          index: '' , width: 150, 
+          sort: {
+            compare: (a, b) => a.attribute3.localeCompare(b.attribute3)
+          },
+          filter: {
+            menus:  [] ,
+            fn: (filter, record) => record.attribute3 ===  filter.value,
+            multiple: true
+          }, 
+      }, 
+      "attribute4":{    key: "attribute4", 
+        title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
+          index: 'attribute4' , width: 150, 
+          sort: {
+            compare: (a, b) => a.attribute4.localeCompare(b.attribute4)
+          },
+          filter: {
+            menus:  [] ,
+            fn: (filter, record) => record.attribute4 ===  filter.value,
+            multiple: true
+          }, 
+      },
+      "attribute5" : {    key: "attribute5", 
+        title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
+              index: 'attribute5' , width: 150, 
+              sort: {
+                compare: (a, b) => a.attribute5.localeCompare(b.attribute5)
+              },
+              filter: {
+                menus:  [] ,
+                fn: (filter, record) => record.attribute5 ===  filter.value,
+                multiple: true
+              },
+      },
+      "lockedForAdjust" :{    key: "lockedForAdjust", 
+        title: this.i18n.fanyi("inventory.locked-for-adjustment"),  
+        render: 'lockedForAdjustColumn' , width: 150, 
+      }, 
+      "pick": {    key: "pick", 
+        title: this.i18n.fanyi("inventory.pick-id"),  render: 'pickColumn' ,  width: 150, },   
+      "allocateByPick" : {    key: "allocateByPick", 
+        title: this.i18n.fanyi("inventory.allocated-by-pick-id"),  
+          render: 'allocateByPickColumn' ,  width: 150, },   
+      "movementPath" : {    key: "movementPath", 
+        title: this.i18n.fanyi("movement-path"),  render: 'movementPathColumn' ,  width: 150, },   
+     
+    };
+  
+  }
+  
+  getDefaultInventoryTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
+    
+    return this.ensureInventoryItemColumn([
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "client",
+        columnDisplayText: this.i18n.fanyi("client.name"),
+        columnWidth: 150,
+        columnSequence: 1, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "lpn",
+        columnDisplayText: this.i18n.fanyi("lpn"),
+        columnWidth: 150,
+        columnSequence: 2, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "itemPackageType",
+        columnDisplayText: this.i18n.fanyi("item.package-type"),
+        columnWidth: 150,
+        columnSequence: 3, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "location",
+        columnDisplayText: this.i18n.fanyi("location"),
+        columnWidth: 150,
+        columnSequence: 4, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "quantity",
+        columnDisplayText: this.i18n.fanyi("quantity"),
+        columnWidth: 150,
+        columnSequence: 5, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "inventoryStatus",
+        columnDisplayText: this.i18n.fanyi("inventory.status"),
+        columnWidth: 150,
+        columnSequence: 6, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "fifoDate",
+        columnDisplayText: this.i18n.fanyi("fifoDate"),
+        columnWidth: 150,
+        columnSequence: 7, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "inWarehouseDatetime",
+        columnDisplayText: this.i18n.fanyi("inWarehouseDatetime"),
+        columnWidth: 150,
+        columnSequence: 8, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "receipt",
+        columnDisplayText: this.i18n.fanyi("receipt"),
+        columnWidth: 150,
+        columnSequence: 9, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "color",
+        columnDisplayText: this.i18n.fanyi("color"),
+        columnWidth: 150,
+        columnSequence: 10, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "productSize",
+        columnDisplayText: this.i18n.fanyi("productSize"),
+        columnWidth: 150,
+        columnSequence: 11, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "style",
+        columnDisplayText: this.i18n.fanyi("style"),
+        columnWidth: 150,
+        columnSequence: 12, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute1",
+        columnDisplayText: this.i18n.fanyi("attribute1"),
+        columnWidth: 150,
+        columnSequence: 13, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute2",
+        columnDisplayText: this.i18n.fanyi("attribute2"),
+        columnWidth: 150,
+        columnSequence: 14, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute3",
+        columnDisplayText: this.i18n.fanyi("attribute3"),
+        columnWidth: 150,
+        columnSequence: 15, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute4",
+        columnDisplayText: this.i18n.fanyi("attribute4"),
+        columnWidth: 150,
+        columnSequence: 16, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "attribute5",
+        columnDisplayText: this.i18n.fanyi("attribute5"),
+        columnWidth: 150,
+        columnSequence: 17, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "lockedForAdjust",
+        columnDisplayText: this.i18n.fanyi("inventory.locked-for-adjustment"),
+        columnWidth: 150,
+        columnSequence: 18, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "pick",
+        columnDisplayText: this.i18n.fanyi("inventory.pick-id"),
+        columnWidth: 150,
+        columnSequence: 19, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "allocateByPick",
+        columnDisplayText: this.i18n.fanyi("inventory.allocated-by-pick-id"),
+        columnWidth: 150,
+        columnSequence: 20, 
+        displayFlag: true
+      }, 
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "inventoryTable",
+        columnName: "movementPath",
+        columnDisplayText: this.i18n.fanyi("movement-path"),
+        columnWidth: 150,
+        columnSequence: 21, 
+        displayFlag: true
+      }, 
+    ]);
+  } 
+
+  inventoryTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]){
+    
+      this.tableConfigurations["inventoryTable"] = tableColumnConfigurationList;
+      this.refreshInventoryTableColumns();
+  }
+  
+  ngOnInit(): void {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
+    this.initSearchForm();
+     
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      /**
+       * 
+      if (params.hasOwnProperty('refresh')) {
+        if (params['id']) {
+          this.search(params['id']);
+        } else if (params['lpn']) {
+          this.searchForm.controls.lpn.setValue(params['lpn']);
+          this.search();
+        } else if (params['location']) {
+          this.searchForm.controls.location.setValue(params['location']);
+          this.search();
+        } else {
+          this.search();
+        }
+      }
+       * 
+       */
+      
+        if (params['id']) {
+          this.search(params['id']);
+        } else if (params['lpn']) {
+          this.searchForm.controls.lpn.setValue(params['lpn']);
+          this.search();
+        } else if (params['location']) {
+          this.searchForm.controls.location.setValue(params['location']);
+          this.search();
+        } 
+    });
+    
+    this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
+      this.locationGroups = locationGroupList;
+    });
+    
+    this.inventoryStatusService
+    .loadInventoryStatuses()
+    .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses)); 
+
+    this.initClientAssignment();
+  }
+   
+
+  initClientAssignment(): void {
+    
+    this.isSpinning = true;
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+    
+  }
+   
+
+  resetForm(): void {
+    this.inventorySearchVersion++;
+    this.inventoryDetailVersion++;
+    this.isSpinning = false;
+    this.searching = false;
+    this.detailsLoading = false;
+    this.searchResult = '';
+    this.searchForm.reset();
+    this.inventories = [];
+    this.listOfDisplayInventories = [];
+
+
+  }
+  searchFromFirstPage(): void {
+    if (this.inventoryTable) this.inventoryTable.pi = 1;
+    this.inventoryTablePI = 1;
+    this.search();
+  }
+
+  search(id?: number): void {
+    const version = ++this.inventorySearchVersion;
+    this.inventoryDetailVersion++;
+    this.detailsLoading = false;
+    this.inventoryTablePI = this.inventoryTable?.pi ?? 1;
+    this.inventoryTablePS = this.inventoryTable?.ps ?? 10;
+    this.searching = true;
+    this.isSpinning = true;
+    this.searchResult = '';
+    
+    // this.setOfCheckedId.clear();
+    if (id) {
+      this.inventoryService.getInventoryById(id).subscribe(
+        inventoryRes => {
+          if (version !== this.inventorySearchVersion) return;
+          this.processInventoryQueryResult([inventoryRes]);
+          
+          // this.resetInventoryTableColumnsFilter();
+          this.isSpinning = false;
+            this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: 1,
+          });
+        },
+        () => {
+          if (version !== this.inventorySearchVersion) return;
+          this.isSpinning = false;
+            this.searching = false;
+          this.searchResult = '';
+        },
+      );
+    } else {
+      
+      this.inventoryService
+        .getPageableInventories(
+          this.searchForm.value.client ? this.searchForm.value.client : undefined,
+          this.searchForm.value.taggedItemFamilies ? this.searchForm.value.taggedItemFamilies : undefined,
+          this.searchForm.value.itemName ? this.searchForm.value.itemName : undefined,
+          this.searchForm.value.location ? this.searchForm.value.location : undefined,
+          this.searchForm.value.lpn ? this.searchForm.value.lpn : undefined,
+          false,
+          this.searchForm.value.inventoryStatus ? this.searchForm.value.inventoryStatus : undefined,
+          this.searchForm.value.locationGroups ? this.searchForm.value.locationGroups : undefined,
+          this.searchForm.value.color ? this.searchForm.value.color : undefined,
+          this.searchForm.value.style ? this.searchForm.value.style : undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined, 
+          this.searchForm.value.receiptNumber ? this.searchForm.value.receiptNumber : undefined,
+          this.inventoryTable?.pi,
+          this.inventoryTable?.ps
+        )
+        .subscribe({
+          next: (page) => {
+            if (version !== this.inventorySearchVersion) return;
+            this.inventoryTable.total = page.totalElements;
+            
+
+            this.processInventoryQueryResult(page.content);
+            // this.resetInventoryTableColumnsFilter();
+            this.isSpinning = false;
+            this.searching = false;
+            this.searchResult = this.i18n.fanyi('search_result_analysis', {
+              currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+              rowCount: page.totalElements,
+            });
+          },
+          error: () => {
+            if (version !== this.inventorySearchVersion) return;
+
+            this.isSpinning = false;
+            this.searching = false;
+            this.searchResult = '';
+          }
+        });
+        
+    }
+  }
+  resetInventoryTableColumnsFilter(){
+      this.resetInventoryTableClientColumnsFilter(); 
+      this.inventoryTable.resetColumns();
+
+  }
+  
+  resetInventoryTableClientColumnsFilter() { 
+    
+    if (this.inventoryTable.columns?.length && this.inventoryTable.columns?.length > 1 && this.inventoryTable.columns[1].filter != null) {
+      console.log(this.inventoryTable.columns[1])
+      this.inventoryTable.columns[1].filter.menus =[];
+      let clientNames = new Set(this.listOfDisplayInventories.map(inventory => inventory.client?.name));
+
+      this.listOfDisplayInventories.forEach(
+        inventory => console.log(`inventory ${inventory.lpn} :\n${JSON.stringify(inventory)}`)
+      )
+      console.log(`get client name from the list of inventory: \n${JSON.stringify(clientNames)}`);
+
+      clientNames.forEach(
+        clientName => {
+          this.inventoryTable.columns![1]!.filter!.menus = [...this.inventoryTable.columns![1]!.filter!.menus!, {
+
+            text: clientName,
+            value: clientName,
+          }]
+        }
+      ) 
+    }
+  }
+
+  processInventoryQueryResult(inventories: Inventory[]): void {
+    this.inventories = inventories;
+    this.setupDisplay(inventories); 
+
+    this.loadDetails(this.listOfDisplayInventories);
+
+  }
+  setupDisplay(inventories: Inventory[]): void {
+    if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_LPN) {
+
+      this.setupDisplayGroupByLpn(inventories);
+    }
+    else if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_ITEM) {
+
+      this.setupDisplayGroupByItem(inventories);
+    }
+    else if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_LOCATION) {
+
+      this.setupDisplayGroupByLocation(inventories);
+    }
+    else if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_LOCATION_ITEM) {
+
+      this.setupDisplayGroupByLocationAndItem(inventories);
+    }
+    else {
+      // by default display the result directly
+      this.listOfDisplayInventories = inventories
+    }
+ 
+  }
+  
+  setupDisplayGroupByLpn(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: lpn
+    // value: Inventory result
+    let inventoryMap : Map<String, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: String = inventory.lpn!;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+  
+  setupDisplayGroupByItem(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: item id
+    // value: Inventory result
+    let inventoryMap : Map<number, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: number = inventory.item!.id!;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+  setupDisplayGroupByLocation(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: location id
+    // value: Inventory result
+    let inventoryMap : Map<number, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: number = inventory.locationId!;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+  setupDisplayGroupByLocationAndItem(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: location id - Item id
+    // value: Inventory result
+    let inventoryMap : Map<String, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: String = `${inventory.locationId!}-${inventory.item?.id}`;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+
+  // the value already exists, let's setup the value
+  // 1. sum up the quantity
+  // 2. for other attribute, if the new inventory has
+  //    different value from the previous inventory, then
+  //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+  sumUpInventory(existingInventory: Inventory, newInventory: Inventory) : Inventory {
+    let sumInventory : Inventory = { 
+      lpn: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+      client: existingInventory.clientId == newInventory.clientId ? existingInventory.client : undefined,
+      clientId: existingInventory.clientId == newInventory.clientId ? existingInventory.clientId : undefined,
+      locationId: existingInventory.locationId == newInventory.locationId ? existingInventory.locationId : undefined,
+      location: existingInventory.locationId == newInventory.locationId ? existingInventory.location : undefined,
+      locationName: existingInventory.locationId == newInventory.locationId ? existingInventory.locationName : "** Multiple Values**",
+      item: existingInventory.item?.id == newInventory.item?.id ? existingInventory.item : undefined,
+      virtual: existingInventory.virtual == newInventory.virtual ? existingInventory.virtual : undefined,
+      warehouseId: existingInventory.warehouseId == newInventory.warehouseId ? existingInventory.warehouseId : undefined,
+      warehouse: existingInventory.warehouseId == newInventory.warehouseId ? existingInventory.warehouse : undefined,
+      itemPackageType: existingInventory.itemPackageType?.id == newInventory.itemPackageType?.id ? existingInventory.itemPackageType : undefined,
+      quantity: existingInventory.quantity! + newInventory.quantity!,
+      displayQuantity: (existingInventory.displayQuantity ? 0 : existingInventory.displayQuantity!) 
+              +  (newInventory.displayQuantity ? 0 : newInventory.displayQuantity!),
+      inventoryStatus: existingInventory.inventoryStatus?.id == newInventory.inventoryStatus?.id ? existingInventory.inventoryStatus : undefined, 
+      lockedForAdjust: existingInventory.lockedForAdjust == newInventory.lockedForAdjust ? existingInventory.lockedForAdjust : undefined,
+    
+      pickId: existingInventory.pickId == newInventory.pickId ? existingInventory.pickId : undefined,
+      pick: existingInventory.pickId == newInventory.pickId ? existingInventory.pick : undefined,
+      allocatedByPickId: existingInventory.allocatedByPickId == newInventory.allocatedByPickId ? existingInventory.allocatedByPickId : undefined,
+      allocatedByPick: existingInventory.allocatedByPickId == newInventory.allocatedByPickId ? existingInventory.allocatedByPick : undefined,
+    
+      inventoryMovements: [],
+      receiptId: existingInventory.receiptId == newInventory.receiptId ? existingInventory.receiptId : undefined,
+      receiptLineId: existingInventory.receiptLineId == newInventory.receiptLineId ? existingInventory.receiptLineId : undefined,
+      inboundQCRequired: existingInventory.inboundQCRequired == newInventory.inboundQCRequired ? existingInventory.inboundQCRequired : undefined,
+    
+      fifoDate: existingInventory.fifoDate == newInventory.fifoDate ? existingInventory.fifoDate : undefined,
+      
+      color: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+      productSize: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+      style: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+    }
+
+    // console.log(`existingInventory ${existingInventory.lpn}'s quantity: ${existingInventory.quantity}`);
+    // console.log(`newInventory ${newInventory.lpn}'s quantity: ${newInventory.quantity}`);
+    // console.log(`sumInventory ${sumInventory.lpn}'s quantity: ${sumInventory.quantity}`);
+
+    return sumInventory;
+  }
+  
+  // we will load the information 
+  // asyncronized
+  async loadDetails(inventories: Inventory[]): Promise<void> {
+    const version = ++this.inventoryDetailVersion;
+    this.detailsLoading = true;
+    const jobs = new Map<string, {
+      load: () => Promise<unknown>;
+      assign: Array<(value: unknown) => void>;
+    }>();
+    const queue = <T>(kind: string, id: number | undefined, load: () => Observable<T>, assign: (value: T) => void): void => {
+      if (id == null) return;
+      const key = `${kind}:${id}`;
+      const callback = (value: unknown): void => assign(value as T);
+      const existing = jobs.get(key);
+      if (existing) existing.assign.push(callback);
+      else jobs.set(key, { load: () => lastValueFrom(load().pipe(timeout(10000))), assign: [callback] });
+    };
+    for (const inventory of inventories) {
+      // Quantities and Item are available immediately, before detail HTTP requests.
+      this.calculateDisplayQuantity(inventory);
+      if (!inventory.location) queue('location', inventory.locationId,
+        () => this.localCacheService.getLocation(inventory.locationId!), value => inventory.location = value);
+      if (!inventory.receipt) queue('receipt', inventory.receiptId,
+        () => this.localCacheService.getReceipt(inventory.receiptId!), value => inventory.receipt = value);
+      if (!inventory.client) queue('client', inventory.clientId,
+        () => this.localCacheService.getClient(inventory.clientId!), value => inventory.client = value);
+      if (!inventory.pick) queue('pick', inventory.pickId,
+        () => this.localCacheService.getPick(inventory.pickId!), value => inventory.pick = value);
+      if (!inventory.allocatedByPick) queue('pick', inventory.allocatedByPickId,
+        () => this.localCacheService.getPick(inventory.allocatedByPickId!), value => inventory.allocatedByPick = value);
+      for (const movement of inventory.inventoryMovements ?? []) {
+        if (!movement.location) queue('location', movement.locationId,
+          () => this.localCacheService.getLocation(movement.locationId!), value => movement.location = value);
+      }
+      const pack = inventory.itemPackageType;
+      for (const uom of [pack?.stockItemUnitOfMeasure, pack?.displayItemUnitOfMeasure, ...(pack?.itemUnitOfMeasures ?? [])]) {
+        if (uom && !uom.unitOfMeasure) queue('uom', uom.unitOfMeasureId,
+          () => this.localCacheService.getUnitOfMeasure(uom.unitOfMeasureId!), value => uom.unitOfMeasure = value);
+      }
+    }
+    const pending = [...jobs.values()];
+    let cursor = 0;
+    let failed = false;
+    const worker = async (): Promise<void> => {
+      while (version === this.inventoryDetailVersion && cursor < pending.length) {
+        const job = pending[cursor++];
+        try {
+          const value = await job.load();
+          if (version === this.inventoryDetailVersion) job.assign.forEach(assign => assign(value));
+        } catch {
+          failed = true;
+        }
+      }
+    };
+    // One request per unique detail key, with at most six simultaneous requests.
+    await Promise.all(Array.from({ length: Math.min(6, pending.length) }, () => worker()));
+    if (version !== this.inventoryDetailVersion) return;
+    this.detailsLoading = false;
+    this.inventoryTable?.reload();
+    if (failed) this.messageService.warning(this.i18n.fanyi('inventory.details-partial'));
+  }
+
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  
+  async loadDetail(inventory: Inventory) {
+ 
+
+    await this.loadLocation(inventory);
+
+    await this.loadReceipt(inventory);
+
+    this.loadClients(inventory);
+
+    this.loadInventoryMovements(inventory);
+
+    // load the Unit of Measure for each item unit of measure of each package type
+    this.loadUnitOfMeasure(inventory);
+
+    // calculate the display quantity based on the display UOM
+    this.calculateDisplayQuantity(inventory);
+
+    await this.loadPicksInformation(inventory);
+    
+    await this.loadAllocateByPicksInformation(inventory);
+
+    await this.loadStockUnitOfMeasure(inventory);
+
+    await this.loadDisplayUnitOfMeasure(inventory);
+
+    
+  }
+
+  calculateDisplayQuantity(inventory: Inventory) : void {
+    // see if we have the display UOM setup
+    // console.log(`start to setup display quantity for inventory of lpn ${inventory.lpn}`)
+    if (inventory.itemPackageType?.displayItemUnitOfMeasure) {
+      // console.log(`inventory.itemPackageType \n ${JSON.stringify(inventory.itemPackageType)}`);
+      let displayItemUnitOfMeasureQuantity  = inventory.itemPackageType.displayItemUnitOfMeasure.quantity;
+
+      if (inventory.quantity! % displayItemUnitOfMeasureQuantity! ==0) {
+        inventory.displayQuantity = inventory.quantity! / displayItemUnitOfMeasureQuantity!
+      }
+      else {
+        // the inventory's quantity can't be devided by the display uom, we will display the quantity in 
+        // stock uom
+        inventory.displayQuantity = inventory.quantity;
+        inventory.itemPackageType.displayItemUnitOfMeasure = inventory.itemPackageType.stockItemUnitOfMeasure;
+      }
+    }
+    else {
+      // there's no display UOM setup for this inventory, we will display
+      // by the quantity
+      inventory.displayQuantity = inventory.quantity; 
+    }
+  }
+  
+  async loadLocation(inventory: Inventory) {
+ 
+    /***
+     * 
+    if (inventory.locationId && inventory.location == null) {
+      this.loadingDetailsRequest++;
+      this.localCacheService.getLocation(inventory.locationId!).subscribe(
+        {
+          next: (locationRes) => {
+            inventory.location = locationRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
+        }
+      )
+    } 
+     */
+    // load the information for current location
+    if (inventory.locationId && inventory.location == null) {
+      this.loadingDetailsRequest++;
+      inventory.location =  await this.localCacheService.getLocation(inventory.locationId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+       
+    } 
+
+  }
+  
+  async loadReceipt(inventory: Inventory) {
+    // load the information for current location
+    if (inventory.receiptId && inventory.receipt == null) {
+        
+      
+      this.loadingDetailsRequest++;
+      
+      let receipt =  await this.localCacheService.getReceipt(inventory.receiptId!).toPromise()
+      .catch(reason => console.log(reason)).finally(
+        () =>  this.loadingDetailsRequest-- 
+      );
+      console.log(`set inventory ${inventory.lpn}'s receipt to ${receipt?.number}`);
+      if (receipt != null) {
+        inventory.receipt = receipt;
+      }
+       
+    } 
+
+  }
+   
+  async loadClients(inventory: Inventory) {
+    if (inventory.clientId && inventory.client == null) {
+      this.loadingDetailsRequest++;
+      inventory.client =  await this.localCacheService.getClient(inventory.clientId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
+
+  }
+
+  async loadInventoryMovements(inventory: Inventory) {
+ 
+    // load the location of the inventory movement
+    if (inventory.inventoryMovements && inventory.inventoryMovements.length > 0) {
+      inventory.inventoryMovements.forEach(
+        inventoryMovement => this.loadInventoryMovementDetails(inventoryMovement)
+      )
+    }
+
+  }
+  async loadInventoryMovementDetails(inventoryMovement: InventoryMovement) {
+
+    /**
+     * 
+    if (inventoryMovement.locationId && inventoryMovement.location == null) {
+
+      this.loadingDetailsRequest++;
+      this.localCacheService.getLocation(inventoryMovement.locationId!).subscribe(
+        {
+          next: (locationRes) => {
+            inventoryMovement.location = locationRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
+        }
+      )
+    } 
+     * 
+     */
+    if (inventoryMovement.locationId && inventoryMovement.location == null) {
+
+      this.loadingDetailsRequest++;
+      /**
+       * 
+      inventoryMovement.location =  await this.localCacheService.getLocation(inventoryMovement.locationId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+       * 
+       */
+      inventoryMovement.location =  await lastValueFrom(this.localCacheService.getLocation(inventoryMovement.locationId!)).finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
+  }
+  async loadPicksInformation(inventory: Inventory) {
+
+    /**
+     * 
+    // load the pick informaiton
+    if (inventory.pickId && inventory.pick == null) {
+      this.loadingDetailsRequest++;
+      this.localCacheService.getPick(inventory.pickId!).subscribe(
+        {
+          next: (pickRes) => {
+            inventory.pick = pickRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
+        }
+      )
+    } 
+     */
+    // load the pick informaiton
+    if (inventory.pickId && inventory.pick == null) {
+      this.loadingDetailsRequest++;
+      inventory.pick =  await this.localCacheService.getPick(inventory.pickId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
+  }
+  async loadAllocateByPicksInformation(inventory: Inventory) {
+
+    /**
+    // load the allocate by pick informaiton
+    if (inventory.allocatedByPickId && inventory.allocatedByPick == null) {
+      this.loadingDetailsRequest++;
+      this.localCacheService.getPick(inventory.allocatedByPickId!).subscribe(
+        {
+          next: (pickRes) => {
+            inventory.allocatedByPick = pickRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
+        }
+      )
+    } 
+     * 
+     */
+    // load the allocate by pick informaiton
+    if (inventory.allocatedByPickId && inventory.allocatedByPick == null) {
+      this.loadingDetailsRequest++;
+      inventory.allocatedByPick =  await this.localCacheService.getPick(inventory.allocatedByPickId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
+  }
+  async loadUnitOfMeasure(inventory: Inventory) {
+    if (inventory.itemPackageType && inventory.itemPackageType.itemUnitOfMeasures &&
+              inventory.itemPackageType.itemUnitOfMeasures.length > 0) {
+
+      inventory.itemPackageType.itemUnitOfMeasures.filter(
+        itemUnitOfMeasure  => itemUnitOfMeasure.unitOfMeasureId != null && 
+                                  itemUnitOfMeasure.unitOfMeasure == null
+      ).forEach(
+          itemUnitOfMeasure => {
+            
+            this.loadingDetailsRequest++;
+            this.localCacheService.getUnitOfMeasure(itemUnitOfMeasure.unitOfMeasureId!)
+              .subscribe({
+                next: (unitOfMeasureRes) => {
+                  itemUnitOfMeasure.unitOfMeasure = unitOfMeasureRes;
+                  this.loadingDetailsRequest--;
+                
+                }, 
+                error: () => this.loadingDetailsRequest--
+              })
+          }
+      )
+    }
+  } 
+  
+  async loadStockUnitOfMeasure(inventory: Inventory) {
+    if (inventory.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
+      inventory.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null) {
+ 
+        this.loadingDetailsRequest++;
+        this.localCacheService.getUnitOfMeasure(inventory.itemPackageType.stockItemUnitOfMeasure.unitOfMeasureId!)
+              .subscribe({
+                next: (unitOfMeasureRes) => {
+                  inventory.itemPackageType!.stockItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes;
+                  this.loadingDetailsRequest--;
+                
+                }, 
+                error: () => this.loadingDetailsRequest--
+              }) 
+    }
+  } 
+  
+
+  async loadDisplayUnitOfMeasure(inventory: Inventory) {
+    if (inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId != null &&
+      inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null) {
+ 
+        this.loadingDetailsRequest++;
+        this.localCacheService.getUnitOfMeasure(inventory.itemPackageType.displayItemUnitOfMeasure.unitOfMeasureId!)
+              .subscribe({
+                next: (unitOfMeasureRes) => {
+                  inventory.itemPackageType!.displayItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes;
+                  this.loadingDetailsRequest--;
+                
+                }, 
+                error: () => this.loadingDetailsRequest--
+              }) 
+    }
+  }  
+ 
+  adjustInventory(inventory: Inventory): void {
+    console.log(`will adjust inventory: ${  JSON.stringify(inventory)}`);
+  }
+  openRemoveInventoryModal(
+    inventory: Inventory,
+    tplInventoryRemovalModalTitle: TemplateRef<{}>,
+    tplInventoryRemovalModalContent: TemplateRef<{}>,
+  ): void {
+    this.mapOfInprocessInventoryId[inventory.id!] = true;
+    this.inventoryToBeRemoved = inventory;
+    this.documentNumber = '';
+    this.comment = '';
+
+    this.inventoryRemovalModal = this.modalService.create({
+      nzTitle: tplInventoryRemovalModalTitle,
+      nzContent: tplInventoryRemovalModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.inventoryRemovalModal.destroy();
+        this.mapOfInprocessInventoryId[inventory.id!] = false;
+        this.search();
+      },
+      nzOnOk: () => {
+        this.removeInventory(this.inventoryToBeRemoved);
+      },
+      nzWidth: 1000,
+    });
+  }
+
+  removeInventory(inventory: Inventory): void {
+    this.isSpinning = true;
+    this.inventoryService.adjustDownInventory(inventory, this.documentNumber, this.comment).subscribe(
+      inventoryRes => {
+        this.mapOfInprocessInventoryId[inventory.id!] = false;
+        this.isSpinning = false;
+        if (inventoryRes.lockedForAdjust === true) {
+          this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
+        } else {
+          this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+        }
+        this.search();
+      },
+      () => {
+        this.mapOfInprocessInventoryId[inventory.id!] = false;
+        this.isSpinning = false;
+        this.messageService.error(this.i18n.fanyi('message.action.fail'));
+      },
+    );
+
+    this.inventoryRemovalModal.destroy();
+  }
+
+  initSearchForm(): void {
+    // initiate the search form
+
+    // initiate the select control
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
+
+    this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
+      itemFamilyList.forEach(itemFamily =>
+        this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }),
+      );
+    });
+  }
+
+  openMoveInventoryModal(
+    inventory: Inventory,
+    tplInventoryMoveModalTitle: TemplateRef<{}>,
+    tplInventoryMoveModalContent: TemplateRef<{}>, 
+  ): void {
+    this.mapOfInprocessInventoryId[inventory.id!] = true;
+    this.inventoryMovementForm = this.fb.group({
+      lpn: new UntypedFormControl({ value: inventory.lpn, disabled: true }),
+      itemNumber: new UntypedFormControl({ value: inventory.item!.name, disabled: true }),
+      itemDescription: new UntypedFormControl({ value: inventory.item!.description, disabled: true }),
+      inventoryStatus: new UntypedFormControl({ value: inventory.inventoryStatus!.name, disabled: true }),
+      itemPackageType: new UntypedFormControl({ value: inventory.itemPackageType!.name, disabled: true }),
+      quantity: new UntypedFormControl({ value: inventory.quantity, disabled: true }),
+      locationName: new UntypedFormControl({ value: inventory.location!.name, disabled: true }),
+      destinationLocation: [null],
+      immediateMove: [false],
+    });
+
+    this.batchMovement = false;
+    // Load the location
+    this.inventoryMoveModal = this.modalService.create({
+      nzTitle: tplInventoryMoveModalTitle,
+      nzContent: tplInventoryMoveModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.inventoryMoveModal.destroy();
+        this.mapOfInprocessInventoryId[inventory.id!] = false;
+      },
+      nzOnOk: () => {
+        this.moveInventory(
+          inventory,
+          this.inventoryMovementForm.value.destinationLocation,
+          this.inventoryMovementForm.value.immediateMove,
+        );
+      },
+
+      nzWidth: 1000,
+    });
+  }
+  
+  openBatchMoveInventoryModal( 
+    tplInventoryMoveModalTitle: TemplateRef<{}>,
+    tplInventoryMoveModalContent: TemplateRef<{}>, 
+  ): void { 
+    this.inventoryMovementForm = this.fb.group({
+       
+      destinationLocation: [null],
+      immediateMove: [false],
+    });
+
+    this.batchMovement = true;
+    // Load the location
+    this.inventoryMoveModal = this.modalService.create({
+      nzTitle: tplInventoryMoveModalTitle,
+      nzContent: tplInventoryMoveModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.inventoryMoveModal.destroy(); 
+      },
+      nzOnOk: () => {
+        
+        this.inventoryMoveModal.updateConfig({ 
+          nzOkDisabled: true,
+          nzOkLoading: true
+        });
+        this.moveInventoryInBatch(
+          this.getSelectedInventory(),
+          this.inventoryMovementForm.value.destinationLocation,
+          this.inventoryMovementForm.value.immediateMove,
+        );
+        return false;
+      },
+
+      nzWidth: 1000,
+    });
+  }
+   
+
+  moveInventoryInBatch(inventories: Inventory[], destinationLocationName: string, immediateMove: boolean): void {
+    this.isSpinning = true;
+    this.locationService.getLocations(undefined, undefined, destinationLocationName).subscribe({
+      next: (locationsRes) => { 
+        if (locationsRes.length == 0 ||
+          locationsRes[0].locationGroup?.locationGroupType?.fourWallInventory == false) {
+          this.messageService.error(this.i18n.fanyi('web.message.8dbaece7bf0c', { p0: destinationLocationName }));
+          this.isSpinning = false;
+          
+          this.inventoryMoveModal.updateConfig({ 
+            nzOkDisabled: false,
+            nzOkLoading: false
+          });
+        } 
+        else {
+
+          this.moveInventoryInBatchSteps(inventories, locationsRes[0], immediateMove, inventories.length - 1);
+        }
+
+        
+      }, 
+      error: () => this.isSpinning = false
+    });  
+  }
+  moveInventoryInBatchSteps(inventories: Inventory[], location: WarehouseLocation, immediateMove: boolean, index: number): void {
+
+    // stop if we already process all the items in the list
+    if (index < 0) {
+      this.isSpinning = false;
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.inventoryMoveModal.destroy(); 
+      this.search();
+      return;
+    }
+    // process the inventory at the index and recursively call to process the next
+    this.inventoryService.move(inventories[index], location, immediateMove).subscribe({
+      next: () => { 
+        this.moveInventoryInBatchSteps(inventories, location, immediateMove, index - 1);
+  
+      }, 
+      error: () => this.isSpinning = false
+    });
+  }
+  moveInventory(inventory: Inventory, destinationLocationName: string, immediateMove: boolean): void {
+    this.locationService.getLocations(undefined, undefined, destinationLocationName).subscribe(location => {
+      this.inventoryService.move(inventory, location[0], immediateMove).subscribe(
+        inventoryRes => {
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+
+          this.mapOfInprocessInventoryId[inventory.id!] = false;
+          // refresh with LPN
+          this.searchForm.controls.lpn.setValue(inventory.lpn);
+          this.search();
+        },
+        () => {
+          this.messageService.error(this.i18n.fanyi('message.action.fail'));
+
+          this.mapOfInprocessInventoryId[inventory.id!] = false;
+        },
+      );
+    });
+  }
+
+  processItemQueryResult(selectedItemName: any): void {
+    // console.log(`start to query with item name ${selectedItemName}`);
+    this.searchForm.controls.itemName.setValue(selectedItemName);
+  }
+  processLocationQueryResult(selectedLocationName: any): void {
+    // console.log(`start to query with location name ${selectedLocationName}`);
+    this.inventoryMovementForm.value.destinationLocation.setValue(selectedLocationName);
+  }
+
+
+  processQueryLocationQueryResult(selectedLocationName: any): void {
+    // console.log(`start to query with location name ${selectedLocationName}`);
+    this.searchForm.controls.location.setValue(selectedLocationName);
+  }
+
+  printLPNReport(event: any, inventory: Inventory) {
+
+    this.isSpinning = true;
+    
+    // console.log(`start to print lPN label for inventory \n${inventory}`);
+    this.inventoryService.generateLPNLabel(
+      inventory.lpn!, undefined, event.printerName)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+        // console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printFileByName(
+          "LPN Label",
+          printResult.fileName,
+          // ReportType.LPN_LABEL,
+          printResult.type,   // The report type may be LPN_LABEL , RECEIVING_LPN_LABEL or PRODUCTION_LINE_ASSIGNMENT_LABEL
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount,
+          PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          inventory.location?.locationGroup?.name, 
+          printResult, event.collated);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+  }
+  previewLPNReport(inventory: Inventory): void {
+
+
+    this.isSpinning = true;
+    this.inventoryService.generateLPNLabel(inventory.lpn!)
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        sessionStorage.setItem('report_previous_page', `/inventory/inventory?lpn=${inventory.lpn}`);
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
+  }
+  processLocationValueQueryResult(event: Event) {
+    console.log(`inventory selected: ${(event.target as HTMLInputElement).value}`)
+  }
+
+  
+  async removeSelectedInventory(asyncronized: boolean = false): Promise<void> {
+    if (this.isSubmittingRemoval || this.isMonitoringRemoval) return;
+    const warehouseId = this.warehouseService.getCurrentWarehouse().id;
+    if (this.removalWarehouseId !== warehouseId) {
+      this.pendingRemovalIds.clear();
+      this.removalNeedsReview = false;
+      this.removalWarehouseId = warehouseId;
+    }
+    const ids = [...new Set(this.getSelectedInventory()
+      .map(inventory => inventory.id)
+      .filter((id): id is number => id != null && !this.pendingRemovalIds.has(id)))];
+    if (!ids.length) return;
+    const version = this.removalMonitorVersion;
+    this.isSubmittingRemoval = true;
+    try {
+      const message = await lastValueFrom(this.inventoryService.removeInventories(ids.join(','), asyncronized));
+      if (version !== this.removalMonitorVersion || this.warehouseService.getCurrentWarehouse().id !== warehouseId) return;
+      this.messageService.success(this.i18n.fanyi(message));
+      ids.forEach(id => this.pendingRemovalIds.add(id));
+      this.removalNeedsReview = false;
+      this.isSubmittingRemoval = false;
+      await this.monitorInventoryRemoval(version);
+    } catch {
+      if (version === this.removalMonitorVersion) this.messageService.error(this.i18n.fanyi('message.action.fail'));
+    } finally {
+      this.isSubmittingRemoval = false;
+    }
+  }
+
+  private async monitorInventoryRemoval(version: number): Promise<void> {
+    const warehouseId = this.warehouseService.getCurrentWarehouse().id;
+    this.isMonitoringRemoval = true;
+    try {
+      for (let attempt = 0; attempt < this.removalPollLimit && this.pendingRemovalIds.size; attempt++) {
+        if (version !== this.removalMonitorVersion) return;
+        if (this.warehouseService.getCurrentWarehouse().id !== warehouseId) {
+          this.pendingRemovalIds.clear();
+          this.removalNeedsReview = false;
+          return;
+        }
+        const ids = [...this.pendingRemovalIds];
+        for (let offset = 0; offset < ids.length; offset += 100) {
+          const chunk = ids.slice(offset, offset + 100);
+          const rows = await lastValueFrom(this.inventoryService.getRemovalInventorySnapshots(chunk).pipe(timeout(5000)));
+          if (version !== this.removalMonitorVersion) return;
+          if (this.warehouseService.getCurrentWarehouse().id !== warehouseId) {
+            this.pendingRemovalIds.clear();
+            this.removalNeedsReview = false;
+            return;
+          }
+          // Missing rows are not proof of deletion: access restrictions may omit them.
+          const completed = new Set(rows.filter(row => row.virtual === true && chunk.includes(row.id!)).map(row => row.id!));
+          if (completed.size) {
+            completed.forEach(id => this.pendingRemovalIds.delete(id));
+            this.applyCompletedInventoryRemovals(completed);
+          }
+        }
+        if (this.pendingRemovalIds.size && attempt + 1 < this.removalPollLimit) await this.delay(500);
+      }
+      if (this.pendingRemovalIds.size) this.removalNeedsReview = true;
+    } catch {
+      // Submission already succeeded. A status lookup failure must not resubmit it.
+      if (version === this.removalMonitorVersion) this.removalNeedsReview = true;
+    } finally {
+      this.isMonitoringRemoval = false;
+    }
+  }
+
+  async checkInventoryRemovalStatus(): Promise<void> {
+    if (!this.pendingRemovalIds.size || this.isSubmittingRemoval || this.isMonitoringRemoval) return;
+    if (this.removalWarehouseId !== this.warehouseService.getCurrentWarehouse().id) {
+      this.pendingRemovalIds.clear();
+      this.removalNeedsReview = false;
+      return;
+    }
+    this.removalNeedsReview = false;
+    await this.monitorInventoryRemoval(this.removalMonitorVersion);
+  }
+
+  private applyCompletedInventoryRemovals(ids: Set<number>): void {
+    const remaining = this.inventories.filter(inventory => !ids.has(inventory.id!));
+    const removedCount = this.inventories.length - remaining.length;
+    if (!removedCount) return;
+    this.inventories = remaining;
+    this.setupDisplay(remaining);
+    if (this.inventoryTable) this.inventoryTable.total = Math.max(0, this.inventoryTable.total - removedCount);
+    this.searchResult = '';
+    // Existing rows retain their loaded metadata; no full Search / loadDetails cycle.
+  }
+
+  ngOnDestroy(): void {
+    this.inventorySearchVersion++;
+    this.inventoryDetailVersion++;
+    this.removalMonitorVersion++;
+  }
+
+  getSelectedInventory(): Inventory[] {
+    let selectedInventory: Inventory[] = [];
+    
+    const dataList: STData[] = this.inventoryTable.list; 
+    dataList
+      .filter( data => data.checked)
+      .forEach(
+        data => {
+          // get the selected billing request and added it to the 
+          // selectedBillingRequests
+          selectedInventory = [...selectedInventory,
+              ...this.inventories.filter(
+                inventory => inventory.id == data["id"]
+              )
+          ]
+
+        }
+      );
+    return selectedInventory;
+  }
+ 
+  changeDisplayItemUnitOfMeasure(inventory: Inventory, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (inventory.quantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      inventory.displayQuantity = inventory.quantity! / itemUnitOfMeasure.quantity!;
+      inventory.itemPackageType!.displayItemUnitOfMeasure = itemUnitOfMeasure;
+    }
+    else {
+      this.messageService.error(this.i18n.fanyi('web.message.cf63d8f8f76f', { p0: inventory.quantity, p1: itemUnitOfMeasure.unitOfMeasure?.name, p2: itemUnitOfMeasure.quantity }));
+    }
+  }
+ 
+  exportResult() {  
+     /***
+      * 
+      * 
+    let data: STData[] = this.listOfDisplayInventories.map(
+      (inventory) => ({
+        lpn: inventory.lpn,
+        location: inventory.location?.name,
+        item: inventory.item?.name,
+        itemColumn: inventory.item?.name,
+        quantity: inventory.displayQuantity,
+        unit: inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name,
+
+      })
+    );
+    // let data: STData[] = this.inventoryTable.data as STData[];
+    console.log(`start to export data ${data}`)
+    console.log(`columns: \n `)
+    
+    this.inventoryTable.columns?.forEach(
+      column => console.log(`${JSON.stringify(column)}`)
+    )
+    this.inventoryTable.export(data,  { filename: 'via-data.xlsx', sheetname: 'user' });
+      * 
+      */
+    console.log(`display inventory table columns`)
+    this.inventoryTable.columns?.forEach(
+      column => console.log(`>> ${JSON.stringify(column)}`)
+    )
+
+    var columnNames = this.getInventoryExportExcelColumns();
+    var contents = this.getInventoryExportExcelRows(this.listOfDisplayInventories);
+
+
+    var worksheet = XLSX.utils.aoa_to_sheet([
+      columnNames, 
+      ...contents
+    ]); 
+     
+
+    /* generate workbook and add the worksheet */
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'inventory');
+
+    /* save to file */
+    XLSX.writeFile(workbook,`inventory.xlsx`);
+  }
+
+  getInventoryExportExcelColumns() : string[]   {
+
+    let columnNames : string[] = [];
+
+    if (this.isChoose('client')  && this.threePartyLogisticsFlag) {
+      columnNames = [...columnNames, this.i18n.fanyi("client")];
+    }
+    if (this.isChoose('lpn')) {
+      columnNames = [...columnNames, this.i18n.fanyi("lpn")];
+    }
+    if (this.isChoose('item')) {
+      columnNames = [...columnNames, this.i18n.fanyi("item")];
+    } 
+    if (this.isChoose('itemPackageType')) {
+      columnNames = [...columnNames, this.i18n.fanyi("item.package-type")];
+    } 
+    if (this.isChoose('location')) {
+      columnNames = [...columnNames, this.i18n.fanyi("location")];
+    } 
+    if (this.isChoose('quantity')) {
+      columnNames = [...columnNames, this.i18n.fanyi("quantity"), this.i18n.fanyi("unitOfMeasure")]; 
+    }
+    if (this.isChoose('inventoryStatus')) {
+      columnNames = [...columnNames, this.i18n.fanyi("inventory.status")];
+    }
+    if (this.isChoose('fifoDate')) {
+      columnNames = [...columnNames, this.i18n.fanyi("fifoDate")];
+    }
+    if (this.isChoose('color')) {
+      columnNames = [...columnNames, this.i18n.fanyi("color")];
+    }
+    if (this.isChoose('productSize')) {
+      columnNames = [...columnNames, this.i18n.fanyi("productSize")];
+    }
+    if (this.isChoose('style')) {
+      columnNames = [...columnNames, this.i18n.fanyi("style")];
+    }
+    if (this.isChoose('inWarehouseDate')) {
+      columnNames = [...columnNames, this.i18n.fanyi("inWarehouseDate")];
+    }
+    if (this.isChoose('attribute1') && this.inventoryConfiguration?.inventoryAttribute1Enabled == true) {
+      columnNames = [...columnNames, this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+        this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName];
+    }
+    if (this.isChoose('attribute2') && this.inventoryConfiguration?.inventoryAttribute2Enabled == true) {
+      columnNames = [...columnNames, this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+        this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName];
+    }
+    if (this.isChoose('attribute3') && this.inventoryConfiguration?.inventoryAttribute3Enabled == true) {
+      columnNames = [...columnNames, this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+        this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName];
+    }
+    if (this.isChoose('attribute4') && this.inventoryConfiguration?.inventoryAttribute4Enabled == true) {
+      columnNames = [...columnNames, this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+        this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName];
+    }
+    if (this.isChoose('attribute5') && this.inventoryConfiguration?.inventoryAttribute5Enabled == true) {
+      columnNames = [...columnNames, this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+        this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName];
+    }
+    if (this.isChoose('lockedForAdjust')) {
+      columnNames = [...columnNames, this.i18n.fanyi("inventory.locked-for-adjustment")];
+    }
+    if (this.isChoose('pick')) {
+      columnNames = [...columnNames, this.i18n.fanyi("inventory.pick-id")];
+    }
+    if (this.isChoose('allocateByPick')) {
+      columnNames = [...columnNames, this.i18n.fanyi("inventory.allocated-by-pick-id")];
+    }
+    if (this.isChoose('movementPath')) {
+      columnNames = [...columnNames, this.i18n.fanyi("movement-path")];
+    }
+
+
+    return columnNames;
+  }
+  
+  getInventoryExportExcelRows(inventoryList: Inventory[]) : string[][]   {
+    let rows: string[][] = [];
+
+    inventoryList.forEach(
+      inventory => rows = [...rows, this.getInventoryExportExcelRow(inventory)]
+    )
+    return rows;
+  }
+  
+  getInventoryExportExcelRow(inventory: Inventory) : string[]   {
+    let row : string[] = [];
+
+    if (this.isChoose('client')  && this.threePartyLogisticsFlag) {
+      row = [...row, inventory.client == null ? "" : inventory.client.name];
+    }
+    if (this.isChoose('lpn')) {
+      row = [...row, inventory.lpn == null ? "" : inventory.lpn]; 
+    }
+    if (this.isChoose('item')) {
+      row = [...row, inventory.item == null ? "" : inventory.item.name];  
+    } 
+    if (this.isChoose('itemPackageType')) {
+      row = [...row, inventory.itemPackageType == null ? "" : inventory.itemPackageType.name!];  
+    } 
+    if (this.isChoose('location')) {
+      row = [...row, inventory.location == null ? "" : inventory.location.name!];  
+    } 
+    if (this.isChoose('quantity')) {
+      row = [...row, 
+        (inventory.displayQuantity == null ? "" : inventory.displayQuantity.toString()), 
+        (inventory.itemPackageType  == null || 
+          inventory.itemPackageType.displayItemUnitOfMeasure   == null ||
+          inventory.itemPackageType.displayItemUnitOfMeasure.unitOfMeasure == null ?
+            "" :
+            inventory.itemPackageType.displayItemUnitOfMeasure.unitOfMeasure.name)];   
+    }
+    if (this.isChoose('inventoryStatus')) {
+      row = [...row, inventory.inventoryStatus == null ? "" : inventory.inventoryStatus.name!];  
+    }
+    if (this.isChoose('fifoDate')) {
+      row = [...row, inventory.fifoDate == null ? "" : 
+           `${this.datePipe.transform(inventory.fifoDate, 'MM/dd/yyyy')}`];   
+    }
+    if (this.isChoose('color')) {
+      row = [...row, inventory.color == null ? "" : inventory.color];   
+    }
+    if (this.isChoose('productSize')) {
+      row = [...row, inventory.productSize == null ? "" : inventory.productSize];   
+    }
+    if (this.isChoose('style')) {
+      row = [...row, inventory.style == null ? "" : inventory.style];   
+    }
+    if (this.isChoose('inWarehouseDate')) {
+      row = [...row, inventory.inWarehouseDatetime == null ? "" : inventory.inWarehouseDatetime.toString()];   
+    }
+    if (this.isChoose('attribute1') && this.inventoryConfiguration?.inventoryAttribute1Enabled == true) {
+      row = [...row, inventory.attribute1 == null ? "" : inventory.attribute1];   
+    }
+    if (this.isChoose('attribute2') && this.inventoryConfiguration?.inventoryAttribute2Enabled == true) {
+      row = [...row, inventory.attribute2 == null ? "" : inventory.attribute2];   
+    }
+    if (this.isChoose('attribute3') && this.inventoryConfiguration?.inventoryAttribute3Enabled == true) {
+      row = [...row, inventory.attribute3 == null ? "" : inventory.attribute3];   
+    }
+    if (this.isChoose('attribute4') && this.inventoryConfiguration?.inventoryAttribute4Enabled == true) {
+      row = [...row, inventory.attribute4 == null ? "" : inventory.attribute4];   
+    }
+    if (this.isChoose('attribute5') && this.inventoryConfiguration?.inventoryAttribute5Enabled == true) {
+      row = [...row, inventory.attribute5 == null ? "" : inventory.attribute5];   
+    }
+    if (this.isChoose('lockedForAdjust')) {
+      row = [...row, inventory.lockedForAdjust == null ? "" : inventory.lockedForAdjust + ""];   
+    }
+    if (this.isChoose('pick')) {
+      row = [...row, inventory.pick == null ? "" : inventory.pick.number ];   
+    }
+    if (this.isChoose('allocateByPick')) {
+      row = [...row, inventory.allocatedByPick == null ? "" : inventory.allocatedByPick.number ];   
+    }
+    if (this.isChoose('movementPath')) {
+      let movementPath = inventory.inventoryMovements?.map(
+        movement => movement?.location?.name
+      ).join(",")
+      row = [...row, movementPath == null ? "" : movementPath ];   
+    }
+
+
+    return row;
+  }
+
+  inventoryPageChanged(pageIndex: number): void {
+    if (pageIndex === this.inventoryTable.pi) return;
+    this.inventoryTable.pi = pageIndex;
+    this.search();
+  }
+
+  inventoryTableRecordPerPageChanged(recordPerPage: number): void {
+    if (!this.inventoryTableRecordPerPages.includes(recordPerPage) || recordPerPage === this.inventoryTable.ps) return;
+    this.inventoryTable.ps = recordPerPage;
+    this.searchFromFirstPage();
+  }
+
+  inventoryDisplayOptionChanged() {
+    console.log(`inventory display is changed to ${this.inventoryDisplayOption}`);
+
+    // setup the display based on the display option
+    this.processInventoryQueryResult(this.inventories);
+  }
+
+  reverseInventory(inventory: Inventory) {
+    
+    this.isSpinning = true;
+    if (inventory.receiptId != null) { 
+        this.inventoryService.reverseReceivedInventory(inventory, true, true).subscribe(
+          {
+            next: () => {
+              this.messageService.success(this.i18n.fanyi('message.action.success'));
+              this.isSpinning = false;
+              this.search();
+            }, 
+            error: () => {
+                    
+              this.isSpinning = false; 
+            }
+          }
+
+        )
+    } 
+    else if (inventory.workOrderId != null) { 
+      this.workOrderService.reverseProduction(inventory.workOrderId, inventory.lpn!).subscribe(
+        {
+          next: () => {
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            this.isSpinning = false;
+            this.search();
+          }, 
+          error: () => {
+                  
+            this.isSpinning = false; 
+          }
+        }
+
+      )
+  } 
+
+  }
+
+  inventoryTableChanged(event: STChange) : void { 
+    if (event.type === 'pi' || event.type === 'ps') {
+      // see if the PI or PS is changed. If so
+      // we will need to redo the search since we use 
+      // client size pagination
+      const pipsChanged : boolean = 
+          (this.inventoryTablePI != this.inventoryTable?.pi) ||
+          (this.inventoryTablePS != this.inventoryTable?.ps);
+ 
+      if (pipsChanged) {
+        this.inventoryTablePI = this.inventoryTable.pi;
+        this.inventoryTablePS = this.inventoryTable.ps;
+        this.search();
+      }
+
+    }
+    if (event.type === 'resize') {
+      console.log(`resize: \n ${JSON.stringify(event.resize)}`);
+      console.log(`${event.resize?.key} is resided to ${event.resize?.width}`);
+      this.saveInventoryTableColumnSize(event.resize?.key, event.resize?.width);
+    }
+
+  }
+
+  saveInventoryTableColumnSize(key?: string, width?: string | number) {
+      if (key == null || width == null) {
+
+        return;
+      }
+
+      const newWidth = parseFloat(`${width}`);
+
+      this.tableConfigurations["inventoryTable"].filter(
+        column => column.columnName == key
+      ).forEach(
+        column => { 
+          console.log(`column ${column.columnName}'s width is changed to ${newWidth}`);
+          column.columnWidth = newWidth
+        }
+      );
+
+      this.webPageTableColumnConfigurationService.changeWebPageTableColumnConfigurations(
+        this.tableConfigurations["inventoryTable"]
+      ).subscribe({
+        next: () => {
+
+          console.log(`table column configuration is saved`);
+        }, 
+      })
+  }
+
+}

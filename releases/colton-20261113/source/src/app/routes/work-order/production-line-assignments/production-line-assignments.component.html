@@ -1,0 +1,58 @@
+<div class="assignment-heading">
+  <div><h1>{{ 'line-assignments.title' | i18n }}</h1><p>{{ 'line-assignments.subtitle' | i18n }}</p></div>
+  <button nz-button [disabled]="loading || batchVisible" (click)="refresh()">{{ 'line-assignments.refresh' | i18n }}</button>
+</div>
+<form class="assignment-filters" (ngSubmit)="filter()">
+  <label>{{ 'line-assignments.line' | i18n }}<input nz-input name="line" [(ngModel)]="line" /></label>
+  <label>{{ 'line-assignments.work-order' | i18n }}<input nz-input name="number" [(ngModel)]="number" /></label>
+  <label>{{ 'line-assignments.item' | i18n }}<input nz-input name="item" [(ngModel)]="item" /></label>
+  <label>{{ 'line-assignments.status' | i18n }}<nz-select name="status" [(ngModel)]="status" nzAllowClear>
+    @for (value of statuses; track value) { <nz-option [nzValue]="value" [nzLabel]="('WORK-ORDER-STATUS-' + value) | i18n" /> }
+  </nz-select></label>
+  <div class="filter-actions"><button nz-button nzType="primary" type="submit">{{ 'line-assignments.search' | i18n }}</button>
+    <button nz-button type="button" (click)="clear()">{{ 'line-assignments.clear' | i18n }}</button></div>
+</form>
+@if (failed) { <nz-alert nzType="error" [nzMessage]="'line-assignments.failed' | i18n" nzShowIcon /> }
+@if (partial) { <nz-alert nzType="warning" [nzMessage]="'line-assignments.partial' | i18n" nzShowIcon /> }
+<div class="assignment-results">
+  @if (canDeassign) {
+    <div class="assignment-selection">
+      <label nz-checkbox [ngModel]="allFilteredSelected" (ngModelChange)="selectFiltered($event)" [nzDisabled]="loading || batchVisible">{{ 'batch-deassign.select-filtered' | i18n }}</label>
+      <span>{{ selected.size }} {{ 'batch-deassign.selected' | i18n }}</span>
+      <button nz-button [disabled]="!selected.size || loading || batchVisible" (click)="selected.clear()">{{ 'batch-deassign.clear-selection' | i18n }}</button>
+      <button nz-button nzType="primary" [disabled]="!selected.size || loading || batchVisible" (click)="openBatch()">{{ 'batch-deassign.title' | i18n }}</button>
+    </div>
+  }
+  <div class="assignment-summary">{{ groups.length }} {{ (groups.length === 1 ? 'line-assignments.line-singular' : 'line-assignments.lines') | i18n }} · {{ assignmentCount }} {{ (assignmentCount === 1 ? 'line-assignments.assignment-singular' : 'line-assignments.assignments') | i18n }}</div>
+  <nz-table [nzData]="visibleGroups" [nzLoading]="loading" [nzFrontPagination]="false" [nzShowPagination]="false"
+    [nzNoResult]="'line-assignments.empty' | i18n" [nzScroll]="{ x: '900px' }">
+    <thead><tr>@if (canDeassign) { <th nzWidth="55px"></th> }<th nzWidth="170px">{{ 'line-assignments.line' | i18n }}</th>
+      <th nzWidth="200px">{{ 'line-assignments.work-order' | i18n }}</th><th nzWidth="220px">{{ 'line-assignments.item' | i18n }}</th>
+      <th>{{ 'line-assignments.description' | i18n }}</th><th nzWidth="160px">{{ 'line-assignments.status' | i18n }}</th></tr></thead>
+    <tbody>
+      @for (group of visibleGroups; track group.key) {
+        @for (row of group.rows; track $index) {
+          <tr>
+            @if (canDeassign) { <td><label nz-checkbox [nzChecked]="!!row.id && selected.has(row.id)"
+              [nzDisabled]="!row.id || !row.lineId || !row.workOrderId || loading || batchVisible" (nzCheckedChange)="toggle(row, $event)"
+              [attr.aria-label]="row.line + ' / ' + row.number"></label></td> }
+            @if ($first) { <td [attr.rowspan]="group.rows.length" class="line-cell">{{ group.line }}
+              <small>{{ group.rows.length }} {{ (group.rows.length === 1 ? 'line-assignments.assignment-singular' : 'line-assignments.assignments') | i18n }}</small></td> }
+            <td>@if (row.workOrderId && row.number !== '—') {
+              <a routerLink="/work-order/work-order" [queryParams]="{ number: row.number }">{{ row.number }}</a>
+            } @else { {{ row.number }} }</td>
+            <td>{{ row.item }}</td><td>{{ row.description }}</td>
+            <td><span class="status-badge" [class.status-progress]="row.status === 'INPROCESS' || row.status === 'WORK_IN_PROCESS'">
+              {{ row.status ? (('WORK-ORDER-STATUS-' + row.status) | i18n) : ('line-assignments.unknown' | i18n) }}</span></td>
+          </tr>
+        }
+      }
+    </tbody>
+  </nz-table>
+  <div class="assignment-pagination"><nz-pagination [nzTotal]="groups.length" [nzPageSize]="pageSize"
+    [(nzPageIndex)]="page" [nzHideOnSinglePage]="true" /></div>
+</div>
+
+@if (batchVisible) {
+  <app-batch-deassign [rows]="batchRows" (removed)="removed($event)" (closed)="batchVisible = false" />
+}

@@ -1,0 +1,88 @@
+<page-header></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+          {{ 'order.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllTrailers"
+    [nzFooter]="tableFoot" #rowSelectionTable>
+    <thead>
+      <tr>
+
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+        <th>
+          {{ 'action' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+
+        <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+
+        <td>{{ data.number }}</td>
+        <td>{{ data.status }}</td>
+        <td>{{ data.carrier.name }}</td>
+        <td>{{ data.carrierServiceLevel.name }}</td>
+
+        <td>{{ data.driverFirstName }}</td>
+        <td>{{ data.driverLastName }}</td>
+        <td>{{ data.driverPhone }}</td>
+        <td>{{ data.licensePlateNumber }}</td>
+        <td>{{ data.size }}</td>
+        <td>{{ data.type }}</td>
+        <td>{{ data.location.name }}</td>
+        <td>
+
+          <button nz-button (click)="checkInTrailer(data)">
+            {{ 'trailer.checkin' | i18n }}
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button nzType="primary" (click)="dispatchTrailer(data)">
+            {{ 'trailer.dispatch' | i18n }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzDanger (click)="cancelSelectedTrailers()">
+      {{ 'cancel' | i18n }}
+    </button>
+  </div>
+</ng-template>

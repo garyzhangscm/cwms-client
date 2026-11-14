@@ -1,0 +1,208 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<!-- Show the work order information -->
+<nz-card nzTitle="{{ 'work-order' | i18n}}">
+
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">
+      {{ currentWorkOrder.number}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item-name' | i18n}}">
+      {{ currentWorkOrder.item?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item.description' | i18n}}">
+      {{ currentWorkOrder.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.expected-quantity' | i18n}}">
+      {{ currentWorkOrder.expectedQuantity}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.produced-quantity' | i18n}}">
+      {{ currentWorkOrder.producedQuantity}}</nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+<!-- Step 1: Change the work order line -->
+<div class="steps-content" *ngIf="stepIndex === 0">
+
+
+
+  <!-- Show the work order line information and allow the user to 
+      1. change the quantity of existing work order lines
+      2. add new work order lines
+  -->
+  <div class="search-result-list">
+
+
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder.workOrderLines!" nzSize="middle"
+      [nzShowPagination]="false">
+
+      <thead>
+        <th>
+          {{ 'work-order.line.number' | i18n }}</th>
+        <th>
+          {{ 'item' | i18n }}</th>
+        <th>
+          {{ 'item.description' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.expectedQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.openQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.deliveredQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.consumedQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.scrappedQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.returnedQuantity' | i18n }}</th>
+        <th>
+          {{ 'inventory.status' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.expectedQuantity.new' | i18n }}</th>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let workOrderLine of currentWorkOrder?.workOrderLines">
+          <td>{{ workOrderLine.number }}</td>
+          <td><span *ngIf="workOrderLine.id !== undefined">{{ workOrderLine.item!.name }}</span>
+
+            <nz-input-group nzCompact *ngIf="workOrderLine.id === undefined">
+              <input nz-input [(ngModel)]="workOrderLine.item!.name!" [nzAutocomplete]="itemList" style="width: 100%;"
+                (blur)="itemNameChanged($event, workOrderLine)" />
+
+            </nz-input-group>
+          </td>
+          <td>{{ workOrderLine.item?.description }}</td>
+          <td>{{ workOrderLine.expectedQuantity }}</td>
+          <td>{{ workOrderLine.openQuantity }}</td>
+          <td>{{ workOrderLine.inprocessQuantity }}</td>
+          <td>{{ workOrderLine.deliveredQuantity }}</td>
+          <td>{{ workOrderLine.consumedQuantity }}</td>
+          <td>{{ workOrderLine.scrappedQuantity }}</td>
+          <td>{{ workOrderLine.returnedQuantity }}</td>
+          <td><span *ngIf="workOrderLine.id !== undefined">{{  workOrderLine.inventoryStatus?.description }}</span>
+
+            <nz-input-group nzCompact *ngIf="workOrderLine.id === undefined">
+              <nz-select nz-input [ngModel]="workOrderLine.inventoryStatus?.name"
+                (ngModelChange)="inventoryStatusChange($event, workOrderLine)" style="width: 150px">
+                <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
+                </nz-option>
+              </nz-select>
+
+
+
+            </nz-input-group>
+          </td>
+          <td>
+            <!-- Allow the user to change the quantity of an existing work order line-->
+            <nz-input-group nzCompact>
+              <input nz-input [(ngModel)]="mapOfNewLineExpectedQuantity[workOrderLine.number!]" style="width: 50%;" />
+            </nz-input-group>
+          </td>
+        </tr>
+      </tbody>
+
+    </nz-table>
+    <nz-autocomplete [nzDataSource]="validItemNames" #itemList></nz-autocomplete>
+    <div nz-row nzJustify="start" style="padding-top: 15px;">
+      <button nz-button nzType="primary" (click)="addNewWorkOrderLine()">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  </div>
+
+
+</div>
+
+
+<!-- Step 2: confirm the change -->
+<div class="steps-content" *ngIf="stepIndex === 1">
+
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder.workOrderLines!" nzSize="middle"
+    [nzShowPagination]="false">
+
+    <thead>
+      <th>
+        {{ 'work-order.line.number' | i18n }}</th>
+      <th>
+        {{ 'item' | i18n }}</th>
+      <th>
+        {{ 'item.description' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.expectedQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.openQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.deliveredQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.consumedQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.scrappedQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.returnedQuantity' | i18n }}</th>
+      <th>
+        {{ 'inventory.status' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.expectedQuantity.new' | i18n }}</th>
+    </thead>
+    <tbody>
+
+      <tr *ngFor="let workOrderLine of currentWorkOrder?.workOrderLines">
+        <td>{{ workOrderLine.number }}</td>
+        <td> {{ workOrderLine.item?.name }}
+
+        </td>
+        <td>{{ workOrderLine.item?.description }}</td>
+        <td>{{ workOrderLine.expectedQuantity }}</td>
+        <td>{{ workOrderLine.openQuantity }}</td>
+        <td>{{ workOrderLine.inprocessQuantity }}</td>
+        <td>{{ workOrderLine.deliveredQuantity }}</td>
+        <td>{{ workOrderLine.consumedQuantity }}</td>
+        <td>{{ workOrderLine.scrappedQuantity }}</td>
+        <td>{{ workOrderLine.returnedQuantity }}</td>
+        <td> {{ workOrderLine.inventoryStatus?.description}}
+
+
+        </td>
+        <td>
+          {{ mapOfNewLineExpectedQuantity[workOrderLine.number!] }}
+        </td>
+      </tr>
+    </tbody>
+
+  </nz-table>
+</div>
+
+
+<nz-divider></nz-divider>
+
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex === 1">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex === 0">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="saveCurrentWorkOrderResults()" *ngIf="stepIndex === 1">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>

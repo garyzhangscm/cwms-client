@@ -1,0 +1,111 @@
+@import '@delon/theme/index';
+
+:host ::ng-deep {
+  .container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background-color: #e9eff8;
+    background-image: url('/assets/login-background.svg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .langs {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    min-height: 64px;
+    padding: 16px 24px 8px;
+  }
+
+  .wrap {
+    flex: 1;
+    padding: 44px 0 24px;
+  }
+
+  .ant-form-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .top {
+    text-align: center;
+  }
+
+  .header {
+    height: 44px;
+    line-height: 44px;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .logo {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: contain;
+    border-radius: 14px;
+  }
+
+  .title {
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+    font-size: 28px;
+    font-weight: 650;
+    color: #182235;
+    vertical-align: middle;
+  }
+
+  .desc {
+    margin-top: 12px;
+    margin-bottom: 26px;
+    font-size: @font-size-base;
+    color: @text-color-secondary;
+  }
+
+  @media (min-width: @screen-md-min) {
+    .wrap {
+      padding: 44px 0 24px;
+    }
+  }
+}
+
+[data-theme='dark'] {
+  :host ::ng-deep {
+    .container {
+      background-color: #141c2d;
+      background-image: linear-gradient(rgba(12, 20, 36, 0.88), rgba(12, 20, 36, 0.88)), url('/assets/login-background.svg');
+    }
+
+    .title {
+      color: fade(@white, 85%);
+    }
+
+    .desc {
+      color: fade(@white, 45%);
+    }
+
+  }
+}
+
+[data-theme='compact'] {
+  :host ::ng-deep {
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+  }
+}

@@ -1,0 +1,187 @@
+<page-header title="{{'light-mes-configuration' |  i18n}}" ></page-header>
+ 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+        
+    <nz-card nzType="inner" nzTitle="{{'credential' | i18n}}">
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                {{ 'accessKeyId' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    
+                    <input nz-input [(ngModel)]="currentLightMESConfiguration.accessKeyId" />  
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                {{ 'accessKeySecret' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <input nz-input [(ngModel)]="currentLightMESConfiguration.accessKeySecret" />   
+
+                </nz-form-control>
+            </nz-form-item>
+          </div> 
+        </div>  
+    </nz-card>
+    
+    <nz-card nzType="inner" nzTitle="{{'host' | i18n}}">
+
+        <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'protocol' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <nz-select nzAllowClear  
+                          nz-input [(ngModel)]="currentLightMESConfiguration.protocol" style="width: 250px"  >
+                              <nz-option nzLabel="http" nzValue="http"></nz-option>
+                              <nz-option nzLabel="https" nzValue="https"></nz-option>
+                          </nz-select> 
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'host' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <input nz-input [(ngModel)]="currentLightMESConfiguration.host" />   
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'port' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <input nz-input [(ngModel)]="currentLightMESConfiguration.port" />   
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div> 
+        </div>   
+    </nz-card>
+    
+    <nz-card nzType="inner" nzTitle="{{'endpoint' | i18n}}">
+
+        <div nz-row [nzGutter]="24">             
+            <div nz-col [nzSpan]="20">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'singleLightStatusQueryUrl' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <input nz-input [(ngModel)]="currentLightMESConfiguration.singleLightStatusQueryUrl" />   
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div>    
+        </div>
+        <div nz-row [nzGutter]="24">             
+            <div nz-col [nzSpan]="20">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'batchLightStatusQueryUrl' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <input nz-input [(ngModel)]="currentLightMESConfiguration.batchLightStatusQueryUrl" />   
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div>    
+        </div>
+        <div nz-row [nzGutter]="24">             
+            <div nz-col [nzSpan]="20">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'singleLightPulseQueryUrl' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <input nz-input [(ngModel)]="currentLightMESConfiguration.singleLightPulseQueryUrl" />   
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div>    
+        </div>
+        <div nz-row [nzGutter]="24">             
+            <div nz-col [nzSpan]="20">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'singleMachineDetailQueryUrl' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <input nz-input [(ngModel)]="currentLightMESConfiguration.singleMachineDetailQueryUrl" />   
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div>    
+        </div>
+        <div nz-row [nzGutter]="24">             
+            <div nz-col [nzSpan]="20">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'machineListQueryUrl' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                      <input nz-input [(ngModel)]="currentLightMESConfiguration.machineListQueryUrl" />   
+                      
+                  </nz-form-control>
+              </nz-form-item>
+            </div>    
+        </div>
+            
+    </nz-card>
+    <nz-card nzType="inner" nzTitle="{{'miscellaneous' | i18n}}">
+        <div nz-row [nzGutter]="24">    
+            <div nz-col [nzSpan]="20">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'time-zone' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+  
+  
+                    <nz-select [(ngModel)]="currentLightMESConfiguration.timeZone" nzAllowClear nzShowSearch>
+                      <nz-option *ngFor="let zoneId of avaiableZoneIds " [nzValue]="zoneId"
+                        [nzLabel]="zoneId"></nz-option>
+                    </nz-select>
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div> 
+        
+        <div nz-row [nzGutter]="24">    
+            <div nz-col [nzSpan]="20">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                  {{ 'cycle-time-window-in-minutes' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                    <nz-input-number [(ngModel)]="currentLightMESConfiguration.cycleTimeWindow" [nzMin]="1" [nzMax]="1440" [nzStep]="1"></nz-input-number>
+   
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div> 
+     </nz-card>
+      <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+          <button nz-button nzType="primary" (click)="confirm()" >
+              <span> {{ 'confirm' | i18n }}</span>
+            </button>
+      </div>
+
+</nz-spin>
+ 

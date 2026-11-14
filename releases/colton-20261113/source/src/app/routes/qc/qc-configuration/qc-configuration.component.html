@@ -1,0 +1,40 @@
+<page-header title="{{'qc-configuration' |  i18n}}" ></page-header>
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="inventoryStatus" [nzSpan]="8">
+            {{'qc-pass-inventory-status' | i18n}}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select [(ngModel)]="currentQcConfiguration!.qcPassInventoryStatus.id" (ngModelChange)="qcPassInventoryStatusChange()">
+              <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+</div>
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label  [nzSpan]="8">
+            {{'qc-fail-inventory-status' | i18n}}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select [(ngModel)]="currentQcConfiguration!.qcFailInventoryStatus.id" (ngModelChange)="qcFailInventoryStatusChange()">
+              <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+</div>
+
+
+<div nz-row nzType="flex" nzJustify="start"  *ngIf="!displayOnly">
+    <button nz-button nzType="primary" (click)="saveConfiguration()">
+        {{ 'confirm' | i18n }}
+    </button>
+</div>

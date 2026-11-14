@@ -1,0 +1,951 @@
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { Subscription, timer } from 'rxjs';
+import { finalize, switchMap, take, timeout } from 'rxjs/operators';
+
+import { UserService } from '../../auth/services/user.service';
+import { Client } from '../../common/models/client';
+import { Customer } from '../../common/models/customer';
+import { Supplier } from '../../common/models/supplier';
+import { ClientService } from '../../common/services/client.service';
+import { CustomerService } from '../../common/services/customer.service';
+import { SupplierService } from '../../common/services/supplier.service';
+import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
+import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
+import { Item } from '../../inventory/models/item';
+import { ItemService } from '../../inventory/services/item.service';
+import { Carrier } from '../../transportation/models/carrier';
+import { CarrierServiceLevel } from '../../transportation/models/carrier-service-level';
+import { CarrierService } from '../../transportation/services/carrier.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
+import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service'; 
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { AllocationStrategyType } from '../models/allocation-strategy-type.enum';
+import { Order } from '../models/order';
+import { OrderCategory } from '../models/order-category';
+import { OrderLine } from '../models/order-line';
+import { OrderStatus } from '../models/order-status.enum'; 
+import { OrderService } from '../services/order.service';
+
+@Component({
+    selector: 'app-outbound-order-maintenance',
+    templateUrl: './order-maintenance.component.html',
+    styleUrls: ['./order-maintenance.component.less'],
+    standalone: false
+})
+export class OutboundOrderMaintenanceComponent implements OnInit, OnDestroy {
+
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  orderCategories = OrderCategory;
+  orderCategoriesKeys = Object.keys(this.orderCategories);
+  orderStatuses = OrderStatus;
+  allocationStrategies = AllocationStrategyType;
+  allocationStrategiesKeys = Object.keys(this.allocationStrategies);
+
+  currentOrder?: Order;
+  pageTitle: string;
+  newOrder = true;
+  existingCustomer = 'true';
+  validCustomers: Customer[] = [];
+
+  anyLineTrackingColor = false;
+  anyLineTrackingStyle = false;
+  anyLineTrackingProductSize = false;
+  anyLineTrackingInventoryAttribute1 = false;
+  anyLineTrackingInventoryAttribute2 = false;
+  anyLineTrackingInventoryAttribute3 = false;
+  anyLineTrackingInventoryAttribute4 = false;
+  anyLineTrackingInventoryAttribute5 = false;
+  inventoryConfiguration?: InventoryConfiguration;
+  // supplier is only used by outsourcing orders
+  existingSupplier = 'true';
+  validSuppliers: Supplier[] = [];
+  filterValidSuppliers: Supplier[] = [];
+
+  validInventoryStatuses: InventoryStatus[] = [];
+  warehouses: Warehouse[] | undefined;
+  availableInventoryStatus?: InventoryStatus;
+
+  avaiableLocationGroups: LocationGroup[] = [];
+
+  avaiableLocations: WarehouseLocation[] = [];
+  private orderNumberValidationVersion = 0;
+  orderNumberValidateStatus = 'warning'; 
+  shipStageLocationGroupStatus = 'success'; 
+  shipStageLocationStatus = 'success'; 
+
+  avaiableCarriers: Carrier[] = [];
+  availableClients: Client[] = [];
+  avaiableServiceLevel: CarrierServiceLevel[] = [];
+
+  itemSuggestions = new Map<OrderLine, { items: Item[]; loading: boolean; error: string; more: boolean; subscription?: Subscription }>();
+  private queueItemSuggestions(value: string, line: OrderLine): void {
+    const previous = this.itemSuggestions.get(line);
+    previous?.subscription?.unsubscribe();
+    const state = { items: previous?.items || [], loading: false, error: '', more: false, subscription: undefined as Subscription | undefined };
+    this.itemSuggestions.set(line, state);
+    const prefix = value.trim();
+    if (prefix.length < 2) { state.items = []; return; }
+    state.loading = true;
+    state.subscription = timer(300).pipe(
+      switchMap(() => this.itemService.getItems(prefix + '*')),
+      timeout(15000), take(1), finalize(() => state.loading = false),
+    ).subscribe({
+      next: items => {
+        if (this.itemSuggestions.get(line) !== state) return;
+        const matches = items.filter(item => item.id && item.name?.toLowerCase().startsWith(prefix.toLowerCase()));
+        state.more = matches.length > 20;
+        state.items = matches.slice(0, 20);
+      },
+      error: () => {
+        if (this.itemSuggestions.get(line) !== state) return;
+        state.items = [];
+        state.error = 'Suggestions could not be loaded. Enter the full item number to verify it.';
+      },
+    });
+  }
+  selectSuggestedItem(name: string, line: OrderLine): void {
+    const state = this.itemSuggestions.get(line);
+    const item = state?.items.find(option => option.name === name);
+    if (!item) return;
+    state?.subscription?.unsubscribe();
+    this.itemSuggestions.delete(line);
+    this.lineItemLookups.get(line)?.subscription?.unsubscribe();
+    this.lineItemLookups.set(line, { loading: false, error: '' });
+    line.item = item;
+    line.itemId = item.id;
+    this.recalculateTrackingInventoryAttributeFlags();
+  }
+  lineItemLookups = new Map<OrderLine, { loading: boolean; error: string; subscription?: Subscription }>();
+  get itemLookupLoading(): boolean {
+    return this.currentOrder?.orderLines.some(line => this.lineItemLookups.get(line)?.loading) || false;
+  }
+  ngOnDestroy(): void {
+    this.itemSuggestions.forEach(state => state.subscription?.unsubscribe());
+    this.itemSuggestions.clear();
+    this.lineItemLookups.forEach(state => state.subscription?.unsubscribe());
+    this.lineItemLookups.clear();
+  }
+  private validateOrderLines(requireLine = true): boolean {
+    const lines = this.currentOrder?.orderLines || [];
+    if (requireLine && !lines.length) {
+      this.messageService.warning('Add at least one order line before continuing.');
+      this.stepIndex = 1;
+      return false;
+    }
+    for (const line of lines) {
+      const state = this.lineItemLookups.get(line);
+      if (state?.loading || state?.error || !line.itemId) {
+        const error = state?.loading ? 'Checking item. Please wait before continuing.'
+          : state?.error || 'Select a valid item before continuing.';
+        this.messageService.warning(`Line ${line.number}: ${error}`);
+        this.stepIndex = 1;
+        return false;
+      }
+    }
+    return true;
+  }
+  stepIndex = 0; 
+  isSpinning = false;
+  saveNewCustomer = false; 
+  newCustomer?: Customer;
+
+  constructor(
+    private http: _HttpClient,
+    private activatedRoute: ActivatedRoute, 
+    private warehouseService: WarehouseService,
+    private companyService: CompanyService,
+    private messageService: NzMessageService,
+    private orderService: OrderService,
+    private userService: UserService,
+    private itemService: ItemService,
+    private inventoryConfigurationService: InventoryConfigurationService,
+    private router: Router,
+    private inventoryStatusService: InventoryStatusService, 
+    private locationGroupService: LocationGroupService, 
+    private locationGroupTypeService: LocationGroupTypeService, 
+    private locationService: LocationService, 
+    private customerService: CustomerService,
+    private carrierService: CarrierService,
+    private clientService: ClientService,
+    private supplierService: SupplierService) { 
+
+    this.pageTitle = this.i18n.fanyi('menu.main.outbound.order-maintenance');
+
+    
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        }  
+      } 
+    });
+  }
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params['id']) {
+        // Get the production line by ID
+        this.orderService.getOrder(params['id'])
+          .subscribe(orderRes => {
+            this.currentOrder = orderRes; 
+
+            this.newOrder = false;
+            this.orderNumberValidateStatus = 'success';
+            // reload the carrier and service level drop down just in case the order 
+            // has the carrier and service setup
+            this.loadCarriers();
+          });
+      }
+      else {
+        // this.currentProductionLine = this.createEmptyProductionLine();
+        this.currentOrder = this.getEmptyOrder();
+        this.validateShipStageLocationAndGroupRequirement();
+        this.newOrder = true;
+        this.loadCarriers();
+      }
+    });
+    this.loadValidInventoryStatus();
+    this.loadAvailableInventoryStatus();
+    this.loadWarehouses();
+    this.loadValidClients();
+    this.loadShippingStageLocationGroups();
+    // init the customer auto complete if necessar
+    this.customerOptionChanged();
+    this.loadValidSuppliers();
+    
+    //this.loadScript('https://maps.googleapis.com/maps/api/js?libraries=places&key=REDACTED_CREDENTIAL&sensor=false&language=en');
+  }
+
+  loadCarriers(): void {
+
+    this.carrierService.loadCarriers().subscribe(
+      {
+        next: (carrierRes) => {
+          this.avaiableCarriers = carrierRes; 
+          if (this.currentOrder?.carrierId) {
+            // if the current order has both the carrier and service level setup
+            // load both the carrier and service level 
+            
+            this.avaiableServiceLevel = [];
+
+            this.avaiableCarriers.filter(
+              carrier => carrier.id === this.currentOrder!.carrierId
+            ).forEach(
+              carrier => {
+                this.avaiableServiceLevel = [...this.avaiableServiceLevel, ...carrier.carrierServiceLevels]; 
+              }
+            )
+
+          }
+        } ,         
+      }
+    )
+  }
+  loadShippingStageLocationGroups(): void {
+
+    this.locationGroupTypeService.loadLocationGroupTypes(true).subscribe(
+      {
+        next: (shippingStageTypesRes) => {
+          let locationGroupTypes: number[] = [];
+          shippingStageTypesRes.forEach(shippingStageType => {
+            locationGroupTypes.push(shippingStageType.id);
+          })
+          this.locationGroupService.getLocationGroups(locationGroupTypes, []).subscribe(
+            {
+              next: (locationGroupsRes) => {
+                this.avaiableLocationGroups = locationGroupsRes;
+              }
+            }
+          )
+        } , 
+        
+      }
+    )
+  }
+  
+  loadValidInventoryStatus(): void {
+    if (this.validInventoryStatuses.length === 0) {
+      this.inventoryStatusService
+        .loadInventoryStatuses()
+        .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses));
+    }
+  }
+
+  loadAvailableInventoryStatus() : void {
+    
+    this.inventoryStatusService.getAvailableInventoryStatuses()
+    .subscribe(inventoryStatuses => {
+      if (inventoryStatuses.length > 0) {
+        this.availableInventoryStatus = inventoryStatuses.find(status => status.name?.trim().toUpperCase() === 'AVAL') || inventoryStatuses[0];
+      }
+    });
+  }
+  
+  loadWarehouses(): void {  
+      this.warehouseService
+        .getWarehouseByUser(this.companyService.getCurrentCompany()!.code, this.userService.getCurrentUsername())
+        .subscribe((warehouses: Warehouse[]) => {
+          // skip the current warehouse since we won't transfer within the same warehouse
+          this.warehouses = warehouses.filter(warehouse => warehouse.id !== this.warehouseService.getCurrentWarehouse().id ); 
+        });
+    
+  }
+
+  getEmptyOrder() : Order{
+    return {
+      id: undefined,
+      number: '',
+
+      orderBillableActivities: [],
+      status: OrderStatus.OPEN,
+      category: OrderCategory.SALES_ORDER,
+      allowForManualPick: true,
+      orderLines: [],
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      shipToCustomer: this.getEmptyCustomer(),
+ 
+    }
+  }
+  getEmptyCustomer(): Customer{
+    return {       
+      name: "",
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      description:  "",
+      contactorFirstname:  "",
+      contactorLastname:  "",
+      addressCountry:  "",
+      addressState:  "", 
+      addressCity:  "", 
+      addressLine1:  "", 
+      addressPostcode:  "",
+    }
+  }
+
+  orderCategoryChanged() {
+    if (this.currentOrder && this.isOutsourcingOrder(this.currentOrder)) {
+      this.currentOrder.allowForManualPick = false;
+    }
+    this.validateShipStageLocationAndGroupRequirement();
+    console.log(`current order's category is changed to ${this.currentOrder?.category}`)
+  }
+
+  lineNumberChanged(orderLine: OrderLine) {
+    
+    console.log(`orderLine's number is changed to ${orderLine.number}`);
+
+  }
+  itemNameChanged(name: string, line: OrderLine): void {
+    this.lineItemLookups.get(line)?.subscription?.unsubscribe();
+    this.lineItemLookups.set(line, { loading: false, error: '' });
+    line.itemId = undefined;
+    line.item = { ...this.getEmptyOrderLine().item!, name: name || '' };
+    this.recalculateTrackingInventoryAttributeFlags();
+    this.queueItemSuggestions(name, line);
+  }
+  itemChanged(event: Event, line: OrderLine): void {
+    const name = (event.target as HTMLInputElement).value.trim();
+    if (line.itemId && line.item?.name === name && !this.lineItemLookups.get(line)?.error) return;
+    this.itemNameChanged(name, line);
+    const state = this.lineItemLookups.get(line)!;
+    if (!name) {
+      state.error = 'Select an item before continuing.';
+      return;
+    }
+    state.loading = true;
+    state.subscription = this.itemService.getItems(name).pipe(
+      timeout(15000), take(1), finalize(() => state.loading = false),
+    ).subscribe({
+      next: items => {
+        if (this.lineItemLookups.get(line) !== state) return;
+        const matches = items.filter(item => item.id && item.name?.toLowerCase() === name.toLowerCase());
+        if (matches.length !== 1) {
+          state.error = matches.length > 1
+            ? 'More than one item matches. Please verify the item master data.'
+            : 'Item not found. Check the item number before continuing.';
+          return;
+        }
+        line.item = matches[0];
+        line.itemId = matches[0].id;
+        state.error = '';
+        this.recalculateTrackingInventoryAttributeFlags();
+      },
+      error: () => {
+        if (this.lineItemLookups.get(line) === state)
+          state.error = 'Unable to verify the item. Enter the item number again to retry.';
+      },
+    });
+  }
+
+  inventoryStatusChanged(orderLine: OrderLine) {
+    
+    this.validInventoryStatuses
+      .filter(inventoryStatus => inventoryStatus.id == orderLine.inventoryStatus!.id)
+      .forEach(inventoryStatus => {
+        orderLine.inventoryStatus = inventoryStatus, 
+        orderLine.inventoryStatusId = inventoryStatus.id
+      });
+    console.log(`orderLine's number is changed to ${orderLine.inventoryStatus!.name}`);
+
+  } 
+
+
+  allocationStratetyChanged(orderLine: OrderLine) {
+    
+    console.log(`orderLine's number is changed to ${orderLine.allocationStrategyType}`);
+
+  }
+ 
+  
+  addExtraOrderLine(): void {
+    if (this.isSpinning || !this.validateOrderLines(false)) return;
+    this.currentOrder!.orderLines = [...this.currentOrder!.orderLines, this.getEmptyOrderLine()];
+
+  }
+
+  recalculateTrackingInventoryAttributeFlags() {
+    
+    this.anyLineTrackingColor = false;
+    this.anyLineTrackingStyle = false;
+    this.anyLineTrackingProductSize = false;
+    this.anyLineTrackingInventoryAttribute1 = false;
+    this.anyLineTrackingInventoryAttribute2 = false;
+    this.anyLineTrackingInventoryAttribute3 = false;
+    this.anyLineTrackingInventoryAttribute4 = false;
+    this.anyLineTrackingInventoryAttribute5 = false;
+
+    if (this.currentOrder && this.currentOrder.orderLines.length > 0) {
+      this.currentOrder.orderLines.filter(
+        orderLine => orderLine.item != null
+      ).forEach(
+        orderLine => {
+          if (orderLine.item?.trackingColorFlag) {
+            this.anyLineTrackingColor = true;
+          }
+          if (orderLine.item?.trackingStyleFlag) {
+            this.anyLineTrackingStyle = true;
+          }
+          if (orderLine.item?.trackingProductSizeFlag) {
+            this.anyLineTrackingProductSize = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute1Flag) {
+            this.anyLineTrackingInventoryAttribute1 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute2Flag) {
+            this.anyLineTrackingInventoryAttribute2 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute3Flag) {
+            this.anyLineTrackingInventoryAttribute3 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute4Flag) {
+            this.anyLineTrackingInventoryAttribute4 = true;
+          }
+          if (orderLine.item?.trackingInventoryAttribute5Flag) {
+            this.anyLineTrackingInventoryAttribute5 = true;
+          } 
+        }
+      )
+    }
+  }
+
+  getEmptyOrderLine(): OrderLine {
+    let defaultInventoryStatus : InventoryStatus = {
+      id: undefined,
+      name: '',
+      description: '',
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+    };
+
+    // get the default inventory status for the newly added line
+    const avalStatus = this.validInventoryStatuses.find(status => status.name?.trim().toUpperCase() === 'AVAL');
+    if (avalStatus) {
+      defaultInventoryStatus = avalStatus;
+    }
+    else if (this.validInventoryStatuses.length === 1) {
+      defaultInventoryStatus = this.validInventoryStatuses[0]; 
+    }
+    else if (this.availableInventoryStatus != null) {
+      defaultInventoryStatus = this.availableInventoryStatus; 
+
+    }
+    // get the maximun number of existing order lines
+    let maxOrderLineNumber : number = 0;
+    if (this.currentOrder!.orderLines.length > 0) {
+      this.currentOrder!.orderLines.forEach(
+        orderLine => {
+          let orderLineNumber = parseInt(orderLine.number);
+          if (!Number.isNaN(maxOrderLineNumber)) {
+            maxOrderLineNumber = Math.max(maxOrderLineNumber, orderLineNumber);
+          }
+        }
+      )
+    }
+
+    return {
+      id: undefined,      
+      number: (maxOrderLineNumber + 1).toString(), 
+      orderNumber: this.currentOrder!.number,
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+
+      orderLineBillableActivities: [],
+      expectedQuantity: 0,
+      openQuantity: 0,
+      inprocessQuantity: 0,
+      shippedQuantity: 0,
+      productionPlanInprocessQuantity: 0,
+      productionPlanProducedQuantity: 0,
+      allocationStrategyType: AllocationStrategyType.FIRST_IN_FIRST_OUT,
+ 
+      item: {
+        id: undefined,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
+        name: '',
+        description: '',
+        allowCartonization: undefined,
+        itemPackageTypes: [
+          {
+            id: undefined,
+            warehouseId: this.warehouseService.getCurrentWarehouse().id,
+            companyId: this.companyService.getCurrentCompany()!.id,
+            description: '',
+            name: '',
+            itemUnitOfMeasures: [],
+          },
+        ],
+
+        client: undefined,
+        itemFamily: undefined,
+        unitCost: undefined,
+
+        allowAllocationByLPN: undefined,
+        allocationRoundUpStrategyType: undefined,
+
+        allocationRoundUpStrategyValue: undefined,
+
+        trackingVolumeFlag: undefined,
+        trackingLotNumberFlag: undefined,
+        trackingManufactureDateFlag: undefined,
+        shelfLifeDays: undefined,
+        trackingExpirationDateFlag: undefined,
+      },
+      inventoryStatus: defaultInventoryStatus,
+      inventoryStatusId: defaultInventoryStatus.id,      
+      autoRequestShippingLabel: false,
+      
+    };
+  }
+
+  allowForManualPickChanged(allowForManualPick: boolean) {
+    console.log(`allow for manual pick : ${allowForManualPick}`);
+
+    this.validateShipStageLocationAndGroupRequirement();
+  }
+
+  previousStep() {
+    this.stepIndex--;
+  }
+  nextStep() {
+    if (this.isSpinning || (this.stepIndex >= 1 && !this.validateOrderLines())) return;
+    if (this.passValidation()) {
+
+      this.stepIndex++;
+    }
+  }
+  passValidation() : boolean {
+    this.validateShipStageLocationAndGroupRequirement();
+    if (!this.validateOrderNumberInput()) return false;
+
+    if (this.stepIndex === 0) {
+      return this.orderNumberValidateStatus === 'success' && 
+      this.shipStageLocationGroupStatus === 'success' &&
+      this.shipStageLocationStatus === 'success'; 
+    }
+
+    return true;
+  }
+
+  confirm() {
+    if (this.isSpinning || !this.validateOrderLines()) return;
+    if (!this.validateOrderNumberInput() || this.orderNumberValidateStatus !== 'success') {
+      this.stepIndex = 0;
+      this.messageService.error(this.i18n.fanyi('outbound.order.number.checkBeforeSave'));
+      return;
+    }
+    this.isSpinning = true;
+    // for outsourcing order, we will clear the stage location
+    // for non outsource order, we will clear the supplier(supplier is the one
+    // who fulfill the outsourcing order)
+    if (this.isOutsourcingOrder(this.currentOrder!)) {
+      this.currentOrder!.stageLocationGroup = undefined;
+      this.currentOrder!.stageLocationGroupId = undefined;
+      this.currentOrder!.stageLocation = undefined;
+      this.currentOrder!.stageLocationId = undefined;
+    }
+    else {
+      this.currentOrder!.supplier = undefined;
+      this.currentOrder!.supplierId = undefined;
+
+    }
+    if (this.existingCustomer === 'false' && this.saveNewCustomer) {
+      // ok we will save the customer information first, then
+      // assign it to the order before we finally save the order
+      this.customerService.addCustomer(this.newCustomer!)
+          .subscribe({
+            next: (customerRes) => {
+              console.log(`customer saved! \n ${JSON.stringify(customerRes)}`);
+              this.currentOrder!.shipToCustomer = customerRes;
+              this.currentOrder!.shipToCustomerId = customerRes.id!;
+
+              // copy the address information from the customer to the order
+              this.copyAddressInformation(this.currentOrder!, customerRes);
+              
+              this.orderService.addOrder(this.currentOrder!).subscribe({
+                next: () => {
+
+                  this.messageService.success(this.i18n.fanyi('message.action.success'));
+                  setTimeout(() => {
+                    this.isSpinning = false;
+                    this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
+                  }, 500);
+                },
+                error: () => {
+                  this.isSpinning = false;
+                },
+              });
+            }, 
+            error: () => {
+              this.isSpinning = false;
+            },
+          })
+    }
+    else {
+      
+      // copy the address information from the customer to the order
+      this.copyAddressInformation(this.currentOrder!, this.currentOrder!.shipToCustomer!);
+      
+      this.orderService.addOrder(this.currentOrder!).subscribe({
+        next: () => {
+
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
+          }, 500);
+        },
+        error: () => {
+          this.isSpinning = false;
+        },
+      });
+    }
+  }
+
+  onSupplierInputChange(e: Event): void {
+    const value = (e.target as HTMLInputElement).value;
+    if (value.length === 0) {
+      // the user didn't input any value in the supplire filter, let's
+      // show all the valid supplier
+      this.filterValidSuppliers = this.validSuppliers;
+    }
+    else {
+      // the user input something, furture filter out the result by
+      // the input value, from the supplier's name or description
+      this.filterValidSuppliers = this.validSuppliers.filter(
+        supplier => supplier.name.toLowerCase().indexOf(value.toLowerCase()) >= 0 || 
+              supplier.description.toLowerCase().indexOf(value.toLowerCase()) >= 0
+      );
+    } 
+  }
+
+  copyAddressInformation(order: Order, customer: Customer) {
+    order.shipToContactorFirstname = customer.contactorFirstname;
+    order.shipToContactorLastname = customer.contactorLastname;
+    order.shipToAddressCountry = customer.addressCountry;
+    order.shipToAddressState  = customer.addressState;
+    order.shipToAddressCounty = customer.addressCounty;
+    order.shipToAddressCity = customer.addressCity;
+    order.shipToAddressLine1 = customer.addressLine1;
+    order.shipToAddressLine2 = customer.addressLine2;
+    order.shipToAddressPostcode = customer.addressPostcode;
+  }
+  orderTransferWarehouseIdChanged() {
+    console.log(`order's transfer warehouse id  is changed to ${this.currentOrder!.transferReceiptWarehouseId}`);
+    this.currentOrder!.transferReceiptWarehouse = this.warehouses?.find(
+      warehouse => warehouse.id === this.currentOrder!.transferReceiptWarehouseId
+    );
+  }
+  
+  onOrderNumberInput(value: string): void {
+    ++this.orderNumberValidationVersion;
+    this.currentOrder!.number = value;
+    this.orderNumberValidateStatus = 'warning';
+    this.validateOrderNumberInput(false);
+  }
+
+  validateOrderNumberInput(normalize = true): boolean {
+    if (!this.currentOrder) return false;
+    const number = (this.currentOrder.number ?? '').replace(/^[\s\u200B\u2060]+|[\s\u200B\u2060]+$/g, '');
+    if (normalize) this.currentOrder.number = number;
+    if (!number) {
+      this.orderNumberValidateStatus = 'required';
+      return false;
+    }
+    if (/[\s\u200B\u2060]/.test(number)) {
+      this.orderNumberValidateStatus = 'whitespace';
+      return false;
+    }
+    return true;
+  }
+
+  orderNumberChange(event: Event) {
+    const version = ++this.orderNumberValidationVersion;
+    const input = event.target as HTMLInputElement;
+    this.currentOrder!.number = input.value;
+    const valid = this.validateOrderNumberInput();
+    input.value = this.currentOrder!.number;
+    if (!valid) return;
+    const number = this.currentOrder!.number;
+    this.orderNumberValidateStatus = 'validating';
+    this.orderService.getOrders(number).pipe(take(1), timeout(15000)).subscribe({
+      next: orders => {
+        if (version !== this.orderNumberValidationVersion || this.currentOrder?.number !== number) return;
+        this.orderNumberValidateStatus = orders.some(order => order.id !== this.currentOrder?.id)
+          ? 'numberExists' : 'success';
+      },
+      error: () => {
+        if (version === this.orderNumberValidationVersion && this.currentOrder?.number === number) {
+          this.orderNumberValidateStatus = 'checkFailed';
+        }
+      }
+    });
+  }
+
+  removeOrderLine(index: number) {
+    const line = this.currentOrder!.orderLines[index];
+    this.itemSuggestions.get(line)?.subscription?.unsubscribe();
+    this.itemSuggestions.delete(line);
+    this.lineItemLookups.get(line)?.subscription?.unsubscribe();
+    this.lineItemLookups.delete(line);
+
+    console.log(`remove index: ${index}`);
+    this.currentOrder!.orderLines.splice(index, 1);
+    console.log(`after splice, we still have ${this.currentOrder!.orderLines.length} lines`);
+
+    this.currentOrder!.orderLines = [...this.currentOrder!.orderLines];
+
+    this.recalculateTrackingInventoryAttributeFlags();
+ 
+  }
+
+  carrierChange(): void {
+    console.log( `carrier ID is changed to ${this.currentOrder!.carrierId}`) ;
+
+      // reset the carrier's service level when the carrier is changed
+      this.currentOrder!.carrierServiceLevelId = undefined;
+      this.currentOrder!.carrierServiceLevel == undefined;
+
+    this.avaiableServiceLevel = [];
+    if (this.currentOrder!.carrierId == null) {
+      this.currentOrder!.carrier == undefined;
+      // clear the service level if the carrier is cleared;
+      return;
+    }
+    this.avaiableCarriers.filter(
+      carrier => carrier.id === this.currentOrder!.carrierId
+    ).forEach(
+      carrier => {
+        this.avaiableServiceLevel = [...this.avaiableServiceLevel, ...carrier.carrierServiceLevels];
+        this.currentOrder!.carrier = carrier; 
+      }
+    )
+  } 
+  carrierServiceChange(): void {
+    
+    this.currentOrder!.carrierServiceLevel == undefined;
+    this.avaiableServiceLevel.filter(
+      service => service.id === this.currentOrder!.carrierServiceLevelId
+    ).forEach(
+      service => { 
+        this.currentOrder!.carrierServiceLevel = service; 
+      }
+    )
+  }
+  stageLocationGroupChange(): void {
+      console.log( `location group id is changed to ${this.currentOrder!.stageLocationGroupId}`) ;
+
+      let locationGroupIds = this.avaiableLocationGroups.filter(
+        locationGroup => locationGroup.id === this.currentOrder!.stageLocationGroupId
+      ).map(locationGroup => locationGroup.id).join(",");
+      this.locationService.getLocations(undefined, locationGroupIds, undefined, true).subscribe(
+        {
+          next: (locationRes) => this.avaiableLocations = locationRes
+        }
+      ) 
+      this.validateShipStageLocationAndGroupRequirement();
+  } 
+  stageLocationChanged(): void {
+    
+    this.validateShipStageLocationAndGroupRequirement();
+
+  }
+  validateShipStageLocationAndGroupRequirement() {
+    
+    this.shipStageLocationGroupStatus = "success";
+    this.shipStageLocationStatus = "success";
+
+    if (this.currentOrder!.allowForManualPick && !this.isOutsourcingOrder(this.currentOrder!)) {
+      if (this.currentOrder!.stageLocationId == null) {
+        this.shipStageLocationStatus = "requiredForManualPickOrder";
+      } 
+      if (this.currentOrder!.stageLocationGroupId == null) {
+        this.shipStageLocationGroupStatus = "requiredForManualPickOrder";
+      }  
+    }
+  }
+  customerOptionChanged() {
+    if (this.existingCustomer === 'true' && this.validCustomers.length === 0) {
+
+      this.loadValidCustomers();
+    }
+    else {
+      // setup the new customer for later use
+      this.newCustomer = {
+          name: "",
+          description: "",
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          companyId: this.companyService.getCurrentCompany()!.id,
+          contactorFirstname: "",
+          contactorLastname: "",
+          addressCountry: "",
+          addressState: "", 
+          addressCity:"", 
+          addressLine1: "",
+          addressPostcode: "",
+      }
+    }
+  }
+
+  loadValidClients() {
+
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
+  }
+  loadValidCustomers() {
+
+    this.customerService.loadCustomers().subscribe({
+      next: (customerRes) => this.validCustomers = customerRes
+    });
+  }
+  loadValidSuppliers() {
+
+    this.supplierService.loadSuppliers().subscribe({
+      next: (supplierRes) => {
+        this.validSuppliers = supplierRes;
+        this.filterValidSuppliers = supplierRes;
+      }
+    });
+  }
+  shipToCustomerChanged() {
+
+    console.log(`ship to customer is chagned to ${this.currentOrder!.shipToCustomer!.name}`)
+    const matchedCustomer = this.validCustomers.find(customer => customer.name === this.currentOrder!.shipToCustomer!.name)
+    if (matchedCustomer) {
+      // clone a new customer structure so any further change won't 
+      // mess up with the existing customers auto complete drop down list
+      var clone = { ...matchedCustomer };
+      this.currentOrder!.shipToCustomer = clone;
+      this.currentOrder!.shipToCustomerId = clone.id!;
+    }
+
+  }
+  
+  clientChanged() {
+    if (this.currentOrder!.clientId) {
+
+      this.currentOrder!.client = this.availableClients.find(
+        availableClient => availableClient.id === this.currentOrder!.clientId
+      );
+    }
+    else {
+      this.currentOrder!.client = undefined;
+    }
+  }
+
+  supplierChanged() {
+
+    console.log(`supplier is chagned to ${this.currentOrder!.supplier!.name}`)
+    if (this.currentOrder!.supplier) {
+      this.currentOrder!.supplierId = this.currentOrder?.supplier.id;
+    }
+
+  }
+  
+  handleNewCustomerAddressChange(address: google.maps.places.PlaceResult) {  
+    // this.warehouseAddress = address;
+    address.address_components!.forEach(
+      addressComponent => {
+         
+        if (addressComponent.types[0] === 'street_number') {
+          // street number
+          // address line 1 = street number + street name
+          this.newCustomer!.addressLine1 = `${addressComponent.long_name  } ${  this.newCustomer!.addressLine1}`;
+        }
+        else if (addressComponent.types[0] === 'route') {
+          // street name
+          // address line 1 = street number + street name
+          this.newCustomer!.addressLine1 = `${this.newCustomer!.addressLine1  } ${  addressComponent.long_name}`;
+        } 
+        else if (addressComponent.types[0] === 'locality') {
+          // city
+          this.newCustomer!.addressCity = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_2') {
+          // county
+          this.newCustomer!.addressCounty = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_1') {
+          // city
+          this.newCustomer!.addressState = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'country') {
+          // city
+          this.newCustomer!.addressCountry = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'postal_code') {
+          // city
+          this.newCustomer!.addressPostcode = addressComponent.long_name;
+        } 
+      }
+
+    )
+  }
+
+  
+  isOutsourcingOrder(order: Order): boolean {
+    return this.orderService.isOutsourcingOrder(order);
+  }
+
+  // load google address script
+  public loadScript(url: string) {
+    const body = <HTMLDivElement> document.body;
+    const script = document.createElement('script');
+    script.innerHTML = '';
+    script.src = url;
+    script.async = false;
+    script.defer = true;
+    body.appendChild(script);
+  }
+}

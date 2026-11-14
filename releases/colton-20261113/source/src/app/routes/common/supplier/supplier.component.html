@@ -1,0 +1,242 @@
+<page-header [title]="'page.supplier.header.title' | i18n">
+</page-header>
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="name" [nzSm]="6" [nzXs]="14">
+            {{ 'name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <input nz-input name="name" id="name" formControlName="name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    </div> 
+  
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: '150vw' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllSuppliers"
+    [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+          @for (column of listOfColumns; track column) {
+          
+            <th [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+              [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+              [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+              {{ column.name | i18n }}
+            </th>
+          }
+
+      </tr>
+    </thead>
+    <tbody>
+      @for (data of rowSelectionTable.data; track data) {
+      
+        <tr>
+
+          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+          <td> 
+            {{ data.name }}
+          </td>
+          <td  nzEllipsis>
+            @if (editId !== data.id! || editCol != 'description') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'description', $event)">
+                  <a>
+                    <span nz-tooltip nzTooltipTitle="{{ data.description }}">{{ (data.description != null && data.description != '')  ? data.description  : "----" }}</span>
+                    </a> 
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.description" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'contactorFirstname') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'contactorFirstname', $event)">
+                  {{ data.contactorFirstname }}
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.contactorFirstname" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'contactorLastname') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'contactorLastname', $event)">
+                  {{ data.contactorLastname }}
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.contactorLastname" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'addressCountry') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressCountry', $event)">
+                  {{ data.addressCountry }}
+                </div>
+              </div>
+            }
+            @else {
+
+              <input type="text" nz-input [(ngModel)]="data.addressCountry" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'addressState') {
+              
+              <div class="editable-cell"  >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressState', $event)">
+                  {{ data.addressState }}
+                </div>
+              </div>
+            }
+            @else {
+              <input type="text" nz-input [(ngModel)]="data.addressState" (blur)="changeSupplier(data)" />
+
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'addressCounty') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressCounty', $event)">
+                  {{ data.addressCounty }}
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.addressCounty" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'addressCity') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressCity', $event)">
+                  {{ data.addressCity }}
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.addressCity" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'addressStreet') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressDistrict', $event)">
+                  {{ data.addressDistrict }}
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.addressDistrict" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td  nzEllipsis>
+            @if (editId !== data.id! || editCol != 'addressLine1') {
+              
+              <div class="editable-cell"  >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressLine1', $event)">
+                  <a>
+                    <span nz-tooltip nzTooltipTitle="{{ data.addressLine1 }}">{{ data.addressLine1 }}</span>
+                    </a> 
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.addressLine1" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td nzEllipsis>
+            @if (editId !== data.id! || editCol != 'addressLine2') {
+              
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressLine2', $event)">
+                  <a>
+                    <span nz-tooltip nzTooltipTitle="{{ data.addressLine2 }}">{{ data.addressLine2 }}</span>
+                    </a> 
+                </div>
+              </div>
+            }
+            @else {
+              
+              <input type="text" nz-input [(ngModel)]="data.addressLine2" (blur)="changeSupplier(data)" />
+            } 
+          </td>
+          <td>
+            @if (editId !== data.id! || editCol != 'addressPostcode') {
+
+              <div class="editable-cell" >
+                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressPostcode', $event)">
+                  {{ data.addressPostcode }}
+                </div>
+              </div>
+            }
+            @else {
+              <input type="text" nz-input [(ngModel)]="data.addressPostcode" (blur)="changeSupplier(data)" />
+              
+            } 
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>
+</nz-spin>
+
+<ng-template #tableFoot>
+  @if(searchResult != '') {
+
+    <div nz-row nzType="flex" nzJustify="start" >
+      {{searchResult}}
+    </div>
+  }
+  
+  @if(!displayOnly) {
+
+    <div nz-row nzType="flex" nzJustify="start" > 
+      <a nz-button nzType="primary" routerLink="/common/supplier-maintenance" routerLinkActive="active"
+        (click)="clearSessionSupplier()">
+        {{'add' | i18n}}
+      </a>
+  
+      <button nz-button nzDanger (click)="removeSelectedSuppliers()">{{'delete' | i18n}}</button>
+    </div>
+  }
+</ng-template>

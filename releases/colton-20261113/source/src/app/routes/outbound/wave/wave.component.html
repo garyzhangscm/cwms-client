@@ -1,0 +1,719 @@
+<page-header title="{{'wave' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="wave-filters" (ngSubmit)="search()">
+  <div class="wave-filter-field">
+    <label for="number">Wave Number</label>
+    <input nz-input name="number" id="number" formControlName="number" placeholder="Search wave number" />
+  </div>
+  <div class="wave-filter-field wave-status-field">
+    <label for="waveStatus">Status</label>
+    <nz-select nzId="waveStatus" formControlName="waveStatus" nzAllowClear nzPlaceHolder="All statuses">
+      <nz-option *ngFor="let waveStatus of waveStatusesKeys" [nzValue]="waveStatus" [nzLabel]="waveStatus"></nz-option>
+    </nz-select>
+  </div>
+  <div class="wave-filter-field wave-include-field">
+    <span class="wave-filter-label">Include</span>
+    <div class="wave-checkboxes">
+      <label nz-checkbox formControlName="includeCompletedWave">Completed</label>
+      <label nz-checkbox formControlName="includeCancelledWave">Cancelled</label>
+    </div>
+  </div>
+  <div class="wave-search-actions">
+    <button nz-button nzType="primary" type="submit" [nzLoading]="searching">Search</button>
+    <button nz-button type="button" (click)="resetForm()">Clear</button>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  
+  <div class="wave-toolbar">
+    <div class="wave-toolbar-title">Waves <span>{{listOfAllWaves.length}}</span></div>
+    <div class="wave-toolbar-actions">
+      <app-util-table-column-selection [tableColumnsConfiguration]="tableConfigurations['waveTable']"
+        (tableColumnConfigurationChanged)="waveTableColumnConfigurationChanged($event)"></app-util-table-column-selection>
+      <button *ngIf="!displayOnly && !waveReservePreview" nz-button nzDanger (click)="removeSelectedWaves()">Delete</button>
+      <button *ngIf="!displayOnly" nz-button nzType="primary" routerLink="/outbound/wave-maintenance" routerLinkActive="active">Create Wave</button>
+    </div>
+  </div>
+
+  <st class="wave-results-table" size="small" #waveTable [data]="listOfAllWaves" [columns]="waveTableColumns" 
+        [expand]="waveExpand"  expandAccordion   (change)="waveTableChanged($event)" 
+        [footer]="tableFoot" [scroll]="{ x: waveTableScrollWidth }"
+        [widthMode]="{ type: 'strict' }" resizable>
+  
+      <ng-template st-row="statusColumn" let-wave > 
+        <span class="wave-list-status" [class.wave-list-status-ready]="reserveStates[wave.id]?.state === 'READY'">{{ reserveStates[wave.id]?.managed ? reserveStates[wave.id].state : ('WAVE-STATUS-' + wave.status | i18n) }}</span>
+      </ng-template>
+      <ng-template st-row="totalShortQuantityColumn" let-wave > 
+        <!--
+
+        <nz-alert nzType="success" nzMessage="{{mapOfTotalShortQuantity[wave.id!]}}" 
+            *ngIf="mapOfTotalShortQuantity[wave.id!] == 0"></nz-alert>
+            <nz-alert nzType="error" nzMessage="{{mapOfTotalShortQuantity[wave.id!]}}" 
+                *ngIf="mapOfTotalShortQuantity[wave.id!] > 0"></nz-alert>
+        -->
+        <nz-alert nzType="success" nzMessage="{{wave.totalShortQuantity}}" 
+        *ngIf="wave.totalShortQuantity == 0"></nz-alert>
+        <nz-alert nzType="error" nzMessage="{{wave.totalShortQuantity}}" 
+            *ngIf="wave.totalShortQuantity > 0"></nz-alert>
+      </ng-template>
+      
+      <ng-template st-row="totalStagedQuantityColumn" let-wave > 
+        <nz-skeleton-element 
+            *ngIf="wave.totalStagedQuantity == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+
+        {{wave.totalStagedQuantity}}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-wave > 
+        
+        <div class="wave-list-actions">
+          <button *ngIf="waveReservePreview" nz-button nzSize="small" nzType="primary"
+            (click)="openReserve(wave)">Reserve / Pick</button>
+          <button nz-button nzSize="small" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+            {{ 'action' | i18n }} <i nz-icon nzType="down"></i>
+          </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>                
+                  <li nz-menu-item *ngIf="isWaveAllocatable(wave) && (!userPermissionMap.has('allocate-wave') || userPermissionMap.get('allocate-wave'))">
+                    <a (click)="allocateWave(wave)">
+                      {{ 'wave.allocate' | i18n }}</a>  
+                  </li>            
+                  <li nz-menu-item *ngIf="!reserveStates[wave.id]?.managed && isWaveReadyForComplete(wave) && (!userPermissionMap.has('complete-wave') || userPermissionMap.get('complete-wave'))">
+                    <a routerLink="/outbound/complete-wave" routerLinkActive="active"
+                      [queryParams]="{id : wave.id}">
+                      {{ 'complete' | i18n }}</a>
+                  </li>             
+                  <li nz-menu-item *ngIf="canModifyWave(wave) && (!userPermissionMap.has('modify-wave') || userPermissionMap.get('modify-wave'))">
+                    <a routerLink="/outbound/wave-maintenance" routerLinkActive="active"
+                      [queryParams]="{id : wave.id}">
+                      {{ 'modify' | i18n }}</a> 
+                  </li>                
+                  <li nz-menu-item *ngIf="!waveReservePreview && isWaveCancellable(wave) && (!userPermissionMap.has('cancel-wave') || userPermissionMap.get('cancel-wave'))">
+                    <a (click)="removeWave(wave)">
+                      {{ 'remove' | i18n }}</a>  
+                  </li>     
+                </ul>
+              </nz-dropdown-menu>
+          <cwms-common-print-button buttonLabel="Pick List" buttonSize="small"
+            (print)="printWavePickSheet($event, wave)"
+            (preview)="previewWavePickSheet(wave)"></cwms-common-print-button>
+        </div>
+      </ng-template>
+      
+      <ng-template #waveExpand let-wave>
+        
+        <nz-tabset  [nzSelectedIndex]="tabSelectedIndex">
+          <nz-tab nzTitle="{{ 'shipment.line' | i18n }}">
+
+            <st #shipmentLineTable class="wave-detail-table" [data]="mapOfShipmentLines[wave.id!]" [columns]="shipmentLineTableColumns"  
+              [footer]="tableFoot" [scroll]="{ x: '1615px' }"
+              [widthMode]="{ type: 'strict' }" resizable>
+              
+              <ng-template st-row="actionColumn" let-shipmentLine > 
+                
+                    <button *ngIf="!waveReservePreview" nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                      {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                      <ul nz-menu>                
+                        <li nz-menu-item>
+                          <a (click)="deassignShipmentLine(wave, shipmentLine)">
+                            {{ 'de-assign' | i18n }}</a> 
+                        </li> 
+                      </ul>
+                    </nz-dropdown-menu>   
+              </ng-template>
+            </st> 
+          </nz-tab>
+          
+          <nz-tab nzTitle=" {{ 'pick' | i18n }}"> 
+
+            <st #stPick class="wave-pick-table wave-detail-table" size="small" [data]="mapOfPicks[wave.id!]" [columns]="pickColumns"   
+            [expand]="pickExpand"  expandAccordion 
+            [footer]="pickTableFoot" [scroll]="{ x: '1488px' }">
+            
+              <ng-template st-row="pickItemColumn" let-pick>
+                <div class="wave-pick-item" [attr.title]="pick.item?.description || null">
+                  <strong>{{ pick.item?.name || '—' }}</strong>
+                  <span *ngIf="pick.item?.description">{{ pick.item.description }}</span>
+                </div>
+              </ng-template>
+              <ng-template st-row="statusColumn" let-pick > 
+                {{ 'PICK-STATUS-' + pick.status | i18n }}
+              </ng-template>
+              <ng-template st-row="typeColumn" let-pick > 
+                <span *ngIf="pick.pickGroupType != null">{{  'PICK-GROUP-TYPE-' + pick.pickGroupType | i18n }}</span>
+              </ng-template>
+              <ng-template st-row="workTaskColumn" let-pick > 
+                <a  *ngIf="pick.workTask" routerLink="/work-task/work-task" routerLinkActive="active" 
+                  [queryParams]="{number : pick.workTask.number}">{{pick.workTask.number}}</a> 
+              </ng-template>
+              <ng-template st-row="assignColumn" let-pick > 
+                <ul>
+                  <li *ngIf="pick.workTask?.assignedUser">
+                    {{'user.assigned' | i18n}} : {{ pick.workTask?.assignedUser?.username}}
+                  </li>
+                  <li *ngIf="pick.workTask?.assignedRole">
+                    {{'role.assigned' | i18n}} : {{ pick.workTask?.assignedRole?.name}}
+                  </li>
+                </ul> 
+              </ng-template>
+              <ng-template st-row="actionColumn" let-pick > 
+                <div class="wave-pick-actions">
+                    <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                      {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                      <ul nz-menu>                
+                        <li nz-menu-item *ngIf="pick.status == pickStatuses.PENDING">
+                          <a (click)="releasePick(wave, pick)">
+                            {{ 'release' | i18n }}</a> 
+                        </li>        
+                        <li nz-menu-item >
+                          <a (click)="openUserQueryModal(wave, pick, tplAssignUserModalTitle, 
+                              tplAssignUserModalContent, tplAssignUserModalFooter)">
+                            {{ 'assign-user' | i18n }}</a> 
+                        </li>               
+                        <li nz-menu-item *ngIf="pick.workTask?.assignedUser != null">
+                          <a (click)="unassignUser(wave, pick)">
+                            {{ 'deassign-user' | i18n }}</a> 
+                        </li>      
+                        <li nz-menu-item *ngIf="pick.workTaskId != null && pick.workTask?.currentUser != null">
+                          <a (click)="unacknowledgeWorkTask(wave, pick.workTaskId)">
+                            {{ 'unacknowledge' | i18n }}</a> 
+                        </li>
+                        <li nz-menu-item >
+                          <a (click)="cancelPick( pick, false, false)" *ngIf="readyForCancelPick(pick)">
+                            {{ 'cancel-pick' | i18n }}</a> 
+                        </li>
+                        <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                          <a (click)="cancelPick( pick, true, false)">
+                            {{ 'cancel-pick-error-location' | i18n }}</a> 
+                        </li>
+                        <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                          <a (click)="cancelPick( pick, true, true)">
+                            {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                        </li>
+                      </ul>
+                    </nz-dropdown-menu>  
+                    <cwms-common-print-button
+                      (print)="printPickSheet($event, pick)"
+                      (preview)="previewPickSheet(wave.number, pick)">
+                    </cwms-common-print-button>
+                </div>
+              </ng-template>
+              <!--   pick details  -->
+              <ng-template #pickExpand let-pick>
+                <st #stInnerPick size="small" [scroll]="{ x: '1200px' }" [data]="pick.picks!" [columns]="innerPickColumns">
+                
+                  <ng-template st-row="innerPickStatusColumn" let-innerPick > 
+                    {{ 'PICK-STATUS-' + innerPick.status | i18n }}
+                    
+                  </ng-template>
+                  
+                  <ng-template st-row="innerPickActionColumn" let-innerPick > 
+                        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" *ngIf="readyForCancelPick(innerPick)">
+                          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                        <nz-dropdown-menu #menu="nzDropdownMenu">
+                          <ul nz-menu>     
+                            <li nz-menu-item >
+                              <a (click)="cancelPick( innerPick, false, false)" >
+                                {{ 'cancel-pick' | i18n }}</a> 
+                            </li>
+                            <li nz-menu-item>
+                              <a (click)="cancelPick( innerPick, true, false)"  >
+                                {{ 'cancel-pick-error-location' | i18n }}</a> 
+                            </li>
+                            <li nz-menu-item >
+                              <a (click)="cancelPick( innerPick, true, true)" >
+                                {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                            </li>
+                          </ul>
+                        </nz-dropdown-menu>  
+                     
+                  </ng-template>
+                </st>
+              
+              </ng-template> 
+            </st>  
+            <ng-template #pickTableFoot>
+              <div class="wave-pick-toolbar"> 
+                <button nz-button (click)="confirmPicks(wave)"  
+                *ngIf="!displayOnly && (!userPermissionMap.has('confirm-multiple-pick') || userPermissionMap.get('confirm-multiple-pick'))"
+                  [disabled]="(mapOfPicks[wave.id!] && mapOfPicks[wave.id!].length === 0) || wave.status === waveStatuses.COMPLETED">
+                  {{ 'confirm' | i18n }}
+                </button>
+
+                <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
+                    (click)="cancelSelectedPick(wave, false, false)"  *ngIf="!displayOnly && (!userPermissionMap.has('cancel-multiple-pick') || userPermissionMap.get('cancel-multiple-pick'))"
+                      [disabled]="wave.status === waveStatuses.COMPLETED " >
+                {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
+                  <ul nz-menu>         
+                    <li nz-menu-item>
+                      <a (click)="cancelSelectedPick(wave, false, false)">
+                        {{ 'cancel-pick' | i18n }}</a> 
+                    </li>
+                    <li nz-menu-item>
+                      <a (click)="cancelSelectedPick(wave, true, false)">
+                        {{ 'cancel-pick-error-location' | i18n }}</a> 
+                    </li>  
+                    <li nz-menu-item>
+                      <a (click)="cancelSelectedPick(wave, true, true)">
+                        {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+ 
+                <div class="wave-pick-print">
+                  <span>{{ 'web.literal.32a1e18816cb' | i18n }}</span>
+                <cwms-common-print-button
+                  (print)="printPickSheetInBatch($event, wave)"
+                  (preview)="previewPickSheetInBatch(wave)">
+                </cwms-common-print-button>
+                </div>
+                <div class="wave-pick-print">
+                  <span>{{ 'web.literal.2c2ca464c6f3' | i18n }}</span>
+                <cwms-common-print-button
+                  (print)="printWavePickSheet($event, wave)"
+                  (preview)="previewWavePickSheet(wave)">
+                </cwms-common-print-button>
+                </div>
+              </div>
+            </ng-template>
+          </nz-tab> 
+          <nz-tab nzTitle=" {{ 'picked-inventory' | i18n }}">
+            <nz-table class="wave-detail-table" [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="false"
+            resizable 
+              [nzData]="mapOfPickedInventory[wave.id!!]">
+              <thead>
+                <th>
+                  {{ 'pick.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'location' | i18n }}
+                </th>
+                <th>
+                  {{ 'lpn' | i18n }}
+                </th>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'item.description' | i18n }}
+                </th>
+                <th>
+                  {{ 'item.package-type' | i18n }}
+                </th>
+                <th>
+                  {{ 'quantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'inventory.status' | i18n }}
+                </th>
+                <th *ngIf="!displayOnly">
+                  {{ 'action' | i18n }}
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let inventory of mapOfPickedInventory[wave.id!!]">
+                  <td>{{ inventory.pickNumber == "" ? inventory.pick?.number : inventory.pickNumber}}</td>
+                  <td>{{ inventory.locationName == "" ? inventory.location?.name : inventory.locationName }}</td>
+                  <td>{{ inventory.lpn }}</td>
+                  <td>{{ inventory.item?.name }}</td>
+                  <td>{{ inventory.item?.description }}</td>
+                  <td>{{ inventory.itemPackageType?.name }}</td>
+                  <td>{{ inventory.quantity }}</td>
+                  <td>{{ inventory.inventoryStatus!.name | i18n }}</td>
+                  <td *ngIf="!displayOnly">
+                    <button nz-button (click)="openUnpickModal(wave, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
+                      {{ 'unpick' | i18n }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+
+          <nz-tab nzTitle=" {{ 'short-allocation' | i18n }}">
+            <st #shortAllocationTable class="wave-detail-table" [data]="mapOfShortAllocations[wave.id!!]"  [columns]="shortAllocationTableColumns"   
+              [scroll]="{ x: '1515px' }" [widthMode]="{ type: 'strict' }" resizable >
+              
+                <ng-template st-row="statusColumn" let-shortAllocation> 
+                  {{ 'SHORT-ALLOCATION-STATUS-' + shortAllocation.status | i18n}} 
+                </ng-template>
+                <ng-template st-row="lastAllocationDatetimeColumn" let-shortAllocation> 
+                    <span *ngIf="shortAllocation.lastAllocationDatetime">
+                      {{ shortAllocation.lastAllocationDatetime | date:'short'}}
+                    </span>
+                </ng-template>
+                <!--   action colummn  -->  
+                <ng-template st-row="actionColumn" let-shortAllocation let-index="index">  
+                    
+                  <button nz-button (click)="cancelShortAllocation(wave, shortAllocation)"
+                      *ngIf="shortAllocation.status !== shortAllocationStatus.COMPLETED">
+                      {{ 'cancel' | i18n }}
+                    </button>
+                </ng-template>
+            </st> 
+<!--
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[wave.id!!]" nzSize="middle"
+              [nzShowPagination]="false">
+              <thead>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'item.description' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.quantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.openQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.inprocessQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.deliveredQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.status' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.allocationCount' | i18n }}
+                </th>
+                <th *ngIf="!displayOnly">
+                  {{ 'action' | i18n }}
+                </th>
+              </thead>
+              <tbody *ngFor="let shortAllocation of mapOfShortAllocations[wave.id!!]">
+                <tr *ngIf="shortAllocation.status !== shortAllocationStatus.CANCELLED">
+                  <td>{{ shortAllocation.item.name }}</td>
+                  <td>{{ shortAllocation.item.description }}</td>
+                  <td>{{ shortAllocation.quantity }}</td>
+                  <td>{{ shortAllocation.openQuantity }}</td>
+                  <td>{{ shortAllocation.inprocessQuantity }}</td>
+                  <td>{{ shortAllocation.deliveredQuantity }}</td>
+                  <td>{{ shortAllocation.status }}</td>
+                  <td>{{ shortAllocation.allocationCount }}</td>
+                  <td *ngIf="!displayOnly">
+                    <button nz-button (click)="cancelShortAllocation(wave, shortAllocation)"
+                      *ngIf="shortAllocation.status !== shortAllocationStatus.COMPLETED">
+                      {{ 'cancel' | i18n }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+            -->
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+  </st> 
+
+</div>
+</nz-spin>
+<ng-template #tableFoot>
+  @if(searchResult != '') {
+
+    <div class="wave-list-search-summary">
+      {{searchResult}}
+    </div>
+  }
+</ng-template>
+
+
+
+<!-- Modal for unpick -->
+<ng-template #tplUnpickModalTitle>
+  <span>{{ 'page.modal.unpick' | i18n }}</span>
+</ng-template>
+
+<ng-template #tplUnpickModalContent>
+  <form nz-form [formGroup]="unpickForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lpn" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'item.description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'inventory.status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="inventoryStatus" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+            {{ 'item.package-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="itemPackageType" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="quantity" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+            {{ 'location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="locationName" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="destinationLocation">
+            {{ 'unpick.destination-location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" [nzHasFeedback]="unpickDestinationStatus !== ''"
+            [nzValidateStatus]="unpickDestinationStatus" [nzErrorTip]="unpickDestinationError" >
+            <nz-input-group nzSize="large">
+              <input nz-input id="destinationLocation" formControlName="destinationLocation" />
+            </nz-input-group>
+          <ng-template #unpickDestinationError>
+              {{ unpickForm.get('destinationLocation')?.hasError('destinationLookupFailed')
+                ? 'Unable to verify the destination. Edit the location to retry.'
+                : 'Enter an existing destination in the current warehouse.' }}
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <label nz-checkbox formControlName="immediateMove">
+              <span>{{ 'unpick.immediately-putaway' | i18n }}</span>
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- modal for assign user -->
+<ng-template #tplAssignUserModalTitle>
+  <span>{{ 'user.assigned' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignUserModalContent>
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchUserForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24"> 
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="username">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="username" id="username" formControlName="username">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="firstname">
+            {{ 'firstname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="firstname" id="firstname" formControlName="firstname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="lastname">
+            {{ 'lastname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="lastname" id="lastname" formControlName="lastname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="searchUser()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    
+    <st #userTable [data]="listOfAllAssignableUsers" [columns]="userTablecolumns" 
+      (change)="userTablechanged($event)" [ps]="5">
+    </st>  
+  </div>
+</ng-template>
+
+<ng-template #tplAssignUserModalFooter>
+  <button nz-button nzType="default" (click)="closeUserQueryModal()">{{ 'cancel' | i18n}}</button>
+  <button nz-button nzType="primary" (click)="returnUserResult()" [disabled]="isAnyUserRecordChecked() == false">{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>
+ 
+<!-- Modal for inventory remove warning -->
+<ng-template #tplCompleteWaveModalTitle>
+  <span>{{ 'complete-wave' | i18n}}</span>
+</ng-template>
+<ng-template #tplCompleteWaveModalContent>
+  <nz-card nzTitle="{{'shipment-complete-staged'}}">
+
+    <st #completelyStagedShipmentTable [data]="completelyStagedShipments" [columns]="shipmentTableColumns"   
+        [widthMode]="{ type: 'strict' }" resizable>
+    </st>
+  </nz-card>
+  <nz-card nzTitle="{{'shipment-not-complete-staged'}}">
+
+    <st #uncompletelyStagedShipmentTable [data]="uncompletelyStagedShipments" [columns]="shipmentTableColumns"   
+        [widthMode]="{ type: 'strict' }" resizable>
+    </st>
+  </nz-card>
+</ng-template>
+<nz-modal *ngIf="waveReservePreview" [(nzVisible)]="reserveVisible" [nzTitle]="'Wave ' + (reserveWave?.number || '') + ' — Reserve / Pick'" [nzWidth]="960" [nzFooter]="null" [nzClosable]="!reserveBusy" [nzMaskClosable]="false" (nzOnCancel)="reserveVisible = false">
+ <ng-container *nzModalContent>
+  <div class="reserve-dialog">
+  <nz-spin [nzSpinning]="reserveBusy">
+   <ng-container *ngIf="reserveData">
+    <nz-alert *ngIf="!reserveData.managed" nzType="warning" nzMessage="Legacy Wave: existing data is unchanged. A reviewed migration is required; create a new Reserve Wave to use this flow."></nz-alert>
+    <ng-container *ngIf="reserveData.managed">
+     <div class="reserve-summary">
+      <span class="reserve-status">{{reserveData.state}}</span>
+      <span>Uses Sales Order Reserve. Picking moves stock to staging; dispatch is separate.</span>
+     </div>
+     <nz-alert *ngIf="reserveData.last_error" nzType="error" [nzMessage]="reserveData.last_error"></nz-alert>
+     <section class="reserve-section">
+      <div class="reserve-section-heading">
+       <h3>Reservations</h3>
+       <div class="reserve-actions" *ngIf="reserveData.state !== 'CANCELLED' && reserveData.state !== 'COMPLETED'">
+        <button nz-button nzType="primary" [disabled]="reserveBusy || !!reservePending" (click)="runReserveAction('allocate')">Allocate Reserve</button>
+        <button nz-button [disabled]="reserveBusy || !!reservePending" (click)="runReserveAction('release')">Release Wave Reserve</button>
+        <button nz-button [disabled]="reserveBusy || !!reservePending" (click)="runReserveAction('close')">Close after Dispatch</button>
+        <button nz-button nzDanger [disabled]="reserveBusy || !!reservePending" (click)="cancelWaveAndRelease()">Cancel Wave &amp; Release Reserve</button>
+       </div>
+      </div>
+      <p class="reserve-help">Release removes the Wave allocation. The order's Reserve is kept.</p>
+      <div class="reserve-table-scroll" tabindex="0" role="region" aria-label="Wave reservations">
+       <table class="reserve-table">
+        <thead><tr><th>Order / Line</th><th>Shipment</th><th>Item ID</th><th class="reserve-number">Wave reserved</th><th class="reserve-number">Order held</th><th class="reserve-number">Order committed</th><th class="reserve-row-action">Pick</th></tr></thead>
+        <tbody><tr *ngFor="let line of reserveData.lines" [class.reserve-selected]="reserveLine?.shipment_line_id === line.shipment_line_id">
+         <td><strong>{{line.order_number}}</strong><span class="reserve-subtext">Line {{line.line_number}}</span></td>
+         <td>{{line.shipment_number}}</td><td>{{line.item_id}}</td><td class="reserve-number">{{line.wave_reserved}}</td><td class="reserve-number">{{line.held}}</td><td class="reserve-number">{{line.committed}}</td>
+         <td class="reserve-row-action"><button nz-button nzSize="small" [disabled]="reserveBusy || !!reservePending || line.wave_reserved <= 0" (click)="chooseReserveLine(line)">Scan LPN</button></td>
+        </tr></tbody>
+       </table>
+      </div>
+     </section>
+     <div *ngFor="let pending of reserveData.pendingScans" class="reserve-saved-row">
+      <div><strong>Saved Pick</strong><span class="reserve-subtext">LPN {{pending.source_lpn}} · {{pending.quantity}} units</span></div>
+      <button nz-button [disabled]="reserveBusy || !!reservePending" (click)="resumeReserveScan(pending)">Resume Pick</button>
+     </div>
+     <section *ngIf="reservePending" class="reserve-pending">
+      <h3>Resume saved Pick</h3>
+      <p>LPN <strong>{{reservePending.sourceLpn}}</strong> · {{reservePending.quantity}} units</p>
+      <p class="reserve-help">Resume this request to avoid creating a duplicate Pick.</p>
+      <div class="reserve-actions">
+       <button nz-button nzType="primary" [disabled]="reserveBusy" (click)="submitReserveScan()">Resume Pick</button>
+       <button nz-button [disabled]="reserveBusy" (click)="cancelReserveScan()">Cancel if not started</button>
+      </div>
+     </section>
+     <section *ngIf="reserveLine && !reservePending" class="reserve-pick-panel">
+      <div class="reserve-section-heading"><h3>Scan &amp; Pick</h3><span class="reserve-help">Shipment {{reserveLine.shipment_number}} · Order line {{reserveLine.line_number}}</span></div>
+      <div class="reserve-scan-row">
+       <div class="reserve-field"><label for="reserve-source-lpn">Source LPN</label><input id="reserve-source-lpn" nz-input [(ngModel)]="reserveLpn" [disabled]="reserveBusy" (ngModelChange)="reservePreviewData = null" placeholder="Scan or enter LPN" /></div>
+       <button nz-button [disabled]="reserveBusy || !reserveLpn.trim()" (click)="previewReserveLpn()">Check LPN</button>
+      </div>
+      <ng-container *ngIf="reservePreviewData">
+       <div class="reserve-quantities"><span>LPN quantity <strong>{{reservePreviewData.sourceQuantity}}</strong></span><span>Available for this line <strong>{{reservePreviewData.pickableQuantity}}</strong></span></div>
+       <div class="reserve-pick-fields">
+        <div class="reserve-field reserve-quantity-field"><label for="reserve-pick-quantity">Pick quantity</label><input id="reserve-pick-quantity" nz-input type="number" [(ngModel)]="reserveQuantity" [disabled]="reserveBusy" min="1" [max]="reservePreviewData.pickableQuantity" /></div>
+        <div class="reserve-field" *ngIf="reserveQuantity < reservePreviewData.sourceQuantity"><label for="reserve-remaining-lpn">Remaining stock LPN</label><input id="reserve-remaining-lpn" nz-input [(ngModel)]="reserveNewLpn" [disabled]="reserveBusy" placeholder="Scan new preprinted LPN" /><span class="reserve-help">Use a new preprinted LPN for the stock left over.</span></div>
+       </div>
+       <div class="reserve-pick-footer"><span class="reserve-help">Destination: staging</span><button nz-button nzType="primary" [disabled]="reserveBusy || reserveQuantity <= 0 || reserveQuantity > reservePreviewData.pickableQuantity" (click)="submitReserveScan()">Confirm Pick to staging</button></div>
+      </ng-container>
+     </section>
+    </ng-container>
+   </ng-container>
+  </nz-spin>
+  </div>
+ </ng-container>
+</nz-modal>
+
+

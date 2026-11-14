@@ -1,0 +1,145 @@
+import { HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { Injector, inject } from '@angular/core';
+import { IGNORE_BASE_URL, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
+import { Observable, of, throwError, mergeMap, catchError } from 'rxjs';
+
+import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin, goTo, CODEMESSAGE, notification } from './helper';
+import { tryRefreshToken } from './refresh-token';
+
+function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
+  if (!req.url.includes('/integration-settings/') && !req.url.includes('/inventory-handoff/')) checkStatus(injector, ev);
+  // 业务处理：一些通用操作
+  switch (ev.status) {
+    case 200:
+      // 业务层级错误处理，以下是假定restful有一套统一输出格式（指不管成功与否都有相应的数据格式）情况下进行处理
+      // 例如响应内容：
+      //  错误内容：{ status: 1, msg: '非法参数' }
+      //  正确内容：{ status: 0, response: {  } }
+      // 则以下代码片断可直接适用
+      // if (ev instanceof HttpResponse) {
+      //   const body = ev.body;
+      //   if (body && body.status !== 0) {
+      //     const customError = req.context.get(CUSTOM_ERROR);
+      //     if (customError) injector.get(NzMessageService).error(body.msg);
+      //     return customError ? throwError(() => ({ body, _throw: true }) as ReThrowHttpError) : of({});
+      //   } else {
+      //     // 返回原始返回体
+      //     if (req.context.get(RAW_BODY) || ev.body instanceof Blob) {
+      //       return of(ev);
+      //     }
+      //     // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
+      //     return of(new HttpResponse({ ...ev, body: body.response } as any));
+      //     // 或者依然保持完整的格式
+      //     return of(ev);
+      //   }
+      // }
+        if (ev instanceof HttpResponse) {
+          const body: any = ev.body; 
+          if (body && body.result && body.result !== 0) {
+            // this.messageService.error(body.message);
+            // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
+            // this.http.get('/').subscribe() 并不会触发
+            // return throwError({});
+            const error: any = new Error();
+            return throwError(() => ({
+              status: body.result,
+              statusText: body.message,
+              url: '',
+            }));
+          } else {
+            // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
+            //        return of(new HttpResponse(Object.assign(event, { body: body.response })));
+            // 或者依然保持完整的格式
+            return of(ev);
+          }
+        }
+        break;
+    case 401:
+      if (req.url.includes('/integration-settings/') || req.url.includes('/inventory-handoff/')) break;
+      if (environment.api.refreshTokenEnabled && environment.api.refreshTokenType === 're-request') {
+        return tryRefreshToken(injector, ev, req, next);
+      }
+      else {
+
+        notification(injector).error(`authentication fail`, `User authentication fail, please login again`);
+        toLogin(injector);
+      }
+      break;
+    case 403:
+    case 404:
+    case 500:
+      if (req.url.includes('/integration-settings/') || req.url.includes('/inventory-handoff/')) break;
+      console.log(`get error http ${ev.status} `);
+      
+      // goTo(injector, `/exception/${ev.status}?url=${req.urlWithParams}`);
+        goTo(injector, `/exception/${ev.status}`);
+      break;
+    default:
+      if (ev instanceof HttpErrorResponse) {
+        console.warn('未可知错误，大部分是由于后端不支持跨域CORS或无效配置引起，请参考 https://ng-alain.com/docs/server 解决跨域问题', ev);
+      }
+      break;
+  }
+  if (ev instanceof HttpErrorResponse) {
+    return throwError(() => ev);
+  } else if ((ev as unknown as ReThrowHttpError)._throw === true) {
+    return throwError(() => (ev as unknown as ReThrowHttpError).body);
+  } else {
+    return of(ev);
+  }
+}
+ 
+
+export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
+  // 统一加上服务端前缀
+  let url = req.url;
+  if (!req.context.get(IGNORE_BASE_URL) && !url.startsWith('https://') && !url.startsWith('http://')) {
+    const { baseUrl } = environment.api;
+    url = baseUrl + (baseUrl.endsWith('/') && url.startsWith('/') ? url.substring(1) : url);
+  }
+  const newReq = req.clone({ url, setHeaders: getAdditionalHeaders(req.headers) });
+  
+  //console.log(`${url} ==> new http request header\n${JSON.stringify(newReq)}`)
+  const injector = inject(Injector);
+
+  return next(newReq).pipe(
+    mergeMap(ev => {
+      // 允许统一对请求错误处理
+      if (ev instanceof HttpResponseBase) {
+        return handleData(injector, ev, newReq, next);
+      }
+      // 若一切都正常，则后续操作
+      return of(ev);
+    }),
+    // catchError((err: HttpErrorResponse) => handleData(injector, err, newReq, next)) 
+    catchError((err: HttpErrorResponse) => {
+      console.log(`!! Get error ${err.status} while call ${url}, \n statusText: ${err.statusText}`);
+      const errortext = CODEMESSAGE[err.status] || err.statusText; 
+      // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
+      console.log(`!! will throw error ${err.status}`);
+      // A missing capability endpoint is expected while the backend upgrade is pending.
+      if (err.status === 404 && newReq.method === 'GET'
+        && /\/outbound\/allocation-tasks\/capabilities(?:\?|$)/.test(url)) return throwError(() => err);
+      // The settings page displays its own access and service errors.
+      if (url.includes('/integration-settings/') || url.includes('/inventory-handoff/')) return throwError(() => err);
+      // The delete confirmation displays the business rejection itself.
+      if (newReq.method === 'DELETE' && (err.status === 55000 || err.status === 55003)
+        && /\/workorder(?:-deletion-test)?\/work-orders(?:\?|$)/.test(url)) return throwError(() => err);
+      // Location Kanban renders its own load/access error and retry action.
+      if (err.status !== 401 && newReq.method === 'GET'
+        && /\/layout\/locationgroups\/utilization\/storage(?:\?|$)/.test(url)) return throwError(() => err);
+      if (err.status === 401) {
+          console.log('reloging required')
+          toLogin(injector);
+      }
+      else {
+
+          // notification(injector).error(`${err.status}: ${err.url}`, errortext);
+          notification(injector).error(`${err.status}: ${err.url}`, err.statusText);
+      }
+      return throwError(() => err);
+
+    }),
+  );
+};

@@ -1,0 +1,778 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/outbound/order" routerLinkActive="active"
+        [queryParams]="!newOrder && currentOrder?.id ? {number: currentOrder?.number, orderId: currentOrder?.id, detail: 1} : {}">{{
+        'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/outbound/order" routerLinkActive="active">{{
+                'order' | i18n
+                }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'order.line' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user input the order information -->
+    <div class="small-card" *ngIf="stepIndex === 0 && currentOrder != null" style="padding-top: 20px;"  >
+ 
+
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="10">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="12" nzRequired>
+                  {{ 'order.number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl" 
+                nzValidateStatus="{{ orderNumberValidateStatus == 'success' ? 'success' : 
+                    (orderNumberValidateStatus == 'validating' ? 'validating' :
+                    (orderNumberValidateStatus == 'warning' ? 'warning' : 'error')) }}"
+                >
+        
+
+                  <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentOrder!.number" required 
+                    (ngModelChange)="onOrderNumberInput($event)" (blur)="orderNumberChange($event)" [disabled]="!newOrder"/>
+                  <ng-template #orderNumberErrorTpl let-control>  
+                      @if (orderNumberValidateStatus === 'required') {
+
+                        <ng-container >{{ 'error.form.field.required' | i18n }}</ng-container>
+                      }
+                      @if (orderNumberValidateStatus === 'whitespace') {
+                        <ng-container>{{ 'outbound.order.number.noSpaces' | i18n }}</ng-container>
+                      }
+                      @if (orderNumberValidateStatus === 'checkFailed') {
+                        <ng-container>{{ 'outbound.order.number.checkFailed' | i18n }}</ng-container>
+                      }
+                      @if (orderNumberValidateStatus === 'numberExists') {
+
+                        <ng-container >{{ 'web.literal.981034b4a8ef' | i18n }}</ng-container>
+                      }
+                     
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        
+            <div nz-col [nzSpan]="10" >
+              <nz-form-item nzFlex>
+                <nz-form-label for="client" [nzSpan]="12">
+                  {{ 'client' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12">
+                  <nz-select [(ngModel)]="currentOrder.clientId" (ngModelChange)="clientChanged()" nzAllowClear>
+                    <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div>
+        
+        <div nz-row [nzGutter]="24">
+          
+          <div nz-col [nzSpan]="10">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+                {{ 'order.category' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+      
+                  <nz-select style="width: 250px"   [(ngModel)]="currentOrder!.category"
+                  (ngModelChange)="orderCategoryChanged()" [disabled]="!newOrder">
+                  <nz-option
+                       *ngFor="let orderCategory of orderCategoriesKeys"
+                       [nzValue]="orderCategory"
+                       nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory | i18n}}"
+                  ></nz-option>
+              </nz-select>
+      
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="10">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+                {{ 'poNumber' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" > 
+                <input   type="text" nz-input [(ngModel)]="currentOrder!.poNumber" /> 
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+       
+      </div>
+       
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="10" *ngIf="!isOutsourcingOrder(currentOrder!)">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="12" [nzRequired]="currentOrder.allowForManualPick === true">
+                  {{ 'shipment.stage.locationGroup' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="shipStageLocationGroupErrorTpl" 
+                nzValidateStatus="{{ shipStageLocationGroupStatus == 'success' ? 'success' : 'error'}}"  >
+                    <nz-select [(ngModel)]="currentOrder!.stageLocationGroupId" 
+                    (ngModelChange)="stageLocationGroupChange()"
+                    nzAllowClear>
+                        <nz-option *ngFor="let loocationGroup of avaiableLocationGroups" [nzValue]="loocationGroup.id" [nzLabel]="loocationGroup.description!"></nz-option>
+                      </nz-select>
+
+                      <ng-template #shipStageLocationGroupErrorTpl let-control>  
+                          @if(shipStageLocationGroupStatus === 'requiredForManualPickOrder') {
+                            <ng-container >{{ 'web.bound.9cd2b53c7ec0' | i18n: { p0: ('shipment.stage.locationGroup' | i18n) } }}</ng-container>
+                          } 
+                         
+                      </ng-template>
+
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="10" *ngIf="!isOutsourcingOrder(currentOrder!)">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="12" [nzRequired]="currentOrder.allowForManualPick === true">
+                  {{ 'shipment.stage.location' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="shipStageLocationErrorTpl"  
+                    nzValidateStatus="{{ shipStageLocationStatus == 'success' ? 'success' : 'error'}}"   >
+                    
+                        <nz-select [(ngModel)]="currentOrder!.stageLocationId" nzAllowClear 
+                            (ngModelChange)="stageLocationChanged()">
+                            <nz-option *ngFor="let location of avaiableLocations" [nzValue]="location.id!" [nzLabel]="location.name!"></nz-option>
+                        </nz-select>
+
+                        <ng-template #shipStageLocationErrorTpl let-control>  
+                          @if(shipStageLocationStatus === 'requiredForManualPickOrder') {
+                            <ng-container >{{ 'web.bound.9cd2b53c7ec0' | i18n: { p0: ('shipment.stage.location' | i18n) } }}</ng-container>
+                          } 
+                         
+                      </ng-template>
+                      
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div>
+        
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="10">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+                {{ 'carrier' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                  <nz-select [(ngModel)]="currentOrder!.carrierId" (ngModelChange)="carrierChange()" nzAllowClear >
+                      <nz-option *ngFor="let carrier of avaiableCarriers" [nzValue]="carrier.id" [nzLabel]="carrier.description!"></nz-option>
+                    </nz-select>
+
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="10" >
+            <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+                {{ 'service' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                  
+                      <nz-select [(ngModel)]="currentOrder!.carrierServiceLevelId" (ngModelChange)="carrierServiceChange()" nzAllowClear>
+                          <nz-option *ngFor="let serviceLevel of avaiableServiceLevel" [nzValue]="serviceLevel.id!" [nzLabel]="serviceLevel.name!"></nz-option>
+                      </nz-select>
+
+                    
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="5"></div>
+          <div nz-col [nzSpan]="10">
+            <nz-form-item> 
+              <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                
+                <label nz-checkbox [(ngModel)]="currentOrder!.allowForManualPick" 
+                [disabled]="currentOrder.status != orderStatuses.OPEN || (newOrder && isOutsourcingOrder(currentOrder))" (ngModelChange)="allowForManualPickChanged($event)" >
+                  {{ "allowForManualPick" | i18n}}</label>  
+
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <nz-card   nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
+          *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER">
+          
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="24">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="3">
+                        {{ 'order.transferReceiptWarehouseId' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                        <nz-select style="width: 250px"   [(ngModel)]="currentOrder!.transferReceiptWarehouseId"
+                        (ngModelChange)="orderTransferWarehouseIdChanged()">
+                            <nz-option *ngFor="let warehouse of warehouses" [nzLabel]="warehouse.name" [nzValue]="warehouse.id">
+                            </nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="24">
+                    
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="3">
+                          {{ 'order.transferReceiptNumber' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                            
+                            <input type="text" nz-input [(ngModel)]="currentOrder!.transferReceiptNumber" />
+                        </nz-form-control>
+                      </nz-form-item>
+                      
+                </div>
+            </div>
+        </nz-card>
+         
+          
+        <nz-card   nzTitle="{{ 'ORDER-CATEGORY-SALES_ORDER' | i18n}}" 
+        *ngIf="currentOrder!.category === orderCategories.SALES_ORDER || currentOrder!.category === orderCategories.OUTSOURCING_ORDER">
+        
+          <!-- only if the order will be fulfilled by a 3rd party -->
+          <div *ngIf="currentOrder!.category === orderCategories.OUTSOURCING_ORDER">
+
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="24">                  
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="3">
+                    {{ 'supplier' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="supplierNameErrorTpl">              
+                    <input type="text" nz-input [(ngModel)]="currentOrder!.supplier" 
+                      (ngModelChange)="supplierChanged()" variable="supplier-name" appExistingNumberValidator
+                      id="supplierName" name="supplierName" 
+                      [nzAutocomplete]="supplierAutoCompleteTpl"
+                      [ngModelOptions]="{updateOn: 'blur'}"
+                      (input)="onSupplierInputChange($event)"
+                       #supplierNameModel="ngModel"/>
+                      
+                      <!-- Display error if the supplier doesn't exists -->
+                    
+                    <!-- Auto Complete -->
+                    <nz-autocomplete #supplierAutoCompleteTpl>
+                      <nz-auto-option *ngFor="let supplier of filterValidSuppliers" [nzLabel]="supplier.name + ' - ' + supplier.description" [nzValue]="supplier">
+                        {{ supplier.name }} - {{supplier.description}}
+                      </nz-auto-option>
+                    </nz-autocomplete>
+  
+                  </nz-form-control>
+                  <ng-template #supplierNameErrorTpl let-control>
+                      <div *ngIf="supplierNameModel.invalid && (supplierNameModel.dirty || supplierNameModel.touched)">
+                        <ng-container *ngIf="supplierNameModel['errors'] && supplierNameModel['errors']['errorCode']">
+                           {{ supplierNameModel['errors']['errorCode'] |i18n}}</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">
+                           {{ 'error.form.field.required' | i18n}}
+                        </ng-container>
+                      </div>
+                    </ng-template>
+                </nz-form-item>
+              </div>
+            </div>
+          </div>
+          <div nz-row [nzGutter]="24">
+              <div nz-col [nzSpan]="24">
+                  <nz-form-item> 
+                    <nz-form-control [nzSpan]="12" >
+                      <nz-radio-group [(ngModel)]="existingCustomer"  (ngModelChange)="customerOptionChanged()"
+                        nzName="radiogroup">
+                        <label nz-radio nzValue="true">{{ 'existing-customer' | i18n }}</label>
+                        <label nz-radio nzValue="false">{{ 'new-customer' | i18n }}</label>
+                      </nz-radio-group>
+                    </nz-form-control>
+                  </nz-form-item>
+              </div>
+          </div>
+          <div *ngIf="existingCustomer === 'true'">
+
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="24">                  
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="3">
+                    {{ 'shipToCustomer' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="customerNameErrorTpl">              
+                    <input type="text" nz-input [(ngModel)]="currentOrder!.shipToCustomer!.name" 
+                      (ngModelChange)="shipToCustomerChanged()" variable="customer-name" appExistingNumberValidator
+                      id="customerName" name="customerName" 
+                      [nzAutocomplete]="customerAutoCompleteTpl"
+                      [ngModelOptions]="{updateOn: 'blur'}" #customerNameModel="ngModel"/>
+                      
+                      <!-- Display error if the customer doesn't exists -->
+                    <ng-template #customerNameErrorTpl let-control>
+                      <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
+                        <ng-container *ngIf="customerNameModel['errors'] && customerNameModel['errors']['errorCode']">
+                           {{customerNameModel['errors']['errorCode'] |i18n}}</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">
+                           {{ 'error.form.field.required' | i18n}}
+                        </ng-container>
+                      </div>
+                    </ng-template>
+                    <!-- Auto Complete -->
+                    <nz-autocomplete #customerAutoCompleteTpl>
+                      <nz-auto-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.name">
+                        {{ customer.name }}
+                      </nz-auto-option>
+                    </nz-autocomplete>
+  
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <!-- if the user choose a valid customer, show the address underneath-->
+            <div nz-row *ngIf="currentOrder?.shipToCustomer?.id">
+              
+              <address>  
+                {{currentOrder.shipToCustomer?.addressLine1}} <br>
+                {{currentOrder.shipToCustomer?.addressLine2}} <br>
+                {{currentOrder.shipToCustomer?.addressCity}},  {{currentOrder.shipToCustomer?.addressState}} <br>
+                {{currentOrder.shipToCustomer?.addressPostcode}} <br>
+                </address>
+
+            </div>
+          </div>
+
+          <div *ngIf="existingCustomer === 'false'">
+            
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="8">            
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="4">
+                    {{ 'firstname' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input [(ngModel)]="newCustomer!.contactorFirstname" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="8">            
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="4">
+                    {{ 'lastname' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input [(ngModel)]="newCustomer!.contactorLastname" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="24">            
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="1">
+                    {{ 'address' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <!--
+                      
+                    <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleNewCustomerAddressChange($event)" />
+                    -->
+                    <input #ngxPlaces="ngx-places"
+                        nz-input 
+                        class="input"
+                        type="text"
+                        ngx-gp-autocomplete
+                        (onAddressChange)="handleNewCustomerAddressChange($event)" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="24">    
+                <nz-form-item >
+                  <nz-form-control [nzSpan]="12" >
+                    <label nz-checkbox [(ngModel)]="saveNewCustomer">
+                      {{ 'save-new-customer' | i18n }}
+                    </label>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="18" *ngIf="saveNewCustomer && newCustomer !== undefined">            
+                <nz-form-item >
+                  <nz-form-label [nzSpan]="3">
+                    {{ 'customer.name' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input  [(ngModel)]="newCustomer!.name" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </div>
+        </nz-card>
+         
+          
+        
+    </div>
+
+    <!-- Let the user input the order line information -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+ 
+
+        <!-- Table to show order line  [nzScroll]="{ x: '100vw' }" -->
+
+        <div class="search-result-list" *ngIf="currentOrder"  > 
+            <nz-table  nzShowPagination [nzData]="currentOrder!.orderLines"
+            [nzScroll]="{ x: '100vw' }"
+                [nzFooter]="orderLineTableFoot" #orderLineTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'order.line.number' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item.description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.expectedQuantity' | i18n }}
+                        </th>  
+                        <th>
+                          {{ 'inventory.status' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.allocationStrategyType' | i18n }}
+                        </th> 
+                        @if(anyLineTrackingColor) {                          
+                          <th>
+                            {{ 'color' | i18n }}
+                          </th>
+                        }
+                        @if(anyLineTrackingStyle) {                          
+                          <th>
+                            {{ 'style' | i18n }}
+                          </th>
+                        }
+                        @if(anyLineTrackingProductSize) {                          
+                          <th>
+                            {{ 'production-size' | i18n }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute1) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+                              ("inventoryAttribute1" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute1DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute2) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+                              ("inventoryAttribute2" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute2DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute3) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+                              ("inventoryAttribute3" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute3DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute4) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+                              ("inventoryAttribute4" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute4DisplayName
+                              }}
+                          </th>
+                        }
+                        @if(anyLineTrackingInventoryAttribute5) {                          
+                          <th>
+                            {{ inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+                              ("inventoryAttribute5" | i18n )
+                              : this.inventoryConfiguration?.inventoryAttribute5DisplayName
+                              }}
+                          </th>
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let orderLine of orderLineTable.data; let i = index"> 
+                        <td>
+                            <span>{{ orderLine.number }}</span>
+                        </td>
+                        <td>
+                            <div *ngIf="orderLine.id === undefined">
+                                <div class="row">
+                                    <input nz-input class="order-item-autocomplete" type="text" autocomplete="off"
+                                      placeholder="Type at least 2 characters"
+                                      [ngModel]="orderLine.item?.name" (ngModelChange)="itemNameChanged($event, orderLine)"
+                                      [nzAutocomplete]="itemAuto" (blur)="itemChanged($event, orderLine)" />
+                                    <nz-autocomplete #itemAuto [nzBackfill]="false" [nzDefaultActiveFirstOption]="false"
+                                      [nzWidth]="440" (selectionChange)="selectSuggestedItem($event.nzValue, orderLine)">
+                                      <nz-auto-option *ngFor="let item of itemSuggestions.get(orderLine)?.items" [nzValue]="item.name" [nzLabel]="item.name">
+                                        <div class="order-item-option-number">{{ item.name }}</div>
+                                        <div class="order-item-option-description">{{ item.description }}</div>
+                                      </nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.get(orderLine)?.loading" [nzDisabled]="true" nzValue="">Searching items…</nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.get(orderLine)?.error" [nzDisabled]="true" nzValue="">{{ itemSuggestions.get(orderLine)?.error }}</nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.has(orderLine) && !itemSuggestions.get(orderLine)?.loading && !itemSuggestions.get(orderLine)?.error && !itemSuggestions.get(orderLine)?.items?.length && (orderLine.item?.name?.trim()?.length || 0) >= 2" [nzDisabled]="true" nzValue="">No matching items.</nz-auto-option>
+                                      <nz-auto-option *ngIf="itemSuggestions.get(orderLine)?.more" [nzDisabled]="true" nzValue="">Showing 20 items. Keep typing to narrow the results.</nz-auto-option>
+                                    </nz-autocomplete>
+                                    <div *ngIf="lineItemLookups.get(orderLine)?.loading" role="status">Checking item…</div>
+                                    <div *ngIf="lineItemLookups.get(orderLine)?.error" role="alert" style="color: #cf1322; margin-top: 4px;">{{ lineItemLookups.get(orderLine)?.error }}</div>
+                                </div>
+                            </div> 
+                            <span *ngIf="orderLine.id">
+                                {{ orderLine.item?.name }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ orderLine.item?.description }}
+                        </td>                        
+                        <td>
+                            <div class="row">
+                                <input nz-input type="text" inputmode="numeric" [(ngModel)]="orderLine.expectedQuantity"  />
+                            </div>
+                        </td> 
+                        <td>
+                            <nz-select style="width: 150px" *ngIf="orderLine.id === undefined"
+                                [(ngModel)]="orderLine.inventoryStatus!.id" (ngModelChange)="inventoryStatusChanged(orderLine)"
+                                >
+                                <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                                    [nzLabel]="inventoryStatus.description"
+                                    [nzValue]="inventoryStatus?.id">
+                                </nz-option>
+                            </nz-select>
+
+                            <span *ngIf="orderLine.id">
+                                {{  orderLine.inventoryStatus?.description}}
+                            </span>
+                        </td>
+                        <td>
+                            <nz-select style="width: 175px"  
+                                [(ngModel)]="orderLine.allocationStrategyType" (ngModelChange)="allocationStratetyChanged(orderLine)" >
+                                <nz-option *ngFor="let allocationStrategyType of allocationStrategiesKeys"
+                                    nzLabel="{{ 'ALLOCATION-STRATEGY-TYPE-' + allocationStrategyType | i18n }}"
+                                    [nzValue]="allocationStrategyType">
+                                </nz-option>
+                            </nz-select>
+<!--
+
+
+                            <span *ngIf="orderLine.id">{{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n }}
+                            </span>
+-->
+                        </td>
+                        @if(anyLineTrackingColor) {  
+                          <td>                            
+                            @if(orderLine?.item?.trackingColorFlag) {                          
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.color"  />
+                              </div>
+                            } 
+                          </td>
+                        }
+                        @if(anyLineTrackingStyle) {
+                          <td> 
+                            @if(orderLine?.item?.trackingStyleFlag) {                          
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.style"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingProductSize) { 
+                          <td> 
+                          @if(orderLine?.item?.trackingProductSizeFlag) {                          
+                            <div class="row" >
+                              <input  type="text" [(ngModel)]="orderLine.productSize"  />
+                            </div>
+                          } 
+                        </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute1) { 
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute1Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute1"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute2) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute2Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute2"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute3) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute3Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute3"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute4) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute4Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute4"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        @if(anyLineTrackingInventoryAttribute5) {
+                          <td> 
+                            @if(orderLine?.item?.trackingInventoryAttribute5Flag) { 
+                              <div class="row" >
+                                <input  type="text" [(ngModel)]="orderLine.inventoryAttribute5"  />
+                              </div>
+                            } 
+                          </td> 
+                        }
+                        <td>
+                            <button nz-button nzDanger nzShape="circle" (click)="removeOrderLine(i)">
+                                <i nz-icon nzType="close"></i>
+                                
+                              </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+
+        <ng-template #orderLineTableFoot>
+            <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="addExtraOrderLine()">
+                    {{ 'add' | i18n }}
+                </button>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Review only: original save and allocation behavior is unchanged. -->
+    <div class="order-review" *ngIf="stepIndex === 2">
+      <section class="review-card">
+        <header class="review-header">
+          <div><div class="review-eyebrow">{{ 'order' | i18n }}</div><h2>{{ currentOrder?.number }}</h2></div>
+          <span class="review-category">{{ 'ORDER-CATEGORY-' + currentOrder?.category | i18n }}</span>
+        </header>
+        <dl class="review-fields">
+          <div><dt>{{ 'poNumber' | i18n }}</dt><dd>{{ currentOrder?.poNumber || '—' }}</dd></div>
+          <div><dt>{{ 'carrier' | i18n }}</dt><dd>{{ currentOrder?.carrier?.name || '—' }}</dd></div>
+          <div><dt>{{ 'service' | i18n }}</dt><dd>{{ currentOrder?.carrierServiceLevel?.name || '—' }}</dd></div>
+        </dl>
+      </section>
+      <section class="review-card" *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER">
+        <dl class="review-fields review-fields-two">
+          <div><dt>{{ 'order.transferReceiptWarehouseId' | i18n }}</dt><dd>{{ currentOrder?.transferReceiptWarehouse?.name || '—' }}</dd></div>
+          <div><dt>{{ 'order.transferReceiptNumber' | i18n }}</dt><dd>{{ currentOrder?.transferReceiptNumber || '—' }}</dd></div>
+        </dl>
+      </section>
+      <section class="review-card review-parties" *ngIf="currentOrder!.category === orderCategories.SALES_ORDER || currentOrder!.category === orderCategories.OUTSOURCING_ORDER">
+        <div class="review-party">
+          <h3>{{ 'supplier' | i18n }}</h3>
+          <div class="review-party-name">{{ currentOrder?.supplier?.name || '—' }}</div>
+          <p class="review-secondary" *ngIf="currentOrder?.supplier?.description">{{ currentOrder?.supplier?.description }}</p>
+          <ng-container *ngTemplateOutlet="reviewAddress; context: { $implicit: currentOrder?.supplier }"></ng-container>
+        </div>
+        <div class="review-party">
+          <h3>{{ 'shipToCustomer' | i18n }}</h3>
+          <div class="review-party-name">{{ (existingCustomer === 'true' ? currentOrder?.shipToCustomer?.name : newCustomer?.name) || '—' }}</div>
+          <ng-container *ngTemplateOutlet="reviewAddress; context: { $implicit: existingCustomer === 'true' ? currentOrder?.shipToCustomer : newCustomer }"></ng-container>
+        </div>
+      </section>
+      <ng-template #reviewAddress let-party>
+        <div class="review-address-label">{{ 'address' | i18n }}</div>
+        <address>
+          <div *ngIf="party?.addressLine1">{{ party.addressLine1 }}</div>
+          <div *ngIf="party?.addressLine2">{{ party.addressLine2 }}</div>
+          <div *ngIf="party?.addressCity || party?.addressState">{{ party?.addressCity }}<span *ngIf="party?.addressCity && party?.addressState">, </span>{{ party?.addressState }}</div>
+          <div *ngIf="party?.addressPostcode">{{ party.addressPostcode }}</div>
+          <span *ngIf="!party?.addressLine1 && !party?.addressLine2 && !party?.addressCity && !party?.addressState && !party?.addressPostcode">—</span>
+        </address>
+      </ng-template>
+        <!-- Table to show order line  -->
+
+        <div class="search-result-list review-lines"> 
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentOrder!.orderLines"
+                #displayOrderLineTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'order.line.number' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item.description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.expectedQuantity' | i18n }}
+                        </th>  
+                        <th>
+                          {{ 'inventory.status' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.allocationStrategyType' | i18n }}
+                        </th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of displayOrderLineTable.data; let i = index">  
+                        <td>{{ data.number }} </td>
+                        <td>{{ data.item?.name }} </td>
+                        <td>{{ data.item?.description }} </td>
+                        <td>{{ data.expectedQuantity }} </td>
+                        <td>{{ data.inventoryStatus?.name }} </td>
+                        <td>{{ data.allocationStrategyType }} </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+ 
+    </div>
+
+
+
+    <div class="steps-action">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" [disabled]="itemLookupLoading || isSpinning" *ngIf="stepIndex < 2">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" [nzLoading]="isSpinning" [disabled]="itemLookupLoading || isSpinning" *ngIf="stepIndex === 2">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>
