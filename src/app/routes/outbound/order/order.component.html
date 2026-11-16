@@ -1,4 +1,12 @@
-<page-header title="{{'order' |  i18n}}" ></page-header>
+<page-header *ngIf="!focusedOrderNumber" title="Outbound Sales Orders"></page-header>
+
+<div *ngIf="focusedOrder" class="workbench-heading workbench-heading--detail">
+  <div>
+    <span class="workbench-eyebrow">OUTBOUND WORKSPACE</span>
+    <h1>Order · {{ focusedOrder.number }}</h1>
+  </div>
+  <button nz-button routerLink="/outbound/order">← Back to orders</button>
+</div>
 
 <div *ngIf="searchError" role="alert" style="margin-bottom: 16px; color: var(--mes-ink);">{{ searchError }}</div>
 <div *ngIf="detailWarning" role="status" style="margin-bottom: 16px; color: var(--mes-muted);">{{ detailWarning }}</div>
@@ -9,11 +17,15 @@
   <span *ngIf="progress.requiresReview && progress.state === 'FAILED'">{{ 'outbound.allocation.review' | i18n }}</span>
   <button *ngIf="progress.state === 'UNKNOWN'" nz-button nzSize="small" (click)="checkAllocationResult(progress.orderId)">{{ 'outbound.allocation.check' | i18n }}</button>
 </section>
-<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-spin [nzSpinning]="isSpinning || (!!focusedOrderNumber && searching)" [nzSize]="'large'">
+  <div *ngIf="focusedOrderNumber" class="search-result-list order-results workbench-focused">
+    <ng-container *ngIf="focusedOrder as order" [ngTemplateOutlet]="expand" [ngTemplateOutletContext]="{ $implicit: order }"></ng-container>
+  </div>
+  <div [hidden]="focusedOrderNumber">
   <!-- Form to query the result  -->
-  <form nz-form nzLayout="vertical" [formGroup]="searchForm" class="ant-advanced-search-form order-search-form">
-    <div nz-row [nzGutter]="24">
-      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6">
+  <form (ngSubmit)="search()" nz-form nzLayout="vertical" [formGroup]="searchForm" class="ant-advanced-search-form order-search-form">
+    <div nz-row nzAlign="bottom" [nzGutter]="[16, 8]">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="5">
         <nz-form-item>
           <nz-form-label for="number">
             {{ 'order.number' | i18n }}
@@ -23,13 +35,13 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6">
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="5">
         <nz-form-item>
           <nz-form-label for="orderStatus">
             {{ 'status' | i18n }}
           </nz-form-label>
           <nz-form-control>
-            <nz-select formControlName="orderStatus">
+            <nz-select nzAllowClear formControlName="orderStatus">
               <nz-option
                 *ngFor="let orderStatus of orderStatusesKeys"
                 [nzValue]="orderStatus"
@@ -40,6 +52,40 @@
         </nz-form-item>
       </div>
       
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="5"  >
+        <nz-form-item>
+          <nz-form-label nzFor="poNumber">
+            {{ 'poNumber' | i18n }}
+          </nz-form-label>
+          <nz-form-control>
+
+            <input nz-input name="poNumber" id="poNumber" formControlName="poNumber" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="5" >
+        <nz-form-item>
+          <nz-form-label nzFor="customers">
+            {{ 'customer' | i18n }}
+          </nz-form-label>
+          <nz-form-control>
+            <nz-select nzShowSearch nzAllowClear  formControlName="customer">
+              <nz-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.id"></nz-option> 
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzXs]="24" [nzXl]="4" class="search-area order-search-actions">
+        <button type="submit" nz-button [nzType]="'primary'" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button type="button" nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+
+    <details class="order-advanced-filters">
+      <summary>More filters</summary>
+      <div nz-row [nzGutter]="[16, 8]">
       <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6">
         <nz-form-item>
           <nz-form-label for="orderCategory">
@@ -58,23 +104,6 @@
       </div>
       <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6" >
         <nz-form-item>
-          <nz-form-label nzFor="customers">
-            {{ 'customer' | i18n }}
-          </nz-form-label>
-          <nz-form-control>
-            <nz-select nzShowSearch nzAllowClear  formControlName="customer">
-              <nz-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.id"></nz-option> 
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </div>
-    
-    <div nz-row [nzGutter]="24">
-      
-
-      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8" >
-        <nz-form-item>
           <nz-form-label nzFor="completeTimeRanger">
             {{ 'complete-time' | i18n }}
           </nz-form-label>
@@ -85,8 +114,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-
-      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="4"  >
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6"  >
         <nz-form-item>
           <nz-form-label nzFor="completeDate">
             {{ 'complete-date' | i18n }}
@@ -96,8 +124,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      
-      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="8" >
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6" >
         <nz-form-item>
           <nz-form-label nzFor="createdTimeRanger">
             {{ 'created-time' | i18n }}
@@ -109,32 +136,13 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-
-      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="4"  >
+      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6"  >
         <nz-form-item>
           <nz-form-label nzFor="createdDate">
             {{ 'created-date' | i18n }}
           </nz-form-label>
           <nz-form-control>
             <nz-date-picker formControlName="createdDate" name="createdDate"></nz-date-picker>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-
-    </div>
-    
-    <div nz-row [nzGutter]="24">
-
-      
-
-      <div nz-col [nzXs]="24" [nzMd]="12" [nzXl]="6"  >
-        <nz-form-item>
-          <nz-form-label nzFor="poNumber">
-            {{ 'poNumber' | i18n }}
-          </nz-form-label>
-          <nz-form-control>
-            
-            <input nz-input name="poNumber" id="poNumber" formControlName="poNumber" /> 
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -150,17 +158,8 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      
-    </div> 
-
-    <div nz-row>
-      <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-          {{ 'search' | i18n }}
-        </button>
-        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
       </div>
-    </div>
+    </details>
   </form>
 
   <!-- Table to Display the result  -->
@@ -197,7 +196,7 @@
     </div>
     
     <st #st class="order-list-table" size="small" [trackBy]="trackOrderById" [loading]="searching" [data]="listOfAllOrders"  [columns]="orderTableColumns" [expand]="expand"  expandAccordion
-    (change)="orderTableChanged($event)" resizable [scroll]="{ x: '1120px' }" [widthMode]="{ type: 'strict' }" >
+    (change)="orderTableChanged($event)" resizable [scroll]="{ x: '1040px' }" [widthMode]="{ type: 'strict' }" >
     
       <ng-template st-row="completedTimeColumn" let-order let-index="index">
             {{order.completeTime | date:'MM/dd/yyyy' }}
@@ -314,16 +313,13 @@
       </ng-template>
 
       <ng-template st-row="orderNumberColumn" let-order let-index="index">
-        <a [routerLink]="['/outbound/order']" [queryParams]="{ number: order.number, orderId: order.id }"
-          (click)="reopenLinkedOrder(order, $event)" nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ order.number }}</a>
+        <a [routerLink]="['/outbound/order']" [queryParams]="{ number: order.number, orderId: order.id, detail: 1 }"
+          nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ order.number }}</a>
         <ng-template #orderNumberTemplate>{{ order.number }}</ng-template>
       </ng-template>
 
       <ng-template st-row="poNumberColumn" let-order>
         <span class="order-po-number">{{ order.poNumber || '—' }}</span>
-      </ng-template>
-      <ng-template st-row="orderPickedQuantityColumn" let-order>
-        {{ order.totalPickedQuantity ?? '—' }}
       </ng-template>
       <ng-template st-row="orderStatusColumn" let-order>
         <span class="order-status" [class.order-status--complete]="order.status === orderStatusEnum.COMPLETE">
@@ -337,15 +333,94 @@
       </ng-template>
 
       <!--   order details  -->
+      <ng-template st-row="cancelRequestedTimeColumn" let-order>
+
+        {{ order.cancelRequestedTime  | date:'short'}}
+      </ng-template>
+      <!--   action colummn  -->
+      <ng-template st-row="actionColumn" let-order let-index="index">
+        <ng-container [ngTemplateOutlet]="orderActions" [ngTemplateOutletContext]="{ $implicit: order }"></ng-container>
+      </ng-template>
+      <!--   label print colummn  -->
+      <!--
+
+
+      <ng-template st-row="printColumnTitle" type="title" let-c>
+        {{ 'print' | i18n }}
+      </ng-template>
+      <ng-template st-row="printColumn" let-item let-index="index">
+        <nz-list>
+          <nz-list-item>
+            {{ 'packing-slip' | i18n }}:
+            <cwms-common-print-button style='padding-left: 20px;'
+              (print)="printPackingSlip($event, item)"
+              (preview)="previewPackingSlip(item)">
+            </cwms-common-print-button>
+          </nz-list-item>
+
+          <nz-list-item >
+            {{ 'bill-of-lading' | i18n }}:
+            <cwms-common-print-button style='padding-left: 20px;'
+              (print)="printBillOfLading($event, item)"
+              (preview)="previewBillOfLading(item)">
+            </cwms-common-print-button>
+          </nz-list-item>
+        </nz-list>
+
+
+      </ng-template>
+      -->
+    </st>
+
+    @if(searchResult != '') {
+
+      <div nz-row nzType="flex" nzJustify="start">
+        {{searchResult}}
+      </div>
+    }
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+      <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active"
+      *ngIf="!userPermissionMap.has('add-order') || userPermissionMap.get('add-order')">
+        {{ 'add' | i18n }}
+      </button>
+      <nz-divider nzType="vertical"></nz-divider>
+      <button nz-button routerLink="/outbound/order-import-pdf" routerLinkActive="active"
+      *ngIf="!userPermissionMap.has('add-order') || userPermissionMap.get('add-order')">
+        <i nz-icon nzType="file-pdf"></i> Import PDF
+      </button>
+    </div>
+  </div>
+
+  </div>
       <ng-template #expand let-order let-index="index" >
+        <section *ngIf="focusedOrder" class="focus-overview">
+          <header class="focus-actionbar"><span class="order-status">{{ order.status }}</span><span class="focus-subtitle">{{ order.totalLineCount }} order lines · {{ order.totalItemCount }} items</span><ng-container *ngIf="!displayOnly" [ngTemplateOutlet]="orderActions" [ngTemplateOutletContext]="{ $implicit: order }"></ng-container></header>
+          <div class="focus-overview-grid">
+            <section class="focus-address"><h3>Ship to</h3><strong>{{ order.shipToCustomer?.name || '—' }}</strong><p>{{ formatOrderAddress(order, 'shipTo') || '—' }}</p></section>
+            <section class="focus-facts"><dl>
+              <div><dt>PO Number</dt><dd>{{ order.poNumber || '—' }}</dd></div>
+              <div><dt>Carrier</dt><dd>{{ order.carrier?.name || '—' }}</dd></div>
+              <div><dt>Service</dt><dd>{{ order.carrierServiceLevel?.name || '—' }}</dd></div>
+              <div><dt>Shipping Stage</dt><dd>{{ order.stageLocation?.name || '—' }}</dd></div>
+            </dl></section>
+            <section class="focus-progress"><h3>Order progress <small>Base quantities</small></h3>
+              <div class="focus-progress-label"><span>Picked</span><strong>{{ order.totalPickedQuantity ?? '—' }} / {{ order.totalExpectedQuantity }}</strong></div>
+              <nz-progress *ngIf="order.totalPickedQuantity != null; else progressLoading" [nzPercent]="detailPercent(order.totalPickedQuantity, order.totalExpectedQuantity)" nzSize="small" [nzShowInfo]="true"></nz-progress>
+              <ng-template #progressLoading><span class="focus-subtitle">Loading picking totals…</span></ng-template>
+              <div class="focus-progress-label"><span>Shipped</span><strong>{{ order.totalShippedQuantity ?? 0 }} / {{ order.totalExpectedQuantity }}</strong></div>
+              <nz-progress [nzPercent]="detailPercent(order.totalShippedQuantity, order.totalExpectedQuantity)" nzSize="small"></nz-progress>
+              <div class="focus-open">Open quantity <strong>{{ order.totalOpenQuantity }}</strong></div>
+            </section>
+          </div>
+        </section>
         <div class="order-details-toggle">
           <button nz-button (click)="toggleOrderDetails(order)"
-            [attr.aria-expanded]="orderDetailsOrder?.id === order.id" [attr.aria-controls]="'order-details-' + order.id">
-            {{ (orderDetailsOrder?.id === order.id ? 'outbound.order.details.hide' : 'outbound.order.details.title') | i18n }}
-            <i nz-icon [nzType]="orderDetailsOrder?.id === order.id ? 'up' : 'down'"></i>
+            [attr.aria-expanded]="orderDetailsOrder === order" [attr.aria-controls]="'order-details-' + order.id">
+            {{ (orderDetailsOrder === order ? 'outbound.order.details.hide' : 'outbound.order.details.title') | i18n }}
+            <i nz-icon [nzType]="orderDetailsOrder === order ? 'up' : 'down'"></i>
           </button>
         </div>
-        <section *ngIf="orderDetailsOrder?.id === order.id" class="order-detail-summary" [id]="'order-details-' + order.id">
+        <section *ngIf="orderDetailsOrder === order" class="order-detail-summary" [id]="'order-details-' + order.id">
           <h3>{{ 'outbound.order.details.title' | i18n }}</h3>
           <div class="order-detail-grid">
             <section class="order-detail-section">
@@ -396,7 +471,34 @@
         <nz-tabset class="order-detail-tabs" [nzSelectedIndex]="tabSelectedIndex">
           <nz-tab nzTitle=" {{ 'order.line' | i18n }}">
 
-            <st #stOrderLine class="order-line-table" size="small" [data]="order.orderLines" [columns]="stOrderLineTableColumns">
+            <st #stOrderLine class="order-line-table" size="small" [scroll]="focusedOrder ? { x: '1050px' } : {}"
+                [data]="order.orderLines" [columns]="focusedOrder ? focusedOrderLineColumns : stOrderLineTableColumns">
+              <ng-template st-row="lineBaseOrdered" let-line><strong>{{ line.expectedQuantity }}</strong> <small>{{ line.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name }}</small></ng-template>
+              <ng-template st-row="lineBaseOpen" let-line><span nz-tooltip nzTooltipTitle="Quantity not yet assigned to a shipment; this is not the remaining quantity to pick.">{{ line.openQuantity }}</span></ng-template>
+              <ng-template st-row="linePickedProgress" let-line>
+                <div class="line-progress-cell" *ngIf="lineFulfillment[line.id]?.picked != null; else linePickedUnavailable" >
+                  <div><strong>{{ detailPercent(lineFulfillment[line.id]?.picked, line.expectedQuantity) }}%</strong><span>({{ lineFulfillment[line.id]?.picked }} of {{ line.expectedQuantity }})</span></div>
+                  <nz-progress [nzPercent]="detailPercent(lineFulfillment[line.id]?.picked, line.expectedQuantity)" [nzShowInfo]="false" nzSize="small" nzStrokeColor="#279c4f"></nz-progress>
+                </div>
+                <ng-template #linePickedUnavailable><span class="line-progress-unavailable" nz-tooltip nzTooltipTitle="Progress data is loading or unavailable.">—</span></ng-template>
+              </ng-template>
+              <ng-template st-row="lineLoadedProgress" let-line>
+                <div class="line-progress-cell" *ngIf="lineFulfillment[line.id]?.loaded != null; else lineLoadedUnavailable" nz-tooltip nzTooltipTitle="Cumulative loaded quantity, including units already shipped.">
+                  <div><strong>{{ detailPercent(lineFulfillment[line.id]?.loaded, line.expectedQuantity) }}%</strong><span>({{ lineFulfillment[line.id]?.loaded }} of {{ line.expectedQuantity }})</span></div>
+                  <nz-progress [nzPercent]="detailPercent(lineFulfillment[line.id]?.loaded, line.expectedQuantity)" [nzShowInfo]="false" nzSize="small" nzStrokeColor="#279c4f"></nz-progress>
+                </div>
+                <ng-template #lineLoadedUnavailable><span class="line-progress-unavailable" nz-tooltip nzTooltipTitle="Progress data is loading or unavailable.">—</span></ng-template>
+              </ng-template>
+              <ng-template st-row="lineShippedProgress" let-line>
+                <div class="line-progress-cell" *ngIf="line.shippedQuantity != null; else lineShippedUnavailable" >
+                  <div><strong>{{ detailPercent(line.shippedQuantity, line.expectedQuantity) }}%</strong><span>({{ line.shippedQuantity }} of {{ line.expectedQuantity }})</span></div>
+                  <nz-progress [nzPercent]="detailPercent(line.shippedQuantity, line.expectedQuantity)" [nzShowInfo]="false" nzSize="small" nzStrokeColor="#279c4f"></nz-progress>
+                </div>
+                <ng-template #lineShippedUnavailable><span class="line-progress-unavailable" nz-tooltip nzTooltipTitle="Progress data is loading or unavailable.">—</span></ng-template>
+              </ng-template>
+
+
+
 
              <ng-template st-row="allocateByReceiptNumberColumn" let-orderLine  >
               <a *ngIf="orderLine.allocateByReceiptNumber" routerLink="/inbound/receipt" routerLinkActive="active"
@@ -411,6 +513,7 @@
                   style="width:75px"
                 ></nz-skeleton-element> 
                 <span class="order-line-item-name">{{ orderLine.item?.name }}</span>
+                <span *ngIf="focusedOrder && orderLine.item?.description" class="order-line-description">{{ orderLine.item?.description }}</span>
                 <div class="order-line-item-meta">
                   <span>{{ orderLine.inventoryStatus?.description }}</span>
                   <button nz-button nzType="link" nzSize="small" nz-popover nzPopoverTrigger="click"
@@ -889,12 +992,7 @@
         </nz-tabset>
       </ng-template>
 
-      <ng-template st-row="cancelRequestedTimeColumn" let-order> 
-              
-        {{ order.cancelRequestedTime  | date:'short'}} 
-      </ng-template>
-      <!--   action colummn  -->  
-      <ng-template st-row="actionColumn" let-order let-index="index">
+      <ng-template #orderActions let-order>
         <div class="order-row-actions">
           <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" [nzDropdownMenu]="menu">
             {{ 'action' | i18n }} <i nz-icon nzType="down"></i>
@@ -994,56 +1092,6 @@
           </ng-template>
         </div>
       </ng-template>
-
-      <!--   label print colummn  --> 
-      <!--
-
-
-      <ng-template st-row="printColumnTitle" type="title" let-c>
-        {{ 'print' | i18n }}
-      </ng-template>
-      <ng-template st-row="printColumn" let-item let-index="index">  
-        <nz-list>
-          <nz-list-item>
-            {{ 'packing-slip' | i18n }}: 
-            <cwms-common-print-button style='padding-left: 20px;'
-              (print)="printPackingSlip($event, item)"
-              (preview)="previewPackingSlip(item)">
-            </cwms-common-print-button>
-          </nz-list-item>
-          
-          <nz-list-item >
-            {{ 'bill-of-lading' | i18n }}: 
-            <cwms-common-print-button style='padding-left: 20px;'
-              (print)="printBillOfLading($event, item)"
-              (preview)="previewBillOfLading(item)">
-            </cwms-common-print-button>
-          </nz-list-item>
-        </nz-list>
-        
-
-      </ng-template>
-      -->
-    </st>
-    
-    @if(searchResult != '') {
-
-      <div nz-row nzType="flex" nzJustify="start">
-        {{searchResult}}
-      </div>
-    }
-    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
-      <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active"
-      *ngIf="!userPermissionMap.has('add-order') || userPermissionMap.get('add-order')">
-        {{ 'add' | i18n }}
-      </button>
-      <nz-divider nzType="vertical"></nz-divider> 
-      <button nz-button routerLink="/outbound/order-import-pdf" routerLinkActive="active"
-      *ngIf="!userPermissionMap.has('add-order') || userPermissionMap.get('add-order')">
-        <i nz-icon nzType="file-pdf"></i> Import PDF
-      </button> 
-    </div>
-  </div> 
 
 </nz-spin> 
 

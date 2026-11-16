@@ -7,6 +7,8 @@ import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, User, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { firstValueFrom, of, timer } from 'rxjs';
+import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
 
 import { UserService } from '../../auth/services/user.service';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
@@ -22,6 +24,7 @@ import { WebPageTableColumnConfiguration } from '../../util/models/web-page-tabl
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';  
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WorkTaskService } from '../../work-task/services/work-task.service';
 import { PickGroupType } from '../models/pick-group-type.enum';
 import { PickStatus } from '../models/pick-status.enum';
@@ -50,6 +53,7 @@ export class OutboundWaveComponent implements OnInit {
  
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "wave";
+  waveTableScrollWidth = '1615px';
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
 
   // Table data for display
@@ -160,7 +164,7 @@ export class OutboundWaveComponent implements OnInit {
 /**
  * 
   waveTableColumns = [
-    { title: '', index: 'number', type: 'checkbox' },
+    { title: '', index: 'number', type: 'checkbox', width: 44 },
     ...this.defaultWaveTableColumns, 
     {
       title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
@@ -386,7 +390,7 @@ export class OutboundWaveComponent implements OnInit {
       }
       // this.waveTableColumns =  this.defaultWaveTableColumns;
       this.waveTableColumns = [
-        { title: '', index: 'number', type: 'checkbox' },
+        { title: '', index: 'number', type: 'checkbox', width: 44 },
       ];
 
       // loop through the table column configuration and add
@@ -399,7 +403,20 @@ export class OutboundWaveComponent implements OnInit {
 
       waveTableConfiguration.forEach(
         columnConfig => {
-          this.defaultWaveTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
+          const shortTitles: Record<string, string> = {
+            'Wave Number': 'Wave', 'Wave Status': 'Status',
+            'Total Order Count': 'Orders', 'Total Order Line Count': 'Order Lines',
+            'Total Item Count': 'Items', 'Total Quantity': 'Quantity',
+            'Total Open Quantity': 'Open Qty', 'Total Inprocess Quantity': 'In Process',
+            'Total In Process Quantity': 'In Process', 'Total Short Quantity': 'Short Qty',
+            'Total Staged Quantity': 'Staged Qty', 'Total Shipped Quantity': 'Shipped Qty'
+          };
+          const definition = this.defaultWaveTableColumns[columnConfig.columnName];
+          definition.title = shortTitles[columnConfig.columnDisplayText] || columnConfig.columnDisplayText;
+          if (columnConfig.columnName.startsWith('total')) {
+            definition.width = 115;
+            definition.className = 'text-right';
+          }
 
           this.waveTableColumns = [...this.waveTableColumns, 
             this.defaultWaveTableColumns[columnConfig.columnName]
@@ -409,7 +426,7 @@ export class OutboundWaveComponent implements OnInit {
 
       this.waveTableColumns = [...this.waveTableColumns,  
         {
-          title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
+          title: this.i18n.fanyi("action"), fixed: 'right', width: 268,
           render: 'actionColumn',
           iif: () => !this.displayOnly
         }, 
@@ -419,6 +436,9 @@ export class OutboundWaveComponent implements OnInit {
       // this.waveTableColumns.forEach(
       //   column =>  console.log(`${JSON.stringify(column)}`) 
       // )
+
+      this.waveTableScrollWidth = `${this.waveTableColumns.reduce((total, column) =>
+        total + (Number(column.width) || 150), 0)}px`;
 
       if (this.waveTable != null) {
 
@@ -438,7 +458,7 @@ export class OutboundWaveComponent implements OnInit {
   
   getDefaultWaveTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
     
-    return [
+    const columns: WebPageTableColumnConfiguration[] = [
       {
         companyId: this.companyService.getCurrentCompany()!.id, 
         webPageName: this.pageName,
@@ -579,7 +599,16 @@ export class OutboundWaveComponent implements OnInit {
         columnSequence: 13, 
         displayFlag: true
       }, 
-    ]
+    ];
+    {
+      const essential = new Set(['number', 'statusColumn', 'totalOrderCount',
+        'totalQuantity', 'totalOpenQuantity', 'totalShippedQuantity']);
+      columns.forEach((column, index) => {
+        column.displayFlag = essential.has(column.columnName);
+        column.columnSequence = index + 1;
+      });
+    }
+    return columns;
   } 
 
   waveTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]){
@@ -653,6 +682,7 @@ export class OutboundWaveComponent implements OnInit {
    
           // this.setupShortAllocationQuantities();
           this.listOfAllWaves = waveRes;
+          if (this.waveReservePreview) this.waveService.reserveStates(waveRes.map(w => w.id!)).subscribe({next: states => this.reserveStates = states});
           this.setupStagedQuantities();
           this.resetWaveNumberFilter();
   
@@ -895,6 +925,15 @@ export class OutboundWaveComponent implements OnInit {
     });
   }
 
+  private readonly unpickLocationService = inject(LocationService);
+
+  get unpickDestinationStatus(): '' | 'validating' | 'success' | 'error' {
+    const control = this.unpickForm.get('destinationLocation');
+    if (!control?.value?.trim()) return '';
+    if (control.pending) return 'validating';
+    return control.valid ? 'success' : 'error';
+  }
+
   openUnpickModal(
     wave: Wave,
     inventory: Inventory,
@@ -909,43 +948,58 @@ export class OutboundWaveComponent implements OnInit {
       itemPackageType: new UntypedFormControl({ value: inventory.itemPackageType!.name, disabled: true }),
       quantity: new UntypedFormControl({ value: inventory.quantity, disabled: true }),
       locationName: new UntypedFormControl({ value: inventory.locationName, disabled: true }),
-      destinationLocation: [null],
+      destinationLocation: this.fb.control('', {
+        nonNullable: true,
+        asyncValidators: [control => {
+          const name = control.value.trim();
+          if (!name) return of(null);
+          if (name.includes('*')) return of({ unknownDestination: true });
+          return timer(250).pipe(
+            switchMap(() => this.unpickLocationService.getLocations(undefined, undefined, name)),
+            map(locations => {
+              const matches = locations.filter(location =>
+                location.id != null && location.name?.toUpperCase() === name.toUpperCase() &&
+                location.enabled !== false);
+              return matches.length === 1 ? null : { unknownDestination: true };
+            }),
+            catchError(() => of({ destinationLookupFailed: true })),
+          );
+        }],
+      }),
       immediateMove: [null],
     });
 
-    // Load the location
-    this.unpickModal = this.modalService.create({
+    const form = this.unpickForm;
+    const modal = this.modalService.create({
       nzTitle: tplUnpickModalTitle,
       nzContent: tplUnpickModalContent,
       nzOkText: this.i18n.fanyi('confirm'),
       nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
-      nzOnCancel: () => {
-        this.unpickModal.destroy();
-        // this.refreshReceiptResults();
-      },
-      nzOnOk: () => {
-        this.unpickInventory(
-          wave,
-          inventory,
-          this.unpickForm.value.destinationLocation,
-          this.unpickForm.value.immediateMove,
-        );
+      nzOnOk: async () => {
+        if (form.pending || form.invalid) return false;
+        this.isSpinning = true;
+        try {
+          const destination = form.value.destinationLocation.trim();
+          await firstValueFrom(this.inventoryService.unpick(
+            inventory,
+            encodeURIComponent(destination),
+            form.value.immediateMove,
+          ));
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          this.search(wave.id, 2);
+          return true;
+        } catch {
+          return false;
+        } finally {
+          this.isSpinning = false;
+        }
       },
       nzWidth: 1000,
     });
-  }
-
-  unpickInventory(wave: Wave, inventory: Inventory, destinationLocation: string, immediateMove: boolean): void {
-    // console.log(
-    //  `Start to unpick ${JSON.stringify(inventory)} to ${destinationLocation}, immediateMove: ${immediateMove}`,
-    //);
-    this.isSpinning = true;
-    this.inventoryService.unpick(inventory, destinationLocation, immediateMove).subscribe(res => {
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      this.isSpinning = false;
-      // refresh the picked inventory
-      this.search(wave.id, 2);
+    this.unpickModal = modal;
+    form.statusChanges.pipe(takeUntil(modal.afterClose)).subscribe(status => {
+      modal.updateConfig({ nzOkDisabled: status !== 'VALID' });
     });
   }
 
@@ -966,7 +1020,13 @@ export class OutboundWaveComponent implements OnInit {
     }
   } 
 
+  canModifyWave(wave: Wave): boolean {
+    return !this.waveReservePreview ||
+      this.waveService.isEditableReserveDraft(wave, this.reserveStates[wave.id!]);
+  }
+
   removeSelectedWaves(): void {
+    if (this.waveReservePreview) return;
     // make sure we have at least one checkbox checked
     const selectedWaves = this.getSelectedWaves();
     if (selectedWaves.length > 0) {
@@ -1020,6 +1080,99 @@ export class OutboundWaveComponent implements OnInit {
     });
   }
 
+  get waveReservePreview(): boolean { return this.waveService.reservePreviewEnabled; }
+  reserveStates: Record<number, any> = {};
+  reserveVisible = false;
+  reserveBusy = false;
+  reserveWave?: Wave;
+  reserveData: any;
+  reserveLine: any;
+  reserveLpn = '';
+  reserveNewLpn = '';
+  reserveQuantity = 0;
+  reservePreviewData: any;
+  reservePending: any;
+  reserveStorageKey(id: number): string { return `mes-wave-reserve-pending-${id}`; }
+  openReserve(wave: Wave): void {
+    this.reserveWave = wave; this.reserveVisible = true; this.reserveData = null;
+    this.reserveLine = null; this.reservePreviewData = null; this.reservePending = null;
+    try { this.reservePending = JSON.parse(localStorage.getItem(this.reserveStorageKey(wave.id!)) || 'null'); } catch { /* no saved request */ }
+    this.reloadReserve();
+  }
+  reloadReserve(): void {
+    if (!this.reserveWave) return;
+    this.reserveBusy = true;
+    this.waveService.reserveView(this.reserveWave.id!).subscribe({next: data => {
+      this.reserveData = data; this.reserveStates[this.reserveWave!.id!] = data; this.reserveBusy = false;
+    }, error: () => this.reserveBusy = false});
+  }
+  cancelWaveAndRelease(): void {
+    if (!this.reserveWave || this.reserveBusy || this.reservePending) return;
+    const waveId = this.reserveWave.id!;
+    this.modalService.confirm({
+      nzTitle: `Cancel Wave ${this.reserveWave.number} and release Reserve?`,
+      nzContent: 'This cancels the Wave and releases its corresponding order Reserve. Reserve assigned to other Waves is kept. Orders and Shipments remain. Picking must be reversed first if it has started.',
+      nzOkText: 'Cancel Wave & Release Reserve', nzOkDanger: true,
+      nzOnOk: () => new Promise<void>((resolve, reject) => {
+        this.reserveBusy = true;
+        this.waveService.reserveAction(waveId, 'cancel-release').subscribe({next: data => {
+          this.reserveData = data; this.reserveStates[waveId] = data;
+          this.reserveLine = null; this.reservePreviewData = null; this.reserveBusy = false;
+          this.messageService.success(`Wave cancelled. Released Reserve: ${data.releasedQuantity || 0}.`);
+          this.search(); resolve();
+        }, error: error => {this.reserveBusy = false; this.reloadReserve(); reject(error);}});
+      })
+    });
+  }
+  runReserveAction(action: string, cancel = false): void {
+    if (!this.reserveWave || this.reserveBusy || this.reservePending) return;
+    const run = () => { this.reserveBusy = true; this.waveService.reserveAction(this.reserveWave!.id!, action, {cancel}).subscribe({next: data => {
+      this.reserveData = data; this.reserveStates[this.reserveWave!.id!] = data; this.reserveBusy = false; this.search();
+    }, error: () => {this.reserveBusy = false; this.reloadReserve();}}); };
+    if (action === 'release' || action === 'close') this.modalService.confirm({nzTitle: cancel ? 'Cancel this Wave grouping?' : action === 'release' ? 'Release this Wave reservation?' : 'Close this dispatched Wave?', nzContent: 'Order reservations remain unchanged. This action does not dispatch any Shipment.', nzOnOk: run});
+    else run();
+  }
+  chooseReserveLine(line: any): void {
+    if (this.reservePending) return;
+    this.reserveLine = line; this.reserveLpn = ''; this.reserveNewLpn = ''; this.reserveQuantity = 0; this.reservePreviewData = null;
+  }
+  previewReserveLpn(): void {
+    if (!this.reserveWave || !this.reserveLine || !this.reserveLpn.trim() || this.reserveBusy || this.reservePending) return;
+    this.reserveBusy = true; this.reservePreviewData = null;
+    this.waveService.reservePreview(this.reserveWave.id!, this.reserveLine.shipment_line_id, this.reserveLpn.trim()).subscribe({next: data => {
+      this.reservePreviewData = {...data, lpn: this.reserveLpn.trim()}; this.reserveQuantity = Math.min(data.sourceQuantity, data.pickableQuantity); this.reserveBusy = false;
+    }, error: () => this.reserveBusy = false});
+  }
+  submitReserveScan(): void {
+    if (!this.reserveWave || this.reserveBusy) return;
+    if (!this.reservePending) {
+      if (!this.reservePreviewData || !this.reserveLine || this.reserveLpn.trim() !== this.reservePreviewData.lpn || !Number.isInteger(this.reserveQuantity) || this.reserveQuantity <= 0 || this.reserveQuantity > this.reservePreviewData.pickableQuantity || this.reserveQuantity > this.reservePreviewData.sourceQuantity) return;
+      if (this.reserveQuantity < this.reservePreviewData.sourceQuantity && !this.reserveNewLpn.trim()) {this.messageService.warning('Scan a new preprinted LPN for the remaining quantity.'); return;}
+      this.reservePending = {requestId: this.waveService.reserveRequestId(), shipmentLineId: this.reserveLine.shipment_line_id, sourceLpn: this.reservePreviewData.lpn, newLpn: this.reserveQuantity < this.reservePreviewData.sourceQuantity ? this.reserveNewLpn.trim() : '', destination: '@SHIP_STAGE', keepOriginal: true, quantity: this.reserveQuantity, expectedQuantity: this.reservePreviewData.sourceQuantity};
+      try { localStorage.setItem(this.reserveStorageKey(this.reserveWave.id!), JSON.stringify(this.reservePending)); }
+      catch { this.reservePending = null; this.messageService.error('Browser storage is unavailable. Enable it before scanning.'); return; }
+    }
+    this.reserveBusy = true;
+    this.waveService.reserveScan(this.reserveWave.id!, this.reservePending).subscribe({next: () => {
+      localStorage.removeItem(this.reserveStorageKey(this.reserveWave!.id!)); this.reservePending = null; this.reserveLine = null; this.reservePreviewData = null; this.reserveBusy = false;
+      this.messageService.success('Pick completed. Shipment has not been dispatched.'); this.reloadReserve(); this.search();
+    }, error: () => {this.reserveBusy = false; this.reloadReserve();}});
+  }
+  resumeReserveScan(saved: any): void {
+    if (this.reservePending || this.reserveBusy || !this.reserveWave) return;
+    this.reservePending = {requestId: saved.request_id, shipmentLineId: saved.shipment_line_id, sourceLpn: saved.source_lpn, newLpn: saved.new_lpn || '', destination: '@SHIP_STAGE', keepOriginal: !!saved.keep_original, quantity: saved.quantity, expectedQuantity: saved.source_quantity};
+    try {localStorage.setItem(this.reserveStorageKey(this.reserveWave.id!), JSON.stringify(this.reservePending));} catch {this.reservePending = null; this.messageService.error('Browser storage is unavailable.'); return;}
+    this.submitReserveScan();
+  }
+  cancelReserveScan(): void {
+    if (!this.reservePending || !this.reserveWave || this.reserveBusy) return;
+    this.reserveBusy = true;
+    this.waveService.reserveAction(this.reserveWave.id!, 'scan-cancel', {shipmentLineId: this.reservePending.shipmentLineId, requestId: this.reservePending.requestId}).subscribe({next: result => {
+      this.reserveBusy = false;
+      if (result.cancelled || result.completed) {localStorage.removeItem(this.reserveStorageKey(this.reserveWave!.id!)); this.reservePending = null; this.reloadReserve();}
+      else this.messageService.warning('A Pick was already prepared. Resume the saved request; it cannot be discarded.');
+    }, error: () => this.reserveBusy = false});
+  }
   allocateWave(wave: Wave): void {
     this.isSpinning = true;
 
@@ -1035,6 +1188,7 @@ export class OutboundWaveComponent implements OnInit {
     }); 
   }
   removeWave(wave: Wave): void {
+    if (this.waveReservePreview) return;
     this.isSpinning = true;
 
     this.waveService.removeWave(wave.id!).subscribe({
@@ -1323,28 +1477,22 @@ export class OutboundWaveComponent implements OnInit {
   
   @ViewChild('stPick', { static: false })
   stPick!: STComponent;
-  pickColumns: STColumn[] = [ 
-    { title: '', index: 'number', type: 'checkbox' },
-
-    { title: this.i18n.fanyi("pick.number"), index: 'number' , width: 150, },   
-    { title: this.i18n.fanyi("status"), render: 'statusColumn', width: 110,  },   
-    { title: this.i18n.fanyi("type"), render: 'typeColumn', width: 110,  },  
-    { title: this.i18n.fanyi("order.number"), index: 'orderNumber' , width: 150, },   
-    { title: this.i18n.fanyi("work-task.number"), render: 'workTaskColumn' , width: 210, },  
-    // { title: this.i18n.fanyi("assign"), render: 'assignColumn'  },  
-    // { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
-    { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation.name'  },  
-    { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation.name'  },     
-    { title: this.i18n.fanyi("item"), index: 'item.name'  },   
-    { title: this.i18n.fanyi("item.description"), index: 'item.description'  },   
-    { title: this.i18n.fanyi("pick.quantity"), index: 'quantity'  },   
-    { title: this.i18n.fanyi("pick.pickedQuantity"), index: 'pickedQuantity'  },    
+  pickColumns: STColumn[] = [
+    { title: '', index: 'number', type: 'checkbox', width: 44 },
+    { title: this.i18n.fanyi('pick.number'), index: 'number', width: 146 },
+    { title: this.i18n.fanyi('status'), render: 'statusColumn', width: 100 },
+    { title: this.i18n.fanyi('type'), render: 'typeColumn', width: 100 },
+    { title: this.i18n.fanyi('order.number'), index: 'orderNumber', width: 134 },
+    { title: this.i18n.fanyi('work-task.number'), render: 'workTaskColumn', width: 126 },
+    { title: this.i18n.fanyi('sourceLocation'), index: 'sourceLocation.name', width: 110 },
+    { title: this.i18n.fanyi('destinationLocation'), index: 'destinationLocation.name', width: 116 },
+    { title: this.i18n.fanyi('item'), render: 'pickItemColumn', width: 204 },
+    { title: this.i18n.fanyi('pick.quantity'), index: 'quantity', width: 88, className: 'text-right' },
+    { title: this.i18n.fanyi('pick.pickedQuantity'), index: 'pickedQuantity', width: 94, className: 'text-right' },
     {
-      title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
-      render: 'actionColumn',
-      iif: () => !this.displayOnly
-    }, 
-   
+      title: this.i18n.fanyi('action'), fixed: 'right', width: 178,
+      render: 'actionColumn', iif: () => !this.displayOnly
+    }
   ];
 
   @ViewChild('stInnerPick', { static: false })
@@ -1875,7 +2023,8 @@ export class OutboundWaveComponent implements OnInit {
           ReportType.WAVE_PICK_SHEET_BY_LOCATION,
           event.printerIndex,
           event.printerName,
-          event.physicalCopyCount, PrintPageOrientation.Landscape,
+          event.physicalCopyCount, printResult.reportOrientation === ReportOrientation.PORTRAIT
+            ? PrintPageOrientation.Portrait : PrintPageOrientation.Landscape,
           PrintPageSize.A4,
           wave.number,
           printResult, event.collated);
@@ -2002,7 +2151,7 @@ export class OutboundWaveComponent implements OnInit {
           this.isSpinning = false;
           sessionStorage.setItem("report_previous_page", `outbound/wave?number=${wave.number}`);
           
-          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${printResult.reportOrientation || ReportOrientation.LANDSCAPE}`);
     
         }, 
         error: () => this.isSpinning = false
@@ -2377,6 +2526,7 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   deassignShipmentLine(wave: Wave, shipmentLine: ShipmentLine) {
+    if (this.waveReservePreview) return;
     this.isSpinning = true;
     this.waveService.deassignShipmentLine(wave.id!, shipmentLine.id).subscribe({
       next: () => {

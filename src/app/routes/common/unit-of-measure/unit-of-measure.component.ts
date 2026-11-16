@@ -48,7 +48,6 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
   displayOnly = false;
-  readonly isolatedTest = (globalThis as any).__MES_PUBLIC_CONFIG__?.masterDataTest === true;
   levelDrafts = new Map<number, UnitOfMeasure['level']>();
   savingLevelChanges = false;
   readonly levelMessage = inject(NzMessageService);
@@ -64,7 +63,7 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   saveUnitLevels(): void {
     if (this.displayOnly || this.savingLevelChanges || !this.levelDrafts.size) return;
     const updates = this.unitOfMeasures.filter(unit => this.levelDrafts.has(unit.id!)).map(unit => ({
-      id: unit.id!, level: this.levelDrafts.get(unit.id!) || null, _testRevision: unit._testRevision
+      id: unit.id!, level: this.levelDrafts.get(unit.id!) || null
     }));
     this.savingLevelChanges = true;
     this.unitOfMeasureService.saveUnitLevels(updates).subscribe({

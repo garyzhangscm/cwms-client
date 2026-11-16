@@ -1,8 +1,9 @@
+import { formatDate } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { PrintingService } from '../../common/services/printing.service';
@@ -22,6 +23,7 @@ import { PickService } from './pick.service';
   providedIn: 'root',
 })
 export class WaveService {
+  readonly reservePreviewEnabled = true;
   private PICKS_PER_PAGE = 20;
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
@@ -123,14 +125,15 @@ export class WaveService {
       params = params.append('clientId', clientId);  
     }  
     
+    // Order candidates use warehouse-local wall time; Shipment candidates accept zoned ISO timestamps.
     if (startCreatedTime) {
-      params = params.append('startCreatedTime', this.dateTimeService.getISODateTimeString(startCreatedTime));  
+      params = params.append('startCreatedTime', formatDate(startCreatedTime, "yyyy-MM-dd'T'HH:mm:ss", 'en-US'));
     }
     if (endCreatedTime) {
-      params = params.append('endCreatedTime', this.dateTimeService.getISODateTimeString(endCreatedTime));   
+      params = params.append('endCreatedTime', formatDate(endCreatedTime, "yyyy-MM-dd'T'HH:mm:ss", 'en-US'));
     }
     if (specificCreatedDate) {
-      params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
+      params = params.append('specificCreatedDate', this.dateTimeService.getLocalDateString(specificCreatedDate));
     }
     if (singleOrderLineOnly ) {
       params = params.append('singleOrderLineOnly', singleOrderLineOnly);  
@@ -176,7 +179,7 @@ export class WaveService {
       params = params.append('endCreatedTime', this.dateTimeService.getISODateTimeString(endCreatedTime));   
     }
     if (specificCreatedDate) {
-      params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
+      params = params.append('specificCreatedDate', this.dateTimeService.getLocalDateString(specificCreatedDate));
     }
     if (singleOrderLineOnly ) {
       params = params.append('singleOrderLineOnly', singleOrderLineOnly);  
@@ -191,7 +194,7 @@ export class WaveService {
   }
 
   planWaveWithOrderLines(waveNumber: string, orderLineIds: (number | undefined)[], comment?: string): Observable<Wave> {
-    const url = `outbound/waves/plan/by-order-lines`;
+    const url = this.reservePreviewEnabled ? `outbound/wave-reserve/plan/orders` : `outbound/waves/plan/by-order-lines`;
 
     let params = new HttpParams(); 
 
@@ -206,7 +209,7 @@ export class WaveService {
     return this.http.post(url, orderLineIds, params).pipe(map(res => res.data));
   }
   planWaveWithShipmentLines(waveNumber: string, shipmentLineIds: (number | undefined)[], comment?: string): Observable<Wave> {
-    const url = `outbound/waves/plan/by-shipment-lines`;
+    const url = this.reservePreviewEnabled ? `outbound/wave-reserve/plan/shipments` : `outbound/waves/plan/by-shipment-lines`;
 
     let params = new HttpParams(); 
 
@@ -221,10 +224,49 @@ export class WaveService {
     return this.http.post(url, shipmentLineIds, params).pipe(map(res => res.data));
   }
 
-  allocateWave(wave: Wave): Observable<Wave> {
-    const url = `outbound/waves/${wave.id}/allocate`;
+  allocateWave(wave: Wave): Observable<any> {
+    if (!this.reservePreviewEnabled) return this.http.post(`outbound/waves/${wave.id}/allocate`).pipe(map(res => res.data));
+    return this.reserveAction(wave.id!, 'allocate');
+  }
+  private reserveRequests = new Map<number, string>();
+  reserveRequestId(): string {
+    const bytes = new Uint8Array(16); window.crypto.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 15) | 64; bytes[8] = (bytes[8] & 63) | 128;
+    const h = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+  }
+  isEditableReserveDraft(wave: Wave, reserve: any): boolean {
+    return wave.status === 'PLANED' && reserve?.managed === true &&
+      reserve.state === 'PLANNED' && Array.isArray(reserve.pendingScans) &&
+      reserve.pendingScans.length === 0 && Array.isArray(reserve.lines) &&
+      reserve.lines.every((line: any) => ['wave_reserved', 'committed',
+        'inprocess_quantity', 'shipped_quantity'].every(key => Number(line[key]) === 0));
+  }
 
-    return this.http.post(url).pipe(map(res => res.data));
+  reserveView(id: number): Observable<any> {
+    return this.http.get(`outbound/wave-reserve/${id}`, {warehouseId: this.warehouseService.getCurrentWarehouse().id}).pipe(map(res => res.data));
+  }
+  reserveStates(ids: number[]): Observable<any> {
+    if (!ids.length) return of({});
+    const requests: Observable<any>[] = [];
+    for (let i = 0; i < ids.length; i += 100) requests.push(this.http.get('outbound/wave-reserve', {warehouseId: this.warehouseService.getCurrentWarehouse().id, waveIds: ids.slice(i, i + 100).join(',')}).pipe(map(res => res.data)));
+    return forkJoin(requests).pipe(map(results => Object.assign({}, ...results)));
+  }
+  reserveAction(id: number, action: string, extra: any = {}): Observable<any> {
+    if (action === 'allocate') {
+      if (!this.reserveRequests.has(id)) this.reserveRequests.set(id, this.reserveRequestId());
+      extra = {...extra, requestId: this.reserveRequests.get(id)};
+    }
+    return this.http.post(`outbound/wave-reserve/${id}/${action}`, undefined, {warehouseId: this.warehouseService.getCurrentWarehouse().id, ...extra}).pipe(map(res => {
+      if (action === 'allocate' || action === 'release') this.reserveRequests.delete(id);
+      return res.data;
+    }));
+  }
+  reservePreview(id: number, shipmentLineId: number, sourceLpn: string): Observable<any> {
+    return this.http.get(`outbound/wave-reserve/${id}/scan-preview`, {warehouseId: this.warehouseService.getCurrentWarehouse().id, shipmentLineId, sourceLpn}).pipe(map(res => res.data));
+  }
+  reserveScan(id: number, payload: any): Observable<any> {
+    return this.http.post(`outbound/wave-reserve/${id}/scan`, payload, {warehouseId: this.warehouseService.getCurrentWarehouse().id}).pipe(map(res => res.data));
   }
   cancelWave(wave: Wave): Observable<Wave> {
     const url = `outbound/waves/${wave.id}/`;

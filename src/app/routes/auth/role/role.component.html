@@ -53,6 +53,7 @@
       
       @for (data of nestedTable.data; track data) {
       
+        <ng-template>
           <tr>
             <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
             <td>
@@ -281,6 +282,7 @@
   
   
           </tr>
+        </ng-template>
       }
 
     </tbody>

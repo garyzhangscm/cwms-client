@@ -1,16 +1,4 @@
-.git
 node_modules
 dist
 .angular
-coverage
-*.log
-.env
-.env.*
-*.local.env
-config/private
-**/*.pem
-**/*.key
-**/*.p12
-**/*.pfx
-*.tar
-*.tar.gz
+services

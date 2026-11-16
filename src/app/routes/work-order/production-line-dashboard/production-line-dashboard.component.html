@@ -13,6 +13,9 @@
 </header>
 <div *ngIf="productionJobMessage" role="status" aria-live="polite" class="production-job-status">
   <span>{{ productionJobMessage | i18n }}</span>
+  <button type="button" class="kiosk-button" *ngIf="pendingProductionSubmission" [disabled]="isProducing" (click)="retryProductionSubmission()">
+    {{ 'Retry production submission' | i18n }}
+  </button>
   <button type="button" class="kiosk-button" *ngIf="productionJobRetry" (click)="continueProductionLabelJob()">{{ 'web.literal.96e7e8256162' | i18n }}</button>
 </div>
 <div class="kiosk-summary" *ngIf="isKioskMode">

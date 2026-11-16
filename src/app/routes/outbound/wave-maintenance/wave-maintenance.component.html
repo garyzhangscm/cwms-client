@@ -37,17 +37,17 @@
         {{ currentWave.totalQuantity | number }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'comment' | i18n }}" >
-        <input nz-input (ngModelChange)="waveCommentChanged($event)" 
+        <input nz-input [readonly]="guardedWaveMaintenance" (ngModelChange)="waveCommentChanged($event)"
         [ngModelOptions]="{updateOn: 'blur'}"
         [ngModel]="currentWave.comment"/>
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'loadNumber' | i18n }}" >
-        <input nz-input (ngModelChange)="waveLoadNumberChanged($event)" 
+        <input nz-input [readonly]="guardedWaveMaintenance" (ngModelChange)="waveLoadNumberChanged($event)"
         [ngModelOptions]="{updateOn: 'blur'}"
         [ngModel]="currentWave.loadNumbers"/>
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'billOfLadingNumber' | i18n }}" >
-        <input nz-input (ngModelChange)="waveBillOfLadingNumberChanged($event)"
+        <input nz-input [readonly]="guardedWaveMaintenance" (ngModelChange)="waveBillOfLadingNumberChanged($event)"
         [ngModelOptions]="{updateOn: 'blur'}"
          [ngModel]="currentWave.billOfLadingNumbers"/>
       </nz-descriptions-item>
@@ -82,7 +82,10 @@
   </nz-card> 
 
  
-  <nz-layout *ngIf="this.currentWave == null || isWaveOpenForNewOrderShipment(this.currentWave)">
+  <p *ngIf="guardedWaveMaintenance && !newWave && !openingExistingWave && !canEditWaveLines">
+    This Wave is locked. Only unallocated Reserve drafts can be edited.
+  </p>
+  <nz-layout *ngIf="canEditWaveLines && (currentWave == null || isWaveOpenForNewOrderShipment(currentWave))">
     <nz-sider [(nzCollapsed)]="hideCriteria">
       <h3 style="border-bottom: 1px solid #d9d9d9">{{'criteria' | i18n}}</h3>
       <form nz-form 
@@ -187,6 +190,16 @@
     </nz-sider>
     <nz-content>      
       <nz-card>
+        <nz-alert *ngIf="showShipmentCandidateHint" nzType="info" nzShowIcon
+          nzMessage="This order already has a Shipment."
+          [nzDescription]="shipmentCandidateHint" style="display:block;margin-bottom:16px">
+        </nz-alert>
+        <ng-template #shipmentCandidateHint>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <span>Use the Shipment tab to add its existing shipment lines to this Wave.</span>
+            <button nz-button nzType="primary" type="button" (click)="planWaveByCategoryIndexChanged(2)">View Shipment</button>
+          </div>
+        </ng-template>
         <nz-tabset [nzSelectedIndex] = "planWaveByCategoryIndex" (nzSelectedIndexChange)="planWaveByCategoryIndexChanged($event)">
           <nz-tab nzTitle="{{ 'order' | i18n }}">
 

@@ -1,5 +1,4 @@
 import { formatDate } from '@angular/common';
-import { defer, finalize, map, tap } from 'rxjs';
 import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -219,38 +218,32 @@ export class OutboundShipmentComponent implements OnInit {
   }
 
   search(expandedShipmentId?: number, tabSelectedIndex?: number): void {
-    if (this.searching) return;
     this.searching = true;
     this.isSpinning = true;
     this.searchResult = '';
 
-    defer(() => this.shipmentService.getShipments(
-      this.searchForm.value.number, this.searchForm.value.orderNumber
-    )).pipe(
-      map(shipments => {
-        if (!Array.isArray(shipments)) throw new Error('Invalid shipment search response');
-        return this.calculateQuantities(shipments);
-      }),
-      tap(shipments => {
-        this.listOfAllShipments = shipments;
-        this.listOfDisplayShipments = shipments;
+    this.shipmentService.getShipments(this.searchForm.value.number,
+      this.searchForm.value.orderNumber).subscribe(
+      shipmentRes => {
+        this.listOfAllShipments = this.calculateQuantities(shipmentRes);
+        this.listOfDisplayShipments = this.calculateQuantities(shipmentRes);
+
         this.collapseAllRecord(expandedShipmentId);
-        this.searchResult = this.i18n.fanyi('search_result_analysis', {
-          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-          rowCount: shipments.length,
-        });
-        if (tabSelectedIndex !== undefined) this.tabSelectedIndex = tabSelectedIndex;
-      }),
-      finalize(() => {
         this.searching = false;
         this.isSpinning = false;
-      }),
-    ).subscribe({
-      error: () => {
-        this.searchResult = this.i18n.fanyi('shipment.search-failed');
-        this.messageService.error(this.searchResult);
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: shipmentRes.length,
+        });
+        if (tabSelectedIndex) {
+          this.tabSelectedIndex = tabSelectedIndex;
+        }
       },
-    });
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
   canCancelShipment(shipment: Shipment) {
     return true;
@@ -404,7 +397,7 @@ export class OutboundShipmentComponent implements OnInit {
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['number']) {
-        this.searchForm.get('number')!.setValue(params['number']);
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });

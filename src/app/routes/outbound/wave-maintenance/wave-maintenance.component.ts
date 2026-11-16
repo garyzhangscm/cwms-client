@@ -1,3 +1,4 @@
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -256,6 +257,49 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   newWaveNumberForm!: UntypedFormGroup;
   planWaveInProcess = false;
   newWave = true;
+  private waveModal = inject(NzModalService);
+  private draftEditable = false;
+  openingExistingWave = false;
+
+  get guardedWaveMaintenance(): boolean {
+    return this.waveService.reservePreviewEnabled;
+  }
+
+  get canEditWaveLines(): boolean {
+    return !this.guardedWaveMaintenance ||
+      (!this.openingExistingWave && (this.newWave || this.draftEditable));
+  }
+
+  private confirmDraftAddition(count: number, save: () => void): void {
+    if (!this.guardedWaveMaintenance) {
+      save();
+      return;
+    }
+    if (!this.canEditWaveLines || this.currentWave.id == null) return;
+    this.waveModal.confirm({
+      nzTitle: 'Add lines to this draft Wave?',
+      nzContent: `Add ${count} selected line(s) to ${this.currentWave.number}.`,
+      nzOkText: 'Add to Wave',
+      nzOnOk: () => {
+        const id = this.currentWave.id!;
+        return new Promise<void>(resolve => {
+          this.waveService.reserveView(id).subscribe({
+            next: state => {
+              this.draftEditable = this.waveService.isEditableReserveDraft(this.currentWave, state);
+              if (this.draftEditable) save();
+              else this.message.warning('This Wave is now locked for editing.');
+              resolve();
+            },
+            error: () => {
+              this.draftEditable = false;
+              resolve();
+            }
+          });
+        });
+      }
+    });
+  }
+
 
   pageTitle: string;
   currentWave: Wave = {
@@ -354,6 +398,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   loadWave(waveId: number): void {
+    this.draftEditable = false;
+    this.openingExistingWave = this.guardedWaveMaintenance;
     this.isSpinning = true;
     this.waveService.getWave(waveId).subscribe({
       next: (waveRes)=> {
@@ -363,6 +409,15 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
             waveRes.shipmentLines = shipmentlineRes;
             this.setupWaveInformation(waveRes);
             this.isSpinning = false;
+            if (this.guardedWaveMaintenance) {
+              this.waveService.reserveView(waveRes.id!).subscribe({
+                next: state => {
+                  this.draftEditable = this.waveService.isEditableReserveDraft(waveRes, state);
+                  this.openingExistingWave = false;
+                },
+                error: () => { this.openingExistingWave = false; }
+              });
+            }
           }, 
           error: () => this.isSpinning = false
         })
@@ -436,7 +491,24 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     return wave;
   }
 
+  private candidateSearchVersion = 0;
+  private candidateOrdersReady = false;
+  private candidateShipmentsReady = false;
+  private candidateSearchNumber = '';
+
+  get showShipmentCandidateHint(): boolean {
+    return this.planWaveByCategoryIndex !== 2
+      && this.candidateOrdersReady && this.candidateShipmentsReady
+      && !!this.candidateSearchNumber
+      && this.candidateSearchNumber === (this.searchForm.value.orderNumber || '').trim()
+      && this.listOfAllOrders.length === 0 && this.waveableShipments.length > 0;
+  }
+
   findWaveCandidate(): void {
+    const searchVersion = ++this.candidateSearchVersion;
+    this.candidateOrdersReady = false;
+    this.candidateShipmentsReady = false;
+    this.candidateSearchNumber = (this.searchForm.value.orderNumber || '').trim();
     this.isSpinning = true;
     
     let startCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
@@ -458,6 +530,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .subscribe({
 
         next: (wavableOrders)  => {
+          if (searchVersion !== this.candidateSearchVersion) return;
+          this.candidateOrdersReady = true;
           this.listOfAllOrders = this.calculateOrderQuantities(wavableOrders);
           this.listOfDisplayOrders = this.calculateOrderQuantities(wavableOrders);
   
@@ -485,6 +559,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .subscribe({
 
         next: (waveableShipmentsRes)  => {
+          if (searchVersion !== this.candidateSearchVersion) return;
+          this.candidateShipmentsReady = true;
           this.waveableShipments = this.calculateShipmentQuantities(waveableShipmentsRes); 
    
           this.refreshShipmentDetailInformations(this.waveableShipments);
@@ -683,6 +759,9 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
   
   clearDisplay(): void {
+    ++this.candidateSearchVersion;
+    this.candidateOrdersReady = false;
+    this.candidateShipmentsReady = false;
     this.searchForm.reset();
 
     this.listOfAllOrders = [];
@@ -775,7 +854,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.selectedWavableOrderLines = this.getWavableOrderLines(selectedOrders);
     if (!this.newWave) {
 
-      this.planWaveWithOrderLines(this.currentWave.number, this.selectedWavableOrderLines);
+      this.confirmDraftAddition(this.selectedWavableOrderLines.length, () =>
+        this.planWaveWithOrderLines(this.currentWave.number, this.selectedWavableOrderLines));
     }
     else {
       this.openNewWaveNumberModal(true);
@@ -794,7 +874,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     
     if (!this.newWave) {
 
-      this.planWaveWithShipmentLines(this.currentWave.number, this.selectedWavableShipmentLines);
+      this.confirmDraftAddition(this.selectedWavableShipmentLines.length, () =>
+        this.planWaveWithShipmentLines(this.currentWave.number, this.selectedWavableShipmentLines));
     }
     else {
       this.openNewWaveNumberModal(false);
@@ -843,7 +924,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     
     if (!this.newWave) {
 
-      this.planWaveWithOrderLines(this.currentWave.number, this.selectedWavableOrderLines);
+      this.confirmDraftAddition(this.selectedWavableOrderLines.length, () =>
+        this.planWaveWithOrderLines(this.currentWave.number, this.selectedWavableOrderLines));
     }
     else {
       this.openNewWaveNumberModal(true);
@@ -898,6 +980,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     }
   }
   planWaveWithOrderLines(waveNumber: string, orderLines: OrderLine[], comment?: string) {
+    if (!this.canEditWaveLines || this.planWaveInProcess) return;
 
     this.isSpinning = true;
     this.planWaveInProcess = true;
@@ -934,6 +1017,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
   
   planWaveWithShipmentLines(waveNumber: string, shipmentLines: ShipmentLine[], comment?: string) {
+    if (!this.canEditWaveLines || this.planWaveInProcess) return;
 
     this.isSpinning = true;
     this.planWaveInProcess = true;
@@ -1061,6 +1145,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
 
   waveCommentChanged(comment: string) {
+    if (this.guardedWaveMaintenance) return;
     this.isSpinning = true;
     this.waveService.changeWaveComment(this.currentWave.id!, comment)
     .subscribe({
@@ -1074,6 +1159,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
   
   waveLoadNumberChanged(loadNumber: string) {
+    if (this.guardedWaveMaintenance) return;
     this.isSpinning = true;
     this.waveService.changeWaveLoadNumber(this.currentWave.id!, loadNumber)
     .subscribe({
@@ -1086,6 +1172,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     })
   }
   waveBillOfLadingNumberChanged(billOfLadingNumber: string) {
+    if (this.guardedWaveMaintenance) return;
     this.isSpinning = true;
     this.waveService.changeWaveBillOfLadingNumber(this.currentWave.id!, billOfLadingNumber)
     .subscribe({

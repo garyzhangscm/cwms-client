@@ -115,7 +115,7 @@
   </nz-card>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="primary" (click)="saveWorkOrderProduceResults()" [nzLoading]="savingInProcess">
-      {{ 'confirm' | i18n }}
+      {{ (pendingProductionSubmission ? 'Retry production submission' : 'confirm') | i18n }}
     </button>
   </div>
 

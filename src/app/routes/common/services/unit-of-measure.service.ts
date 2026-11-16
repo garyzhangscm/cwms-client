@@ -22,10 +22,9 @@ export class UnitOfMeasureService {
     private companyService: CompanyService,
   ) {}
 
-  readonly isolatedTest = (globalThis as any).__MES_PUBLIC_CONFIG__?.masterDataTest === true;
-  private get endpoint(): string { return this.isolatedTest ? 'master-data-test/units' : 'common/unit-of-measures'; }
+  private readonly endpoint = 'common/unit-of-measures';
   private get cacheKey(): string {
-    return `${this.isolatedTest ? 'test.' : ''}common.unit-of-measure.${this.companyService.getCurrentCompany()!.id}.${this.warehouseService.getCurrentWarehouse().id}`;
+    return `common.unit-of-measure.${this.companyService.getCurrentCompany()!.id}.${this.warehouseService.getCurrentWarehouse().id}`;
   }
   private clearUnitCache(id?: number): void {
     this.localStorageService.removeItem(this.cacheKey);
@@ -61,8 +60,8 @@ export class UnitOfMeasureService {
       .pipe(tap(res => this.localStorageService.setItem(`${this.cacheKey}.${unitOfMeasureId}`, res)));
   }
 
-  saveUnitLevels(updates: { id: number; level: UnitOfMeasure['level']; _testRevision?: number }[]): Observable<UnitOfMeasure[]> {
-    const scope = this.isolatedTest ? '' : `?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+  saveUnitLevels(updates: { id: number; level: UnitOfMeasure['level'] }[]): Observable<UnitOfMeasure[]> {
+    const scope = `?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.put(`${this.endpoint}/levels${scope}`, { updates }).pipe(
       map(res => res.data), tap(() => { for (const update of updates) this.clearUnitCache(update.id); })
     );

@@ -75,7 +75,6 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     }
     return true;
   }
-  readonly isolatedMasterDataTest = (globalThis as any).__MES_PUBLIC_CONFIG__?.masterDataTest === true;
   getFootprintLevel(footprint: ItemUnitOfMeasure): string {
     const id = footprint.unitOfMeasureId ?? footprint.unitOfMeasure?.id;
     const unit = this.availableUnitOfMeasures.find(candidate => candidate.id === id);

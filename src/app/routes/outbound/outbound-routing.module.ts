@@ -70,6 +70,13 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   },
+  { path: 'load-board', redirectTo: 'load', pathMatch: 'full' },
+  {
+    path: 'dock-board',
+    loadComponent: () => import('./dock-board/dock-board.component').then(m => m.DockBoardComponent),
+    canActivate: [aclCanActivate],
+    data: { guard: { role: ['/outbound/trailer', 'admin', 'system-admin'] } as ACLGuardType, guard_url: '/exception/403' }
+  },
   { path: 'shipment', component: OutboundShipmentComponent, 
     canActivate: [aclCanActivate], 
     data: { 
@@ -133,15 +140,7 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   },
-  { path: 'trailer', component: OutboundTrailerComponent, 
-    canActivate: [aclCanActivate], 
-    data: { 
-      guard:  {
-        role: [ '/outbound/trailer' , 'admin', 'system-admin' ], 
-      } as ACLGuardType,
-      guard_url: '/exception/403'
-    }
-  },
+  { path: 'trailer', redirectTo: 'dock-board', pathMatch: 'full' },
   { path: 'pick/confirm', component: OutboundPickConfirmComponent, 
     canActivate: [aclCanActivate], 
     data: { 
@@ -281,7 +280,7 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   },
-  { path: 'load', component: OutboundLoadComponent , 
+  { path: 'load', loadComponent: () => import('./dock-board/load-board.component').then(m => m.LoadBoardComponent),
     canActivate: [aclCanActivate], 
     data: { 
       guard:  {

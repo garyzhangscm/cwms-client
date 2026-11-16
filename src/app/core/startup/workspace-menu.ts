@@ -69,12 +69,53 @@ function organizeProduction(entry: Menu): Menu {
   return { ...entry, children };
 }
 
+const outboundSections = [
+  { text: "Shipping Workflow", i18n: "workspace.section.shipping-workflow", routes: ["order", "shipment", "load", "dock-board", "wave"] },
+  { text: "Orders & Planning", i18n: "workspace.section.orders-planning", routes: ["order-import-pdf", "quantity-allocation", "order-maintenance", "wave-maintenance", "complete-order", "complete-wave", "order-document", "outbound-order-popup-query"] },
+  { text: "Picking & Packing", i18n: "workspace.section.picking-packing", routes: ["pick", "pick/confirm", "pick-list", "short-allocation", "sortation", "sortation/by-shipment", "grid", "grid-maintenance", "carton", "cartonization", "shipping-cartonization"] },
+  { text: "Shipping Tools", i18n: "workspace.section.shipping-tools", routes: ["stop", "shipment-display", "parcel-by-order", "ship-by-hualei", "parcel-package/maintenance", "order/walmart-shipping-carton-label", "order/target-shipping-carton-label"] },
+  { text: "Activity & History", i18n: "workspace.section.activity-history", routes: ["order-activity", "allocation-transaction-history"] },
+  { text: "Configuration", i18n: "workspace.section.configuration", routes: ["allocation-configuration", "allocation-configuration/maintenance", "pick-configuration", "list-pick-configuration", "list-pick-configuration/maintenance", "pick-confirm-strategy", "pick-confirm-strategy/maintenance", "cartonization-configuration", "cartonization-configuration/maintenance", "cartonization-configuration/confirm", "outbound-configuration", "hualei-configuration"] }
+];
+function organizeOutbound(entry: Menu): Menu {
+  const items = entry.children ?? [];
+  if (!items.length || items.every((item) => item.children && !item.link))
+    return entry;
+  const used = new Set<Menu>();
+  const children: Menu[] = [];
+  for (const section of outboundSections) {
+    const links = [];
+    for (const route of section.routes) {
+      for (const item of items.filter((candidate) => candidate.link === `/outbound/${route}`)) {
+        used.add(item);
+        links.push(item);
+      }
+    }
+    if (links.length)
+      children.push({ text: section.text, i18n: section.i18n, children: links });
+  }
+  const remaining = items.filter((item) => !used.has(item));
+  if (remaining.length)
+    children.push({ text: "Other Outbound Tools", i18n: "workspace.section.other-outbound-tools", children: remaining });
+  return { ...entry, children };
+}
 /** Reorganize the supplied menu while preserving the supplied module permissions. */
 export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
-  // Hide the legacy table board while retaining the overview card board and its route.
-  const visibleMenu = (entries: Menu[]): Menu[] => entries
+  // Canonical shipping workflow entries; preserve server-provided ACL and visibility.
+  const canonical = (link?: string): string|undefined => link === '/outbound/load-board' ? '/outbound/load'
+    : link === '/outbound/trailer' ? '/outbound/dock-board' : link;
+  const uniqueEntries = (entries: Menu[]): Menu[] => entries.filter((entry, index) => {
+    const link=canonical(entry.link);
+    return !['/outbound/load','/outbound/dock-board'].includes(link || '') ||
+      entries.findIndex(other=>canonical(other.link)===link)===index;
+  });
+  const visibleMenu = (entries: Menu[]): Menu[] => uniqueEntries(entries)
     .filter(entry => entry.link !== '/work-order/production-kanban')
     .map(entry => {
+      const link = canonical(entry.link);
+      if (link === '/outbound/load' || link === '/outbound/dock-board') {
+        entry = { ...entry, link, text: link === '/outbound/load' ? 'Loads' : 'Yard & Docks', i18n: undefined };
+      }
       const icon = moduleIcons[entry.i18n ?? ''];
       if (icon) entry = { ...entry, icon: { type: 'icon', value: icon, theme: 'outline' } };
       const labelled = entry.link === '/work-order/production-line'
@@ -82,7 +123,10 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
         : entry.link === '/work-order/produce-transaction'
         ? { ...entry, text: 'Production Records', i18n: 'work-order.production-records' }
         : entry;
-      return labelled.children ? { ...labelled, children: visibleMenu(labelled.children) } : labelled;
+      if (!labelled.children) return labelled;
+      const children = visibleMenu(labelled.children);
+      if (labelled.i18n === 'menu.main.outbound') return organizeOutbound({ ...labelled, children });
+      return { ...labelled, children };
     });
   const modules: Menu[] = [];
   const extra: Menu[] = [];
@@ -128,6 +172,7 @@ export function organizeWorkspaceMenu(menu: Menu[]): Menu[] {
       for (const entry of modules.filter(item => item.i18n === key)) {
         used.add(entry);
         children.push(key === 'menu.main.work-order' ? organizeProduction(entry)
+          : key === 'menu.main.outbound' ? organizeOutbound(entry)
           : labels[key] ? { ...entry, text: labels[key], i18n: key } : entry);
       }
     }

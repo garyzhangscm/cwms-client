@@ -1,6 +1,6 @@
-<button nz-button nz-dropdown [nzDropdownMenu]="printButtons" [nzLoading]="printingInProcess"
+<button nz-button [nzSize]="buttonSize" nz-dropdown [nzDropdownMenu]="printButtons" [nzLoading]="printingInProcess"
   [disabled]="printButtonDisabled" (click)="openPrinterModal(tplPrinterModalTitle, tplPrinterModalContent)">
-  {{ 'print' | i18n }}<i nz-icon nzType="down"></i></button>
+  {{ buttonLabel || ('print' | i18n) }}<i nz-icon nzType="down"></i></button>
 <nz-dropdown-menu #printButtons="nzDropdownMenu">
   <ul nz-menu>
 

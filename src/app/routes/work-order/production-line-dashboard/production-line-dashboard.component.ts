@@ -26,7 +26,7 @@ import { WorkOrder } from '../models/work-order';
 import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction';
 import { ProductionLineTypeService } from '../services/production-line-type.service';
 import { ProductionLineService } from '../services/production-line.service';
-import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
+import { PendingProductionSubmission, WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
 import { WorkOrderService } from '../services/work-order.service';
 import { ProductionLabelJob, ProductionLabelReceiptService } from '../services/production-label-receipt.service';
 import { ReportHistory } from '../../report/models/report-history';
@@ -109,6 +109,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
   isProducing = false;
   productionJobMessage = '';
   productionJobRetry = false;
+  pendingProductionSubmission?: PendingProductionSubmission;
   private readonly receiptService = inject(ProductionLabelReceiptService);
   private pendingLabelJob?: ProductionLabelJob;
   private readonly printedLpns = new Set<string>();
@@ -198,6 +199,14 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
 
   ngOnInit(): void {
     this.restorePendingLabelJob();
+    try {
+      this.pendingProductionSubmission = this.workOrderProduceTransactionService.pendingSubmission('dashboard');
+      if (this.pendingProductionSubmission) {
+        this.productionJobMessage = 'An earlier production submission needs confirmation.';
+      }
+    } catch {
+      this.productionJobMessage = 'The pending production submission could not be read.';
+    }
     this.loadAvailableProductionLineTypes();
     this.loadInventoryStatuses();
 
@@ -391,7 +400,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     itemName: string,
     itemDescription: string
   ): void {
-    if (this.isProducing) return;
+    if (this.isProducing || this.pendingProductionSubmission) return;
     this.isSpinning = true;
     this.itemService.getItems(itemName).subscribe({
       next: itemRes => {
@@ -621,13 +630,28 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
     this.saveWorkOrderProduceResults(workOrderProduceTransaction);
   }
   saveWorkOrderProduceResults(request: WorkOrderProduceTransaction): void {
-    if (this.isProducing) return;
+    if (this.isProducing || this.pendingProductionSubmission) return;
+    try {
+      this.pendingProductionSubmission = this.workOrderProduceTransactionService.beginSubmission('dashboard', request);
+      this.retryProductionSubmission();
+    } catch {
+      this.isSpinning = false;
+      this.produceInventoryModal.updateConfig({ nzOkDisabled: false, nzOkLoading: false });
+      this.messageService.error(this.i18n.fanyi('The production submission could not be saved locally.'));
+    }
+  }
+
+  retryProductionSubmission(): void {
+    const submission = this.pendingProductionSubmission;
+    if (this.isProducing || !submission) return;
     this.isProducing = true;
     this.productionJobRetry = false;
     this.productionJobMessage = 'Submitting production…';
-    this.productionJobSubscription = this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(request).subscribe({
+    const request = submission.request;
+    this.productionJobSubscription = this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction('dashboard', submission).subscribe({
       next: saved => {
-        this.produceInventoryModal.destroy();
+        this.pendingProductionSubmission = undefined;
+        this.produceInventoryModal?.destroy();
         this.isSpinning = false;
         const shouldPrint = this.warehouseConfiguration?.newLPNPrintLabelAtProducingFlag &&
           this.warehouseConfiguration?.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA;
@@ -652,11 +676,16 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit, OnDest
         this.persistPendingLabelJob();
         this.continueProductionLabelJob();
       },
-      error: () => {
+      error: error => {
         this.isSpinning = false;
-        this.produceInventoryModal.updateConfig({ nzOkDisabled: true, nzOkLoading: false });
-        this.productionJobMessage = 'Submission could not be confirmed. Check the LPN before submitting again.';
-        this.messageService.error(this.productionJobMessage);
+        this.isProducing = false;
+        this.pendingProductionSubmission = this.workOrderProduceTransactionService.pendingSubmission('dashboard');
+        this.produceInventoryModal?.updateConfig({ nzOkDisabled: !!this.pendingProductionSubmission, nzOkLoading: false });
+        this.productionJobMessage = this.pendingProductionSubmission
+          ? 'Submission could not be confirmed. Retry the original production submission.'
+          : (error.statusText || 'The production submission was rejected.');
+        if (this.pendingProductionSubmission) this.produceInventoryModal?.destroy();
+        this.messageService.error(this.i18n.fanyi(this.productionJobMessage));
       }
     });
   }

@@ -1,3 +1,4 @@
+import { ShipmentLine } from '../models/shipment-line';
 import { DatePipe, formatDate } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder,  UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
@@ -68,7 +69,7 @@ import { DateTimeService } from '../../util/services/date-time.service';
 @Component({
     selector: 'app-outbound-order',
     templateUrl: './order.component.html',
-    styleUrls: ['./order.component.less'],
+    styleUrls: ['./order.component.less', './order-focus.component.less'],
     standalone: false
 })
 export class OutboundOrderComponent implements OnInit, OnDestroy {
@@ -115,6 +116,45 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   canPrintManual(order: Order): boolean { return !!this.printPolicies.get(order.id!)?.manualPick; }
 
  
+
+  lineFulfillment: Record<number, { picked: number | null; loaded: number | null }> = {};
+  updateLineFulfillment(order: Order, shipments: ShipmentLine[]): void {
+    const totals: Record<number, { picked: number | null; loaded: number | null }> = {};
+    const seenShipments = new Set<number>();
+    const seenPicks = new Set<number>();
+    for (const line of order.orderLines ?? []) if (line.id != null) totals[line.id] = {picked: 0, loaded: 0};
+    for (const shipment of shipments) {
+      if (seenShipments.has(shipment.id)) continue;
+      seenShipments.add(shipment.id);
+      const id = shipment.orderLine?.id;
+      if (id == null || !totals[id]) continue;
+      const total = totals[id];
+      if (shipment.loadedQuantity == null) total.loaded = null;
+      else if (total.loaded != null) total.loaded += shipment.loadedQuantity;
+      if (!Array.isArray(shipment.picks)) { total.picked = null; continue; }
+      for (const pick of shipment.picks) {
+        if (seenPicks.has(pick.id)) continue;
+        seenPicks.add(pick.id);
+        if (pick.pickedQuantity == null) total.picked = null;
+        else if (total.picked != null) total.picked += pick.pickedQuantity;
+      }
+    }
+    // Shipping consumes the current loaded balance. Keep shipped units in
+    // the order's cumulative loading progress.
+    for (const line of order.orderLines ?? []) {
+      if (line.id == null) continue;
+      const total = totals[line.id];
+      if (total.loaded != null) total.loaded += line.shippedQuantity ?? 0;
+    }
+    this.lineFulfillment = {...this.lineFulfillment, ...totals};
+  }
+  detailPercent(value: number | undefined | null, total: number | undefined | null): number {
+    if (value == null || total == null || !Number.isFinite(value) || !Number.isFinite(total) || total <= 0) return 0;
+    return Math.min(100, Math.max(0, Math.round(value / total * 100)));
+  }
+  focusedOrder?: Order;
+  focusedOrderNumber?: string;
+
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   private readonly allocationMonitor = inject(AllocationMonitorService);
   private allocationSubscriptions = new Map<number, Subscription>();
@@ -267,7 +307,6 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   searchError = '';
   detailWarning = '';
   orderDetailsOrder?: Order;
-  private linkedOrderId?: number;
   removingOrderIds = new Set<number>();
   private searchSubscription?: Subscription;
   private detailSubscriptions = new Subscription();
@@ -326,14 +365,12 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
     // IN case we get the number passed in, refresh the display
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
+      this.focusedOrder = undefined;
+      this.focusedOrderNumber = params['detail'] === '1' ? params['number'] : undefined;
       if (params['number']) {
-        // A direct order link must not inherit unrelated list filters.
-        this.searchForm.reset();
-        // nonNullable reset restores OPEN; direct links must explicitly clear it.
-        this.searchForm.controls.orderStatus.setValue(undefined);
         this.searchForm.controls.number.setValue(params['number']);
-        const id = Number(params['orderId']);
-        this.linkedOrderId = Number.isSafeInteger(id) && id > 0 ? id : undefined;
+        // Links to a specific order must also find completed and cancelled orders.
+        this.searchForm.controls.orderStatus.setValue(undefined);
         this.search();
       }
     });
@@ -378,7 +415,6 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
  
   ngOnDestroy(): void {
-    this.orderPrintDialog?.destroy();
     this.searchSubscription?.unsubscribe();
     this.allocationLatestSubscription?.unsubscribe();
     this.allocationSubscriptions.forEach(subscription => subscription.unsubscribe());
@@ -421,8 +457,27 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   }
 
   search(tabSelectedIndex?: number): void {
-    const linkedOrderId = this.linkedOrderId;
-    this.linkedOrderId = undefined;
+    const orderId = Number(this.activatedRoute.snapshot.queryParamMap.get('orderId'));
+    if (this.focusedOrderNumber && Number.isSafeInteger(orderId) && orderId > 0) {
+      this.searchSubscription?.unsubscribe();
+      this.cancelDetailLoading();
+      this.searchError = '';
+      this.detailWarning = '';
+      this.searching = true;
+      this.searchSubscription = this.orderService.getOrder(orderId).pipe(
+        take(1), timeout(20000), finalize(() => this.searching = false)
+      ).subscribe({
+        next: order => {
+          this.focusedOrder = this.calculateQuantities([order])[0];
+          this.tabSelectedIndex = tabSelectedIndex ?? 0;
+          this.orderDetailsOrder = undefined;
+          this.refreshDetailInformation(order);
+          this.showOrderDetails(order);
+        },
+        error: () => this.searchError = 'Unable to load this order.',
+      });
+      return;
+    }
     this.searchSubscription?.unsubscribe();
     this.cancelDetailLoading();
     this.searchError = '';
@@ -458,30 +513,22 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
       this.searchForm.value.client, 
       this.searchForm.value.poNumber, true).pipe(
         timeout(60000),
-        take(1),
         finalize(() => this.searching = false)
       ).subscribe({
 
         next: (orderRes) => {
-          if (linkedOrderId !== undefined) {
-            orderRes = orderRes.filter(order => order.id === linkedOrderId);
-            this.st.pi = 1;
-          }
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: orderRes.length,
           });
           
           this.listOfAllOrders = this.calculateQuantities(orderRes);
+          if (this.focusedOrderNumber && orderRes.length === 1) {
+            this.focusedOrder = orderRes[0];
+            this.showOrderDetails(this.focusedOrder);
+          }
           void this.refreshDetailInformations(orderRes);
           this.restoreAllocationResults(orderRes);
-          if (linkedOrderId !== undefined && orderRes.length === 1) {
-            const order = orderRes[0];
-            (order as STData).expand = true;
-            this.tabSelectedIndex = 0;
-            this.orderDetailsOrder = undefined;
-            this.showOrderDetails(order);
-          }
           if (tabSelectedIndex != null) {
             this.tabSelectedIndex = tabSelectedIndex;
           }
@@ -814,6 +861,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
         } 
     );
     this.trackOrderDetail(this.shipmentLineService.getShipmentLinesByOrder(order.id!), (shipmentLineRes) => {
+        this.updateLineFulfillment(order, shipmentLineRes);
         shipmentLineRes.forEach(shipmentLine => {
 
           // console.log(`add ${shipmentLine.openQuantity} to totalPendingAllocationQuantity: ${order.totalPendingAllocationQuantity}`);
@@ -823,7 +871,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
       });
     this.trackOrderDetail(this.pickService.getPicksByOrder(order.id!), (pickRes) => {
         
-        order.totalPickedQuantity = pickRes.reduce((sum, pick) => sum + (pick.pickedQuantity ?? 0), 0);
+        order.totalPickedQuantity = pickRes.map(pick => pick.pickedQuantity).reduce((sum, current) => sum + current, 0);
           order.totalOpenPickQuantity = pickRes.map(pick => (pick.quantity - pick.pickedQuantity)).reduce((sum, current) => sum + current, 0);
 
       })
@@ -1106,8 +1154,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   }
   
   printManualPickSheet(event: any, order: Order) {
-    if (!this.canPrintManual(order)) { this.messageService.warning("No pending manual pick demand." ); return; }
-
+    if (!this.canPrintManual(order)) return;
 
     this.isSpinning = true;
 
@@ -1138,8 +1185,7 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
 
   }
   previewManualPickSheet(order: Order): void {
-    if (!this.canPrintManual(order)) { this.messageService.warning("No pending manual pick demand." ); return; }
-
+    if (!this.canPrintManual(order)) return;
 
 
     this.isSpinning = true;
@@ -1550,7 +1596,6 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
     { title: this.i18n.fanyi('outbound.order.column.quantity'), index: 'totalExpectedQuantity', width: 70, className: 'order-quantity-cell' },
     { title: this.i18n.fanyi('outbound.order.column.shipped'), index: 'totalShippedQuantity', width: 70, className: 'order-quantity-cell' },
     { title: this.i18n.fanyi('outbound.order.column.open'), index: 'totalOpenQuantity', width: 70, className: 'order-quantity-cell' },
-    { title: this.i18n.fanyi('outbound.order.column.picked'), render: 'orderPickedQuantityColumn', width: 75, className: 'order-quantity-cell' },
     { title: this.i18n.fanyi('action'), render: 'actionColumn', fixed: 'right', width: 185, iif: () => !this.displayOnly }
   ];
   customColumns = [
@@ -1629,17 +1674,8 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
             iif: () => !this.displayOnly },
   ];
 
-  reopenLinkedOrder(order: Order, event: MouseEvent): void {
-    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
-        this.activatedRoute.snapshot.queryParamMap.get('orderId') !== String(order.id)) return;
-    this.st.setRow(order, { expand: true });
-    this.tabSelectedIndex = 0;
-    this.orderDetailsOrder = undefined;
-    this.showOrderDetails(order);
-  }
-
   toggleOrderDetails(order: Order): void {
-    this.orderDetailsOrder = this.orderDetailsOrder?.id === order.id ? undefined : order;
+    this.orderDetailsOrder = this.orderDetailsOrder === order ? undefined : order;
   }
 
   orderTableChanged(event: STChange) : void {
@@ -2190,8 +2226,18 @@ export class OutboundOrderComponent implements OnInit, OnDestroy {
   stOrderLine!: STComponent;
 
   stOrderLineTableColumns: STColumn[] = [];
+  focusedOrderLineColumns: STColumn[] = [];
   setupOrderLineTableColumns() {
-
+    this.focusedOrderLineColumns = [
+      { title: 'Line #', index: 'number', width: 65 },
+      { title: this.i18n.fanyi('item'), render: 'itemColumn', width: 260 },
+      { title: 'Ordered Qty', render: 'lineBaseOrdered', width: 130 },
+      { title: 'Open Qty', render: 'lineBaseOpen', width: 110 },
+      { title: 'Picked', render: 'linePickedProgress', width: 210 },
+      { title: 'Loaded', render: 'lineLoadedProgress', width: 210 },
+      { title: 'Shipped', render: 'lineShippedProgress', width: 210 },
+      { title: this.i18n.fanyi('action'), render: 'actionColumn', width: 130, iif: () => !this.displayOnly }
+    ];
     this.stOrderLineTableColumns = [
       { title: this.i18n.fanyi('outbound.order.line.number'), index: 'number', width: '9%' },
       { title: this.i18n.fanyi('item'), render: 'itemColumn', width: '37%' },

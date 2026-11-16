@@ -11,7 +11,7 @@ import { ReportType } from '../../report/models/report-type.enum';
 import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WorkOrderLineConsumeTransaction } from '../models/work-order-line-consume-transaction';
 import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction'; 
-import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
+import { PendingProductionSubmission, WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
 import { WorkOrderService } from '../services/work-order.service';
 import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
 import { Inventory } from '../../inventory/models/inventory';
@@ -40,6 +40,7 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   isWorkOrderKPICollapse = true;
 
   savingInProcess = false;
+  pendingProductionSubmission?: PendingProductionSubmission;
   isSpinning = false;
 
   pageTitle: string;
@@ -74,12 +75,22 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.work-order.produce.confirm'));
 
-    this.workOrderProduceTransaction = JSON.parse(sessionStorage.getItem('currentWorkOrderProduceTransaction')!);
-
-    // skip all the transaction with 0 quantity
-    this.removeZeroQuantity();
-
-    this.setupWorkOrderConsumptionInformation(); 
+    try {
+      this.pendingProductionSubmission = this.workOrderProduceTransactionService.pendingSubmission('confirmation');
+    } catch {
+      this.messageService.error(this.i18n.fanyi('The pending production submission could not be read.'));
+      return;
+    }
+    this.workOrderProduceTransaction = this.pendingProductionSubmission?.request
+      ?? JSON.parse(sessionStorage.getItem('currentWorkOrderProduceTransaction')!);
+    if (!this.workOrderProduceTransaction) {
+      this.router.navigateByUrl('/work-order/work-order');
+      return;
+    }
+    if (!this.pendingProductionSubmission) {
+      this.removeZeroQuantity();
+      this.setupWorkOrderConsumptionInformation();
+    }
     this.savingInProcess = false;
   }
 
@@ -167,11 +178,20 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   }
 
   saveWorkOrderProduceResults(): void {
-    
+    if (this.savingInProcess || !this.workOrderProduceTransaction) return;
+    try {
+      this.pendingProductionSubmission ??= this.workOrderProduceTransactionService.beginSubmission(
+        'confirmation', this.workOrderProduceTransaction,
+      );
+    } catch {
+      this.messageService.error(this.i18n.fanyi('The production submission could not be saved locally.'));
+      return;
+    }
     this.savingInProcess = true;
     this.isSpinning = true;
-    this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(this.workOrderProduceTransaction).subscribe(
+    this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction('confirmation', this.pendingProductionSubmission).subscribe(
       workOrderProduceTransactionRes => {
+        this.pendingProductionSubmission = undefined;
         this.messageService.success(this.i18n.fanyi('message.work-order.produced-success')); 
 
         /**
@@ -202,9 +222,13 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
         }, 500);
       },
       error => {
-        console.log(`error: ${JSON.stringify(error)}`);
         this.savingInProcess = false;
         this.isSpinning = false;
+        this.pendingProductionSubmission = this.workOrderProduceTransactionService.pendingSubmission('confirmation');
+        const message = this.pendingProductionSubmission
+          ? 'Submission could not be confirmed. Retry the original production submission.'
+          : (error.statusText || 'The production submission was rejected.');
+        this.messageService.error(this.i18n.fanyi(message));
       },
     );
   }

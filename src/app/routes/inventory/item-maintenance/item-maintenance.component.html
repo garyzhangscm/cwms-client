@@ -17,7 +17,6 @@
 
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <div class="item-editor">
-<p *ngIf="isolatedMasterDataTest">{{ 'uom.test-isolation' | i18n }}</p>
   
 <div class="item-scope">
   <nz-radio-group [(ngModel)]="warehouseSpecific" (ngModelChange)="warehouseSpecificOptionChanged()">

@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
@@ -98,15 +99,37 @@ export class OrderService {
       return exactQuery;
     }
     return exactQuery.pipe(switchMap(orders => {
-      if (orders.length || searchNumber.length < 3 || /[%_]/.test(searchNumber)) return of(orders);
+      if (orders.length) return of(orders);
       // Legacy numbers can contain NBSP or invisible characters at either edge.
-      // Keep the number filter as a bounded substring search; never fetch the whole warehouse.
-      // Then normalize edges and require the complete number to match.
-      return this.http.get(url, params.set('number', `*${searchNumber}*`)).pipe(
+      // Keep all other filters and narrow candidates back to the complete number.
+      return this.http.get(url, params.delete('number')).pipe(
         map(res => (res.data as Order[]).filter(order =>
           this.normalizeOrderSearchNumber(order.number).toUpperCase() === searchNumber.toUpperCase()))
       );
     }));
+  }
+
+  getOrdersPage(filters: any, page: number, size: number, sort: string, direction: string,
+    orderId?: number): Observable<{items: Order[]; total: number; page: number; size: number}> {
+    let params = new HttpParams().set('warehouseId', this.warehouseService.getCurrentWarehouse().id)
+      .set('page', page).set('size', size).set('sort', sort).set('direction', direction);
+    const values: Record<string, any> = {number: this.normalizeOrderSearchNumber(filters.number || ''),
+      status: filters.orderStatus, category: filters.orderCategory, customerId: filters.customer,
+      clientId: filters.client, poNumber: filters.poNumber?.trim()};
+    // A link identifies the order even when a legacy number has invisible edge characters.
+    if (orderId != null) { values['ids'] = orderId; delete values['number']; }
+    for (const [key, value] of Object.entries(values)) {
+      if (value !== undefined && value !== null && value !== '') params = params.set(key, value);
+    }
+    for (const [field, start, end] of [['completeTimeRanger', 'startCompleteTime', 'endCompleteTime'],
+      ['createdTimeRanger', 'startCreatedTime', 'endCreatedTime']]) {
+      const range = filters[field];
+      if (range?.[0]) params = params.set(start, formatDate(range[0], "yyyy-MM-dd'T'HH:mm:ss", 'en-US'));
+      if (range?.[1]) params = params.set(end, formatDate(range[1], "yyyy-MM-dd'T'HH:mm:ss", 'en-US'));
+    }
+    if (filters.completeDate) params = params.set('specificCompleteDate', this.dateTimeService.getLocalDateString(filters.completeDate));
+    if (filters.createdDate) params = params.set('specificCreatedDate', this.dateTimeService.getLocalDateString(filters.createdDate));
+    return this.http.get('outbound/orders/page', params).pipe(map(res => res.data));
   }
 
   private normalizeOrderSearchNumber(number: string): string {

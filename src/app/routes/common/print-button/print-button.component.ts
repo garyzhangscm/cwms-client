@@ -20,6 +20,8 @@ export class CommonPrintButtonComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   @Input() printingInProcess: boolean = false;
+  @Input() buttonLabel?: string;
+  @Input() buttonSize: 'small' | 'default' | 'large' = 'default';
   @Input() allowPreview: boolean = true;
   @Input() printButtonDisabled: boolean = false;
   @Input() defaultPhysicalCopyCount: number = 1;

@@ -1,7 +1,6 @@
 <page-header [title]="'page.unit-of-measure.header.title' | i18n">
 </page-header>
 
-<p *ngIf="isolatedTest">{{ 'uom.test-isolation' | i18n }}</p>
 <p *ngIf="!displayOnly">{{ 'uom.save-level-hint' | i18n }}
   <span *ngIf="levelDrafts.size">{{ 'uom.unsaved-count' | i18n }} {{ levelDrafts.size }}</span>
 </p>

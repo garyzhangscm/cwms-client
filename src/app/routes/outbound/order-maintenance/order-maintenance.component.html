@@ -2,7 +2,7 @@
 
 <ng-template #returnLink>
     <a routerLink="/outbound/order" routerLinkActive="active"
-        [queryParams]="!newOrder && currentOrder?.id ? {number: currentOrder?.number, orderId: currentOrder?.id} : {}">{{
+        [queryParams]="!newOrder && currentOrder?.id ? {number: currentOrder?.number, orderId: currentOrder?.id, detail: 1} : {}">{{
         'return' | i18n }}</a>
 </ng-template>
 <ng-template #breadcrumb>
@@ -551,7 +551,7 @@
                         </td>                        
                         <td>
                             <div class="row">
-                                <input  type="text" [(ngModel)]="orderLine.expectedQuantity"  />
+                                <input nz-input type="text" inputmode="numeric" [(ngModel)]="orderLine.expectedQuantity"  />
                             </div>
                         </td> 
                         <td>
